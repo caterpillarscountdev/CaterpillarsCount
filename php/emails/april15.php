@@ -10,7 +10,7 @@
 	$query = mysqli_query($dbconn, "SELECT DISTINCT Plant.SiteFK FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE YEAR(Survey.LocalDate)='" . date("Y") . "'");
 	while($siteRow = mysqli_fetch_assoc($query)){
 		$site = self::findByID($siteRow["ID"]);
-		echo $site->getName();
+		echo $site->getName() . "<br/>";
 	}
 	mysqli_close($dbconn);
 ?>
