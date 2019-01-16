@@ -8,7 +8,7 @@ header('Access-Control-Allow-Origin: *');
 	$site = Site::findByID("2");
 	$dbconn = (new Keychain)->getDatabaseConnection();
       $query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS Count FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $site->getID() . "' AND Survey.LocalDate>'2018-06-13'");
-			if(mysqli_num_rows($query) == 0 || intval(mysqli_fetch_assoc($query)["Count"]) == 0){
+			if(intval(mysqli_fetch_assoc($query)["Count"]) == 0){
 				$emails = $site->getAuthorityEmails();
 				for($j = 0; $j < count($emails); $j++){
 					if($emails[$j] == "plocharczykweb@gmail.com"){
