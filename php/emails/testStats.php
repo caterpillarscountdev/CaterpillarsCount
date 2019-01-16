@@ -19,7 +19,7 @@ header('Access-Control-Allow-Origin: *');
 			$currentCirclesQuery = mysqli_query($dbconn, "SELECT COUNT(DISTINCT Circle) AS CurrentCircleCount FROM Plant WHERE SiteFK='" . $site->getID() . "'");
 			$currentCircles = mysqli_fetch_assoc($currentCirclesQuery)["CurrentCircleCount"];
 			
-			$visualQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS VisualSurveyCount FROM Survey WHERE SiteFK='" . $site->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "' AND ObservationMethod='Visual'");
+			$visualQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS VisualSurveyCount FROM Survey JOIN Plant ON Survey.PlantFK = Plant.ID WHERE SiteFK='" . $site->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "' AND ObservationMethod='Visual'");
 			$visualSurveyCount = mysqli_fetch_assoc($visualQuery)["VisualSurveyCount"];
 			
 			$beatSheetSurveyCount = $surveyCount - $visualSurveyCount;
