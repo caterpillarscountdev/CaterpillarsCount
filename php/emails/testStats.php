@@ -13,7 +13,7 @@ header('Access-Control-Allow-Origin: *');
 	$today = date("Y-m-d");
 	$sundayOffset = date('w', strtotime($today));
     	$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
-	$query = mysqli_query($dbconn, "SELECT COUNT(Survey.*) AS SurveyCount, COUNT(DISTINCT(Survey.UserFKOfObserver)) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
+	$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS SurveyCount, COUNT(DISTINCT(Survey.UserFKOfObserver)) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
 		$surveyCount = intval(mysqli_fetch_assoc($query)["SurveyCount"]);
 		$userCount = intval(mysqli_fetch_assoc($query)["UserCount"]);
 		if($surveyCount > 0){
