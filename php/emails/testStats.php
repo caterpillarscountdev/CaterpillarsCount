@@ -7,7 +7,7 @@ header('Access-Control-Allow-Origin: *');
 	
 	$site = Site::findByID("2");
 	$dbconn = (new Keychain)->getDatabaseConnection();
-      $emails = $sites[$i]->getAuthorityEmails();
+      $emails = $site->getAuthorityEmails();
       for($j = 0; $j < count($emails); $j++){
         $firstName = "there";
         $user = User::findByEmail($emails[$j]);
