@@ -35,7 +35,7 @@
 						$arthropod1 = str_replace("leafhopper", "leaf hopper", str_replace("daddylonglegs", "daddy longleg", str_replace("moths", "moth", str_replace("truebugs", "true bug", $row["Group"]))));
 						$arthropod1Count = $row["Count"];
 					}
-					if($arthropod2Count == ""){
+					else if($arthropod2Count == ""){
 						$arthropod2 = str_replace("leafhopper", "leaf hopper", str_replace("daddylonglegs", "daddy longleg", str_replace("moths", "moth", str_replace("truebugs", "true bug", $row["Group"]))));
 						$arthropod2Count = $row["Count"];
 					}
