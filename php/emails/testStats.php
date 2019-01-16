@@ -7,16 +7,14 @@ header('Access-Control-Allow-Origin: *');
 	
 	$site = Site::findByID("2");
 	$dbconn = (new Keychain)->getDatabaseConnection();
-      $emails = $site->getAuthorityEmails();
-      for($j = 0; $j < count($emails); $j++){
-        $firstName = "there";
-        $user = User::findByEmail($emails[$j]);
-        if(is_object($user) && get_class($user) == "User"){
-          $firstName = $user->getFirstName();
-        }
-	      if($emails[$j] == "plocharczykweb@gmail.com"){
-        email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
-	      }
-      }
+      $query = mysqli_query($dbconn, "SELECT COUNT(Survey.*) AS Count FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $site . "' AND Survey.LocalDate>'" . date("Y") . "-06-13'");
+			if(intval(mysqli_fetch_assoc($query)["Count"]) == 0){
+				$emails = $site->getAuthorityEmails();
+				for($j = 0; $j < count($emails); $j++){
+					if($emails[$j] == "plocharczykweb@gmail.com"){
+						email6($emails[$j], "Touching Base about " . $site->getName(), $site->getName());
+					}
+				}
+			}
 
 ?>
