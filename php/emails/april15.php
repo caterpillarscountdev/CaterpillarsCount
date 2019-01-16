@@ -7,10 +7,10 @@
 	require_once("../orm/resources/mailing.php");
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
-	$query = mysqli_query($dbconn, "SELECT DISTINCT Plant.SiteFK FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE YEAR(Survey.LocalDate)='" . date("Y") . "'");
+	$query = mysqli_query($dbconn, "SELECT DISTINCT Plant.SiteFK FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE YEAR(Survey.LocalDate)='" . (intval(date("Y")) - 1) . "'");
 	while($siteRow = mysqli_fetch_assoc($query)){
-		die($siteRow["SiteFK"]);// . "<br/>";
-		//$site = Site::findByID($siteRow["SiteFK"]);
+		$site = Site::findByID($siteRow["SiteFK"]);
+		echo $site->getName() . "<br/>";
 	}
 	mysqli_close($dbconn);
 ?>
