@@ -6,7 +6,7 @@ header('Access-Control-Allow-Origin: *');
 	require_once("../orm/resources/mailing.php");
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
-	$monday = "2018-10-22";
+	$monday = "2018-10-15";
      	
 	$user = User::findByID("25");
 	if(is_object($user) && get_class($user) == "User"){
