@@ -321,7 +321,7 @@ class Site
 	public function getNumberOfSurveysByYear($year){
 		$year = intval($year);
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT COUNT(Survey.*) AS Count FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $this->id . "' AND YEAR(Survey.LocalDate)='$year'");
+		$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS Count FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $this->id . "' AND YEAR(Survey.LocalDate)='$year'");
 		mysqli_close($dbconn);
 		return intval(mysqli_fetch_assoc($query)["Count"]);
 	}
