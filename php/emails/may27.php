@@ -21,7 +21,7 @@
       for($j = 0; $j < count($emails); $j++){
         $firstName = "there";
         $user = User::findByEmail($emails[$j]);
-        if(is_object($user) && get_class($user) != "User"){
+        if(is_object($user) && get_class($user) == "User"){
           $firstName = $user->getFirstName();
         }
         
@@ -38,7 +38,7 @@
       for($j = 0; $j < count($emails); $j++){
         $firstName = "there";
         $user = User::findByEmail($emails[$j]);
-        if(is_object($user) && get_class($user) != "User"){
+        if(is_object($user) && get_class($user) == "User"){
           $firstName = $user->getFirstName();
         }
         email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
