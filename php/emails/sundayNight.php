@@ -12,7 +12,7 @@
     	$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	for($i = 0; $i < count($sites); $i++){
-		$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS SurveyCount, COUNT(DISTINCT(Survey.UserFKOfObserver)) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
+		$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS SurveyCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
 		$row = mysqli_fetch_assoc($query);
 		$surveyCount = intval($row["SurveyCount"]);
 		$userCount = intval($row["UserCount"]);
@@ -67,11 +67,11 @@
 			}
 		}
 	}
-	$query = mysqli_query($dbconn, "SELECT DISTINCT(Survey.UserFKOfObserver) AS UserID FROM Survey WHERE Survey.LocalDate>='$monday'");
+	$query = mysqli_query($dbconn, "SELECT DISTINCT Survey.UserFKOfObserver AS UserID FROM Survey WHERE Survey.LocalDate>='$monday'");
 	while($userIDRow = mysqli_fetch_assoc($query)){
 		$user = User::findByID($userIDRow["UserID"]);
 		if(is_object($user) && get_class($user) == "User"){
-			$query = mysqli_query($dbconn, "SELECT DISTINCT(Plant.SiteFK) AS SiteID FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "'");
+			$query = mysqli_query($dbconn, "SELECT DISTINCT Plant.SiteFK AS SiteID FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "'");
 			$sites = array();
 			while($siteIDRow = mysqli_fetch_assoc($query)){
 				$sites[] = Site::findByID($siteIDRow["SiteID"]);
