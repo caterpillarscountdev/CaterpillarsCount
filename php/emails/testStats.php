@@ -51,7 +51,10 @@ header('Access-Control-Allow-Origin: *');
 			}
 			$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, Count(DISTINCT ArthropodSighting.SurveyFK) AS SurveyWithCaterpillarCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday' AND ArthropodSighting.Group='caterpillar' GROUP BY Survey.LocalDate ORDER BY SurveyWithCaterpillarCount DESC, Survey.LocalDate ASC");
 			while($dateCaterpillarRow = mysqli_fetch_assoc($query)){
-				$occurrence = round((floatval($dateSurveyRow["SurveyWithCaterpillarCount"]) / floatval($caterpillarOccurrenceArray[$dateSurveyRow["LocalDate"]])) * 100, 2);
+				$occurrence = 0;
+				if(floatval($caterpillarOccurrenceArray[$dateSurveyRow["LocalDate"]]) != 0){
+					$occurrence = round((floatval($dateSurveyRow["SurveyWithCaterpillarCount"]) / floatval($caterpillarOccurrenceArray[$dateSurveyRow["LocalDate"]])) * 100, 2);
+				}
 				if($occurrence > $peakCaterpillarOccurrence){
 					$peakCaterpillarOccurrence = $occurrence;
 					$peakCaterpillarOccurrenceDate = $dateSurveyRow["LocalDate"];
