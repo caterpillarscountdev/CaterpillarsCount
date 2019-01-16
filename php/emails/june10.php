@@ -12,7 +12,7 @@
       $emails = $sites[$i]->getAuthorityEmails();
       for($j = 0; $j < count($emails); $j++){
         $firstName = "there";
-        $user = User::findByEmail();
+        $user = User::findByEmail($email[$j]);
         if(is_object($user) && get_class($user) != "User"){
           $firstName = $user->getFirstName();
         }
@@ -31,7 +31,7 @@
       
       for($j = 0; $j < count($emails); $j++){
         $firstName = "there";
-        $user = User::findByEmail();
+        $user = User::findByEmail($email[$j]);
         if(is_object($user) && get_class($user) != "User"){
           $firstName = $user->getFirstName();
         }
