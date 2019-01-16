@@ -10,7 +10,7 @@ header('Access-Control-Allow-Origin: *');
      	
 	$user = User::findByID("25");
 	if(is_object($user) && get_class($user) == "User"){
-		$query = mysqli_query($dbconn, "SELECT DISTINCT(Plant.SiteFK) AS SiteID FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "'");
+		$query = mysqli_query($dbconn, "SELECT DISTINCT Plant.SiteFK AS SiteID FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "'");
 		$sites = array();
 		while($siteIDRow = mysqli_fetch_assoc($query)){
 			$sites[] = Site::findByID($siteIDRow["SiteID"]);
