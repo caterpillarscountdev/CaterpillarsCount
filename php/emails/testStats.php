@@ -8,7 +8,7 @@ header('Access-Control-Allow-Origin: *');
 	$sites = array(Site::findByID("2"));
 	$i = 0;
 	$dbconn = (new Keychain)->getDatabaseConnection();
-	$emails = $site->getAuthorityEmails();
+	$emails = $sites[$i]->getAuthorityEmails();
      	
 	$today = date("Y-m-d");
 	$sundayOffset = date('w', strtotime($today));
