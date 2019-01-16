@@ -14,11 +14,6 @@
 			if(intval(mysqli_fetch_assoc($query)["Count"]) == 0){
 				$emails = $sites[$i]->getAuthorityEmails();
 				for($j = 0; $j < count($emails); $j++){
-					$firstName = "there";
-					$user = User::findByEmail();
-					if(is_object($user) && get_class($user) != "User"){
-						$firstName = $user->getFirstName();
-					}
 					email6($emails[$j], "Touching Base about " . $sites[$i]->getName(), $sites[$i]->getName());
 				}
 			}
