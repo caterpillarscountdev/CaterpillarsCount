@@ -6,7 +6,7 @@ header('Access-Control-Allow-Origin: *');
 	require_once("../orm/resources/mailing.php");
 	
 	$site = Site::findByID("2");
-	$emails = $sites[$i]->getAuthorityEmails();
+	$emails = $site->getAuthorityEmails();
       
       $dbconn = (new Keychain)->getDatabaseConnection();
       $query = mysqli_query($dbconn, "SELECT COUNT(*) AS `All`, SUM(SubmittedThroughApp) AS `App` FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $site->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "'");
