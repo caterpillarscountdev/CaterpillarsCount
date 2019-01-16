@@ -14,7 +14,7 @@ header('Access-Control-Allow-Origin: *');
       for($j = 0; $j < count($emails); $j++){
         $firstName = "there";
         $user = User::findByEmail($emails[$j]);
-        if(is_object($user) && get_class($user) != "User"){
+        if(is_object($user) && get_class($user) == "User"){
           $firstName = $user->getFirstName();
         }
 	      if($emails[$j] == "plocharczykweb@gmail.com"){
