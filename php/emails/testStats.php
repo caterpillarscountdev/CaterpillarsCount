@@ -22,7 +22,7 @@ $emails = $site->getAuthorityEmails();
         }
         
 	      if($emails[$j] == "plocharczykweb@gmail.com"){
-        if($all == 0 || $app > ($all / 2)){
+        if(!($all == 0 || $app > ($all / 2))){
           email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
         }
         else{
