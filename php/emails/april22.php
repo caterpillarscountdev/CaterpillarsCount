@@ -36,10 +36,8 @@
 			
 			$authorityEmails = $site->getAuthorityEmails();
 			for($i = 0; $i < count($authorityEmails); $i++){
-        			if($authorityEmails[$i] == "plocharczykweb@gmail.com"){
-					email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
-				}
-      			}
+        			email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
+			}
 		}
 	}
 	mysqli_close($dbconn);
