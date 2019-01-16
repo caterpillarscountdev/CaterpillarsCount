@@ -13,8 +13,9 @@
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	for($i = 0; $i < count($sites); $i++){
 		$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS SurveyCount, COUNT(DISTINCT(Survey.UserFKOfObserver)) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
-		$surveyCount = intval(mysqli_fetch_assoc($query)["SurveyCount"]);
-		$userCount = intval(mysqli_fetch_assoc($query)["UserCount"]);
+		$row = mysqli_fetch_assoc($query);
+		$surveyCount = intval($row["SurveyCount"]);
+		$userCount = intval($row["UserCount"]);
 		if($surveyCount > 0){
 			//site with surveys since monday email
 			$query = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
