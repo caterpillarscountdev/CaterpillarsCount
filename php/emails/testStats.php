@@ -10,7 +10,7 @@ header('Access-Control-Allow-Origin: *');
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	$emails = $sites[$i]->getAuthorityEmails();
      	
-	$today = "2018-10-27";
+	$today = "2018-10-28";
 	$sundayOffset = date('w', strtotime($today));
     	$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 	echo $monday;
