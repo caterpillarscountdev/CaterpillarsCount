@@ -16,8 +16,7 @@
 			$participantCount = $siteRow["ParticipantCount"];
 			$dateCount = $siteRow["DateCount"];
 			
-			$surveyCountQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS SurveyCount FROM Survey WHERE SiteFK='" . $site->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "'");
-			$surveyCount = mysqli_fetch_assoc($surveyCountQuery)["SurveyCount"];
+			$surveyCount = $site->getNumberOfSurveysByYear((intval(date("Y")) - 1));
 			
 			$currentCirclesQuery = mysqli_query($dbconn, "SELECT COUNT(DISTINCT Circle) AS CurrentCircleCount FROM Plant WHERE SiteFK='" . $site->getID() . "'");
 			$currentCircles = mysqli_fetch_assoc($currentCirclesQuery)["CurrentCircleCount"];
