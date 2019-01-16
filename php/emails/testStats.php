@@ -14,8 +14,9 @@ header('Access-Control-Allow-Origin: *');
 	$sundayOffset = date('w', strtotime($today));
     	$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 	$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS SurveyCount, COUNT(DISTINCT(Survey.UserFKOfObserver)) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
-		$surveyCount = intval(mysqli_fetch_assoc($query)["SurveyCount"]);
-		$userCount = intval(mysqli_fetch_assoc($query)["UserCount"]);
+		$row = mysqli_fetch_assoc($query);
+		$surveyCount = intval($row["SurveyCount"]);
+		$userCount = intval($row["UserCount"]);
 		if($surveyCount > 0){
 			//site with surveys since monday email
 			$query = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
@@ -35,7 +36,7 @@ header('Access-Control-Allow-Origin: *');
 						$arthropod1 = str_replace("leafhopper", "leaf hopper", str_replace("daddylonglegs", "daddy longleg", str_replace("moths", "moth", str_replace("truebugs", "true bug", $row["Group"]))));
 						$arthropod1Count = $row["Count"];
 					}
-					if($arthropod2Count == ""){
+					else if($arthropod2Count == ""){
 						$arthropod2 = str_replace("leafhopper", "leaf hopper", str_replace("daddylonglegs", "daddy longleg", str_replace("moths", "moth", str_replace("truebugs", "true bug", $row["Group"]))));
 						$arthropod2Count = $row["Count"];
 					}
