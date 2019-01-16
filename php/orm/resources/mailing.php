@@ -161,6 +161,8 @@
 		
 		$peakCaterpillarSentence = "So far, no caterpillars have been observed at this site. Keep looking!";
 		if($peakCaterpillarOccurrenceDate != ""){
+			$peakCaterpillarOccurrenceDateParts = explode("-", $peakCaterpillarOccurrenceDate);
+			$peakCaterpillarOccurrenceDate = intval($peakCaterpillarOccurrenceDateParts[1]) . "/" . intval($peakCaterpillarOccurrenceDateParts[2]) . "/" . intval($peakCaterpillarOccurrenceDateParts[0]);
 			$peakCaterpillarSentence = "So far, the peak caterpillar date is $peakCaterpillarOccurrenceDate with " . round($peakCaterpillarOccurrence) . "% of surveys reporting at least one caterpillar.";
 		}
 		
