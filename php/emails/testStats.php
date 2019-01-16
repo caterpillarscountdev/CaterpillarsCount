@@ -1,4 +1,11 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+	
+	require_once("../orm/Site.php");
+	require_once("../orm/resources/Keychain.php");
+	require_once("../orm/resources/mailing.php");
+	
+	$dbconn = (new Keychain)->getDatabaseConnection();
   $site = Site::findByID("2");
 		if($site->getLatitude() < 36.5){
 			$siteName = $site->getName();
