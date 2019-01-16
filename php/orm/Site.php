@@ -328,7 +328,7 @@ class Site
 	
 	public function getAuthorityEmails(){
 		$authorityEmails = array($this->creator->getEmail());
-		$managerRequests = ManagerRequest::findManagerRequestsBySite($site);
+		$managerRequests = ManagerRequest::findManagerRequestsBySite($this);
 		for($i = 0; $i < count($managerRequests); $i++){
 			if($managerRequests[$i]->getStatus() == "Approved"){
 				$authorityEmails[] = $managerRequests[$i]->getManager()->getEmail();
