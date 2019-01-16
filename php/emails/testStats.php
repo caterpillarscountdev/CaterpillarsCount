@@ -7,7 +7,8 @@ header('Access-Control-Allow-Origin: *');
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT Survey.LocalDate) AS DateCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS ParticipantCount, COUNT(DISTINCT Survey.PlantFK) AS PlantCount, COUNT(DISTINCT Plant.Circle) AS SurveyedCircleCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE YEAR(Survey.LocalDate)='" . (intval(date("Y")) - 1) . "' AND Plant.SiteFK='2' GROUP BY Plant.SiteFK");
-  $site = Site::findByID("2");
+	$siteRow = mysqli_fetch_assoc($query);
+	$site = Site::findByID("2");
 		if($site->getLatitude() < 36.5){
 			$siteName = $site->getName();
 			$surveyedPlantCount = $siteRow["PlantCount"];
