@@ -5,7 +5,7 @@
   require_once("../orm/User.php");
   require_once("../orm/resources/Keychain.php");
   require_once("../orm/resources/mailing.php");
-  
+$time_start = microtime(true); 
   $sites = Site::findAll();
   for($i = 0; $i < count($sites); $i++){
     if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getLatitude() < 40.7 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
@@ -27,11 +27,11 @@
         
         if($all == 0 || $app > ($all / 2)){
           //email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
-          echo $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName;
+          echo $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
         }
         else{
           //email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
-          echo $emails[$j] . "Need Help Submitting Caterpillars Count! Surveys?" . $firstName;
+          echo $emails[$j] . "Need Help Submitting Caterpillars Count! Surveys?" . $firstName. "<br/>";
         }
       }
     }
@@ -44,8 +44,9 @@
           $firstName = $user->getFirstName();
         }
         //email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
-        echo $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName;
+        echo $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName. "<br/>";
       }
     }
   }
+echo "<br/>" . round(((microtime(true) - $time_start)/60)*100) . "% of resources used.";
 ?>
