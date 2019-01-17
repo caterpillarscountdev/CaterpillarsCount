@@ -4,6 +4,7 @@
 	require_once("../orm/Site.php");
 	require_once("../orm/resources/Keychain.php");
 	require_once("../orm/resources/mailing.php");
+	set_time_limit(0);
   $time_start = microtime(true); 
 	$sites = Site::findAll();
 	$dbconn = (new Keychain)->getDatabaseConnection();
@@ -20,5 +21,5 @@
 		}
 	}
 	mysqli_close($dbconn);
-echo "<br/>" . round(((microtime(true) - $time_start)/60)*100) . "% of resources used.";
+echo "<br/>" . (microtime(true) - $time_start) . " seconds";
 ?>
