@@ -42,5 +42,4 @@
 		}
 	}
 	mysqli_close($dbconn);
-    }
 ?>
