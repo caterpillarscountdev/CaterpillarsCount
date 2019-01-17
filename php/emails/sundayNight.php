@@ -5,6 +5,7 @@
 	require_once("../orm/User.php");
 	require_once("../orm/resources/Keychain.php");
 	require_once("../orm/resources/mailing.php");
+	set_time_limit(0);
 $time_start = microtime(true); 
 	$sites = Site::findAll();
 	$today = "2018-04-22";//date("Y-m-d");
