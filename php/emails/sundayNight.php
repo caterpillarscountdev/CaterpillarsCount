@@ -5,7 +5,7 @@
 	require_once("../orm/User.php");
 	require_once("../orm/resources/Keychain.php");
 	require_once("../orm/resources/mailing.php");
-	
+$time_start = microtime(true); 
 	$sites = Site::findAll();
 	$today = "2018-04-22";//date("Y-m-d");
 	$sundayOffset = date('w', strtotime($today));
@@ -64,7 +64,7 @@
 			$emails = $sites[$i]->getAuthorityEmails();
 			for($j = 0; $j < count($emails); $j++){
 				//email7($emails[$j], "This Week at " . $sites[$i]->getName() . "...", $userCount, $surveyCount, $sites[$i]->getName(), $arthropodCount, $caterpillarCount, $arthropod1, $arthropod1Count, $arthropod2, $arthropod2Count, $peakCaterpillarOccurrenceDate, $peakCaterpillarOccurrence, $sites[$i]->getID());
-				echo $emails[$j] . "This Week at " . $sites[$i]->getName() . "..." . $userCount . $surveyCount . $sites[$i]->getName() . $arthropodCount . $caterpillarCount . $arthropod1 . $arthropod1Count . $arthropod2 . $arthropod2Count . $peakCaterpillarOccurrenceDate . $peakCaterpillarOccurrence . $sites[$i]->getID();
+				echo $emails[$j] . "This Week at " . $sites[$i]->getName() . "..." . $userCount . $surveyCount . $sites[$i]->getName() . $arthropodCount . $caterpillarCount . $arthropod1 . $arthropod1Count . $arthropod2 . $arthropod2Count . $peakCaterpillarOccurrenceDate . $peakCaterpillarOccurrence . $sites[$i]->getID() . "<br/>";
 			}
 		}
 	}
@@ -88,8 +88,9 @@
 			$userHasINaturalistObservations = (mysqli_num_rows($query) > 0);
 			
 			//email8($user->getEmail(), "Your Caterpillars Count! weekly summary", $sites, $arthropodCount, $caterpillarCount, $user->getINaturalistObserverID(), $userHasINaturalistObservations);
-			echo $user->getEmail() . "Your Caterpillars Count! weekly summary" . $sites . $arthropodCount . $caterpillarCount . $user->getINaturalistObserverID() . $userHasINaturalistObservations;
+			echo $user->getEmail() . "Your Caterpillars Count! weekly summary" . $sites . $arthropodCount . $caterpillarCount . $user->getINaturalistObserverID() . $userHasINaturalistObservations . "<br/>";
 		}
 	}
 	mysqli_close($dbconn);
+echo "<br/>" . round(((microtime(true) - $time_start)/60)*100) . "% of resources used.";
 ?>
