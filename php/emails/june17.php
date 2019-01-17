@@ -5,7 +5,7 @@
   require_once("../orm/User.php");
   require_once("../orm/resources/Keychain.php");
   require_once("../orm/resources/mailing.php");
-  
+$time_start = microtime(true); 
   $sites = Site::findAll();
   for($i = 0; $i < count($sites); $i++){
     if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
@@ -17,8 +17,9 @@
           $firstName = $user->getFirstName();
         }
         //email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
-       echo $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName;
+       echo $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
       }
     }
   }
+echo "<br/>" . round(((microtime(true) - $time_start)/60)*100) . "% of resources used.";
 ?>
