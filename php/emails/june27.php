@@ -13,7 +13,8 @@
 			if(intval(mysqli_fetch_assoc($query)["Count"]) == 0){
 				$emails = $sites[$i]->getAuthorityEmails();
 				for($j = 0; $j < count($emails); $j++){
-					email6($emails[$j], "Caterpillars Count! at " . $sites[$i]->getName(), $sites[$i]->getName());
+					//email6($emails[$j], "Caterpillars Count! at " . $sites[$i]->getName(), $sites[$i]->getName());
+					echo $emails[$j] . "Caterpillars Count! at " . $sites[$i]->getName() . $sites[$i]->getName();
 				}
 			}
 		}
