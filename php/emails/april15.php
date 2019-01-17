@@ -4,7 +4,7 @@
 	require_once("../orm/Site.php");
 	require_once("../orm/resources/Keychain.php");
 	require_once("../orm/resources/mailing.php");
-	
+$time_start = microtime(true); 
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT Survey.LocalDate) AS DateCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS ParticipantCount, COUNT(DISTINCT Survey.PlantFK) AS PlantCount, COUNT(DISTINCT Plant.Circle) AS SurveyedCircleCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE YEAR(Survey.LocalDate)='" . (intval(date("Y")) - 1) . "' AND Plant.SiteFK<>'2' GROUP BY Plant.SiteFK");
 	while($siteRow = mysqli_fetch_assoc($query)){
@@ -37,9 +37,10 @@
 			$authorityEmails = $site->getAuthorityEmails();
 			for($i = 0; $i < count($authorityEmails); $i++){
         			//email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
-				echo $authorityEmails[$i] . "Preparing for a new Caterpillars Count! Season" . $siteName . $surveyedPlantCount . $surveyedCircleCount . $currentCircles . $participantCount . $visualSurveyCount . $beatSheetSurveyCount . $dateCount . $arthropodCount . $caterpillarCount . $caterpillarOccurrence;
+				echo $authorityEmails[$i] . "Preparing for a new Caterpillars Count! Season" . $siteName . $surveyedPlantCount . $surveyedCircleCount . $currentCircles . $participantCount . $visualSurveyCount . $beatSheetSurveyCount . $dateCount . $arthropodCount . $caterpillarCount . $caterpillarOccurrence . "<br/>";
 			}
 		}
 	}
 	mysqli_close($dbconn);
+echo "<br/>" . round(((microtime(true) - $time_start)/60)*100) . "% of resources used.";
 ?>
