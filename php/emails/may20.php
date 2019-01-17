@@ -4,6 +4,7 @@
   require_once("../orm/Site.php");
   require_once("../orm/User.php");
   require_once("../orm/resources/mailing.php");
+  set_time_limit(0);
 $time_start = microtime(true); 
   $sites = Site::findAll();
   for($i = 0; $i < count($sites); $i++){
@@ -20,5 +21,5 @@ $time_start = microtime(true);
       }
     }
   }
-echo "<br/>" . round(((microtime(true) - $time_start)/60)*100) . "% of resources used.";
+echo "<br/>" . (microtime(true) - $time_start) . " seconds";
 ?>
