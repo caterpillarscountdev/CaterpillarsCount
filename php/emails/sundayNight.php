@@ -93,5 +93,5 @@ $time_start = microtime(true);
 		}
 	}
 	mysqli_close($dbconn);
-echo "<br/>" . round(((microtime(true) - $time_start)/60)*100) . "% of resources used.";
+echo "<br/>" . (microtime(true) - $time_start) . " seconds";
 ?>
