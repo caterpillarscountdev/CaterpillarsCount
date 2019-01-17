@@ -4,7 +4,7 @@
 	require_once("../orm/Site.php");
 	require_once("../orm/resources/Keychain.php");
 	require_once("../orm/resources/mailing.php");
-  
+  $time_start = microtime(true); 
 	$sites = Site::findAll();
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	for($i = 0; $i < count($sites); $i++){
@@ -14,10 +14,11 @@
 				$emails = $sites[$i]->getAuthorityEmails();
 				for($j = 0; $j < count($emails); $j++){
 					//email6($emails[$j], "Caterpillars Count! at " . $sites[$i]->getName(), $sites[$i]->getName());
-					echo $emails[$j] . "Caterpillars Count! at " . $sites[$i]->getName() . $sites[$i]->getName();
+					echo $emails[$j] . "Caterpillars Count! at " . $sites[$i]->getName() . $sites[$i]->getName() . "<br/>";
 				}
 			}
 		}
 	}
 	mysqli_close($dbconn);
+echo "<br/>" . round(((microtime(true) - $time_start)/60)*100) . "% of resources used.";
 ?>
