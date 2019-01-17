@@ -7,7 +7,7 @@
 	require_once("../orm/resources/mailing.php");
 	
 	$sites = Site::findAll();
-	$today = date("Y-m-d");
+	$today = "2018-04-22";//date("Y-m-d");
 	$sundayOffset = date('w', strtotime($today));
     	$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 	$dbconn = (new Keychain)->getDatabaseConnection();
@@ -63,7 +63,8 @@
 			
 			$emails = $sites[$i]->getAuthorityEmails();
 			for($j = 0; $j < count($emails); $j++){
-				email7($emails[$j], "This Week at " . $sites[$i]->getName() . "...", $userCount, $surveyCount, $sites[$i]->getName(), $arthropodCount, $caterpillarCount, $arthropod1, $arthropod1Count, $arthropod2, $arthropod2Count, $peakCaterpillarOccurrenceDate, $peakCaterpillarOccurrence, $sites[$i]->getID());
+				//email7($emails[$j], "This Week at " . $sites[$i]->getName() . "...", $userCount, $surveyCount, $sites[$i]->getName(), $arthropodCount, $caterpillarCount, $arthropod1, $arthropod1Count, $arthropod2, $arthropod2Count, $peakCaterpillarOccurrenceDate, $peakCaterpillarOccurrence, $sites[$i]->getID());
+				echo $emails[$j] . "This Week at " . $sites[$i]->getName() . "..." . $userCount . $surveyCount . $sites[$i]->getName() . $arthropodCount . $caterpillarCount . $arthropod1 . $arthropod1Count . $arthropod2 . $arthropod2Count . $peakCaterpillarOccurrenceDate . $peakCaterpillarOccurrence . $sites[$i]->getID();
 			}
 		}
 	}
@@ -86,7 +87,8 @@
 			$query = mysqli_query($dbconn, "SELECT * FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `UserFKOfObserver`='" . $user->getID() . "' AND PhotoURL<>'' LIMIT 1");
 			$userHasINaturalistObservations = (mysqli_num_rows($query) > 0);
 			
-			email8($user->getEmail(), "Your Caterpillars Count! weekly summary", $sites, $arthropodCount, $caterpillarCount, $user->getINaturalistObserverID(), $userHasINaturalistObservations);
+			//email8($user->getEmail(), "Your Caterpillars Count! weekly summary", $sites, $arthropodCount, $caterpillarCount, $user->getINaturalistObserverID(), $userHasINaturalistObservations);
+			echo $user->getEmail() . "Your Caterpillars Count! weekly summary" . $sites . $arthropodCount . $caterpillarCount . $user->getINaturalistObserverID() . $userHasINaturalistObservations;
 		}
 	}
 	mysqli_close($dbconn);
