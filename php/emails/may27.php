@@ -26,10 +26,12 @@
         }
         
         if($all == 0 || $app > ($all / 2)){
-          email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
+          //email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
+          echo $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName;
         }
         else{
-          email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
+          //email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
+          echo $emails[$j] . "Need Help Submitting Caterpillars Count! Surveys?" . $firstName;
         }
       }
     }
@@ -41,7 +43,8 @@
         if(is_object($user) && get_class($user) == "User"){
           $firstName = $user->getFirstName();
         }
-        email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
+        //email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
+        echo $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName;
       }
     }
   }
