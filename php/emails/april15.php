@@ -36,7 +36,8 @@
 			
 			$authorityEmails = $site->getAuthorityEmails();
 			for($i = 0; $i < count($authorityEmails); $i++){
-        			email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
+        			//email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
+				echo $authorityEmails[$i] . "Preparing for a new Caterpillars Count! Season" . $siteName . $surveyedPlantCount . $surveyedCircleCount . $currentCircles . $participantCount . $visualSurveyCount . $beatSheetSurveyCount . $dateCount . $arthropodCount . $caterpillarCount . $caterpillarOccurrence);
 			}
 		}
 	}
