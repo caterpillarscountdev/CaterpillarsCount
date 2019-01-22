@@ -4,6 +4,12 @@ A cron job named "email" that was set up using the OC program runs the file [htt
 If so, we send a maximum of 5 emails per call over the course of a couple hours or so to avoid timeout issues.
 You can easily change these limits and timeframes using the variables at the top of the file if needed. You can also change the dates by adjusting the "if" statements near the bottom of the file.
 
+In order to not send the same email twice, we need to know which emails we've already sent. That's what the "TemporaryEmailLog" table in the database is for.
+That table has three columns:
+	1) UserIdentifier: either the email recipient's email address or User ID, depending on what is most convenient for the [https://caterpillarscount.unc.edu/php/emails/cron.php] to use.
+	2) EmailTypeIdentifier: a string that identifies a unique category of emails. [https://caterpillarscount.unc.edu/php/emails/cron.php] uses this to make sure a user who has already received an email in this category does not get sent another.
+	3) Date: the date that each row was recorded. [https://caterpillarscount.unc.edu/php/emails/cron.php] uses this to delete old record each day around noon.
+
 When [https://caterpillarscount.unc.edu/php/emails/cron.php] calls functions like "email3" and "email4", it is calling these functions from [https://caterpillarscount.unc.edu/php/orm/mailing.php].
 These functions hold the HTML strings that make up the custom emails. If you need to edit the HTML for any of these emails, follow these steps:
 	1) Copy the HTML string (without encompassing quotations) into a text editor like Notepad++ (for Windows), TextWrangler (for Mac), or whatever is your preference.
