@@ -118,12 +118,25 @@ class User
 		if($email === false){
 			return null;
 		}
-		$query = mysqli_query($dbconn, "SELECT `ID` FROM `User` WHERE `Email`='$email' LIMIT 1");
+		$query = mysqli_query($dbconn, "SELECT * FROM `User` WHERE `Email`='$email' LIMIT 1");
 		mysqli_close($dbconn);
+		
 		if(mysqli_num_rows($query) == 0){
 			return null;
 		}
-		return self::findByID(intval(mysqli_fetch_assoc($query)["ID"]));
+		
+		$userRow = mysqli_fetch_assoc($query);
+		
+		$id = $userRow["ID"];
+		$firstName = $userRow["FirstName"];
+		$lastName = $userRow["LastName"];
+		$desiredEmail = $userRow["DesiredEmail"];
+		$salt = $userRow["Salt"];
+		$saltedPasswordHash = $userRow["SaltedPasswordHash"];
+		$hidden = $userRow["Hidden"];
+		$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+		
+		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
 	}
 	
 	public static function findBySignInKey($email, $salt){
@@ -133,23 +146,44 @@ class User
 		if($email === false){
 			return null;
 		}
-		$query = mysqli_query($dbconn, "SELECT `ID` FROM `User` WHERE `Email`='" . $email . "' AND `Salt`='" . $salt . "' LIMIT 1");
+		$query = mysqli_query($dbconn, "SELECT * FROM `User` WHERE `Email`='" . $email . "' AND `Salt`='" . $salt . "' LIMIT 1");
 		mysqli_close($dbconn);
+		
 		if(mysqli_num_rows($query) == 0){
 			return null;
 		}
-		return self::findByID(intval(mysqli_fetch_assoc($query)["ID"]));
+		
+		$userRow = mysqli_fetch_assoc($query);
+		
+		$id = $userRow["ID"];
+		$firstName = $userRow["FirstName"];
+		$lastName = $userRow["LastName"];
+		$desiredEmail = $userRow["DesiredEmail"];
+		$saltedPasswordHash = $userRow["SaltedPasswordHash"];
+		$hidden = $userRow["Hidden"];
+		$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+		
+		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
 	}
 	
 	public static function findAll(){
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT `ID` FROM `User`");
+		$query = mysqli_query($dbconn, "SELECT * FROM `User`");
 		mysqli_close($dbconn);
 		
 		$usersArray = array();
 		while($userRow = mysqli_fetch_assoc($query)){
-			$user = self::findByID($userRow["ID"]);
-			array_push($usersArray, $user);
+			$id = $userRow["ID"];
+			$firstName = $userRow["FirstName"];
+			$lastName = $userRow["LastName"];
+			$desiredEmail = $userRow["DesiredEmail"];
+			$email = $userRow["Email"];
+			$salt = $userRow["Salt"];
+			$saltedPasswordHash = $userRow["SaltedPasswordHash"];
+			$hidden = $userRow["Hidden"];
+			$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+
+			$usersArray[] = new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
 		}
 		return $usersArray;
 	}
