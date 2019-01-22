@@ -43,6 +43,15 @@
 		}
 		return $userIdentifiers;
 	}
+
+	function allEmailsHaveBeenSent($emails, $sends){
+		for($i = 0; $i < count($emails); $i++){
+			if(!in_array($emails[$i], $sends)){
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	function send3($minLat, $maxLat){
 		global $emailsSent;
@@ -54,30 +63,32 @@
 			if($emailsSent < $MAX_EMAIL_SENDS){
 				$site = Site::findByID($siteRow["SiteFK"]);
 				if($site->getLatitude() >= $minLat && $site->getLatitude() < $maxLat){
-					$siteName = $site->getName();
-					$surveyedPlantCount = $siteRow["PlantCount"];
-					$surveyedCircleCount = $siteRow["SurveyedCircleCount"];
-					$participantCount = $siteRow["ParticipantCount"];
-					$dateCount = $siteRow["DateCount"];
-					$surveyCount = $site->getNumberOfSurveysByYear((intval(date("Y")) - 1));
-					$currentCirclesQuery = mysqli_query($dbconn, "SELECT COUNT(DISTINCT Circle) AS CurrentCircleCount FROM Plant WHERE SiteFK='" . $site->getID() . "'");
-					$currentCircles = mysqli_fetch_assoc($currentCirclesQuery)["CurrentCircleCount"];
-					$visualQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS VisualSurveyCount FROM Survey JOIN Plant ON Survey.PlantFK = Plant.ID WHERE SiteFK='" . $site->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "' AND ObservationMethod='Visual'");
-					$visualSurveyCount = mysqli_fetch_assoc($visualQuery)["VisualSurveyCount"];
-					$beatSheetSurveyCount = $surveyCount - $visualSurveyCount;
-					$arthropodCountQuery = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS Quantity FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $site->getID() . "' AND YEAR(Survey.LocalDate)='" . (intval(date("Y")) - 1) . "'");
-					$arthropodCount = mysqli_fetch_assoc($arthropodCountQuery)["Quantity"];
-					$caterpillarQuery = mysqli_query($dbconn, "SELECT COUNT(DISTINCT Survey.ID) AS Occurrences, SUM(ArthropodSighting.Quantity) AS Quantity FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $site->getID() . "' AND YEAR(Survey.LocalDate)='" . (intval(date("Y")) - 1) . "' AND ArthropodSighting.Group='caterpillar'");
-					$caterpillarRow = mysqli_fetch_assoc($caterpillarQuery);
-					$caterpillarOccurrence = (floatval($caterpillarRow["Occurrences"]) / floatval($surveyCount)) * 100;
-					$caterpillarCount = $caterpillarRow["Quantity"];
 					$authorityEmails = $site->getAuthorityEmails();
-					for($i = 0; $i < count($authorityEmails); $i++){
-						if($emailsSent < $MAX_EMAIL_SENDS && !in_array($authorityEmails[$i], $sends)){
-							//email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
-							echo "email3| " . $authorityEmails[$i] . "Preparing for a new Caterpillars Count! Season" . $siteName . $surveyedPlantCount . $surveyedCircleCount . $currentCircles . $participantCount . $visualSurveyCount . $beatSheetSurveyCount . $dateCount . $arthropodCount . $caterpillarCount . $caterpillarOccurrence . "<br/>";
-							logSend($authorityEmails[$i]);
-							$emailsSent++;
+					if(!allEmailsHaveBeenSent($authorityEmails, $sends)){
+						$siteName = $site->getName();
+						$surveyedPlantCount = $siteRow["PlantCount"];
+						$surveyedCircleCount = $siteRow["SurveyedCircleCount"];
+						$participantCount = $siteRow["ParticipantCount"];
+						$dateCount = $siteRow["DateCount"];
+						$surveyCount = $site->getNumberOfSurveysByYear((intval(date("Y")) - 1));
+						$currentCirclesQuery = mysqli_query($dbconn, "SELECT COUNT(DISTINCT Circle) AS CurrentCircleCount FROM Plant WHERE SiteFK='" . $site->getID() . "'");
+						$currentCircles = mysqli_fetch_assoc($currentCirclesQuery)["CurrentCircleCount"];
+						$visualQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS VisualSurveyCount FROM Survey JOIN Plant ON Survey.PlantFK = Plant.ID WHERE SiteFK='" . $site->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "' AND ObservationMethod='Visual'");
+						$visualSurveyCount = mysqli_fetch_assoc($visualQuery)["VisualSurveyCount"];
+						$beatSheetSurveyCount = $surveyCount - $visualSurveyCount;
+						$arthropodCountQuery = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS Quantity FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $site->getID() . "' AND YEAR(Survey.LocalDate)='" . (intval(date("Y")) - 1) . "'");
+						$arthropodCount = mysqli_fetch_assoc($arthropodCountQuery)["Quantity"];
+						$caterpillarQuery = mysqli_query($dbconn, "SELECT COUNT(DISTINCT Survey.ID) AS Occurrences, SUM(ArthropodSighting.Quantity) AS Quantity FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $site->getID() . "' AND YEAR(Survey.LocalDate)='" . (intval(date("Y")) - 1) . "' AND ArthropodSighting.Group='caterpillar'");
+						$caterpillarRow = mysqli_fetch_assoc($caterpillarQuery);
+						$caterpillarOccurrence = (floatval($caterpillarRow["Occurrences"]) / floatval($surveyCount)) * 100;
+						$caterpillarCount = $caterpillarRow["Quantity"];
+						for($i = 0; $i < count($authorityEmails); $i++){
+							if($emailsSent < $MAX_EMAIL_SENDS && !in_array($authorityEmails[$i], $sends)){
+								//email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
+								echo "email3| " . $authorityEmails[$i] . "Preparing for a new Caterpillars Count! Season" . $siteName . $surveyedPlantCount . $surveyedCircleCount . $currentCircles . $participantCount . $visualSurveyCount . $beatSheetSurveyCount . $dateCount . $arthropodCount . $caterpillarCount . $caterpillarOccurrence . "<br/>";
+								logSend($authorityEmails[$i]);
+								$emailsSent++;
+							}
 						}
 					}
 				}
@@ -120,58 +131,60 @@
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
-				$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS SurveyCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
-				$row = mysqli_fetch_assoc($query);
-				$surveyCount = intval($row["SurveyCount"]);
-				$userCount = intval($row["UserCount"]);
-				if($surveyCount > 0){
-					//site with surveys since monday email
-					$query = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
-					$arthropodCount = intval(mysqli_fetch_assoc($query)["ArthropodCount"]);
-					$query = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS CaterpillarCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday' AND ArthropodSighting.Group='caterpillar'");
-					$caterpillarCount = intval(mysqli_fetch_assoc($query)["CaterpillarCount"]);
-					$arthropod1 = "";
-					$arthropod1Count = "";
-					$arthropod2 = "";
-					$arthropod2Count = "";
-					$query = mysqli_query($dbconn, "SELECT ArthropodSighting.`Group`, SUM(ArthropodSighting.Quantity) AS Count FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday' GROUP BY ArthropodSighting.`Group` ORDER BY Count DESC LIMIT 3");
-					while($row = mysqli_fetch_assoc($query)){
-						if($row["Group"] != "caterpillar"){
-							if($arthropod1Count == ""){
-								$arthropod1 = str_replace("leafhopper", "leaf hopper", str_replace("daddylonglegs", "daddy longleg", str_replace("moths", "moth", str_replace("truebugs", "true bug", $row["Group"]))));
-								$arthropod1Count = $row["Count"];
+				$emails = $sites[$i]->getAuthorityEmails();
+				if(!allEmailsHaveBeenSent($authorityEmails, $sends)){
+					$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS SurveyCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
+					$row = mysqli_fetch_assoc($query);
+					$surveyCount = intval($row["SurveyCount"]);
+					$userCount = intval($row["UserCount"]);
+					if($surveyCount > 0){
+						//site with surveys since monday email
+						$query = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
+						$arthropodCount = intval(mysqli_fetch_assoc($query)["ArthropodCount"]);
+						$query = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS CaterpillarCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday' AND ArthropodSighting.Group='caterpillar'");
+						$caterpillarCount = intval(mysqli_fetch_assoc($query)["CaterpillarCount"]);
+						$arthropod1 = "";
+						$arthropod1Count = "";
+						$arthropod2 = "";
+						$arthropod2Count = "";
+						$query = mysqli_query($dbconn, "SELECT ArthropodSighting.`Group`, SUM(ArthropodSighting.Quantity) AS Count FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday' GROUP BY ArthropodSighting.`Group` ORDER BY Count DESC LIMIT 3");
+						while($row = mysqli_fetch_assoc($query)){
+							if($row["Group"] != "caterpillar"){
+								if($arthropod1Count == ""){
+									$arthropod1 = str_replace("leafhopper", "leaf hopper", str_replace("daddylonglegs", "daddy longleg", str_replace("moths", "moth", str_replace("truebugs", "true bug", $row["Group"]))));
+									$arthropod1Count = $row["Count"];
+								}
+								else if($arthropod2Count == ""){
+									$arthropod2 = str_replace("leafhopper", "leaf hopper", str_replace("daddylonglegs", "daddy longleg", str_replace("moths", "moth", str_replace("truebugs", "true bug", $row["Group"]))));
+									$arthropod2Count = $row["Count"];
+								}
 							}
-							else if($arthropod2Count == ""){
-								$arthropod2 = str_replace("leafhopper", "leaf hopper", str_replace("daddylonglegs", "daddy longleg", str_replace("moths", "moth", str_replace("truebugs", "true bug", $row["Group"]))));
-								$arthropod2Count = $row["Count"];
+						}
+						$peakCaterpillarOccurrenceDate = "";
+						$peakCaterpillarOccurrence = 0;
+						$caterpillarOccurrenceArray = array();
+						$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, Count(DISTINCT ArthropodSighting.SurveyFK) AS SurveyCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday' GROUP BY Survey.LocalDate ORDER BY SurveyCount DESC, Survey.LocalDate ASC");
+						while($dateSurveyRow = mysqli_fetch_assoc($query)){
+							$caterpillarOccurrenceArray[$dateSurveyRow["LocalDate"]] = $dateSurveyRow["SurveyCount"];
+						}
+						$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, Count(DISTINCT ArthropodSighting.SurveyFK) AS SurveyWithCaterpillarCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday' AND ArthropodSighting.Group='caterpillar' GROUP BY Survey.LocalDate ORDER BY SurveyWithCaterpillarCount DESC, Survey.LocalDate ASC");
+						while($dateCaterpillarRow = mysqli_fetch_assoc($query)){
+							$occurrence = 0;
+							if(floatval($caterpillarOccurrenceArray[$dateCaterpillarRow["LocalDate"]]) != 0){
+								$occurrence = round((floatval($dateCaterpillarRow["SurveyWithCaterpillarCount"]) / floatval($caterpillarOccurrenceArray[$dateCaterpillarRow["LocalDate"]])) * 100, 2);
+							}
+							if($occurrence > $peakCaterpillarOccurrence){
+								$peakCaterpillarOccurrence = $occurrence;
+								$peakCaterpillarOccurrenceDate = $dateCaterpillarRow["LocalDate"];
 							}
 						}
-					}
-					$peakCaterpillarOccurrenceDate = "";
-					$peakCaterpillarOccurrence = 0;
-					$caterpillarOccurrenceArray = array();
-					$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, Count(DISTINCT ArthropodSighting.SurveyFK) AS SurveyCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday' GROUP BY Survey.LocalDate ORDER BY SurveyCount DESC, Survey.LocalDate ASC");
-					while($dateSurveyRow = mysqli_fetch_assoc($query)){
-						$caterpillarOccurrenceArray[$dateSurveyRow["LocalDate"]] = $dateSurveyRow["SurveyCount"];
-					}
-					$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, Count(DISTINCT ArthropodSighting.SurveyFK) AS SurveyWithCaterpillarCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday' AND ArthropodSighting.Group='caterpillar' GROUP BY Survey.LocalDate ORDER BY SurveyWithCaterpillarCount DESC, Survey.LocalDate ASC");
-					while($dateCaterpillarRow = mysqli_fetch_assoc($query)){
-						$occurrence = 0;
-						if(floatval($caterpillarOccurrenceArray[$dateCaterpillarRow["LocalDate"]]) != 0){
-							$occurrence = round((floatval($dateCaterpillarRow["SurveyWithCaterpillarCount"]) / floatval($caterpillarOccurrenceArray[$dateCaterpillarRow["LocalDate"]])) * 100, 2);
-						}
-						if($occurrence > $peakCaterpillarOccurrence){
-							$peakCaterpillarOccurrence = $occurrence;
-							$peakCaterpillarOccurrenceDate = $dateCaterpillarRow["LocalDate"];
-						}
-					}
-					$emails = $sites[$i]->getAuthorityEmails();
-					for($j = 0; $j < count($emails); $j++){
-						if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
-							//email7($emails[$j], "This Week at " . $sites[$i]->getName() . "...", $userCount, $surveyCount, $sites[$i]->getName(), $arthropodCount, $caterpillarCount, $arthropod1, $arthropod1Count, $arthropod2, $arthropod2Count, $peakCaterpillarOccurrenceDate, $peakCaterpillarOccurrence, $sites[$i]->getID());
-							echo "email7| " . $emails[$j] . "This Week at " . $sites[$i]->getName() . "..." . $userCount . $surveyCount . $sites[$i]->getName() . $arthropodCount . $caterpillarCount . $arthropod1 . $arthropod1Count . $arthropod2 . $arthropod2Count . $peakCaterpillarOccurrenceDate . $peakCaterpillarOccurrence . $sites[$i]->getID() . "<br/>";
-							logSend($emails[$j], "email7");
-							$emailsSent++;
+						for($j = 0; $j < count($emails); $j++){
+							if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
+								//email7($emails[$j], "This Week at " . $sites[$i]->getName() . "...", $userCount, $surveyCount, $sites[$i]->getName(), $arthropodCount, $caterpillarCount, $arthropod1, $arthropod1Count, $arthropod2, $arthropod2Count, $peakCaterpillarOccurrenceDate, $peakCaterpillarOccurrence, $sites[$i]->getID());
+								echo "email7| " . $emails[$j] . "This Week at " . $sites[$i]->getName() . "..." . $userCount . $surveyCount . $sites[$i]->getName() . $arthropodCount . $caterpillarCount . $arthropod1 . $arthropod1Count . $arthropod2 . $arthropod2Count . $peakCaterpillarOccurrenceDate . $peakCaterpillarOccurrence . $sites[$i]->getID() . "<br/>";
+								logSend($emails[$j], "email7");
+								$emailsSent++;
+							}
 						}
 					}
 				}
