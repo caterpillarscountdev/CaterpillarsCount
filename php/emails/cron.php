@@ -1,4 +1,6 @@
 <?php
+	//A CRON JOB RUNS THIS SCRIPT ONCE PER MINUTE.
+	
 	header('Access-Control-Allow-Origin: *');
 	
 	require_once("../orm/Site.php");
@@ -7,9 +9,13 @@
 	require_once("../orm/resources/mailing.php");
 
 	date_default_timezone_set('US/Eastern');
-
-	$MAX_EMAIL_SENDS = 5;
-	$emailsSent = 0;
+	
+	$SUNDAY_START_HOUR = 17;
+	$SUNDAY_END_HOUR = 24;
+	$ANNUAL_START_HOUR = 15;
+	$ANNUAL_END_HOUR = 18;
+	$MAX_EMAIL_SENDS = 5;//max emails send each time this script is run (to prevent timeouts)
+	$emailsSent = 0;//current number of emails sent during this run
 
 	if(date('H:i') == "12:00" || date('H:i') == "12:01" || date('H:i') == "12:02"){
 		$dbconn = (new Keychain)->getDatabaseConnection();
@@ -124,7 +130,7 @@
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
 		$sites = Site::findAll();
-		$today = date("Y-m-d");//FOR TESTING: "2018-04-22";
+		$today = date("Y-m-d");
 		$sundayOffset = date('w', strtotime($today));
 		$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 		$dbconn = (new Keychain)->getDatabaseConnection();
@@ -196,7 +202,7 @@
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
 		$sends = getSends("email8");
-		$today = date("Y-m-d");//FOR TESTING: "2018-04-22";
+		$today = date("Y-m-d");
 		$sundayOffset = date('w', strtotime($today));
 		$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 		$dbconn = (new Keychain)->getDatabaseConnection();
@@ -287,78 +293,80 @@
 		mysqli_close($dbconn);
 	}
 	
-	if(date("m/d") == "04/15"){
-		send3(-9999, 36.5);
-	}
-	else if(date("m/d") == "04/22"){
-		send3(36.5, 40.7);
-	}
-	//else if(date("m/d") == "04/29"){
-		send3(40.7, 9999);
-	//}
-	/*else if(date("m/d") == "05/20"){
-		$sites = Site::findAll();
-		for($i = 0; $i < count($sites); $i++){
-			if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getLatitude() < 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
-				send4ToAuthorities($sites[$i]);
-			}
+	if(intval(date('H')) >= $ANNUAL_START_HOUR && intval(date('H')) <= $ANNUAL_END_HOUR){
+		if(date("m/d") == "04/15"){
+			send3(-9999, 36.5);
 		}
-	}
-	else if(date("m/d") == "05/27"){
-		$sites = Site::findAll();
-		for($i = 0; $i < count($sites); $i++){
-			if($emailsSent < $MAX_EMAIL_SENDS){
-				$numberOfSurveysThisYear = $sites[$i]->getNumberOfSurveysByYear(date("Y"));
-				if($sites[$i]->getActive() && $sites[$i]->getLatitude() < 36.5 && $numberOfSurveysThisYear == 0){
-					send4ToAppAuthoritiesAnd5ToPaperAuthorities($sites[$i]);
-				}
-				else if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getLatitude() < 40.7 && $numberOfSurveysThisYear == 0){
+		else if(date("m/d") == "04/22"){
+			send3(36.5, 40.7);
+		}
+		else if(date("m/d") == "04/29"){
+			send3(40.7, 9999);
+		}
+		else if(date("m/d") == "05/20"){
+			$sites = Site::findAll();
+			for($i = 0; $i < count($sites); $i++){
+				if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getLatitude() < 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
 					send4ToAuthorities($sites[$i]);
 				}
 			}
 		}
-	}
-	else if(date("m/d") == "06/03"){
-		$sites = Site::findAll();
-		for($i = 0; $i < count($sites); $i++){
-			if($emailsSent < $MAX_EMAIL_SENDS){
-				$numberOfSurveysThisYear = $sites[$i]->getNumberOfSurveysByYear(date("Y"));
-				if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getLatitude() < 40.7 && $numberOfSurveysThisYear == 0){
-					send4ToAppAuthoritiesAnd5ToPaperAuthorities($sites[$i]);
+		else if(date("m/d") == "05/27"){
+			$sites = Site::findAll();
+			for($i = 0; $i < count($sites); $i++){
+				if($emailsSent < $MAX_EMAIL_SENDS){
+					$numberOfSurveysThisYear = $sites[$i]->getNumberOfSurveysByYear(date("Y"));
+					if($sites[$i]->getActive() && $sites[$i]->getLatitude() < 36.5 && $numberOfSurveysThisYear == 0){
+						send4ToAppAuthoritiesAnd5ToPaperAuthorities($sites[$i]);
+					}
+					else if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getLatitude() < 40.7 && $numberOfSurveysThisYear == 0){
+						send4ToAuthorities($sites[$i]);
+					}
 				}
-				else if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 40.7 && $numberOfSurveysThisYear == 0){
+			}
+		}
+		else if(date("m/d") == "06/03"){
+			$sites = Site::findAll();
+			for($i = 0; $i < count($sites); $i++){
+				if($emailsSent < $MAX_EMAIL_SENDS){
+					$numberOfSurveysThisYear = $sites[$i]->getNumberOfSurveysByYear(date("Y"));
+					if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getLatitude() < 40.7 && $numberOfSurveysThisYear == 0){
+						send4ToAppAuthoritiesAnd5ToPaperAuthorities($sites[$i]);
+					}
+					else if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 40.7 && $numberOfSurveysThisYear == 0){
+						send4ToAuthorities($sites[$i]);
+					}
+				}
+			}
+		}
+		else if(date("m/d") == "06/10"){
+			$sites = Site::findAll();
+			for($i = 0; $i < count($sites); $i++){
+				if($emailsSent < $MAX_EMAIL_SENDS){
+					$numberOfSurveysThisYear = $sites[$i]->getNumberOfSurveysByYear(date("Y"));
+					if($sites[$i]->getActive() && $sites[$i]->getLatitude() < 36.5 && $numberOfSurveysThisYear == 0){
+						send4ToAuthorities($sites[$i]);
+					}
+					else if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 40.7 && $numberOfSurveysThisYear == 0){
+						send4ToAppAuthoritiesAnd5ToPaperAuthorities($sites[$i]);
+					}
+				}
+			}
+		}
+		else if(date("m/d") == "06/17"){
+			$sites = Site::findAll();
+			for($i = 0; $i < count($sites); $i++){
+				if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
 					send4ToAuthorities($sites[$i]);
 				}
 			}
 		}
-	}
-	else if(date("m/d") == "06/10"){
-		$sites = Site::findAll();
-		for($i = 0; $i < count($sites); $i++){
-			if($emailsSent < $MAX_EMAIL_SENDS){
-				$numberOfSurveysThisYear = $sites[$i]->getNumberOfSurveysByYear(date("Y"));
-				if($sites[$i]->getActive() && $sites[$i]->getLatitude() < 36.5 && $numberOfSurveysThisYear == 0){
-					send4ToAuthorities($sites[$i]);
-				}
-				else if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 40.7 && $numberOfSurveysThisYear == 0){
-					send4ToAppAuthoritiesAnd5ToPaperAuthorities($sites[$i]);
-				}
-			}
+		else if(date("m/d") == "06/27"){
+			send6();
 		}
 	}
-	else if(date("m/d") == "06/17"){
-		$sites = Site::findAll();
-		for($i = 0; $i < count($sites); $i++){
-			if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
-				send4ToAuthorities($sites[$i]);
-			}
-		}
-	}
-	else if(date("m/d") == "06/27"){
-		send6();
-	}
-	*/
-	if(date('D') == "Sun" && intval(date('H')) > 17){
+
+	if(date('D') == "Sun" && intval(date('H')) >= $SUNDAY_START_HOUR && intval(date('H')) <= $SUNDAY_END_HOUR){
 		send7();
 		send8();
 	}
