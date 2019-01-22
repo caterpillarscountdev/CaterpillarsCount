@@ -56,12 +56,12 @@
 	function send3($minLat, $maxLat){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$sends = getSends();
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT Survey.LocalDate) AS DateCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS ParticipantCount, COUNT(DISTINCT Survey.PlantFK) AS PlantCount, COUNT(DISTINCT Plant.Circle) AS SurveyedCircleCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE YEAR(Survey.LocalDate)='" . (intval(date("Y")) - 1) . "' AND Plant.SiteFK<>'2' GROUP BY Plant.SiteFK");
 		while($siteRow = mysqli_fetch_assoc($query)){
 			if($emailsSent < $MAX_EMAIL_SENDS){
 				$site = Site::findByID($siteRow["SiteFK"]);
+				$sends = getSends(date("Y-m-d") . "|" . $site->getID());
 				if($site->getLatitude() >= $minLat && $site->getLatitude() < $maxLat){
 					$authorityEmails = $site->getAuthorityEmails();
 					if(!allEmailsHaveBeenSent($authorityEmails, $sends)){
@@ -86,7 +86,7 @@
 							if($emailsSent < $MAX_EMAIL_SENDS && !in_array($authorityEmails[$i], $sends)){
 								//email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
 								echo $emailsSent . ") email3| " . $authorityEmails[$i] . "Preparing for a new Caterpillars Count! Season" . $siteName . $surveyedPlantCount . $surveyedCircleCount . $currentCircles . $participantCount . $visualSurveyCount . $beatSheetSurveyCount . $dateCount . $arthropodCount . $caterpillarCount . $caterpillarOccurrence . "<br/>";
-								logSend($authorityEmails[$i]);
+								logSend($authorityEmails[$i], date("Y-m-d") . "|" . $site->getID());
 								$emailsSent++;
 							}
 						}
@@ -99,10 +99,10 @@
 	function send6(){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$sends = getSends();
 		$sites = Site::findAll();
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		for($i = 0; $i < count($sites); $i++){
+			$sends = getSends(date("Y-m-d") . "|" . $sites[$i]->getID());
 			if($emailsSent < $MAX_EMAIL_SENDS && $site->getActive() && $sites[$i]->getNumberOfSurveysByYear(date("Y")) <= 2){
 				$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS Count FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>'" . date("Y") . "-06-13'");
 				if(intval(mysqli_fetch_assoc($query)["Count"]) == 0){
@@ -111,7 +111,7 @@
 						if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
 							//email6($emails[$j], "Caterpillars Count! at " . $sites[$i]->getName(), $sites[$i]->getName());
 							echo $emailsSent . ") email6| " . $emails[$j] . "Caterpillars Count! at " . $sites[$i]->getName() . $sites[$i]->getName() . "<br/>";
-							logSend($emails[$j]);
+							logSend($emails[$j], date("Y-m-d") . "|" . $sites[$i]->getID());
 							$emailsSent++;
 						}
 					}
@@ -123,7 +123,6 @@
 	function send7(){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$sends = getSends("email7");
 		$sites = Site::findAll();
 		$today = "2018-04-22";//date("Y-m-d");//FOR TESTING: "2018-04-22";
 		$sundayOffset = date('w', strtotime($today));
@@ -131,6 +130,7 @@
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
+				$sends = getSends("email7|" . $sites[$i]->getID());
 				$emails = $sites[$i]->getAuthorityEmails();
 				if(!allEmailsHaveBeenSent($emails, $sends)){
 					$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS SurveyCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
@@ -182,7 +182,7 @@
 							if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
 								//email7($emails[$j], "This Week at " . $sites[$i]->getName() . "...", $userCount, $surveyCount, $sites[$i]->getName(), $arthropodCount, $caterpillarCount, $arthropod1, $arthropod1Count, $arthropod2, $arthropod2Count, $peakCaterpillarOccurrenceDate, $peakCaterpillarOccurrence, $sites[$i]->getID());
 								echo $emailsSent . ") email7| " . $emails[$j] . "This Week at " . $sites[$i]->getName() . "..." . $userCount . $surveyCount . $sites[$i]->getName() . $arthropodCount . $caterpillarCount . $arthropod1 . $arthropod1Count . $arthropod2 . $arthropod2Count . $peakCaterpillarOccurrenceDate . $peakCaterpillarOccurrence . $sites[$i]->getID() . "<br/>";
-								logSend($emails[$j], "email7");
+								logSend($emails[$j], "email7|" . $sites[$i]->getID());
 								$emailsSent++;
 							}
 						}
