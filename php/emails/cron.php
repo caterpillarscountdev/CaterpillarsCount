@@ -231,7 +231,7 @@
 	function send4ToAuthorities($site){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$sends = getSends(date("Y-m-d") . "|" . $site->getID());
+		$sends = getSends("2018-06-17" . "|" . $site->getID());//date("Y-m-d")
 		$emails = $site->getAuthorityEmails();
 		for($j = 0; $j < count($emails); $j++){
 			if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
@@ -242,7 +242,7 @@
 				}
 				//email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
 				echo $emailsSent . ") email4| " . $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
-				logSend($emails[$j], date("Y-m-d") . "|" . $site->getID());
+				logSend($emails[$j], "2018-06-17" . "|" . $site->getID());//date("Y-m-d")
 				$emailsSent++;
 			}
 		}
