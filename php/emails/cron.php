@@ -107,16 +107,18 @@
 		$sites = Site::findAll();
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		for($i = 0; $i < count($sites); $i++){
-			$sends = getSends(date("Y-m-d") . "|" . $sites[$i]->getID());
-			if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getNumberOfSurveysByYear(date("Y")) <= 2){
-				$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS Count FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>'" . date("Y") . "-06-13'");
-				if(intval(mysqli_fetch_assoc($query)["Count"]) == 0){
-					$emails = $sites[$i]->getAuthorityEmails();
-					for($j = 0; $j < count($emails); $j++){
-						if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
-							email6($emails[$j], "Caterpillars Count! at " . $sites[$i]->getName(), $sites[$i]->getName());
-							logSend($emails[$j], date("Y-m-d") . "|" . $sites[$i]->getID());
-							$emailsSent++;
+			if($sites[$i]->getID() != 2){
+				$sends = getSends(date("Y-m-d") . "|" . $sites[$i]->getID());
+				if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getNumberOfSurveysByYear(date("Y")) <= 2){
+					$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS Count FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>'" . date("Y") . "-06-13'");
+					if(intval(mysqli_fetch_assoc($query)["Count"]) == 0){
+						$emails = $sites[$i]->getAuthorityEmails();
+						for($j = 0; $j < count($emails); $j++){
+							if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
+								email6($emails[$j], "Caterpillars Count! at " . $sites[$i]->getName(), $sites[$i]->getName());
+								logSend($emails[$j], date("Y-m-d") . "|" . $sites[$i]->getID());
+								$emailsSent++;
+							}
 						}
 					}
 				}
@@ -133,7 +135,7 @@
 		$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		for($i = 0; $i < count($sites); $i++){
-			if($emailsSent < $MAX_EMAIL_SENDS){
+			if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getID() != 2){
 				$sends = getSends("email7|" . $sites[$i]->getID());
 				$emails = $sites[$i]->getAuthorityEmails();
 				if(!allEmailsHaveBeenSent($emails, $sends)){
@@ -203,14 +205,14 @@
 		$sundayOffset = date('w', strtotime($today));
 		$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT DISTINCT Survey.UserFKOfObserver AS UserID FROM Survey WHERE Survey.LocalDate>='$monday'");
+		$query = mysqli_query($dbconn, "SELECT DISTINCT Survey.UserFKOfObserver AS UserID FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Plant.SiteFK<>'2'");
 		while($userIDRow = mysqli_fetch_assoc($query)){
 			if($emailsSent < $MAX_EMAIL_SENDS){
 				$userID = $userIDRow["UserID"];
 				if(!in_array(strval($userID), $sends)){
 					$user = User::findByID($userID);
 					if(is_object($user) && get_class($user) == "User"){
-						$innerQuery = mysqli_query($dbconn, "SELECT DISTINCT Plant.SiteFK AS SiteID FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "'");
+						$innerQuery = mysqli_query($dbconn, "SELECT DISTINCT Plant.SiteFK AS SiteID FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "' AND Plant.SiteFK<>'2'");
 						$sites = array();
 						while($siteIDRow = mysqli_fetch_assoc($innerQuery)){
 							$sites[] = Site::findByID($siteIDRow["SiteID"]);
@@ -233,57 +235,61 @@
 	function send4ToAuthorities($site){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$sends = getSends("email4");
-		$emails = $site->getAuthorityEmails();
-		for($j = 0; $j < count($emails); $j++){
-			if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
-				$firstName = "there";
-				$user = User::findByEmail($emails[$j]);
-				if(is_object($user) && get_class($user) == "User"){
-					$firstName = $user->getFirstName();
+		if($site->getID() != 2){
+			$sends = getSends("email4");
+			$emails = $site->getAuthorityEmails();
+			for($j = 0; $j < count($emails); $j++){
+				if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
+					$firstName = "there";
+					$user = User::findByEmail($emails[$j]);
+					if(is_object($user) && get_class($user) == "User"){
+						$firstName = $user->getFirstName();
+					}
+					email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
+					logSend($emails[$j], "email4");
+					$emailsSent++;
 				}
-				email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
-				logSend($emails[$j], "email4");
-				$emailsSent++;
 			}
 		}
 	}
 	function send4ToAppAuthoritiesAnd5ToPaperAuthorities($site){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$email4Sends = getSends("email4");
-		$email5Sends = getSends("email5");
-		$emails = $site->getAuthorityEmails();
-		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT COUNT(*) AS `All`, SUM(SubmittedThroughApp) AS `App` FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $site->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "'");
-		$resultRow = mysqli_fetch_assoc($query);
-		$all = intval($resultRow["All"]);
-		$app = intval($resultRow["App"]);
-		for($j = 0; $j < count($emails); $j++){
-			if($emailsSent < $MAX_EMAIL_SENDS && !(in_array($emails[$j], $email4Sends) && in_array($emails[$j], $email5Sends))){
-				$firstName = "there";
-				$user = User::findByEmail($emails[$j]);
-				if(is_object($user) && get_class($user) == "User"){
-					$firstName = $user->getFirstName();
-				}
-
-				if($all == 0 || $app > ($all / 2)){
-					if(!in_array($emails[$j], $email4Sends)){
-						email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
-						logSend($emails[$j], "email4");
-						$emailsSent++;
+		if($site->getID() != 2){
+			$email4Sends = getSends("email4");
+			$email5Sends = getSends("email5");
+			$emails = $site->getAuthorityEmails();
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			$query = mysqli_query($dbconn, "SELECT COUNT(*) AS `All`, SUM(SubmittedThroughApp) AS `App` FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $site->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "'");
+			$resultRow = mysqli_fetch_assoc($query);
+			$all = intval($resultRow["All"]);
+			$app = intval($resultRow["App"]);
+			for($j = 0; $j < count($emails); $j++){
+				if($emailsSent < $MAX_EMAIL_SENDS && !(in_array($emails[$j], $email4Sends) && in_array($emails[$j], $email5Sends))){
+					$firstName = "there";
+					$user = User::findByEmail($emails[$j]);
+					if(is_object($user) && get_class($user) == "User"){
+						$firstName = $user->getFirstName();
 					}
-				}
-				else{
-					if(!in_array($emails[$j], $email5Sends)){
-						email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
-						logSend($emails[$j], "email5");
-						$emailsSent++;
+
+					if($all == 0 || $app > ($all / 2)){
+						if(!in_array($emails[$j], $email4Sends)){
+							email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
+							logSend($emails[$j], "email4");
+							$emailsSent++;
+						}
+					}
+					else{
+						if(!in_array($emails[$j], $email5Sends)){
+							email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
+							logSend($emails[$j], "email5");
+							$emailsSent++;
+						}
 					}
 				}
 			}
+			mysqli_close($dbconn);
 		}
-		mysqli_close($dbconn);
 	}
 	
 	if(intval(date('H')) >= $ANNUAL_START_HOUR && intval(date('H')) <= $ANNUAL_END_HOUR){
