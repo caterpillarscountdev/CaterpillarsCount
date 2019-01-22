@@ -108,13 +108,23 @@ class ArthropodSighting
 	
 	public static function findArthropodSightingsBySurvey($survey){
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT `ID` FROM `ArthropodSighting` WHERE `SurveyFK`='" . $survey->getID() . "'");
+		$query = mysqli_query($dbconn, "SELECT * FROM `ArthropodSighting` WHERE `SurveyFK`='" . $survey->getID() . "'");
 		mysqli_close($dbconn);
 		
 		$arthropodSightingsArray = array();
 		while($arthropodSightingRow = mysqli_fetch_assoc($query)){
-			$arthropodSighting = self::findByID($arthropodSightingRow["ID"]);
-			array_push($arthropodSightingsArray, $arthropodSighting);
+			$id = $arthropodSightingRow["ID"];
+			$survey = Survey::findByID($arthropodSightingRow["SurveyFK"]);
+			$group = $arthropodSightingRow["Group"];
+			$length = $arthropodSightingRow["Length"];
+			$quantity = $arthropodSightingRow["Quantity"];
+			$photoURL = $arthropodSightingRow["PhotoURL"];
+			$notes = $arthropodSightingRow["Notes"];
+			$hairy = $arthropodSightingRow["Hairy"];
+			$rolled = $arthropodSightingRow["Rolled"];
+			$tented = $arthropodSightingRow["Tented"];
+
+			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $group, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented);
 		}
 		return $arthropodSightingsArray;
 	}
