@@ -103,7 +103,7 @@
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		for($i = 0; $i < count($sites); $i++){
 			$sends = getSends(date("Y-m-d") . "|" . $sites[$i]->getID());
-			if($emailsSent < $MAX_EMAIL_SENDS && $site->getActive() && $sites[$i]->getNumberOfSurveysByYear(date("Y")) <= 2){
+			if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getNumberOfSurveysByYear(date("Y")) <= 2){
 				$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS Count FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>'" . date("Y") . "-06-13'");
 				if(intval(mysqli_fetch_assoc($query)["Count"]) == 0){
 					$emails = $sites[$i]->getAuthorityEmails();
