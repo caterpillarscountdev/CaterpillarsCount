@@ -293,18 +293,18 @@
 	else if(date("m/d") == "04/22"){
 		send3(36.5, 40.7);
 	}
-	else if(date("m/d") == "04/29"){
+	//else if(date("m/d") == "04/29"){
 		send3(40.7, 9999);
-	}
-	//else if(date("m/d") == "05/20"){
+	//}
+	/*else if(date("m/d") == "05/20"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getLatitude() < 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
 				send4ToAuthorities($sites[$i]);
 			}
 		}
-	//}
-	/*else if(date("m/d") == "05/27"){
+	}
+	else if(date("m/d") == "05/27"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
@@ -318,7 +318,7 @@
 			}
 		}
 	}
-	/*else if(date("m/d") == "06/03"){
+	else if(date("m/d") == "06/03"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
