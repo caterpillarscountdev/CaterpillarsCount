@@ -215,13 +215,27 @@ class Site
 	
 	public static function findAll(){
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT `ID` FROM `Site`");
+		$query = mysqli_query($dbconn, "SELECT * FROM `Site`");
 		mysqli_close($dbconn);
 		
 		$sitesArray = array();
 		while($siteRow = mysqli_fetch_assoc($query)){
-			$site = self::findByID($siteRow["ID"]);
-			array_push($sitesArray, $site);
+			$id = $siteRow["ID"];
+			$creator = User::findByID($siteRow["UserFKOfCreator"]);
+			$name = $siteRow["Name"];
+			$description = $siteRow["Description"];
+			$latitude = $siteRow["Latitude"];
+			$longitude = $siteRow["Longitude"];
+			$region = $siteRow["Region"];
+			$salt = $siteRow["Salt"];
+			$saltedPasswordHash = $siteRow["SaltedPasswordHash"];
+			$active = filter_var($siteRow["Active"], FILTER_VALIDATE_BOOLEAN);
+			
+			$site = new Site($id, $creator, $name, $description, $latitude, $longitude, $region, $salt, $saltedPasswordHash, true, $active);
+			
+			if($active){
+				array_push($sitesArray, $site);
+			}
 		}
 		return $sitesArray;
 	}
