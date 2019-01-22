@@ -1,13 +1,13 @@
 <?php
 	require_once("orm/Plant.php");
-	function r($search, $replace, $subject){
+	function rp($search, $replace, $subject){
 		return str_replace($search, $replace, $subject);
 	}
-	function myUrlEncode($string) {
-	    return r(" ", "%20", r(">", "%3E", r("!", "%21", r("*", "%2A", r("(", "%28", r(")", "%29", r(";", "%3B", r(":", "%3A", r("@", "%40", r("&", "%26", r("=", "%3D", r("+", "%2B", r("$", "%24", r(",", "%2C", r("/", "%2F", r("?", "%3F", r("%", "%25", $string)))))))))))))))));
+	function myLocalUrlEncode($string) {
+	    return rp(" ", "%20", rp(">", "%3E", rp("!", "%21", rp("*", "%2A", rp("(", "%28", rp(")", "%29", rp(";", "%3B", rp(":", "%3A", rp("@", "%40", rp("&", "%26", rp("=", "%3D", rp("+", "%2B", rp("$", "%24", rp(",", "%2C", rp("/", "%2F", rp("?", "%3F", rp("%", "%25", $string)))))))))))))))));
 	}
     	function cleanParameter($param){
-		$param = myUrlEncode(preg_replace('!\s+!', ' ', trim(preg_replace('/[^a-zA-Z0-9.!*();:@&=+$,\/?%>-]/', ' ', trim((string)$param)))));
+		$param = myLocalUrlEncode(preg_replace('!\s+!', ' ', trim(preg_replace('/[^a-zA-Z0-9.!*();:@&=+$,\/?%>-]/', ' ', trim((string)$param)))));
 		if($param == ""){
 			return "None";
 		}
