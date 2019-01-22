@@ -255,7 +255,6 @@
 		$emails = $site->getAuthorityEmails();
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT COUNT(*) AS `All`, SUM(SubmittedThroughApp) AS `App` FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $site->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "'");
-		mysqli_close($dbconn);
 		$resultRow = mysqli_fetch_assoc($query);
 		$all = intval($resultRow["All"]);
 		$app = intval($resultRow["App"]);
