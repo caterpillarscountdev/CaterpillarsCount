@@ -348,9 +348,9 @@
 			}
 		}
 	//}
-	else if(date("m/d") == "06/27"){
-		send6();
-	}
+	//else if(date("m/d") == "06/27"){
+	//	send6();
+	//}
 	
 	if(date('D') == "Sun" && intval(date('H')) > 17){
 		send7();
