@@ -31,7 +31,9 @@ root -> composer.json draws in the code necessary to perform email functions in 
 
 root -> phpMyAdmin is your phpMyAdmin interface available at https://caterpillarscount.unc.edu/phpMyAdmin.
 
-root -> php -> orm -> resources -> mailing.php provides functions that allow you to quickly and easily send emails with PHP.
+root -> php -> orm -> resources -> mailing.php provides "email" and "advancedEmail" functions that allow you to quickly and easily send emails with PHP, along with some other HTML-formatted email functions which are used exclusively for automatic regularly scheduled emails.
+
+root -> php -> emails -> cron.php is connected to a cron job and regularly sends out HTML-formatted emails to our users. For more details on how this file works, read root -> php -> emails -> Instructions.txt.
 
 root -> api -> users.php exists to stop users from creating accounts through the *old* Caterpillars Count! website. At some point in the process of creating an account through the old website, users are directed to the absolute URL "https://caterpillarscount.unc.edu/api/users.php", so we made that page into a notice that we have a new website that they should sign up through.
 
