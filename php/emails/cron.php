@@ -271,6 +271,7 @@
 						//email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
 						echo $emailsSent . ") email4| " . $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
 						logSend($emails[$j], "email4");
+						$emailsSent++;
 					}
 				}
 				else{
@@ -278,9 +279,9 @@
 						//email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
 						echo $emailsSent . ") email5| " . $emails[$j] . "Need Help Submitting Caterpillars Count! Surveys?" . $firstName . "<br/>";
 						logSend($emails[$j], "email5");
+						$emailsSent++;
 					}
 				}
-				$emailsSent++;
 			}
 		}
 		mysqli_close($dbconn);
@@ -317,7 +318,7 @@
 			}
 		}
 	}
-	else if(date("m/d") == "06/03"){
+	//else if(date("m/d") == "06/03"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
@@ -330,8 +331,8 @@
 				}
 			}
 		}
-	}
-	//else if(date("m/d") == "06/10"){
+	//}
+	/*else if(date("m/d") == "06/10"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
@@ -344,8 +345,8 @@
 				}
 			}
 		}
-	//}
-	/*else if(date("m/d") == "06/17"){
+	}
+	else if(date("m/d") == "06/17"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
