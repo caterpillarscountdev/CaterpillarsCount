@@ -5,7 +5,7 @@ If so, we send a maximum of 5 emails per call over the course of a couple hours 
 You can easily change these limits and timeframes using the variables at the top of the file if needed. You can also change the dates by adjusting the "if" statements near the bottom of the file.
 
 When [https://caterpillarscount.unc.edu/php/emails/cron.php] calls functions like "email3" and "email4", it is calling these functions from [https://caterpillarscount.unc.edu/php/orm/mailing.php].
-These functions the HTML strings that make up the custom emails. If you need to edit the HTML for any of these emails, follow these steps:
+These functions hold the HTML strings that make up the custom emails. If you need to edit the HTML for any of these emails, follow these steps:
 	1) Copy the HTML string (without encompassing quotations) into a text editor like Notepad++ (for Windows), TextWrangler (for Mac), or whatever is your preference.
 	2) Use that text editor to replace all occurrences of \" with "
 	3) Copy and paste that newly edited text into the website [https://www.freeformatter.com/html-formatter.html] to format it nicely.
