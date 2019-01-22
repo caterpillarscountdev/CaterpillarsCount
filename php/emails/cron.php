@@ -6,8 +6,43 @@
 	require_once("../orm/resources/Keychain.php");
 	require_once("../orm/resources/mailing.php");
 
+	date_default_timezone_set('US/Eastern');
+
 	$MAX_EMAIL_SENDS = 5;
 	$emailsSent = 0;
+
+	if(date('H:i') == "12:00" || date('H:i') == "12:01" || date('H:i') == "12:02"){
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		mysqli_query($dbconn, "DELETE FROM TemporaryEmailLog WHERE `Date`<'" . date("Y-m-d") . "'");
+		mysqli_close($dbconn);
+	}
+
+	function logSend($userIdentifier, $emailTypeIdentifier = "USE CURRENT DATE"){
+		$date = date("Y-m-d");
+		if($emailTypeIdentifier == "USE CURRENT DATE"){
+			$emailTypeIdentifier = $date;
+		}
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		mysqli_query($dbconn, "INSERT INTO TemporaryEmailLog (`UserIdentifier`, `EmailTypeIdentifier`, `Date`) VALUES ('$userIdentifier', '$emailTypeIdentifier', '$date')");
+		mysqli_close($dbconn);
+	}
+	
+	function getSends($emailTypeIdentifier = "USE CURRENT DATE"){
+		$date = date("Y-m-d");
+		if($emailTypeIdentifier == "USE CURRENT DATE"){
+			$emailTypeIdentifier = $date;
+		}
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		$query = mysqli_query($dbconn, "SELECT `UserIdentifier` FROM TemporaryEmailLog WHERE `Date`='$date' AND `EmailTypeIdentifier`='$emailTypeIdentifier'");
+		mysqli_close($dbconn);
+		$userIdentifiers = array();
+		while($row = mysqli_fetch_assoc($query)){
+			$userIdentifiers[] = strval($row["UserIdentifier"]);
+		}
+		return $userIdentifiers;
+	}
 	
 	function send3($minLat, $maxLat){
 		global $emailsSent;
@@ -37,9 +72,10 @@
 					$caterpillarCount = $caterpillarRow["Quantity"];
 					$authorityEmails = $site->getAuthorityEmails();
 					for($i = 0; $i < count($authorityEmails); $i++){
-						if($emailsSent < $MAX_EMAIL_SENDS){
+						if($emailsSent < $MAX_EMAIL_SENDS && !in_array($authorityEmails[$i], $sends)){
 							//email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
 							echo $authorityEmails[$i] . "Preparing for a new Caterpillars Count! Season" . $siteName . $surveyedPlantCount . $surveyedCircleCount . $currentCircles . $participantCount . $visualSurveyCount . $beatSheetSurveyCount . $dateCount . $arthropodCount . $caterpillarCount . $caterpillarOccurrence . "<br/>";
+							logSend($authorityEmails[$i]);
 							$emailsSent++;
 						}
 					}
@@ -59,9 +95,10 @@
 				if(intval(mysqli_fetch_assoc($query)["Count"]) == 0){
 					$emails = $sites[$i]->getAuthorityEmails();
 					for($j = 0; $j < count($emails); $j++){
-						if($emailsSent < $MAX_EMAIL_SENDS){
+						if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
 							//email6($emails[$j], "Caterpillars Count! at " . $sites[$i]->getName(), $sites[$i]->getName());
 							echo $emails[$j] . "Caterpillars Count! at " . $sites[$i]->getName() . $sites[$i]->getName() . "<br/>";
+							logSend($emails[$j]);
 							$emailsSent++;
 						}
 					}
@@ -127,9 +164,10 @@
 					}
 					$emails = $sites[$i]->getAuthorityEmails();
 					for($j = 0; $j < count($emails); $j++){
-						if($emailsSent < $MAX_EMAIL_SENDS){
+						if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
 							//email7($emails[$j], "This Week at " . $sites[$i]->getName() . "...", $userCount, $surveyCount, $sites[$i]->getName(), $arthropodCount, $caterpillarCount, $arthropod1, $arthropod1Count, $arthropod2, $arthropod2Count, $peakCaterpillarOccurrenceDate, $peakCaterpillarOccurrence, $sites[$i]->getID());
 							echo $emails[$j] . "This Week at " . $sites[$i]->getName() . "..." . $userCount . $surveyCount . $sites[$i]->getName() . $arthropodCount . $caterpillarCount . $arthropod1 . $arthropod1Count . $arthropod2 . $arthropod2Count . $peakCaterpillarOccurrenceDate . $peakCaterpillarOccurrence . $sites[$i]->getID() . "<br/>";
+							logSend($emails[$j], "email7");
 							$emailsSent++;
 						}
 					}
@@ -148,22 +186,26 @@
 		$query = mysqli_query($dbconn, "SELECT DISTINCT Survey.UserFKOfObserver AS UserID FROM Survey WHERE Survey.LocalDate>='$monday'");
 		while($userIDRow = mysqli_fetch_assoc($query)){
 			if($emailsSent < $MAX_EMAIL_SENDS){
-				$user = User::findByID($userIDRow["UserID"]);
-				if(is_object($user) && get_class($user) == "User"){
-					$query = mysqli_query($dbconn, "SELECT DISTINCT Plant.SiteFK AS SiteID FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "'");
-					$sites = array();
-					while($siteIDRow = mysqli_fetch_assoc($query)){
-						$sites[] = Site::findByID($siteIDRow["SiteID"]);
+				$userID = $userIDRow["UserID"];
+				if(!in_array(strval($user->getID()), $sends)){
+					$user = User::findByID($userID);
+					if(is_object($user) && get_class($user) == "User"){
+						$query = mysqli_query($dbconn, "SELECT DISTINCT Plant.SiteFK AS SiteID FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "'");
+						$sites = array();
+						while($siteIDRow = mysqli_fetch_assoc($query)){
+							$sites[] = Site::findByID($siteIDRow["SiteID"]);
+						}
+						$query = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "'");
+						$arthropodCount = intval(mysqli_fetch_assoc($query)["ArthropodCount"]);
+						$query = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS CaterpillarCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "' AND ArthropodSighting.Group='caterpillar'");
+						$caterpillarCount = intval(mysqli_fetch_assoc($query)["CaterpillarCount"]);
+						$query = mysqli_query($dbconn, "SELECT * FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `UserFKOfObserver`='" . $user->getID() . "' AND PhotoURL<>'' LIMIT 1");
+						$userHasINaturalistObservations = (mysqli_num_rows($query) > 0);
+						//email8($user->getEmail(), "Your Caterpillars Count! weekly summary", $sites, $arthropodCount, $caterpillarCount, $user->getINaturalistObserverID(), $userHasINaturalistObservations);
+						echo $user->getEmail() . "Your Caterpillars Count! weekly summary" . $sites . $arthropodCount . $caterpillarCount . $user->getINaturalistObserverID() . $userHasINaturalistObservations . "<br/>";
+						logSend($user->getID(), "email8");
+						$emailsSent++;
 					}
-					$query = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "'");
-					$arthropodCount = intval(mysqli_fetch_assoc($query)["ArthropodCount"]);
-					$query = mysqli_query($dbconn, "SELECT SUM(ArthropodSighting.Quantity) AS CaterpillarCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "' AND ArthropodSighting.Group='caterpillar'");
-					$caterpillarCount = intval(mysqli_fetch_assoc($query)["CaterpillarCount"]);
-					$query = mysqli_query($dbconn, "SELECT * FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `UserFKOfObserver`='" . $user->getID() . "' AND PhotoURL<>'' LIMIT 1");
-					$userHasINaturalistObservations = (mysqli_num_rows($query) > 0);
-					//email8($user->getEmail(), "Your Caterpillars Count! weekly summary", $sites, $arthropodCount, $caterpillarCount, $user->getINaturalistObserverID(), $userHasINaturalistObservations);
-					echo $user->getEmail() . "Your Caterpillars Count! weekly summary" . $sites . $arthropodCount . $caterpillarCount . $user->getINaturalistObserverID() . $userHasINaturalistObservations . "<br/>";
-					$emailsSent++;
 				}
 			}
 		}
@@ -174,7 +216,7 @@
 		global $MAX_EMAIL_SENDS;
 		$emails = $site->getAuthorityEmails();
 		for($j = 0; $j < count($emails); $j++){
-			if($emailsSent < $MAX_EMAIL_SENDS){
+			if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
 				$firstName = "there";
 				$user = User::findByEmail($emails[$j]);
 				if(is_object($user) && get_class($user) == "User"){
@@ -182,6 +224,7 @@
 				}
 				//email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
 				echo $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
+				logSend($emails[$j]);
 				$emailsSent++;
 			}
 		}
@@ -197,7 +240,7 @@
 		$all = intval($resultRow["All"]);
 		$app = intval($resultRow["App"]);
 		for($j = 0; $j < count($emails); $j++){
-			if($emailsSent < $MAX_EMAIL_SENDS){
+			if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
 				$firstName = "there";
 				$user = User::findByEmail($emails[$j]);
 				if(is_object($user) && get_class($user) == "User"){
@@ -212,6 +255,7 @@
 					//email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
 					echo $emails[$j] . "Need Help Submitting Caterpillars Count! Surveys?" . $firstName . "<br/>";
 				}
+				logSend($emails[$j]);
 				$emailsSent++;
 			}
 		}
@@ -289,9 +333,7 @@
 		send6();
 	}
 	
-	date_default_timezone_set('US/Eastern');
-	$hour = intval(date('H'));
-	if(date('D') == "Sun" && $hour > 17 && $hour < 20){
+	if(date('D') == "Sun" && intval(date('H')) > 17){
 		send7();
 		send8();
 	}
