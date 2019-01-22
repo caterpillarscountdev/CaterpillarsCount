@@ -17,9 +17,9 @@
 		mysqli_close($dbconn);
 	}
 
-	function logSend($userIdentifier, $emailTypeIdentifier = "USE CURRENT DATE"){
+	function logSend($userIdentifier, $emailTypeIdentifier = "DEFAULT TO CURRENT DATE"){
 		$date = date("Y-m-d");
-		if($emailTypeIdentifier == "USE CURRENT DATE"){
+		if($emailTypeIdentifier == "DEFAULT TO CURRENT DATE"){
 			$emailTypeIdentifier = $date;
 		}
 		
@@ -28,9 +28,9 @@
 		mysqli_close($dbconn);
 	}
 	
-	function getSends($emailTypeIdentifier = "USE CURRENT DATE"){
+	function getSends($emailTypeIdentifier = "DEFAULT TO CURRENT DATE"){
 		$date = date("Y-m-d");
-		if($emailTypeIdentifier == "USE CURRENT DATE"){
+		if($emailTypeIdentifier == "DEFAULT TO CURRENT DATE"){
 			$emailTypeIdentifier = $date;
 		}
 		
@@ -231,7 +231,7 @@
 	function send4ToAuthorities($site){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$sends = getSends();
+		$sends = getSends(date("Y-m-d") . "|" . $site->getID());
 		$emails = $site->getAuthorityEmails();
 		for($j = 0; $j < count($emails); $j++){
 			if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
@@ -242,7 +242,7 @@
 				}
 				//email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
 				echo $emailsSent . ") email4| " . $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
-				logSend($emails[$j]);
+				logSend($emails[$j], date("Y-m-d") . "|" . $site->getID());
 				$emailsSent++;
 			}
 		}
@@ -250,7 +250,7 @@
 	function send4ToAppAuthoritiesAnd5ToPaperAuthorities($site){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$sends = getSends();
+		$sends = getSends(date("Y-m-d") . "|" . $site->getID());
 		$emails = $site->getAuthorityEmails();
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT COUNT(*) AS `All`, SUM(SubmittedThroughApp) AS `App` FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "'");
@@ -274,7 +274,7 @@
 					//email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
 					echo $emailsSent . ") email5| " . $emails[$j] . "Need Help Submitting Caterpillars Count! Surveys?" . $firstName . "<br/>";
 				}
-				logSend($emails[$j]);
+				logSend($emails[$j], date("Y-m-d") . "|" . $site->getID());
 				$emailsSent++;
 			}
 		}
