@@ -132,7 +132,7 @@
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
 				$emails = $sites[$i]->getAuthorityEmails();
-				if(!allEmailsHaveBeenSent($authorityEmails, $sends)){
+				if(!allEmailsHaveBeenSent($emails, $sends)){
 					$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS SurveyCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
 					$row = mysqli_fetch_assoc($query);
 					$surveyCount = intval($row["SurveyCount"]);
