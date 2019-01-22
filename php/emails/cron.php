@@ -304,7 +304,7 @@
 			}
 		}
 	}
-	else if(date("m/d") == "05/27"){
+	//else if(date("m/d") == "05/27"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
@@ -317,8 +317,8 @@
 				}
 			}
 		}
-	}
-	//else if(date("m/d") == "06/03"){
+	//}
+	/*else if(date("m/d") == "06/03"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
@@ -331,8 +331,8 @@
 				}
 			}
 		}
-	//}
-	/*else if(date("m/d") == "06/10"){
+	}
+	else if(date("m/d") == "06/10"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
