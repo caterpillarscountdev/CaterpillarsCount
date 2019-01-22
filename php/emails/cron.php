@@ -340,17 +340,17 @@
 			}
 		}
 	}
-	else if(date("m/d") == "06/17"){
+	//else if(date("m/d") == "06/17"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
 				send4ToAuthorities($sites[$i]);
 			}
 		}
-	}
-	//else if(date("m/d") == "06/27"){
-		send6();
 	//}
+	else if(date("m/d") == "06/27"){
+		send6();
+	}
 	
 	if(date('D') == "Sun" && intval(date('H')) > 17){
 		send7();
