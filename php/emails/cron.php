@@ -231,7 +231,7 @@
 	function send4ToAuthorities($site){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$sends = getSends("2018-06-17" . "|" . $site->getID());//date("Y-m-d")
+		$sends = getSends("email4");
 		$emails = $site->getAuthorityEmails();
 		for($j = 0; $j < count($emails); $j++){
 			if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
@@ -242,7 +242,7 @@
 				}
 				//email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
 				echo $emailsSent . ") email4| " . $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
-				logSend($emails[$j], "2018-06-17" . "|" . $site->getID());//date("Y-m-d")
+				logSend($emails[$j], "email4");
 				$emailsSent++;
 			}
 		}
@@ -250,7 +250,8 @@
 	function send4ToAppAuthoritiesAnd5ToPaperAuthorities($site){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$sends = getSends(date("Y-m-d") . "|" . $site->getID());
+		$email4Sends = getSends("email4");
+		$email5Sends = getSends("email5");
 		$emails = $site->getAuthorityEmails();
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT COUNT(*) AS `All`, SUM(SubmittedThroughApp) AS `App` FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "'");
@@ -259,7 +260,7 @@
 		$all = intval($resultRow["All"]);
 		$app = intval($resultRow["App"]);
 		for($j = 0; $j < count($emails); $j++){
-			if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
+			if($emailsSent < $MAX_EMAIL_SENDS && !(in_array($emails[$j], $email4Sends) && in_array($emails[$j], $email5Sends))){
 				$firstName = "there";
 				$user = User::findByEmail($emails[$j]);
 				if(is_object($user) && get_class($user) == "User"){
@@ -267,14 +268,19 @@
 				}
 
 				if($all == 0 || $app > ($all / 2)){
-					//email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
-					echo $emailsSent . ") email4| " . $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
+					if(!in_array($emails[$j], $email4Sends)){
+						//email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
+						echo $emailsSent . ") email4| " . $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
+						logSend($emails[$j], "email4");
+					}
 				}
 				else{
-					//email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
-					echo $emailsSent . ") email5| " . $emails[$j] . "Need Help Submitting Caterpillars Count! Surveys?" . $firstName . "<br/>";
+					if(!in_array($emails[$j], $email5Sends)){
+						//email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
+						echo $emailsSent . ") email5| " . $emails[$j] . "Need Help Submitting Caterpillars Count! Surveys?" . $firstName . "<br/>";
+						logSend($emails[$j], "email5");
+					}
 				}
-				logSend($emails[$j], date("Y-m-d") . "|" . $site->getID());
 				$emailsSent++;
 			}
 		}
@@ -326,7 +332,7 @@
 			}
 		}
 	}
-	else if(date("m/d") == "06/10"){
+	//else if(date("m/d") == "06/10"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
@@ -339,19 +345,19 @@
 				}
 			}
 		}
-	}
-	//else if(date("m/d") == "06/17"){
+	//}
+	/*else if(date("m/d") == "06/17"){
 		$sites = Site::findAll();
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
 				send4ToAuthorities($sites[$i]);
 			}
 		}
-	//}
-	//else if(date("m/d") == "06/27"){
-	//	send6();
-	//}
-	
+	}
+	else if(date("m/d") == "06/27"){
+		send6();
+	}
+	*/
 	if(date('D') == "Sun" && intval(date('H')) > 17){
 		send7();
 		send8();
