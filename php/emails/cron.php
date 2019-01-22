@@ -124,7 +124,7 @@
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
 		$sites = Site::findAll();
-		$today = "2018-04-22";//date("Y-m-d");//FOR TESTING: "2018-04-22";
+		$today = date("Y-m-d");//FOR TESTING: "2018-04-22";
 		$sundayOffset = date('w', strtotime($today));
 		$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 		$dbconn = (new Keychain)->getDatabaseConnection();
@@ -196,7 +196,7 @@
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
 		$sends = getSends("email8");
-		$today = "2018-04-22";//date("Y-m-d");//FOR TESTING: "2018-04-22";
+		$today = date("Y-m-d");//FOR TESTING: "2018-04-22";
 		$sundayOffset = date('w', strtotime($today));
 		$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 		$dbconn = (new Keychain)->getDatabaseConnection();
@@ -348,12 +348,12 @@
 			}
 		}
 	}
-	else if(date("m/d") == "06/27"){
+	//else if(date("m/d") == "06/27"){
 		send6();
-	}
+	//}
 	
-	//if(date('D') == "Sun" && intval(date('H')) > 17){
+	if(date('D') == "Sun" && intval(date('H')) > 17){
 		send7();
 		send8();
-	//}
+	}
 ?>
