@@ -47,6 +47,7 @@
 	function send3($minLat, $maxLat){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
+		$sends = getSends();
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT Survey.LocalDate) AS DateCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS ParticipantCount, COUNT(DISTINCT Survey.PlantFK) AS PlantCount, COUNT(DISTINCT Plant.Circle) AS SurveyedCircleCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE YEAR(Survey.LocalDate)='" . (intval(date("Y")) - 1) . "' AND Plant.SiteFK<>'2' GROUP BY Plant.SiteFK");
 		while($siteRow = mysqli_fetch_assoc($query)){
@@ -87,6 +88,7 @@
 	function send6(){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
+		$sends = getSends();
 		$sites = Site::findAll();
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		for($i = 0; $i < count($sites); $i++){
@@ -110,6 +112,7 @@
 	function send7(){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
+		$sends = getSends("email7");
 		$sites = Site::findAll();
 		$today = date("Y-m-d");//FOR TESTING: "2018-04-22";
 		$sundayOffset = date('w', strtotime($today));
@@ -179,6 +182,7 @@
 	function send8(){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
+		$sends = getSends("email8");
 		$today = date("Y-m-d");//FOR TESTING: "2018-04-22";
 		$sundayOffset = date('w', strtotime($today));
 		$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
@@ -214,6 +218,7 @@
 	function send4ToAuthorities($site){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
+		$sends = getSends();
 		$emails = $site->getAuthorityEmails();
 		for($j = 0; $j < count($emails); $j++){
 			if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
@@ -232,6 +237,7 @@
 	function send4ToAppAuthoritiesAnd5ToPaperAuthorities($site){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
+		$sends = getSends();
 		$emails = $site->getAuthorityEmails();
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT COUNT(*) AS `All`, SUM(SubmittedThroughApp) AS `App` FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND YEAR(LocalDate)='" . (intval(date("Y")) - 1) . "'");
