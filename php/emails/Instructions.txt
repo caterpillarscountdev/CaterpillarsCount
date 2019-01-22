@@ -10,6 +10,6 @@ These functions hold the HTML strings that make up the custom emails. If you nee
 	2) Use that text editor to replace all occurrences of \" with "
 	3) Copy and paste that newly edited text into the website [https://www.freeformatter.com/html-formatter.html] to format it nicely.
 	4) Grab that newly formatted code and paste it back into your text editor to make whatever adjustments you want.
-	5) Once you've made your updates, go ahead and replace all occurrences of " with \" so we can start to get everything back into a string format
-	6) Copy and paste everything into the website [https://www.textfixer.com/tools/remove-line-breaks.php] to remove all line breaks from the code
+	5) Once you've made your updates, go ahead and replace all occurrences of " with \" so we can start to get everything back into a string format.
+	6) Copy and paste everything into the website [https://www.textfixer.com/tools/remove-line-breaks.php] to remove all line breaks from the code.
 	7) Go back to [https://caterpillarscount.unc.edu/php/orm/mailing.php] and put your new HTML string wherever you are making this adjustment (don't forget to add the string's encompassing quotations back if you deleted them).
