@@ -74,7 +74,7 @@
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
 		$sites = Site::findAll();
-		$today = "2018-04-22";//TODO: date("Y-m-d");
+		$today = date("Y-m-d");//FOR TESTING: "2018-04-22";
 		$sundayOffset = date('w', strtotime($today));
 		$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 		$dbconn = (new Keychain)->getDatabaseConnection();
@@ -141,7 +141,7 @@
 	function send8(){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
-		$today = "2018-04-22";//TODO: date("Y-m-d");
+		$today = date("Y-m-d");//FOR TESTING: "2018-04-22";
 		$sundayOffset = date('w', strtotime($today));
 		$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 		$dbconn = (new Keychain)->getDatabaseConnection();
