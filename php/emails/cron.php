@@ -204,7 +204,7 @@
 		while($userIDRow = mysqli_fetch_assoc($query)){
 			if($emailsSent < $MAX_EMAIL_SENDS){
 				$userID = $userIDRow["UserID"];
-				if(!in_array(strval($user->getID()), $sends)){
+				if(!in_array(strval($userID), $sends)){
 					$user = User::findByID($userID);
 					if(is_object($user) && get_class($user) == "User"){
 						$query = mysqli_query($dbconn, "SELECT DISTINCT Plant.SiteFK AS SiteID FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.LocalDate>='$monday' AND Survey.UserFKOfObserver='" . $user->getID() . "'");
