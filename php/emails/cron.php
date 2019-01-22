@@ -124,11 +124,15 @@
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
 		$sends = getSends("email7");
-		$sites = Site::findAll();
+		$sites = array();
 		$today = "2018-04-22";//date("Y-m-d");//FOR TESTING: "2018-04-22";
 		$sundayOffset = date('w', strtotime($today));
 		$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
 		$dbconn = (new Keychain)->getDatabaseConnection();
+		
+		$query = mysqli_query($dbconn, "SELECT DISTINCT Plant. AS SurveyCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS UserCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>='$monday'");
+		
+		
 		for($i = 0; $i < count($sites); $i++){
 			if($emailsSent < $MAX_EMAIL_SENDS){
 				$emails = $sites[$i]->getAuthorityEmails();
