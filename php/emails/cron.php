@@ -90,8 +90,7 @@
 						$caterpillarCount = $caterpillarRow["Quantity"];
 						for($i = 0; $i < count($authorityEmails); $i++){
 							if($emailsSent < $MAX_EMAIL_SENDS && !in_array($authorityEmails[$i], $sends)){
-								//email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
-								echo $emailsSent . ") email3| " . $authorityEmails[$i] . "Preparing for a new Caterpillars Count! Season" . $siteName . $surveyedPlantCount . $surveyedCircleCount . $currentCircles . $participantCount . $visualSurveyCount . $beatSheetSurveyCount . $dateCount . $arthropodCount . $caterpillarCount . $caterpillarOccurrence . "<br/>";
+								email3($authorityEmails[$i], "Preparing for a new Caterpillars Count! Season", $siteName, $surveyedPlantCount, $surveyedCircleCount, $currentCircles, $participantCount, $visualSurveyCount, $beatSheetSurveyCount, $dateCount, $arthropodCount, $caterpillarCount, $caterpillarOccurrence);
 								logSend($authorityEmails[$i], date("Y-m-d") . "|" . $site->getID());
 								$emailsSent++;
 							}
@@ -115,8 +114,7 @@
 					$emails = $sites[$i]->getAuthorityEmails();
 					for($j = 0; $j < count($emails); $j++){
 						if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
-							//email6($emails[$j], "Caterpillars Count! at " . $sites[$i]->getName(), $sites[$i]->getName());
-							echo $emailsSent . ") email6| " . $emails[$j] . "Caterpillars Count! at " . $sites[$i]->getName() . $sites[$i]->getName() . "<br/>";
+							email6($emails[$j], "Caterpillars Count! at " . $sites[$i]->getName(), $sites[$i]->getName());
 							logSend($emails[$j], date("Y-m-d") . "|" . $sites[$i]->getID());
 							$emailsSent++;
 						}
@@ -186,8 +184,7 @@
 						}
 						for($j = 0; $j < count($emails); $j++){
 							if($emailsSent < $MAX_EMAIL_SENDS && !in_array($emails[$j], $sends)){
-								//email7($emails[$j], "This Week at " . $sites[$i]->getName() . "...", $userCount, $surveyCount, $sites[$i]->getName(), $arthropodCount, $caterpillarCount, $arthropod1, $arthropod1Count, $arthropod2, $arthropod2Count, $peakCaterpillarOccurrenceDate, $peakCaterpillarOccurrence, $sites[$i]->getID());
-								echo $emailsSent . ") email7| " . $emails[$j] . "This Week at " . $sites[$i]->getName() . "..." . $userCount . $surveyCount . $sites[$i]->getName() . $arthropodCount . $caterpillarCount . $arthropod1 . $arthropod1Count . $arthropod2 . $arthropod2Count . $peakCaterpillarOccurrenceDate . $peakCaterpillarOccurrence . $sites[$i]->getID() . "<br/>";
+								email7($emails[$j], "This Week at " . $sites[$i]->getName() . "...", $userCount, $surveyCount, $sites[$i]->getName(), $arthropodCount, $caterpillarCount, $arthropod1, $arthropod1Count, $arthropod2, $arthropod2Count, $peakCaterpillarOccurrenceDate, $peakCaterpillarOccurrence, $sites[$i]->getID());
 								logSend($emails[$j], "email7|" . $sites[$i]->getID());
 								$emailsSent++;
 							}
@@ -224,8 +221,7 @@
 						$caterpillarCount = intval(mysqli_fetch_assoc($innerQuery)["CaterpillarCount"]);
 						$innerQuery = mysqli_query($dbconn, "SELECT * FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `UserFKOfObserver`='" . $user->getID() . "' AND PhotoURL<>'' LIMIT 1");
 						$userHasINaturalistObservations = (mysqli_num_rows($innerQuery) > 0);
-						//email8($user->getEmail(), "Your Caterpillars Count! weekly summary", $sites, $arthropodCount, $caterpillarCount, $user->getINaturalistObserverID(), $userHasINaturalistObservations);
-						echo $emailsSent . ") email8| " . $user->getEmail() . "Your Caterpillars Count! weekly summary" . $sites . $arthropodCount . $caterpillarCount . $user->getINaturalistObserverID() . $userHasINaturalistObservations . "<br/>";
+						email8($user->getEmail(), "Your Caterpillars Count! weekly summary", $sites, $arthropodCount, $caterpillarCount, $user->getINaturalistObserverID(), $userHasINaturalistObservations);
 						logSend($user->getID(), "email8");
 						$emailsSent++;
 					}
@@ -246,8 +242,7 @@
 				if(is_object($user) && get_class($user) == "User"){
 					$firstName = $user->getFirstName();
 				}
-				//email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
-				echo $emailsSent . ") email4| " . $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
+				email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
 				logSend($emails[$j], "email4");
 				$emailsSent++;
 			}
@@ -274,16 +269,14 @@
 
 				if($all == 0 || $app > ($all / 2)){
 					if(!in_array($emails[$j], $email4Sends)){
-						//email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
-						echo $emailsSent . ") email4| " . $emails[$j] . "The Caterpillars Count! Season Has Begun!" . $firstName . "<br/>";
+						email4($emails[$j], "The Caterpillars Count! Season Has Begun!", $firstName);
 						logSend($emails[$j], "email4");
 						$emailsSent++;
 					}
 				}
 				else{
 					if(!in_array($emails[$j], $email5Sends)){
-						//email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
-						echo $emailsSent . ") email5| " . $emails[$j] . "Need Help Submitting Caterpillars Count! Surveys?" . $firstName . "<br/>";
+						email5($emails[$j], "Need Help Submitting Caterpillars Count! Surveys?", $firstName);
 						logSend($emails[$j], "email5");
 						$emailsSent++;
 					}
