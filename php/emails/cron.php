@@ -14,10 +14,10 @@
 	date_default_timezone_set('US/Eastern');
 	
 	//ADJUSTABLE LIMITS:
-	$SUNDAY_START_HOUR = 14;
-	$SUNDAY_END_HOUR = 23;
-	$ANNUAL_START_HOUR = 15;
-	$ANNUAL_END_HOUR = 19;
+	$SUNDAY_START_HOUR = 18;
+	$MONDAY_END_HOUR = 3;
+	$ANNUAL_START_HOUR = 18;
+	$ANNUAL_END_HOUR = 22;
 	$MAX_EMAIL_SENDS = 5;//max emails send each time this script is run (to prevent timeouts)
 
 	$emailsSent = 0;//current number of emails sent during this run
@@ -370,7 +370,7 @@
 		}
 	}
 
-	if(date('D') == "Sun" && intval(date('H')) >= $SUNDAY_START_HOUR && intval(date('H')) <= $SUNDAY_END_HOUR){
+	if((date('D') == "Sun" && intval(date('H')) >= $SUNDAY_START_HOUR) || (date('D') == "Mon" && intval(date('H')) <= $MONDAY_END_HOUR)){
 		send7();
 		send8();
 	}
