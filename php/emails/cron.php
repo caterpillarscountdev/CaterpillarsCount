@@ -19,6 +19,7 @@
 	$ANNUAL_START_HOUR = 15;
 	$ANNUAL_END_HOUR = 19;
 	$MAX_EMAIL_SENDS = 5;//max emails send each time this script is run (to prevent timeouts)
+
 	$emailsSent = 0;//current number of emails sent during this run
 
 	if(date('H:i') == "12:00" || date('H:i') == "12:01" || date('H:i') == "12:02"){
