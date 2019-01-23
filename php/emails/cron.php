@@ -14,10 +14,10 @@
 	date_default_timezone_set('US/Eastern');
 	
 	//ADJUSTABLE LIMITS:
-	$SUNDAY_START_HOUR = 18;
-	$MONDAY_END_HOUR = 3;
-	$ANNUAL_START_HOUR = 18;
-	$ANNUAL_END_HOUR = 22;
+	$SUNDAY_START_HOUR = 21;
+	$MONDAY_END_HOUR = 6;
+	$ANNUAL_START_HOUR = 19;
+	$ANNUAL_END_HOUR = 23;
 	$MAX_EMAIL_SENDS = 5;//max emails send each time this script is run (to prevent timeouts)
 
 	$emailsSent = 0;//current number of emails sent during this run
