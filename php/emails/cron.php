@@ -3,6 +3,9 @@
 	
 	header('Access-Control-Allow-Origin: *');
 	
+	//TO PAUSE ALL EMAILS, UNCOMMENT THE FOLLOWING "die();" LINE
+	//die();
+	
 	require_once("../orm/Site.php");
 	require_once("../orm/User.php");
 	require_once("../orm/resources/Keychain.php");
@@ -10,6 +13,7 @@
 
 	date_default_timezone_set('US/Eastern');
 	
+	//ADJUSTABLE LIMITS:
 	$SUNDAY_START_HOUR = 14;
 	$SUNDAY_END_HOUR = 23;
 	$ANNUAL_START_HOUR = 15;
