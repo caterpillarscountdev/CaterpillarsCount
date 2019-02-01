@@ -2,6 +2,7 @@
 	header('Access-Control-Allow-Origin: *');
 	
 	require_once('submitToINaturalist.php');
+	require_once('submitToSciStarter.php');
 	require_once('orm/User.php');
 	require_once('orm/Plant.php');
 	require_once('orm/Survey.php');
@@ -100,6 +101,7 @@
 								$observerID = "anonymous";
 							}
 							submitINaturalistObservation($observerID, $plant->getCode(), $survey->getLocalDate(), $survey->getObservationMethod(), $survey->getNotes(), $survey->getWetLeaves(), $arthropodSighting->getGroup(), $arthropodSighting->getHairy(), $arthropodSighting->getRolled(), $arthropodSighting->getTented(), $arthropodSighting->getQuantity(), $arthropodSighting->getLength(), $arthropodSighting->getPhotoURL(), $arthropodSighting->getNotes(), $survey->getNumberOfLeaves(), $survey->getAverageLeafLength(), $survey->getHerbivoryScore());
+							submitToSciStarter($user->getEmail(), "collection", null, $survey->getLocalDate() . "T" . $survey->getLocalTime(), 300, 2, null);
 						}
 					}
 					else{
