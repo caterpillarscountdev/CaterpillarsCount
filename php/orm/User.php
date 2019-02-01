@@ -503,8 +503,6 @@ class User
 	
 
 //FUNCTIONS
-	require_once("../submitToSciStarter.php");
-	
 	public function createSite($name, $description, $latitude, $longitude, $zoom, $location, $password, $openToPublic){
 		return Site::create($this, $name, $description, $latitude, $longitude, $zoom, $location, $password, $openToPublic);
 	}
@@ -546,7 +544,20 @@ class User
 		$usersEmailVerificationCode = mysqli_fetch_assoc($query)["EmailVerificationCode"];
 		if($verificationCode == $usersEmailVerificationCode){
 			if($this->email == ""){
-				submitToSciStarter($this->desiredEmail, "signup", null, date("Y-m-d") . "T" . date("H:i:s"), 300, 2, null);
+				$KEY = getenv("SciStarterKey");
+				$ch = curl_init("https://scistarter.com/api/profile/id?hashed=" . hash("sha256", $this->desiredEmail) . "&key=" . $KEY);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				$profileID = json_decode(curl_exec($ch), true)["scistarter_profile_id"];
+				curl_close($ch);
+				
+				$ch = curl_init("https://scistarter.com/api/record_event?key=" . $KEY);
+				curl_setopt($ch, CURLOPT_POST, 1);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, "profile_id=" . $profileID . "&project_id=" . getenv("SciStarterProjectID") . "&type=signup&when=" . date("Y-m-d") . "T" . date("H:i:s") . "&duration=300&magnitude=2");
+				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+				curl_setopt($ch, CURLOPT_HEADER, 0);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_exec($ch);
+				curl_close ($ch);
 			}
 			mysqli_query($dbconn, "UPDATE User SET `Email`=`DesiredEmail` WHERE `ID`='" . $this->id . "'");
 			mysqli_query($dbconn, "UPDATE User SET `EmailVerificationCode`='' WHERE `ID`='" . $this->id . "'");
