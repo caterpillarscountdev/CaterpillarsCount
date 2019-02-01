@@ -101,8 +101,8 @@
 								$observerID = "anonymous";
 							}
 							submitINaturalistObservation($observerID, $plant->getCode(), $survey->getLocalDate(), $survey->getObservationMethod(), $survey->getNotes(), $survey->getWetLeaves(), $arthropodSighting->getGroup(), $arthropodSighting->getHairy(), $arthropodSighting->getRolled(), $arthropodSighting->getTented(), $arthropodSighting->getQuantity(), $arthropodSighting->getLength(), $arthropodSighting->getPhotoURL(), $arthropodSighting->getNotes(), $survey->getNumberOfLeaves(), $survey->getAverageLeafLength(), $survey->getHerbivoryScore());
-							submitToSciStarter($user->getEmail(), "collection", null, $survey->getLocalDate() . "T" . $survey->getLocalTime(), 300, 2, null);
 						}
+						submitToSciStarter($user->getEmail(), "collection", null, $survey->getLocalDate() . "T" . $survey->getLocalTime(), 300, 2, null);
 					}
 					else{
 						$arthropodSightingFailures .= $arthropodSighting;
