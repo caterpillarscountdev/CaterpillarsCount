@@ -1,5 +1,4 @@
 <?php
-	/*
 	function submitToSciStarter($email, $type, $where = null, $when = null, $duration = null, $magnitude = null, $extra = null){
 		$KEY = getenv("SciStarterKey");
 		$ch = curl_init("https://scistarter.com/api/profile/id?hashed=" . hash("sha256", $email) . "&key=" . $KEY);
@@ -31,5 +30,4 @@
 		curl_exec($ch);
 		curl_close ($ch);
 	}
-	*/
 ?>
