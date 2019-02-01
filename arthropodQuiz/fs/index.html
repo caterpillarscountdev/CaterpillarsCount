@@ -314,6 +314,27 @@
 				xhttp.open("GET", "../../php/getArthropodQuizQuestions.php", true);
 				xhttp.send();
 			}
+			
+			var submittedClassificationToSciStarter = false;
+			function submitClassificationToSciStarter(){
+				if(!submittedClassificationToSciStarter && window.localStorage.getItem("email") !== null){
+					if(window.localStorage.getItem("email").length > 0){
+						submittedClassificationToSciStarter = true;
+						var formData = new FormData();
+						formData.append("email", window.localStorage.getItem("email"));
+						$.ajax({
+							url : "../../php/submitClassificationToSciStarter.php",
+							type : 'POST',
+							data : formData,
+							processData: false,  // tell jQuery not to process the data
+							contentType: false,  // tell jQuery not to set contentType
+							success: function(data){},
+							error: function(){},
+							complete: function(){}
+						});
+					}
+				}				
+			}
 		</script>
 	</head>
 	<body>
@@ -325,7 +346,7 @@
 				<div id="startScreenTitle">Caterpillars Count!</div>
 				<div id="startScreenSubtitle">Arthropod Quiz</div>
 				<div id="finalScore"></div>
-				<button style="background:#222;margin-top:20px;" onclick="startQuickplay();">Quickplay</button>
+				<button style="background:#222;margin-top:20px;" onclick="startQuickplay();submitClassificationToSciStarter();">Quickplay</button>
 				<!--<button style="background:#fed136;">Log In To Save Scores</button>-->
 			</div>
 			<div id="fade" onclick="showNextQuestion();">
