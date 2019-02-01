@@ -4,6 +4,7 @@ require_once('resources/mailing.php');
 require_once('resources/Keychain.php');
 require_once('Site.php');
 require_once('ManagerRequest.php');
+require_once('../submitToSciStarter.php');
 
 class User
 {
@@ -543,6 +544,9 @@ class User
 		}
 		$usersEmailVerificationCode = mysqli_fetch_assoc($query)["EmailVerificationCode"];
 		if($verificationCode == $usersEmailVerificationCode){
+			if($this->email == ""){
+				submitToSciStarter($this->desiredEmail, "signup", null, date("Y-m-d") . "T" . date("H:i:s"), 300, 2, null);
+			}
 			mysqli_query($dbconn, "UPDATE User SET `Email`=`DesiredEmail` WHERE `ID`='" . $this->id . "'");
 			mysqli_query($dbconn, "UPDATE User SET `EmailVerificationCode`='' WHERE `ID`='" . $this->id . "'");
 			mysqli_close($dbconn);
