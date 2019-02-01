@@ -1,0 +1,151 @@
+<html>
+	<head>
+		<!-- Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+			gtag('config', 'UA-113319025-1');
+		</script>
+		<!-- End of Google Analytics -->
+
+		<title>Privacy Policy | Caterpillars Count!</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<link href="../css/template.css" rel="stylesheet">
+		<script src="../js/template.js?v=1"></script>
+		<script>
+			$(document).ready(function(){
+				loadBackgroundImage($("#splashImage"), "../images/splash.png");
+			});
+		</script>
+	</head>
+	<body>
+		<div id="managerRequest">
+			<div id="managerRequestMessage"></div>
+			<div id="managerRequestButtons">
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('deny');">Deny</div>
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('approve');">Accept</div>
+			</div>
+		</div>
+		<div id="error" onclick="hideNotice();"></div>
+		<div id="confirmation" onclick="hideNotice();"></div>
+		<div id="alert" onclick="hideNotice();"></div>
+		<div id="promptInteractionBlock"></div>
+		<div id="noticeInteractionBlock" onclick="hideNotice();"></div>
+		<div id="confirm">
+			<div></div>
+			<div>
+				<button>OK</button>
+				<button>Cancel</button>
+				<div class="clearBoth"></div>
+			</div>
+		</div>
+
+		<div id="splash">
+			<div id="splashImage"></div>
+			<div id="splashOverlay">
+				<div id="splashIntroText">Welcome to</div>
+				<div id="splashMainText">Caterpillars Count!</div>
+				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">View Privacy Policy</button>
+			</div>
+		</div>
+		<header>
+			<h1><a href="../">Caterpillars Count!</a></h1>
+			<div id="hamburger" onclick="toggleNav();">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div id="navKnockDown" class="clearBoth"></div>
+			<nav class="loadingNav">
+				<ul>
+					<li onclick="accessSubMenu(this);">
+						<span>Participate</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../getStarted">Get Started</a></li>
+							<li><a href="../conductASurvey">Conduct a Survey</a></li>
+							<li><a href="../submitObservations">Submit Observations</a></li>
+							<li><a href="../hostASurveySite">Host a Survey Site</a></li>
+							<li><a href="../resources">Resources</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Explore</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
+							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="../dataDownload">Data Download</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Learn</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../identificationSkills">Identification Skills</a></li>
+							<li><a href="../forEducators">For Educators</a></li>
+							<li><a href="../faq">FAQ</a></li>
+						</ul>
+					</li>
+					<li onclick="window.location = '../news';">
+						<span>News</span>
+					</li>
+					<li onclick="window.location = '../signIn';">
+						<span>Sign In</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../createNewSite">Create New Site</a></li>
+							<li><a href="../manageMySites">Manage My Sites</a></li>
+							<li><a href="../manageMySurveys">Manage My Surveys</a></li>
+							<li><a href="../settings">Settings</a></li>
+							<li><a href="" onclick="logOut();">Sign Out</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="navBack" onclick="resetMenu(false);">&#10094;</div>
+		</header>
+		<main>
+			<div class="panel">
+				<h2>What is SciStarter?</h2>
+				<div class="tagline">And what does it have to do with Caterpillars Count?</div>
+				<div class="content">
+					<div>
+						<div class="imageTextTable tableDiv">
+							<div class="cellDiv">
+								<div class="circleImage" style="background-image:url('../images/sciStarterRobot.png');"></div>
+							</div>
+							<div class="cellDiv scrollAnimationElement fadeInOnScroll">
+                <p>SciStarter connects particiants to new and exciting citizen science projects and lets them track their participation across multiple projects right in one place! How do you use it? We're glad you asked!</p>
+								<ul>
+									<li>Visit <a href="https://scistarter.com/" target="_blank">SciStarter's website</a> and sign up for an account with them, using the same email address as your Caterpillars Count! account.</li>
+									<li><a href="https://scistarter.com/finder" target="_blank">Find all sorts of projects that interest you</a> and request to join them. There is no need to request Caterpillars Count!. If you have an account with us, we've already linked you up to SciStarter!</li>
+									<li>Conveniently track your partication for all your projects right there on SciStarter!</li>
+							  </ul>
+							</div>
+						</div>
+					</div>
+        			</div>
+			</div>
+		</main>
+		<footer>
+			<div>Part of the <a href="http://pheno-mismatch.org" target="_blank">Pheno Mismatch</a> project funded by the National Science Foundation</div>
+
+			<div><img src="../images/unc.png"/></div><div>
+				<a target="_blank" href="https://www.facebook.com/Caterpillars-Count-1854259101283140/"><img src="../images/facebook.png" alt="facebook"/></a><a target="_blank" href="https://twitter.com/CaterpillarsCt"><img src="../images/twitter.png" alt="twitter"/></a>
+			</div>
+
+			<div>Contact us: <a href="mailto:caterpillarscount@gmail.com">caterpillarscount@gmail.com</a></div>
+
+			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
+		</footer>
+	</body>
+</html>
