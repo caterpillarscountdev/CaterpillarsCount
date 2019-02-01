@@ -4,7 +4,6 @@ require_once('resources/mailing.php');
 require_once('resources/Keychain.php');
 require_once('Site.php');
 require_once('ManagerRequest.php');
-require_once((new Keychain)->getRoot() . "/php/submitToSciStarter.php");
 
 class User
 {
@@ -504,6 +503,8 @@ class User
 	
 
 //FUNCTIONS
+	require_once("../submitToSciStarter.php");
+	
 	public function createSite($name, $description, $latitude, $longitude, $zoom, $location, $password, $openToPublic){
 		return Site::create($this, $name, $description, $latitude, $longitude, $zoom, $location, $password, $openToPublic);
 	}
