@@ -4,7 +4,7 @@ require_once('resources/mailing.php');
 require_once('resources/Keychain.php');
 require_once('Site.php');
 require_once('ManagerRequest.php');
-require_once('~/php/submitToSciStarter.php');
+require_once('../submitToSciStarter.php');
 
 class User
 {
