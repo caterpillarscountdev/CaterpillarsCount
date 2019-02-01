@@ -1,4 +1,5 @@
 <?php
+	/*
 	function submitToSciStarter($email, $type, $where = null, $when = null, $duration = null, $magnitude = null, $extra = null){
 		$KEY = getenv("SciStarterKey");
 
@@ -33,4 +34,5 @@
 		curl_exec($ch);
 		curl_close ($ch);
 	}
+	*/
 ?>
