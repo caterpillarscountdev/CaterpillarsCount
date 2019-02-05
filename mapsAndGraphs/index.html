@@ -3027,6 +3027,22 @@
 				return dayCount;
 			}
 			
+			var indexedMarkers = {};
+			function findMarkerBySiteName(siteName){
+				if(siteName in indexedMarkers){
+					return indexedMarkers[siteName];
+				}
+				
+				for(var i = 0; i < markers.length; i++){
+					var thisSiteName = markers[i].siteInformation.Name;
+					indexedMarkers[thisSiteName] = markers[i];
+					if(thisSiteName == siteName){
+						return markers[i];
+					}
+				}
+				return null;
+			}
+			
 			function downloadPhenologyData(){
 				var metric = $("#lineGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Date", "Julian Day", metric];
@@ -3053,7 +3069,7 @@
 							siteNames[siteNames.length] = siteName.replace(/[\W_]+/g," ");
 						}
 						var year = Number(optionsString.substring(optionsString.lastIndexOf(" in")).replace(/\D/g, ""));
-						var marker = markers[activeSiteID.toString()];
+						var marker = findMarkerBySiteName(siteName);
 						
 						var points = datasets[i].data;
 						for(var j = 0; j < points.length; j++){
@@ -3114,7 +3130,7 @@
 						}
 						filtersString += " " + siteName;
 					}
-					var marker = markers[activeSiteID.toString()];
+					var marker = findMarkerBySiteName(siteName);
 					for(var j = 0; j < barConfig.data.datasets.length; j++){
 						var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), barConfig.data.datasets[j].label, barConfig.data.datasets[j].data[i]];
 						if(xAxis != "site"){
