@@ -3033,11 +3033,13 @@
 					return indexedMarkers[siteName];
 				}
 				
-				for(var i = 0; i < markers.length; i++){
-					var thisSiteName = markers[i].siteInformation.Name;
-					indexedMarkers[thisSiteName] = markers[i];
-					if(thisSiteName == siteName){
-						return markers[i];
+				for (var siteID in markers) {
+					if (markers.hasOwnProperty(siteID)){
+						var thisSiteName = markers[siteID].siteInformation.Name;
+						indexedMarkers[thisSiteName] = markers[siteID];
+						if(thisSiteName == siteName){
+							return markers[siteID];
+						}
 					}
 				}
 				return null;
