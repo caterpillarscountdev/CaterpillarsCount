@@ -21,7 +21,7 @@
 	$MAX_EMAIL_SENDS = 5;//max emails send each time this script is run (to prevent timeouts)
 
 	$emailsSent = 0;//current number of emails sent during this run
-	email("plocharczykweb@gmail.com", "email cron ran", date('H:i'));
+	
 	if(date('H:i') == "12:00" || date('H:i') == "12:01" || date('H:i') == "12:02"){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		mysqli_query($dbconn, "DELETE FROM TemporaryEmailLog WHERE `Date`<'" . date("Y-m-d") . "'");
