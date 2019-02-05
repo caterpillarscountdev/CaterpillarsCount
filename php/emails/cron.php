@@ -6,10 +6,10 @@
 	//TO PAUSE ALL EMAILS, UNCOMMENT THE FOLLOWING "die();" LINE
 	//die();
 	
-	require_once("../orm/Site.php");
-	require_once("../orm/User.php");
-	require_once("../orm/resources/Keychain.php");
-	require_once("../orm/resources/mailing.php");
+	require_once("/opt/app-root/src/php/orm/Site.php");
+	require_once("/opt/app-root/src/php/orm/User.php");
+	require_once("/opt/app-root/src/php/orm/resources/Keychain.php");
+	require_once("/opt/app-root/src/php/orm/resources/mailing.php");
 
 	date_default_timezone_set('US/Eastern');
 	
