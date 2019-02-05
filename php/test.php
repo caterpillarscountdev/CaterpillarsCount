@@ -8,12 +8,13 @@
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
 		$sites = $user->getSites();
-    for($i = 0; $i < count($sites); $i++){
-      echo $sites[$i]->getName() . "<br/>";
-    }
-    
-    
-		/*$site = Site::findByID($siteID);
+		for($i = 0; $i < count($sites); $i++){
+			echo $sites[$i]->getName() . "<br/>";
+		}
+		
+		$site = Site::findByID($siteID);
+		echo "<br/>" . $site->getName();
+		
 		if(is_object($site) && get_class($site) == "Site" && in_array($site, $sites)){
 			$siteArray = array(
 				"name" => $site->getName(),
@@ -24,7 +25,6 @@
 			die("true|" . json_encode($siteArray));
 		}
 		die("false|You do not have permission to edit this site.");
-    */
 	}
-	//die("false|Your log in dissolved. Maybe you logged in on another device.");
+	die("false|Your log in dissolved. Maybe you logged in on another device.");
 ?>
