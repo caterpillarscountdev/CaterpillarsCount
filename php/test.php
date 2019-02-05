@@ -10,12 +10,13 @@
 		$sites = $user->getSites();
 		for($i = 0; $i < count($sites); $i++){
 			echo $sites[$i]->getName() . "<br/>";
+			$sites[$i] = intval($sites[$i]->getID());
 		}
 		
 		$site = Site::findByID($siteID);
 		echo "<br/>" . $site->getName();
 		
-		if(is_object($site) && get_class($site) == "Site" && in_array($site, $sites)){
+		if(is_object($site) && get_class($site) == "Site" && in_array(intval($site->getID()), $sites)){
 			$siteArray = array(
 				"name" => $site->getName(),
 				"description" => $site->getDescription(),
