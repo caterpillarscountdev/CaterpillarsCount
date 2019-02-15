@@ -85,6 +85,10 @@
 				width:0px;
 				min-width:100%;
 			}
+			
+			.promptInput{
+				margin-top:10px;
+			}
 
 		    	@media only screen and (max-width: 900px) {
 				.thead{
@@ -134,8 +138,9 @@
 		    	}
 		</style>
 		<script>
-			function email(creatorEmailParts){
-				window.location = "mailto:" + creatorEmailParts.join('@');
+			function email(creatorEmailParts, siteName){
+				promptConfirm("We here at " + siteName + " are looking forward to hearing from you! Here is our email address:<br/><input type=\"text\" class=\"promptInput\" value=\"" + creatorEmailParts.join('@') + "\"/>", "Nevermind.", "Got it!", function(){}, function(){});
+				$(".promptInput").eq(0)[0].select();
 			}
 
 			function populatePublicSites(){
@@ -168,7 +173,7 @@
                 					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\">" + publicSites[i]["region"] + "</div></div>";
                 					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\">" + publicSites[i]["siteName"] + "</div></div>";
                 					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\">" + publicSites[i]["description"] + "</div></div>";
-                					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\"><span class=\"highlighted pointer underline\" onclick=\"email(['" + publicSites[i]["creatorEmailParts"][0] + "', '" + publicSites[i]["creatorEmailParts"][1] + "']);\">Email us!</span></div></div>";
+                					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\"><span class=\"highlighted pointer underline\" onclick=\"email(['" + publicSites[i]["creatorEmailParts"][0] + "', '" + publicSites[i]["creatorEmailParts"][1] + "'], '" + publicSites[i]["siteName"] + "');\">Email us!</span></div></div>";
                 					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\"><a class=\"highlighted\" href=\"https://www.google.com/maps/search/?api=1&query=" + publicSites[i]["latitude"] + "," + publicSites[i]["longitude"] + "\" target=\"_blank\">Map us!</a></div></div>";
                 					htmlToAdd += "</div>";
               					}
