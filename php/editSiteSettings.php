@@ -9,6 +9,7 @@
 	$salt = $_GET["salt"];
 	$siteName = $_GET["siteName"];
 	$description = $_GET["description"];
+	$url = $_GET["url"];
 	$sitePassword = $_GET["sitePassword"];
 	$public = $_GET["public"];
 	$active = $_GET["active"];
@@ -31,6 +32,9 @@
 				if(!$site->setDescription($description)){
 					$errors .= "Site description must be between 1 and 255 characters. ";
 				}
+			}
+			if($site->getURL() != $url){
+				$site->setURL($url);
 			}
 			if(!$site->passwordIsCorrect($sitePassword) && $sitePassword != "hf!Eo 2k"){//"hf!Eo 2k" is just the placeholder default value from the front end
 				if($user->passwordIsCorrect($password)){
