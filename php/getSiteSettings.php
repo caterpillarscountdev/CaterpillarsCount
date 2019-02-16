@@ -19,6 +19,7 @@
 			$siteArray = array(
 				"name" => $site->getName(),
 				"description" => $site->getDescription(),
+				"url" => $site->getURL(),
 				"openToPublic" => $site->getOpenToPublic(),
 				"active" => $site->getActive(),
 			);
