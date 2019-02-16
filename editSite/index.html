@@ -325,7 +325,7 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/editSiteSettings.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&siteName=" + encodeURIComponent(name) + "&description=" + encodeURIComponent(description) + "&sitePassword=" + encodeURIComponent(password) + "&public=" + checkboxIsChecked($("#openToPublic")).toString() + "&active=" + checkboxIsChecked($("#active")).toString() + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
+				xhttp.open("GET", "../php/editSiteSettings.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&siteName=" + encodeURIComponent(name) + "&url=" + encodeURIComponent(url) + "&description=" + encodeURIComponent(description) + "&sitePassword=" + encodeURIComponent(password) + "&public=" + checkboxIsChecked($("#openToPublic")).toString() + "&active=" + checkboxIsChecked($("#active")).toString() + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
 				xhttp.send();
 			}
 
