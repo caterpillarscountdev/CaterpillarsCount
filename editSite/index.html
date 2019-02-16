@@ -67,6 +67,25 @@
 			.group:first-of-type{
 				margin-top:0px;
 			}
+			
+			.instructionInputTitleTable{
+				width:100%;
+			}
+			
+			.instructionInputTitleTable td{
+				vertical-align:middle;
+			}
+			.instructionInputTitleTable td:first-of-type{
+				text-align:left;
+			}
+			.instructionInputTitleTable td:last-of-type{
+				text-align:right;
+				padding:0px 2.5px;
+			}
+			.instructionInputTitleTable td:last-of-type img{
+				height:20px;
+				opacity:.2;
+			}
 
 			.inputTitle{
 				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -151,10 +170,12 @@
 							var name = data["name"];
 							savedName = name;
 							var description = data["description"];
+							var url = data["url"];
 							var openToPublic = data["openToPublic"];
 							var active = data["active"];
 
 							$("#name")[0].value = name;
+							$("#url")[0].value = url;
 							$("#description")[0].value = description;
 							countTo($("#description")[0], 140);
 							if(openToPublic){
@@ -189,6 +210,7 @@
 				if(savingSiteSettings){return false;}
 
 				var name = $("#name")[0].value;
+				var url = $("#url")[0].value;
 				var description = $("#description")[0].value;
 				var openToPublic = checkboxIsChecked($("#openToPublic"));
 				var active = checkboxIsChecked($("#active"));
@@ -203,7 +225,7 @@
 					$("#name")[0].focus();
 					return false;
 				}
-
+				
 				if(description == ""){
 					queueNotice("error", "Enter a site description.");
 					$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 300);
@@ -407,6 +429,16 @@
 						<div class="group">
 							<div class="inputTitle">Site name:</div>
 							<input type="text" id="name" oninput="if(this.value.trim() == savedName){setChangeSiteNameConfirmed(true);}else{setChangeSiteNameConfirmed(false);}" placeholder="short and descriptive" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" onblur="if(this.value != savedName){promptConfirm('Changing your site\'s name might confuse other people who are already familiar with its current name. Are you sure you want to do this? You\'ll still need to click &quot;Save Site Settings&quot; at this bottom of this page.', 'Nevermind.', 'Yes, I am sure!', function(){document.getElementById('name').value = savedName;setChangeSiteNameConfirmed(true);}, function(){setChangeSiteNameConfirmed(true);});setTimeout(function(){$('textarea').eq(0).blur();for(var i = 1; i < $('input').length; i++){$('input').eq(i).blur();}},1);}"/>
+						</div>
+						
+						<div class="group">
+							<table class="instructionInputTitleTable">
+								<tr>
+									<td class="inputTitle">Organizational URL (optional):</td>
+									<td onclick="event.stopPropagation();queueNotice('alert', 'If you are creating a Caterpillars Count! site at an existing nature center, school, or other organization, please paste a web link here.');"><img src="../images/question.png"/></td>
+								<tr>
+							</table>
+							<input type="text" placeholder="http://" autocomplete="off" id="url"/>
 						</div>
 
 						<div class="group">
