@@ -503,8 +503,8 @@ class User
 	
 
 //FUNCTIONS
-	public function createSite($name, $description, $latitude, $longitude, $zoom, $location, $password, $openToPublic){
-		return Site::create($this, $name, $description, $latitude, $longitude, $zoom, $location, $password, $openToPublic);
+	public function createSite($name, $description, $url, $latitude, $longitude, $zoom, $location, $password, $openToPublic){
+		return Site::create($this, $name, $description, $url, $latitude, $longitude, $zoom, $location, $password, $openToPublic);
 	}
 	
 	public static function sendEmailVerificationCodeToUser($usersId){
