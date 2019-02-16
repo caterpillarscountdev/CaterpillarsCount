@@ -575,7 +575,7 @@
 						<div class="group">
 							<div class="inputTitle">Number of plants you will survey:</div>
 							<div class="countInput">
-								<input type="number" placeholder="must be multiple of 5" pattern="\d*" onclick="this.setSelectionRange(0, 9999);" onblur="enforceRange(this, 10, null, 5);" autocomplete="off" readonly class="noautocomplete" name="noautocomplete3"/>
+								<input type="number" placeholder="must be multiple of 5" pattern="\d*" onclick="this.setSelectionRange(0, 9999);" onblur="enforceRange(this, 10, null, 5);"/>
 								<div class="countAttachment">
 									<div onclick="incrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 10, null, 5);"></div>
 									<div onclick="decrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 10, null, 5);"></div>
