@@ -7,7 +7,7 @@
 	$salt = $_GET["salt"];
 	$siteName = $_GET["siteName"];
 	$description = $_GET["description"];
-	$url = $_GET["URL"];
+	$url = $_GET["url"];
 	$latitude = $_GET["latitude"];
 	$longitude = $_GET["longitude"];
 	$zoom = $_GET["zoom"];
