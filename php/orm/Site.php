@@ -239,10 +239,7 @@ class Site
 			$active = filter_var($siteRow["Active"], FILTER_VALIDATE_BOOLEAN);
 			
 			$site = new Site($id, $creator, $name, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, true, $active);
-			
-			if($active){
-				array_push($sitesArray, $site);
-			}
+			array_push($sitesArray, $site);
 		}
 		return $sitesArray;
 	}
