@@ -14,6 +14,7 @@
 			"creatorEmailParts" => array($beforeAt, $afterAt),
 			"siteName" => $publicSites[$i]->getName(),
 			"description" => $publicSites[$i]->getDescription(),
+			"url" => $publicSites[$i]->getURL(),
 			"region" => $publicSites[$i]->getRegion(),
 			"latitude" => $publicSites[$i]->getLatitude(),
 			"longitude" => $publicSites[$i]->getLongitude(),
