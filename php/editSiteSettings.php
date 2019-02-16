@@ -17,8 +17,11 @@
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
 		$sites = $user->getSites();
+		for($i = 0; $i < count($sites); $i++){
+			$sites[$i] = intval($sites[$i]->getID());
+		}
 		$site = Site::findByID($siteID);
-		if(is_object($site) && get_class($site) == "Site" && in_array($site, $sites)){
+		if(is_object($site) && get_class($site) == "Site" && in_array(intval($site->getID()), $sites)){
 			$errors = "";
 			if($site->getName() != $siteName){
 				if(preg_replace('/\s+/', '', $siteName) == ""){
