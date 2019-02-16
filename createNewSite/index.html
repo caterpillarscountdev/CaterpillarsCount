@@ -154,6 +154,10 @@
 			#createSiteButton{
 				width:201px;
 			}
+			
+			.noautocomplete{
+				display:none;
+			}
 
 			@media screen and (max-width: 620px) {
 				#createSiteButton{
@@ -170,6 +174,7 @@
 				
 				for(var i = 0; i < $(".noautocomplete").length; i++){
 					$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
+					$(".noautocomplete").eq(i)[0].style.display = "block";
 				}
 			});
 			var mapInited = false;
@@ -538,7 +543,7 @@
 					<div class="form">
 						<div class="group">
 							<div class="inputTitle">Site name:</div>
-							<input type="text" placeholder="short and descriptive" autocomplete="off" readonly class="noautocomplete"/>
+							<input type="text" placeholder="short and descriptive" autocomplete="off" readonly class="noautocomplete" name="noautocomplete1"/>
 						</div>
 						
 						<div class="group">
@@ -548,7 +553,7 @@
 									<td onclick="event.stopPropagation();queueNotice('alert', 'If you are creating a Caterpillars Count! site at an existing nature center, school, or other organization, please paste a web link here.');"><img src="../images/question.png"/></td>
 								<tr>
 							</table>
-							<input type="text" placeholder="http://" autocomplete="off" readonly class="noautocomplete"/>
+							<input type="text" placeholder="http://" autocomplete="off" readonly class="noautocomplete" name="noautocomplete2"/>
 						</div>
 
 						<!--<input type="text" placeholder="site zip code" pattern="\d*"/>-->
@@ -570,7 +575,7 @@
 						<div class="group">
 							<div class="inputTitle">Number of plants you will survey:</div>
 							<div class="countInput">
-								<input type="number" placeholder="must be multiple of 5" pattern="\d*" onclick="this.setSelectionRange(0, 9999);" onblur="enforceRange(this, 10, null, 5);" autocomplete="off" readonly class="noautocomplete"/>
+								<input type="number" placeholder="must be multiple of 5" pattern="\d*" onclick="this.setSelectionRange(0, 9999);" onblur="enforceRange(this, 10, null, 5);" autocomplete="off" readonly class="noautocomplete" name="noautocomplete3"/>
 								<div class="countAttachment">
 									<div onclick="incrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 10, null, 5);"></div>
 									<div onclick="decrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 10, null, 5);"></div>
@@ -580,12 +585,12 @@
 
 						<div class="group">
 							<div class="inputTitle">Site password (that you are willing to share with vistors at this site):</div>
-							<input type="password" placeholder="to verify submissions" autocomplete="off" readonly class="noautocomplete"/>
+							<input type="password" placeholder="to verify submissions" autocomplete="new-password" readonly class="noautocomplete" name="noautocomplete4"/>
 						</div>
 
 						<div class="group">
 							<div class="inputTitle">Confirm site password:</div>
-							<input type="password" placeholder="to verify submissions" autocomplete="off" readonly class="noautocomplete"/>
+							<input type="password" placeholder="to verify submissions" autocomplete="new-password" readonly class="noautocomplete" name="noautocomplete5"/>
 						</div>
 
 						<div class="group">
