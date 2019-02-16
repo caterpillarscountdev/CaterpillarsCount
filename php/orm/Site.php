@@ -588,7 +588,7 @@ class Site
 	}
 	
 	public static function validURL($dbconn, $url){
-		return mysqli_real_escape_string($dbconn, rawurldecode($url));
+		return mysqli_real_escape_string($dbconn, rawurldecode(trim($url)));
 	}
 	
 	public static function validLatitude($dbconn, $latitude){
