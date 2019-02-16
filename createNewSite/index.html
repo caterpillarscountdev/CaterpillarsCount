@@ -167,6 +167,10 @@
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
 				showCreateSite();
+				
+				for(var i = 0; i < $(".noautocomplete").length; i++){
+					$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
+				}
 			});
 			var mapInited = false;
 			var lat = 0;
@@ -534,7 +538,7 @@
 					<div class="form">
 						<div class="group">
 							<div class="inputTitle">Site name:</div>
-							<input type="text" placeholder="short and descriptive" autocomplete="off"/>
+							<input type="text" placeholder="short and descriptive" autocomplete="off" readonly class="noautocomplete"/>
 						</div>
 						
 						<div class="group">
@@ -544,7 +548,7 @@
 									<td onclick="event.stopPropagation();queueNotice('alert', 'If you are creating a Caterpillars Count! site at an existing nature center, school, or other organization, please paste a web link here.');"><img src="../images/question.png"/></td>
 								<tr>
 							</table>
-							<input type="text" placeholder="http://" autocomplete="off"/>
+							<input type="text" placeholder="http://" autocomplete="off" readonly class="noautocomplete"/>
 						</div>
 
 						<!--<input type="text" placeholder="site zip code" pattern="\d*"/>-->
@@ -566,7 +570,7 @@
 						<div class="group">
 							<div class="inputTitle">Number of plants you will survey:</div>
 							<div class="countInput">
-								<input type="number" placeholder="must be multiple of 5" pattern="\d*" onclick="this.setSelectionRange(0, 9999);" onblur="enforceRange(this, 10, null, 5);"/>
+								<input type="number" placeholder="must be multiple of 5" pattern="\d*" onclick="this.setSelectionRange(0, 9999);" onblur="enforceRange(this, 10, null, 5);" autocomplete="off" readonly class="noautocomplete"/>
 								<div class="countAttachment">
 									<div onclick="incrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 10, null, 5);"></div>
 									<div onclick="decrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 10, null, 5);"></div>
@@ -576,12 +580,12 @@
 
 						<div class="group">
 							<div class="inputTitle">Site password (that you are willing to share with vistors at this site):</div>
-							<input type="password" placeholder="to verify submissions" autocomplete="off"/>
+							<input type="password" placeholder="to verify submissions" autocomplete="off" readonly class="noautocomplete"/>
 						</div>
 
 						<div class="group">
 							<div class="inputTitle">Confirm site password:</div>
-							<input type="password" placeholder="to verify submissions" autocomplete="off"/>
+							<input type="password" placeholder="to verify submissions" autocomplete="off" readonly class="noautocomplete"/>
 						</div>
 
 						<div class="group">
