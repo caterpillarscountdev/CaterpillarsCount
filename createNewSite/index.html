@@ -99,7 +99,7 @@
 			}
 			.instructionInputTitleTable td:last-of-type{
 				text-align:right;
-				padding:5px 2.5px;
+				padding:0px 2.5px;
 			}
 			.instructionInputTitleTable td:last-of-type img{
 				height:20px;
@@ -534,7 +534,7 @@
 					<div class="form">
 						<div class="group">
 							<div class="inputTitle">Site name:</div>
-							<input type="text" placeholder="short and descriptive"/>
+							<input type="text" placeholder="short and descriptive" autocomplete="off"/>
 						</div>
 						
 						<div class="group">
@@ -544,7 +544,7 @@
 									<td onclick="event.stopPropagation();queueNotice('alert', 'If you are creating a Caterpillars Count! site at an existing nature center, school, or other organization, please paste a web link here.');"><img src="../images/question.png"/></td>
 								<tr>
 							</table>
-							<input type="text" placeholder="http://"/>
+							<input type="text" placeholder="http://" autocomplete="off"/>
 						</div>
 
 						<!--<input type="text" placeholder="site zip code" pattern="\d*"/>-->
@@ -576,12 +576,12 @@
 
 						<div class="group">
 							<div class="inputTitle">Site password (that you are willing to share with vistors at this site):</div>
-							<input type="password" placeholder="to verify submissions"/>
+							<input type="password" placeholder="to verify submissions" autocomplete="off"/>
 						</div>
 
 						<div class="group">
 							<div class="inputTitle">Confirm site password:</div>
-							<input type="password" placeholder="to verify submissions"/>
+							<input type="password" placeholder="to verify submissions" autocomplete="off"/>
 						</div>
 
 						<div class="group">
