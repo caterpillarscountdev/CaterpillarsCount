@@ -7,6 +7,7 @@
 	$salt = $_GET["salt"];
 	$siteName = $_GET["siteName"];
 	$description = $_GET["description"];
+	$url = $_GET["URL"];
 	$latitude = $_GET["latitude"];
 	$longitude = $_GET["longitude"];
 	$zoom = $_GET["zoom"];
@@ -47,7 +48,7 @@
 		}
 		
 		//create site
-		$site = $user->createSite($siteName, $description, $latitude, $longitude, $zoom, $finalRegion, $sitePassword, $public);
+		$site = $user->createSite($siteName, $description, $url, $latitude, $longitude, $zoom, $finalRegion, $sitePassword, $public);
 		
 		//output errors if there are any
 		if(!is_object($site) || get_class($site) != "Site"){
