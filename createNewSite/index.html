@@ -86,6 +86,25 @@
 			.group:first-of-type{
 				margin-top:0px;
 			}
+			
+			.instructionInputTitleTable{
+				width:100%;
+			}
+			
+			.instructionInputTitleTable td{
+				vertical-align:middle;
+			}
+			.instructionInputTitleTable td:first-of-type{
+				text-align:left;
+			}
+			.instructionInputTitleTable td:last-of-type{
+				text-align:right;
+				padding:5px 2.5px;
+			}
+			.instructionInputTitleTable td:last-of-type img{
+				height:20px;
+				opacity:.2;
+			}
 
 			.inputTitle{
 				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -187,12 +206,13 @@
 
 				//verify all site parameters we can without an internet connection
 				var name = $("#createSite input").eq(0)[0].value.trim();
+				var url = $("#createSite input").eq(1)[0].value.trim();
 				var description = $("#createSite textarea").eq(0)[0].value.trim();
 				var latitude = lat;
 				var longitude = long;
-				var plantCount = $("#createSite input").eq(1)[0].value.trim();
-				var password = $("#createSite input").eq(2)[0].value;
-				var confirmPassword = $("#createSite input").eq(3)[0].value;
+				var plantCount = $("#createSite input").eq(2)[0].value.trim();
+				var password = $("#createSite input").eq(3)[0].value;
+				var confirmPassword = $("#createSite input").eq(4)[0].value;
 
 				if(name.replace(/ /g, "") == ""){
 					queueNotice("error", "Enter a site name.");
@@ -207,8 +227,8 @@
 					queueNotice("error", "Enter a site description.");
 					$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 300);
 
-					clearCountInput($("#createSite textarea").eq(0)[0]);
-					$("#createSite textarea").eq(0)[0].focus();
+					clearCountInput($("#createSite textarea").eq(1)[0]);
+					$("#createSite textarea").eq(1)[0].focus();
 					return false;
 				}
 
@@ -222,16 +242,16 @@
 					queueNotice("error", "Enter the number of plants you will survey.");
 					$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 300);
 
-					$("#createSite input").eq(1)[0].value = "";
-					$("#createSite input").eq(1)[0].focus();
+					$("#createSite input").eq(2)[0].value = "";
+					$("#createSite input").eq(2)[0].focus();
 					return false;
 				}
 				else if(Number(plantCount) % 5 != 0){
 					queueNotice("error", "The number of plants you will survey must be a multiple of 5.");
 					$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 300);
 
-					$("#createSite input").eq(1)[0].value = "";
-					$("#createSite input").eq(1)[0].focus();
+					$("#createSite input").eq(3)[0].value = "";
+					$("#createSite input").eq(3)[0].focus();
 					return false;
 				}
 
@@ -239,9 +259,9 @@
 					queueNotice("error", "Site passwords must match.");
 					$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 300);
 
-					$("#createSite input").eq(2)[0].value = "";
-					$("#createSite input").eq(3)[0].value ="";
-					$("#createSite input").eq(2)[0].focus();
+					$("#createSite input").eq(3)[0].value = "";
+					$("#createSite input").eq(4)[0].value ="";
+					$("#createSite input").eq(3)[0].focus();
 					return false;
 				}
 
@@ -249,9 +269,9 @@
 					queueNotice("error", "Password must be at least 4 characters with no spaces.");
 					$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 300);
 
-					$("#createSite input").eq(2)[0].value = "";
 					$("#createSite input").eq(3)[0].value = "";
-					$("#createSite input").eq(2)[0].focus();
+					$("#createSite input").eq(4)[0].value = "";
+					$("#createSite input").eq(3)[0].focus();
 					return false;
 				}
 
@@ -271,6 +291,7 @@
 							$("#createSite input").eq(1)[0].value = "";
 							$("#createSite input").eq(2)[0].value = "";
 							$("#createSite input").eq(3)[0].value = "";
+							$("#createSite input").eq(4)[0].value = "";
 
 							queueNotice("confirmation", "Check your email to finish setting up your site! Allow 5 minutes and check spam!");
 							$("#confirmation")[0].onclick = function(){window.location = "../manageMySites";};
@@ -286,6 +307,7 @@
 								$("#createSite input").eq(1)[0].blur();
 								$("#createSite input").eq(2)[0].blur();
 								$("#createSite input").eq(3)[0].blur();
+								$("#createSite input").eq(4)[0].blur();
 
 								$("#createSite input").eq(0)[0].value = "";
 								$("#createSite input").eq(0)[0].focus();
@@ -296,6 +318,7 @@
 								$("#createSite input").eq(1)[0].blur();
 								$("#createSite input").eq(2)[0].blur();
 								$("#createSite input").eq(3)[0].blur();
+								$("#createSite input").eq(4)[0].blur();
 
 								$("#createSite textarea").eq(0)[0].focus();
 							}
@@ -305,6 +328,7 @@
 								$("#createSite input").eq(1)[0].blur();
 								$("#createSite input").eq(2)[0].blur();
 								$("#createSite input").eq(3)[0].blur();
+								$("#createSite input").eq(4)[0].blur();
 							}
 							else if(createSiteError.indexOf("The number of plants you will survey must be a multiple of 5.") > -1){
 								$("#createSite input").eq(0)[0].blur();
@@ -312,8 +336,9 @@
 								$("#createSite input").eq(1)[0].blur();
 								$("#createSite input").eq(2)[0].blur();
 								$("#createSite input").eq(3)[0].blur();
+								$("#createSite input").eq(4)[0].blur();
 
-								$("#createSite textarea").eq(1)[0].focus();
+								$("#createSite textarea").eq(2)[0].focus();
 							}
 							else if(createSiteError.indexOf("Password must be at least 4 characters with no spaces.") > -1){
 								$("#createSite input").eq(0)[0].blur();
@@ -321,10 +346,11 @@
 								$("#createSite input").eq(1)[0].blur();
 								$("#createSite input").eq(2)[0].blur();
 								$("#createSite input").eq(3)[0].blur();
+								$("#createSite input").eq(4)[0].blur();
 
-								$("#createSite input").eq(2)[0].value = "";
 								$("#createSite input").eq(3)[0].value = "";
-								$("#createSite input").eq(2)[0].focus();
+								$("#createSite input").eq(4)[0].value = "";
+								$("#createSite input").eq(3)[0].focus();
 							}
 							else if(createSiteError.indexOf("Password cannot be the same as your Caterpillars Count! account password because you may be sharing it with vistors at this site.") > -1){
 								$("#createSite input").eq(0)[0].blur();
@@ -332,10 +358,11 @@
 								$("#createSite input").eq(1)[0].blur();
 								$("#createSite input").eq(2)[0].blur();
 								$("#createSite input").eq(3)[0].blur();
+								$("#createSite input").eq(4)[0].blur();
 
-								$("#createSite input").eq(2)[0].value = "";
 								$("#createSite input").eq(3)[0].value = "";
-								$("#createSite input").eq(2)[0].focus();
+								$("#createSite input").eq(4)[0].value = "";
+								$("#createSite input").eq(3)[0].focus();
 							}
 							else if(createSiteError.indexOf("Your log in dissolved. Maybe you logged in on another device.") > -1){
 								$("#createSite input").eq(0)[0].blur();
@@ -343,6 +370,7 @@
 								$("#createSite input").eq(1)[0].blur();
 								$("#createSite input").eq(2)[0].blur();
 								$("#createSite input").eq(3)[0].blur();
+								$("#createSite input").eq(4)[0].blur();
 
 								$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 'slow');
 
@@ -351,7 +379,7 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/createSite.php?siteName=" + encodeURIComponent(name) + "&description=" + encodeURIComponent(description) + "&longitude=" + encodeURIComponent(longitude) + "&latitude=" + encodeURIComponent(latitude) + "&zoom=" + encodeURIComponent(map.getZoom()) + "&plantCount=" + encodeURIComponent(plantCount) + "&sitePassword=" + encodeURIComponent(password) + "&public=" + checkboxIsChecked($("#publicCheckbox")).toString() + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
+				xhttp.open("GET", "../php/createSite.php?siteName=" + encodeURIComponent(name) + "&description=" + encodeURIComponent(description) + "&url=" + encodeURIComponent(url) + "&longitude=" + encodeURIComponent(longitude) + "&latitude=" + encodeURIComponent(latitude) + "&zoom=" + encodeURIComponent(map.getZoom()) + "&plantCount=" + encodeURIComponent(plantCount) + "&sitePassword=" + encodeURIComponent(password) + "&public=" + checkboxIsChecked($("#publicCheckbox")).toString() + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
 				xhttp.send();
 			}
 
@@ -507,6 +535,16 @@
 						<div class="group">
 							<div class="inputTitle">Site name:</div>
 							<input type="text" placeholder="short and descriptive"/>
+						</div>
+						
+						<div class="group">
+							<table class="instructionInputTitleTable">
+								<tr>
+									<td class="inputTitle">Organizational URL (optional):</td>
+									<td onclick="event.stopPropagation();queueNotice('alert', 'If you are creating a Caterpillars Count! site at an existing nature center, school, or other organization, please paste a web link here.');"><img src="../images/question.png"/></td>
+								<tr>
+							</table>
+							<input type="text" placeholder="http://"/>
 						</div>
 
 						<!--<input type="text" placeholder="site zip code" pattern="\d*"/>-->
