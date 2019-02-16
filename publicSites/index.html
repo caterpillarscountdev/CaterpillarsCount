@@ -145,7 +145,7 @@
 		</style>
 		<script>
 			function email(creatorEmailParts, siteName){
-				promptConfirm("We here at " + siteName + " are looking forward to hearing from you! Here is our email address:<br/><input type=\"text\" class=\"promptInput\" value=\"" + creatorEmailParts.join('@') + "\" readonly onclick=\"this.select();\"/>", "Nevermind.", "Got it!", function(){}, function(){});
+				promptConfirm("We here at " + siteName + " are looking forward to hearing from you! Here is our email address:<br/><input type=\"text\" class=\"promptInput\" value=\"" + creatorEmailParts.join('@') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Nevermind.", "Got it!", function(){}, function(){});
 				$(".promptInput").eq(0)[0].select();
 			}
 
