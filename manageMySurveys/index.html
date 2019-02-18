@@ -1749,7 +1749,7 @@
 						}
 						else if($("#" + surveyID + " .plantCodeData").eq(0)[0].innerHTML.length == 0){
 							//survey location doesnt exist
-							queueNotice("error", "Enter a valid survey location code.");
+							queueNotice("error", "Enter a valid branch survey code.");
 							savingSurvey = false;
 							setLoadingButton($("#saveSurveyButton")[0], "Save changes", false);
 						}
@@ -2199,10 +2199,10 @@
 										<div class="inputTitle">Circle:</div>
 										<input type="number" id="circleSearch" placeholder="circle search" oninput="this.value=this.value.replace(/\D/g, '');"/>
 									</div>
-									<div class="toggleLink underline pointer" onclick="showSurveyLocationCodeFilter();">Filter by specific survey location code instead</div>
+									<div class="toggleLink underline pointer" onclick="showSurveyLocationCodeFilter();">Filter by specific branch survey code instead</div>
 								</div>
 								<div id="surveylocationCodeFilter">
-									<div class="inputTitle">Survey location code:</div>
+									<div class="inputTitle">Branch survey code:</div>
 									<input type="text" id="codeSearch" oninput="this.value = this.value.toUpperCase().replace(/ /g, '');"/>
 									<div class="toggleLink underline pointer" onclick="showSiteCircleFilter();">Filter by site/circle instead</div>
 								</div>
