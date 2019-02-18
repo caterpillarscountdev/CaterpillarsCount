@@ -57,6 +57,29 @@
 				font-family: 'Roboto Slab', serif;
 				cursor:pointer;
 			}
+			
+			.instructionInputTitleTable{
+				width:100%;
+				margin-bottom:-3px;
+			}
+			
+			.instructionInputTitleTable td{
+				vertical-align:middle;
+			}
+			.instructionInputTitleTable td:first-of-type{
+				text-align:left;
+				width:100%;
+			}
+			.instructionInputTitleTable td:last-of-type{
+				text-align:right;
+				padding:0px 2.5px;
+				cursor:pointer;
+			}
+			.instructionInputTitleTable td:last-of-type img{
+				height:20px;
+				opacity:.2;
+			}
+			
 			@media only screen and (max-width: 780px) {
 				main h2{
 					font-size:33px;
@@ -202,16 +225,21 @@
 								<div class="tagline">Step 1: Site Information</div>
 
 								<div class="group">
-									<div class="observationFieldTitle">Branch survey code:</div>
+									<table class="instructionInputTitleTable">
+										<tr>
+											<td class="observationFieldTitle" style="padding:0px;">Branch survey code:</td>
+											<td onclick="event.stopPropagation();queueNotice('alert', 'Please enter the multi-letter code for the branch you are about to survey');"><img src="../images/question.png"/></td>
+										<tr>
+									</table>
 									<div>
 										<div></div>
-										<input type="text" id="plantCode" class="noautocomplete" oninput="getPlant(this, $('#sitePasswordGroup'));if($('#time')[0].value == '' && $('#date')[0].value == ''){autosetDateAndTimeInputs();}" readonly autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+										<input type="text" id="plantCode" class="noautocomplete" oninput="getPlant(this, $('#sitePasswordGroup'));if($('#time')[0].value == '' && $('#date')[0].value == ''){autosetDateAndTimeInputs();}" readonly autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="noautocomplete1"/>
 									</div>
 								</div>
 
 								<div class="group" id="sitePasswordGroup">
 									<div class="observationFieldTitle">Site password:</div>
-									<input type="password" id="sitePassword" autocomplete="off" readonly class="noautocomplete" onclick="this.select();" oninput="uncheckCheckbox($('#samePass .checkbox').eq(0));"/>
+									<input type="password" id="sitePassword" autocomplete="new-password" readonly class="noautocomplete" onclick="this.select();" oninput="uncheckCheckbox($('#samePass .checkbox').eq(0));" name="noautocomplete2"/>
 									<div id="samePass" onclick="toggleSamePass();">
 										<table>
 											<tr>
