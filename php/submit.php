@@ -81,7 +81,7 @@
 			$survey = Survey::create($user, $plant, $date, $time, $observationMethod, $siteNotes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $submittedThroughApp);
 			
 			if(is_object($survey) && get_class($survey) == "Survey"){
-				//$arthropodData = orderType, orderLength, orderQuantity, orderNotes, hairy, leafRoll, silkTent, fileInput
+				//$arthropodData = orderType, orderLength, orderQuantity, orderNotes, hairy, leafRoll, silkTent, sawfly, beetleLarva, fileInput
 				$arthropodSightingFailures = "";
 				for($i = 0; $i < count($arthropodData); $i++){
 					if($arthropodData[$i][0] != "caterpillar"){
@@ -89,7 +89,13 @@
 						$arthropodData[$i][5] = false;
 						$arthropodData[$i][6] = false;
 					}
-					$arthropodSighting = $survey->addArthropodSighting($arthropodData[$i][0], $arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6]);
+					if($arthropodData[$i][0] != "bee"){
+						$arthropodData[$i][7] = false;
+					}
+					if($arthropodData[$i][0] != "beetle"){
+						$arthropodData[$i][8] = false;
+					}
+					$arthropodSighting = $survey->addArthropodSighting($arthropodData[$i][0], $arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6], $arthropodData[$i][7], $arthropodData[$i][8]);
 					if(is_object($arthropodSighting) && get_class($arthropodSighting) == "ArthropodSighting"){
 						$attachResult = attachPhotoToArthropodSighting($_FILES['file' . $i], $arthropodSighting);
 						if($attachResult != "File not uploaded." && $attachResult !== true){
