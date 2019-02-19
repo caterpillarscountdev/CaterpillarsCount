@@ -238,7 +238,12 @@
 								</div>
 
 								<div class="group" id="sitePasswordGroup">
-									<div class="observationFieldTitle">Site password:</div>
+									<table class="instructionInputTitleTable">
+										<tr>
+											<td class="observationFieldTitle" style="padding:0px;">Site password:</td>
+											<td onclick="event.stopPropagation();queueNotice('alert', 'Please consult the local site coordinator for the site password in order to submit observations for this site.');"><img src="../images/question.png"/></td>
+										<tr>
+									</table>
 									<input type="password" id="sitePassword" autocomplete="new-password" readonly class="noautocomplete" onclick="this.select();" oninput="uncheckCheckbox($('#samePass .checkbox').eq(0));" name="noautocomplete2"/>
 									<div id="samePass" onclick="toggleSamePass();">
 										<table>
