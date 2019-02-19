@@ -436,12 +436,12 @@
 				font-family: 'Roboto Slab', serif;
 			}
 
-			.false.caterpillarOption{
+			.false.caterpillarOption, .false.beeOption, .false.beetleOption{
 				color:#c5c5c5;
 				text-decoration:line-through;
 			}
 
-			.true.caterpillarOption::after{
+			.true.caterpillarOption::after, .true.beeOption::after, .true.beetleOption::after{
 				content:"!";
 			}
 
@@ -944,20 +944,20 @@
 										htmlToAdd += 			"<div class=\"smallSelect\">";
 										htmlToAdd +=				"<div class=\"selected\">" + singular(surveys[i]["arthropodSightings"][j]["group"]) + "</div>";
 										htmlToAdd +=				"<div class=\"options\">";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ant</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphid</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/bee.png')&quot;\">bee</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/beetle.png')&quot;\">beetle</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/caterpillar.png')&quot;\">caterpillar</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/daddylonglegs.png')&quot;\">daddylongleg</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/fly.png')&quot;\">fly</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/grasshopper.png')&quot;\">grasshopper</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/leafhopper.png')&quot;\">leafhopper</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/moths.png')&quot;\">moth</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/spider.png')&quot;\">spider</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/truebugs.png')&quot;\">truebug</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/other.png')&quot;\">other</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/unidentified.png')&quot;\">unidentified</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ant</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphid</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/bee.png')&quot;\">bee</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/beetle.png')&quot;\">beetle</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/caterpillar.png')&quot;\">caterpillar</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/daddylonglegs.png')&quot;\">daddylongleg</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/fly.png')&quot;\">fly</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/grasshopper.png')&quot;\">grasshopper</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/leafhopper.png')&quot;\">leafhopper</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/moths.png')&quot;\">moth</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/spider.png')&quot;\">spider</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/truebugs.png')&quot;\">truebug</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/other.png')&quot;\">other</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/unidentified.png')&quot;\">unidentified</div>";
 										htmlToAdd +=				"</div>";
 										htmlToAdd += 			"</div>";
 									}
@@ -965,22 +965,23 @@
 										htmlToAdd += 			"<div class=\"smallSelect\">";
 										htmlToAdd +=				"<div class=\"selected\">" + plural(surveys[i]["arthropodSightings"][j]["group"]) + "</div>";
 										htmlToAdd +=				"<div class=\"options\">";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ants</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphids</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/bee.png')&quot;\">bees</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/beetle.png')&quot;\">beetles</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/caterpillar.png')&quot;\">caterpillars</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/daddylonglegs.png')&quot;\">daddylonglegs</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/fly.png')&quot;\">flies</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/grasshopper.png')&quot;\">grasshoppers</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/leafhopper.png')&quot;\">leafhoppers</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/moths.png')&quot;\">moths</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/spider.png')&quot;\">spiders</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/truebugs.png')&quot;\">truebugs</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/other.png')&quot;\">others</div>";
-										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/unidentified.png')&quot;\">unidentifieds</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ants</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphids</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/bee.png')&quot;\">bees</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/beetle.png')&quot;\">beetles</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/caterpillar.png')&quot;\">caterpillars</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/daddylonglegs.png')&quot;\">daddylonglegs</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/fly.png')&quot;\">flies</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/grasshopper.png')&quot;\">grasshoppers</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/leafhopper.png')&quot;\">leafhoppers</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/moths.png')&quot;\">moths</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/spider.png')&quot;\">spiders</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/truebugs.png')&quot;\">truebugs</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/other.png')&quot;\">others</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/unidentified.png')&quot;\">unidentifieds</div>";
 										htmlToAdd +=				"</div>";
 										htmlToAdd += 			"</div>";
+										
 									}
 									if(surveys[i]["arthropodSightings"][j]["photoURL"].length > 0){
 										htmlToAdd +=			"</a>";
@@ -1010,6 +1011,30 @@
 									}
 									else{
 								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption\">In a silk tent</div></div>";
+									}
+									htmlToAdd +=			"</div>";
+									htmlToAdd +=			"<div class=\"beeOptions\"";
+									if(surveys[i]["arthropodSightings"][j]["group"] != "bee"){
+										htmlToAdd +=		" style=\"display:none;\"";
+									}
+									htmlToAdd +=			">";
+									if(surveys[i]["arthropodSightings"][j]["sawfly"]){
+								   		htmlToAdd += 			"<div><div class=\"toggleable true beeOption\">In sawfly larva form</div></div>";
+									}
+									else{
+								   		htmlToAdd += 			"<div><div class=\"toggleable false beeOption\">In sawfly larva form</div></div>";
+									}
+									htmlToAdd +=			"</div>";
+									htmlToAdd +=			"<div class=\"beetleOptions\"";
+									if(surveys[i]["arthropodSightings"][j]["group"] != "beetle"){
+										htmlToAdd +=		" style=\"display:none;\"";
+									}
+									htmlToAdd +=			">";
+									if(surveys[i]["arthropodSightings"][j]["beetleLarva"]){
+								   		htmlToAdd += 			"<div><div class=\"toggleable true beetleOption\">In larva form</div></div>";
+									}
+									else{
+								   		htmlToAdd += 			"<div><div class=\"toggleable false beetleOption\">In larva form</div></div>";
 									}
 									htmlToAdd +=			"</div>";
 									if(surveys[i]["arthropodSightings"][j]["notes"].trim().length > 0){
@@ -1358,20 +1383,20 @@
 				htmlToAdd += 				"<div class=\"smallSelect\">";
 				htmlToAdd +=					"<div class=\"selected\">" + plural("unidentified") + "</div>";
 				htmlToAdd +=					"<div class=\"options\">";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ants</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphids</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/bee.png')&quot;\">bees</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/beetle.png')&quot;\">beetles</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/caterpillar.png')&quot;\">caterpillars</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/daddylonglegs.png')&quot;\">daddylonglegs</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/fly.png')&quot;\">flies</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/grasshopper.png')&quot;\">grasshoppers</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/leafhopper.png')&quot;\">leafhoppers</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/moths.png')&quot;\">moths</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/spider.png')&quot;\">spiders</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/truebugs.png')&quot;\">truebugs</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/other.png')&quot;\">others</div>";
-				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/unidentified.png')&quot;\">unidentifieds</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ants</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphids</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/bee.png')&quot;\">bees</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/beetle.png')&quot;\">beetles</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/caterpillar.png')&quot;\">caterpillars</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/daddylonglegs.png')&quot;\">daddylonglegs</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/fly.png')&quot;\">flies</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/grasshopper.png')&quot;\">grasshoppers</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/leafhopper.png')&quot;\">leafhoppers</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/moths.png')&quot;\">moths</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/spider.png')&quot;\">spiders</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/truebugs.png')&quot;\">truebugs</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/other.png')&quot;\">others</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/unidentified.png')&quot;\">unidentifieds</div>";
 				htmlToAdd +=					"</div>";
 				htmlToAdd += 				"</div>";
 				htmlToAdd +=			"</div>";
@@ -1379,6 +1404,12 @@
 				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">With hairy/spiny characteristics</div></div>";
 				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In a leaf roll</div></div>";
 				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In a silk tent</div></div>";
+				htmlToAdd +=			"</div>";
+				htmlToAdd +=			"<div class=\"beeOptions\" style=\"display:none;\">";
+				htmlToAdd += 				"<div><div class=\"toggleable false beeOption\">In sawfly larva form</div></div>";
+				htmlToAdd +=			"</div>";
+				htmlToAdd +=			"<div class=\"beetleOptions\" style=\"display:none;\">";
+				htmlToAdd += 				"<div><div class=\"toggleable false beetleOption\">In larva form</div></div>";
 				htmlToAdd +=			"</div>";
 				htmlToAdd +=			"<div class=\"italic notes\">*<div class=\"editable\">[notes]</div></div>";
 				htmlToAdd +=		"</div>";
@@ -1408,6 +1439,16 @@
 				//caterpillar options
 				$("#" + arthropodSightingID + " .toggleable").css({cursor:"pointer"});
 				$("#" + arthropodSightingID + " .caterpillarOption").click(function(){
+					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+				
+				//bee options
+				$("#" + arthropodSightingID + " .beeOption").click(function(){
+					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+				
+				//beetle options
+				$("#" + arthropodSightingID + " .beetleOption").click(function(){
 					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
 				});
 
@@ -1531,6 +1572,18 @@
 				$("#" + id + " .toggleable").css({cursor:"pointer"});
 				$("#" + id + " .caterpillarOption").off("click");
 				$("#" + id + " .caterpillarOption").click(function(){
+					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+				
+				//bee options
+				$("#" + id + " .beeOption").off("click");
+				$("#" + id + " .beeOption").click(function(){
+					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+				
+				//beetle options
+				$("#" + id + " .beetleOption").off("click");
+				$("#" + id + " .beetleOption").click(function(){
 					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
 				});
 			}
@@ -1822,10 +1875,18 @@
 					var hairy = false;
 					var leafRoll = false;
 					var silkTent = false;
+					var sawfly = false;
+					var beetleLarva = false;
 					if(group == "caterpillar"){
 						hairy = arthropodSightings.eq(i).find(".toggleable").eq(0).hasClass("true");
 						leafRoll = arthropodSightings.eq(i).find(".toggleable").eq(1).hasClass("true");
 						silkTent = arthropodSightings.eq(i).find(".toggleable").eq(2).hasClass("true");
+					}
+					if(group == "bee"){
+						sawfly = arthropodSightings.eq(i).find(".toggleable").eq(3).hasClass("true");
+					}
+					if(group == "beetle"){
+						beetleLarva = arthropodSightings.eq(i).find(".toggleable").eq(4).hasClass("true");
 					}
 					var notes = arthropodSightings.eq(i).find(".editable").eq(2)[0].innerHTML.trim();
 					if(notes == "[notes]"){
@@ -1837,7 +1898,7 @@
 					}
 					//qualifiers
 					if(quantity > 0 && length > 0){
-						arthropodData[arthropodData.length] = [group, length, quantity, notes, hairy, leafRoll, silkTent, photoURL];
+						arthropodData[arthropodData.length] = [group, length, quantity, notes, hairy, leafRoll, silkTent, sawfly, beetleLarva, photoURL];
 					}
 				}
 				console.log([code, date, time, observationMethod, numberOfLeaves, wetLeaves, averageLeafLength, herbivoryScore, siteNotes, arthropodData]);
