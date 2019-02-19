@@ -320,7 +320,7 @@
 							var loadManagersError = this.responseText.replace("false|", "");
 							queueNotice("error", loadManagersError);
 							if(loadManagersError == "You do not have permission to oversee this site's management."){
-								$(".tagline").eq(0)[0].innerHTML = "You have not been granted permission to oversee this site's management. Only the creator of this site and high-ranking managers can do that. <a href=\"../manageMySites\">Click here to go back to your Manage My Sites page</a>."
+								$(".tagline").eq(0)[0].innerHTML = "You have not been granted permission to oversee this site's management. Only the creator of this site and high-ranking managers can do that. <a href=\"../manageMySites\">Click here to go back to your Manage My Sites page</a>.";
 							}
 							if(loadManagersError == "Your log in dissolved. Maybe you logged in on another device."){
 								logOut();
