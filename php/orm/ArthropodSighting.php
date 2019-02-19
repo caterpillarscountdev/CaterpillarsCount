@@ -16,11 +16,13 @@ class ArthropodSighting
 	private $hairy;
 	private $rolled;
 	private $tented;
+	private $sawfly;
+	private $beetleLarva;
 	
 	private $deleted;
 
 //FACTORY
-	public static function create($survey, $group, $length, $quantity, $notes, $hairy, $rolled, $tented) {
+	public static function create($survey, $group, $length, $quantity, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		if(!$dbconn){
 			return "Cannot connect to server.";
@@ -34,6 +36,8 @@ class ArthropodSighting
 		$hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
 		$rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
 		$tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
+		$sawfly = filter_var($sawfly, FILTER_VALIDATE_BOOLEAN);
+		$beetleLarva = filter_var($beetleLarva, FILTER_VALIDATE_BOOLEAN);
 		
 		
 		$failures = "";
@@ -59,13 +63,13 @@ class ArthropodSighting
 			return $failures;
 		}
 		
-		mysqli_query($dbconn, "INSERT INTO ArthropodSighting (`SurveyFK`, `Group`, `Length`, `Quantity`, `PhotoURL`, `Notes`, `Hairy`, `Rolled`, `Tented`) VALUES ('" . $survey->getID() . "', '$group', '$length', '$quantity', '', '$notes', '$hairy', '$rolled', '$tented')");
+		mysqli_query($dbconn, "INSERT INTO ArthropodSighting (`SurveyFK`, `Group`, `Length`, `Quantity`, `PhotoURL`, `Notes`, `Hairy`, `Rolled`, `Tented`, `Sawfly`, `BeetleLarva`) VALUES ('" . $survey->getID() . "', '$group', '$length', '$quantity', '', '$notes', '$hairy', '$rolled', '$tented', '$sawfly', '$beetleLarva')");
 		$id = intval(mysqli_insert_id($dbconn));
 		mysqli_close($dbconn);
 		
-		return new ArthropodSighting($id, $survey, $group, $length, $quantity, "", $notes, $hairy, $rolled, $tented);
+		return new ArthropodSighting($id, $survey, $group, $length, $quantity, "", $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
 	}
-	private function __construct($id, $survey, $group, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented) {
+	private function __construct($id, $survey, $group, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva){
 		$this->id = intval($id);
 		$this->survey = $survey;
 		$this->group = $group;
@@ -76,6 +80,8 @@ class ArthropodSighting
 		$this->hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
 		$this->rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
 		$this->tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
+		$this->sawfly = filter_var($sawfly, FILTER_VALIDATE_BOOLEAN);
+		$this->beetleLarva = filter_var($beetleLarva, FILTER_VALIDATE_BOOLEAN);
 		
 		$this->deleted = false;
 	}
@@ -102,8 +108,10 @@ class ArthropodSighting
 		$hairy = $arthropodSightingRow["Hairy"];
 		$rolled = $arthropodSightingRow["Rolled"];
 		$tented = $arthropodSightingRow["Tented"];
+		$sawfly = $arthropodSightingRow["Sawfly"];
+		$beetleLarva = $arthropodSightingRow["BeetleLarva"];
 		
-		return new ArthropodSighting($id, $survey, $group, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented);
+		return new ArthropodSighting($id, $survey, $group, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
 	}
 	
 	public static function findArthropodSightingsBySurvey($survey){
@@ -123,8 +131,10 @@ class ArthropodSighting
 			$hairy = $arthropodSightingRow["Hairy"];
 			$rolled = $arthropodSightingRow["Rolled"];
 			$tented = $arthropodSightingRow["Tented"];
+			$sawfly = $arthropodSightingRow["Sawfly"];
+			$beetleLarva = $arthropodSightingRow["BeetleLarva"];
 
-			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $group, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented);
+			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $group, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
 		}
 		return $arthropodSightingsArray;
 	}
@@ -178,6 +188,16 @@ class ArthropodSighting
 	public function getTented() {
 		if($this->deleted){return null;}
 		return filter_var($this->tented, FILTER_VALIDATE_BOOLEAN);
+	}
+	
+	public function getSawfly() {
+		if($this->deleted){return null;}
+		return filter_var($this->sawfly, FILTER_VALIDATE_BOOLEAN);
+	}
+	
+	public function getBeetleLarva() {
+		if($this->deleted){return null;}
+		return filter_var($this->beetleLarva, FILTER_VALIDATE_BOOLEAN);
 	}
 	
 //SETTERS
