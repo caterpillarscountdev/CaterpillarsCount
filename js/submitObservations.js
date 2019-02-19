@@ -93,12 +93,12 @@
 	//alert("set vars");
 					var formData = new FormData();
 					for(var i = 0; i < arthropodDataCopy.length; i++){
-						var imgData = arthropodDataCopy[i][7];
+						var imgData = arthropodDataCopy[i][9];
 						if(imgData != ""){
 							var b64Data = imgData[1];
 							var contentType = imgData[0];
 							formData.append(('file' + i), b64toBlob(b64Data, contentType));
-							arthropodDataCopy[i][7] = "";
+							arthropodDataCopy[i][9] = "";
 						}
 					}
 	//alert("converted base64 to blobs");
@@ -138,9 +138,6 @@
 								
 								//go to next in queue
 								submitPendingSurveyOnStandby = true;
-								
-								//TEMPORARY:
-								findOldSiteAndSubmitOldSurvey(plantCode, siteNotes, plantSpecies, herbivoryScore, observationMethod, numberOfLeaves, dateAndTime[0], dateAndTime[1], arthropodDataCopy);
 							}
 							else{
 	//alert("survey " + index + " had an issue");
@@ -1229,8 +1226,8 @@
 					var arthropodDataCopy = [];
 					for(var i  = 0; i < arthropodData.length; i++){
 						arthropodDataCopy[i] = arthropodData[i].slice();
-						if(arthropodDataCopy[i][7].length > 0){
-							compressBase64Index(arthropodDataCopy[i], 7, 500, 24, false);
+						if(arthropodDataCopy[i][9].length > 0){
+							compressBase64Index(arthropodDataCopy[i], 9, 500, 24, false);
 						}
 					}
 		//alert("copied data");
@@ -1238,10 +1235,10 @@
 					var savedCheck = setInterval(function(){
 						var allImageDataLoaded = true;
 						for(var i  = 0; i < arthropodDataCopy.length; i++){
-		//alert("arthropodDataCopy[i][7] != '': " + (arthropodDataCopy[i][7] != "").toString());
-		//alert("arthropodDataCopy[i][7].constructor !== Array: " + (arthropodDataCopy[i][7].constructor !== Array).toString());
-		//alert("image" + i + " still processing: " + (arthropodDataCopy[i][7] != "" && arthropodDataCopy[i][7].constructor !== Array).toString());
-							if(arthropodDataCopy[i][7] != "" && arthropodDataCopy[i][7].constructor !== Array){
+		//alert("arthropodDataCopy[i][9] != '': " + (arthropodDataCopy[i][9] != "").toString());
+		//alert("arthropodDataCopy[i][9].constructor !== Array: " + (arthropodDataCopy[i][9].constructor !== Array).toString());
+		//alert("image" + i + " still processing: " + (arthropodDataCopy[i][9] != "" && arthropodDataCopy[i][9].constructor !== Array).toString());
+							if(arthropodDataCopy[i][9] != "" && arthropodDataCopy[i][9].constructor !== Array){
 								allImageDataLoaded = false;
 								break;
 							}
@@ -1280,7 +1277,7 @@
 									//submit without photos
 									var arthropodSightings = existingPendingSurveys[existingPendingSurveys.length][6];
 									for(var i = 0; i < arthropodSightings.length; i++){
-										arthropodSightings[7] = "";
+										arthropodSightings[9] = "";
 									}
 									window.localStorage.setItem("pendingSurveys", JSON.stringify(existingPendingSurveys));
 									queueNotice("alert", "Wow, you've sure submitted a lot of data offline! We just can't quite fit it all in your offline survey box! We had to throw out your arthropod photos for this survey to make everything fit, but don't worry- everything else on this survey is safe. We automatically clear your box out every time you log in with an internet connection, so it's a good idea to do that regularly. You should use this device to log in to " + pendingSurveyEmails + " WITH AN INTERNET CONNECTION for at least one minute soon so we can automatically clear your box out behind the scenes for you. Otherwise, this will happen again.");
@@ -1313,8 +1310,8 @@
 					var formData = new FormData();
 					var arthropodBlobs = [];
 					for(var i = 0; i < arthropodData.length; i++){
-						if(arthropodData[i][7].length > 0){
-							compressBase64Index(arthropodBlobs, i, 1750, 70, true, arthropodData[i][7]);
+						if(arthropodData[i][9].length > 0){
+							compressBase64Index(arthropodBlobs, i, 1750, 70, true, arthropodData[i][9]);
 						}
 						else{
 							arthropodBlobs[i] = null;
@@ -1341,7 +1338,7 @@
 							var temporaryArthropodData = [];
 							for(var i = 0; i < arthropodData.length; i++){
 								temporaryArthropodData[i] = arthropodData[i].slice();
-								temporaryArthropodData[i].splice(7, 1);
+								temporaryArthropodData[i].splice(9, 1);
 							}
 							
 							formData.append("plantCode", plantCode);
@@ -1371,7 +1368,6 @@
 									if(data.indexOf("true|") == 0){
 										queueNotice("confirmation", "Submitted!");
 										restart();
-										findOldSiteAndSubmitOldSurvey(plantCode, siteNotes, plantSpecies, herbivoryScore, observationMethod, numberOfLeaves, dateAndTime[0], dateAndTime[1], temporaryArthropodData);
 									}
 									else{
 										var submissionError = data.replace("false|", "");
@@ -1453,18 +1449,20 @@
 					var hairy = checkboxIsChecked($("#hairyCheckbox"));
 					var leafRoll = checkboxIsChecked($("#leafRollCheckbox"));
 					var silkTent = checkboxIsChecked($("#silkTentCheckbox"));
+					var sawfly = checkboxIsChecked($("#sawflyCheckbox"));
+					var beetleLarva = checkboxIsChecked($("#beetleLarvaCheckbox"));
 					var base64 = "";
 					if($("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.indexOf("#") == -1){
 						base64 = $("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.replace("url(", "").replace(/'/g, "").replace(/"/g, "").replace(")", "");
 					}
-					arthropodData[currentlyShownIndex] = [orderType, orderLength, orderQuantity, orderNotes, hairy, leafRoll, silkTent, base64];
+					arthropodData[currentlyShownIndex] = [orderType, orderLength, orderQuantity, orderNotes, hairy, leafRoll, silkTent, sawfly, beetleLarva, base64];
 					updateArthropodCards();
 					return true;
 				}
 			}
             
 			function deleteArthropodData(i){
-				arthropodData[i][7].outerHTML = "";
+				arthropodData[i][9].outerHTML = "";
 				arthropodData.splice(i, 1);
 				updateArthropodCards();
 				
@@ -1491,7 +1489,11 @@
 				uncheckCheckbox($("#hairyCheckbox"));
 				uncheckCheckbox($("#leafRollCheckbox"));
 				uncheckCheckbox($("#silkTentCheckbox"));
+				uncheckCheckbox($("#sawflyCheckbox"));
+				uncheckCheckbox($("#beetleLarvaCheckbox"));
 				$("#caterpillarOptionsGroup")[0].style.display = "none";
+				$("#beeOptionsGroup")[0].style.display = "none";
+				$("#beetleOptionsGroup")[0].style.display = "none";
 				$("#orderLength")[0].value = $("#orderLength")[0].defaultValue;
 				$("#orderQuantity")[0].value = $("#orderQuantity")[0].defaultValue;
 				$("#orderNotes")[0].value = "";
@@ -1523,7 +1525,9 @@
 					checkboxIsChecked($("#hairyCheckbox")[0]) != arthropodData[currentlyShownIndex][4] || 
 					checkboxIsChecked($("#leafRollCheckbox")[0]) != arthropodData[currentlyShownIndex][5] || 
 					checkboxIsChecked($("#silkTentCheckbox")[0]) != arthropodData[currentlyShownIndex][6] ||
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.indexOf(arthropodData[currentlyShownIndex][7]) == -1);
+					checkboxIsChecked($("#sawflyCheckbox")[0]) != arthropodData[currentlyShownIndex][7] ||
+					checkboxIsChecked($("#beetleLarvaCheckbox")[0]) != arthropodData[currentlyShownIndex][8] ||
+					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.indexOf(arthropodData[currentlyShownIndex][9]) == -1);
 				}
 				
 				var newDataIsShown = (currentlyShownIndex == arthropodData.length);
@@ -1536,6 +1540,8 @@
 					checkboxIsChecked($("#hairyCheckbox")[0]) || 
 					checkboxIsChecked($("#leafRollCheckbox")[0]) || 
 					checkboxIsChecked($("#silkTentCheckbox")[0]) ||
+					checkboxIsChecked($("#sawflyCheckbox")[0]) ||
+					checkboxIsChecked($("#beetleLarvaCheckbox")[0]) ||
 					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.indexOf("#") == -1);
 				}
 				
@@ -1561,15 +1567,27 @@
 				if(arthropodData[i][6]){checkCheckbox($("#silkTentCheckbox"));}
 				else{uncheckCheckbox($("#silkTentCheckbox"));}
 				
+				if(arthropodData[i][6]){checkCheckbox($("#sawflyCheckbox"));}
+				else{uncheckCheckbox($("#sawflyCheckbox"));}
+				
+				if(arthropodData[i][6]){checkCheckbox($("#beetleLarvaCheckbox"));}
+				else{uncheckCheckbox($("#beetleLarvaCheckbox"));}
+				
 				if(arthropodData[i][0] == "caterpillar"){$("#caterpillarOptionsGroup")[0].style.display = "block";}
 				else{$("#caterpillarOptionsGroup")[0].style.display = "none";}
+				
+				if(arthropodData[i][0] == "bee"){$("#beeOptionsGroup")[0].style.display = "block";}
+				else{$("#beeOptionsGroup")[0].style.display = "none";}
+				
+				if(arthropodData[i][0] == "beetle"){$("#beetleOptionsGroup")[0].style.display = "block";}
+				else{$("#beetleOptionsGroup")[0].style.display = "none";}
 				
 				$("#orderLength")[0].value = arthropodData[i][1];
 				$("#orderQuantity")[0].value = arthropodData[i][2];
 				
-				if(arthropodData[i][7] != ""){
+				if(arthropodData[i][9] != ""){
 					$("#arthropodFileInputHolder .snapIcon").eq(0)[0].src = "../images/inputCheckIcon.png";
-					showUploadedImage(arthropodData[i][7]);
+					showUploadedImage(arthropodData[i][9]);
 					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.height = "80px";
 					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.margin = "-20px -20px 16px -20px";
 					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.padding = "0px 20px";
@@ -1652,15 +1670,15 @@
 				document.getElementById("arthropodCards").innerHTML = htmlToAdd;
 				
 				for(var i = 0; i < arthropodData.length; i++){
-					if(arthropodData[i][7] != ""){
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage = "url('" + arthropodData[i][7] + "')";
+					if(arthropodData[i][9] != ""){
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage = "url('" + arthropodData[i][9] + "')";
 						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundSize = "cover";
 						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.padding = "5px";
 						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.margin = "-5px -10px -5px -5px";
 						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.borderRadius = "4px";
 						if($("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage.length <= 22){
 							var cardPhotoCheck = setInterval(function(){
-								$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage = "url('" + arthropodData[i][7] + "')";
+								$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage = "url('" + arthropodData[i][9] + "')";
 								if($("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage.length > 22){
 									clearInterval(cardPhotoCheck);
 								}
@@ -1911,146 +1929,3 @@
 				$("#pictureUploadMethod").stop().animate({left:"100%", marginLeft:"16px", right:"-16px"}, 200);
 				$("#uploadedImageGrayOutCover").stop().fadeOut(200);
 			}
-
-//TEMPORARY:
-function findOldSiteAndSubmitOldSurvey(plantCode, siteNotes, plantSpecies, herbivoryScore, observationMethod, numberOfLeaves, date, time, arthropodData){
-	//get info by plant code
-	$.get("https://caterpillarscount.unc.edu/php/getPlantCodeInfo.php?code=" + encodeURIComponent(plantCode) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
-		//success
-		if(data.indexOf("true|") == 0){
-//alert("got plant code info");
-			var newInfo = JSON.parse(data.replace("true|", ""));
-			
-			//get all old sites
-			$.ajax({
- 		    	url: "https://master-caterpillars.vipapps.unc.edu/api/sites.php",
- 		    	type: "post",
-  		   		dataType: "json",
-      			data: JSON.stringify({action: "getAll"}),
-      			success: function (sites, xhr, status) {
-//alert("got all old sites");
-      		  		var oldSiteID = -1;
-      		  		for (var i = 0; i < sites.length; i++) {
-      		  			if(newInfo["siteName"].trim().toLowerCase() == sites[i].siteName.trim().toLowerCase() && Math.abs(newInfo["latitude"] - sites[i].siteLat) < 0.01 && Math.abs(newInfo["longitude"] - sites[i].siteLong) < 0.01){
-      		  				//match
-      		  				oldSiteID = sites[i].siteID;
-      		  				submitOldSurvey(oldSiteID, newInfo["circle"], newInfo["orientation"], siteNotes, plantSpecies, herbivoryScore, observationMethod, numberOfLeaves, date, time, arthropodData);
-      		  				break;
-      		  			}
-  					}
-  					if(oldSiteID < 0){
-  						//no match
-  						var data = {
-							action: "create",
-							email: "caterpillarscountdev@gmail.com",
-							password: "opendevpass",
-							siteName: newInfo["siteName"],
-							siteState: newInfo["region"],
-							siteLat: newInfo["latitude"],
-							siteLong: newInfo["longitude"],
-							siteDescription: newInfo["siteDescription"],
-							sitePassword: "opendevpass",
-							numCircles: newInfo["circleCount"]
-						};
-				
-						//create site
-						$.ajax({
-							url: 'https://master-caterpillars.vipapps.unc.edu/api/sites.php',
-							type: 'POST',
-							dataType: "json",
-							data: JSON.stringify(data),
-							processData: false,
-							success: function (data) {
-//alert("created site");
-								oldSiteID = data.siteID;
-  								submitOldSurvey(oldSiteID, newInfo["circle"], newInfo["orientation"], siteNotes, plantSpecies, herbivoryScore, observationMethod, numberOfLeaves, date, time, arthropodData);
-							},
-							error: function (e) {
-//alert("SITE CREATION ERROR: " + e);
-							}
-						});
-  					}
-        		},
-        		error: function (xhr, status) {
-//alert("GET SITES ERROR");
-        		}
-    		});
-		}
-		else{
-//alert("GET PLANT CODE INFO ERROR: " + data);
-		}
-	})
-	.fail(function(){
-		//error
-//alert("GET PLANT CODE INFO ERROR");
-	});
-}
-function submitOldSurvey(oldSiteID, circle, orientation, siteNotes, plantSpecies, herbivoryScore, observationMethod, numberOfLeaves, date, time, arthropodData){
-//alert("submitting old survey");
-	if(observationMethod != "Visual"){observationMethod = "Beat_Sheet";}
-	
-	//submit old survey
-	$.ajax({
-		url: "https://master-caterpillars.vipapps.unc.edu/api/submission_full.php",
-		type : "POST",
-		crossDomain: true,
-		dataType: 'json',
-		data: JSON.stringify({
-			"type" : "survey",
-			"siteID" : oldSiteID,
-			"userID" : 599,
-			"password" : "opendevpass",
-			//survey
-			"circle" : circle,
-			"survey" :  orientation,
-			"timeStart" :  date + " " + time,
-			"temperatureMin" : 9999,
-			"temperatureMax" : 9999,
-			"siteNotes" :  siteNotes,
-			"plantSpecies" : plantSpecies,
-			"herbivory" : herbivoryScore,
-			"surveyType" :  observationMethod,
-			"leafCount" : parseInt(numberOfLeaves),
-			"source" : "Mobile"
-		}),
-		success: function(result){
-//alert("submitted old survey");
-			for(var i = 0; i < arthropodData.length; i++){
-//alert("submitting arthropod order " + i + " of " + (arthropodData.length - 1));
-				var newGroups = ["", "ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "other", "unidentified"];
-				var oldGroups = ["NONE", "Ants (Formicidae)", "Aphids and Psyllids (Sternorrhyncha)", "Bees and Wasps (Hymenoptera, excluding ants)", "Beetles (Coleoptera)", "Caterpillars (Lepidoptera larvae)", "Daddy longlegs (Opiliones)", "Flies (Diptera)", "Grasshoppers, Crickets (Orthoptera)", "Leaf hoppers and Cicadas (Auchenorrhyncha)", "Butterflies and Moths (Lepidoptera adult)", "Spiders (Araneae; NOT daddy longlegs!)", "True Bugs (Heteroptera)", "OTHER (describe in Notes)", "Unidentified"];
-				var orderArthropod = oldGroups[Math.max(0, newGroups.indexOf(arthropodData[i][0]))];
-				$.ajax({
-					url: "https://master-caterpillars.vipapps.unc.edu/api/submission_full.php",
-					type: "POST",
-					crossDomain: true,
-					dataType: 'json',
-					data: JSON.stringify({
-						"type": "order",
-						"surveyID": result.surveyID,
-						"userID": 599,
-						"password": "opendevpass",
-						//order
-						"orderArthropod": orderArthropod,
-						"orderLength": parseInt(arthropodData[i][1]),
-						"orderNotes": arthropodData[i][3],
-						"orderCount": parseInt(arthropodData[i][2]),
-						//Caterpillar features
-						"hairyOrSpiny": arthropodData[i][4] ? 1 : 0,
-						"leafRoll": arthropodData[i][5] ? 1 : 0,
-						"silkTent": arthropodData[i][6] ? 1 : 0
-					}),
-					success: function (arthropodResult) {
-//alert("submitted arthropod order");
-					},
-					error: function () {
-//alert("ARTHROPOD SUBMISSION ERROR: " + orderArthropod);
-					}
-				});
-			}
-		},
-		error : function(xhr, status){
-//alert("SURVEY SUBMISSION ERROR: " + xhr.status);
-		}
-	});
-}
