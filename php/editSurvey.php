@@ -56,10 +56,10 @@
 				//add new arthropod sightings
 				for($i = 0; $i < count($arthropodData); $i++){
 					$arthropodSightingFailures = "";
-					$arthropodSighting = $survey->addArthropodSighting($arthropodData[$i][0], $arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6]);
+					$arthropodSighting = $survey->addArthropodSighting($arthropodData[$i][0], $arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6], $arthropodData[$i][7], $arthropodData[$i][8]);
 					if(is_object($arthropodSighting) && get_class($arthropodSighting) == "ArthropodSighting"){
-						if($arthropodData[$i][7] != ""){
-							$arthropodSighting->setPhotoURL($arthropodData[$i][7]);
+						if($arthropodData[$i][9] != ""){
+							$arthropodSighting->setPhotoURL($arthropodData[$i][9]);
 						}
 					}
 					else{
