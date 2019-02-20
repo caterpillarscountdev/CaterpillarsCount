@@ -31,6 +31,61 @@
 			#sitesLoading img{
 				height:22px;
 			}
+			
+			.select{
+				width:100%;
+				-webkit-appearance: none;
+    				-moz-appearance: none;
+    				appearance: none;
+    				border-radius:4px;
+    				overflow:hidden;
+    				background:#fff;
+				border:1px solid #ddd;
+				border-bottom:2px solid #ddd;
+				color:#aaa;
+				box-sizing:border-box;
+				margin-top:5px;
+				cursor:pointer;
+			}
+			.select{
+				padding:0px;
+				color:#aaa;
+				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+			}
+			.select .option{
+				max-height:0px;
+				overflow:hidden;
+			}
+			.select .option.selected{
+				max-height:250px;
+				overflow:hidden;
+			}
+			.select .option .value{
+				display:none;
+			}
+			.select .option .shown{
+				padding:16px;
+				position:relative;
+				font-size:16px;
+			}
+			.select .option:nth-of-type(even){
+				background:#f7f7f7;
+			}
+			.select .option .shown .image{
+				height:34px;
+				width:34px;
+				background-size:contain;
+				background-repeat:no-repeat;
+				background-position:center;
+				display:inline-block;
+				opacity:.4;
+				position:absolute;
+				right:20px;
+				top:10px;
+			}
+			.select .option .shown .text{
+				display:inline-block;
+			}
 		</style>
 		<script>
 			$(document).ready(function(){
