@@ -9,6 +9,10 @@
 			    margin: 0;
 			}
 
+			.noautocomplete{
+				display:none;
+			}
+
 			#panels{
 				font-family: 'Roboto Slab', serif;
 			}
