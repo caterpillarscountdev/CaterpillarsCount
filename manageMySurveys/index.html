@@ -652,6 +652,15 @@
 
 				requireLogIn();
 			});
+			
+			function email(fullName, emailAddress){
+				var possessiveS = "s";
+				if(fullName[fullName.length - 1] == 's'){
+					possessiveS = "";
+				}
+				promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailAddress + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Nevermind.", "Got it!", function(){}, function(){});
+				$(".promptInput").eq(0)[0].select();
+			}
 
 			function showYears(){
 				var htmlToAdd = "<div class=\"option selected\" onclick=\"selectOption(this);showDateLabel('year', this);\">	<div class=\"value\">____</div>		<div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/selectIcons/notselected.png');\"></div>		<div class=\"text\">Year</div></div></div>";
@@ -839,7 +848,7 @@
 								}
 								htmlToAdd += "\" id=\"" + surveys[i]["id"] + "\">";
 								htmlToAdd += 	"<div class=\"headInfo\">";
-								htmlToAdd +=		"<div><a href=\"mailto:" + surveys[i]["observerEmail"] + "\">" + surveys[i]["observerFullName"] + "</a></div>";
+								htmlToAdd +=		"<div class=\"underline pointer\" onclick=\"email('" + surveys[i]["observerEmail"] + "');\">" + surveys[i]["observerFullName"] + "</div>";
 								htmlToAdd +=	"</div>";
 								htmlToAdd += 	"<div class=\"siteInfo\" style=\"background:" + surveys[i]["color"] + ";\"><div class=\"editable\" style=\"font-weight:bold;text-transform:uppercase;\" oninput=\"populatePlant(this);\">" + surveys[i]["plantCode"] + "</div><span class=\"plantCodeData\">: <a href=\"https://www.google.com/maps/search/?api=1&query=" + surveys[i]["siteCoordinates"] + "\" target=\"_blank\">" + surveys[i]["siteName"] + " (" + surveys[i]["siteRegion"] + ")</a>, Circle " + surveys[i]["circle"] + ", " + surveys[i]["plantSpecies"] + "</span><div class=\"date\" style=\"display:none;\">" + getReadableDate(surveys[i]["localDate"]) + "</div><div class=\"time\"><div class=\"editable\" onblur=\"forceTime(this);\">" + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "</div></div><div class=\"options\"><div";
 								if($("#batchDeleteDropdown")[0].style.maxHeight != "" && $("#batchDeleteDropdown")[0].style.maxHeight != "0px"){
@@ -856,7 +865,7 @@
 								htmlToAdd += 		"<div>";
 								htmlToAdd += 			"<div>";
 								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/userIcon.png');\"></div>";
-								htmlToAdd += 				"<div><a href=\"mailto:" + surveys[i]["observerEmail"] + "\">" + surveys[i]["observerFullName"] + "</a></div>";
+								htmlToAdd += 				"<div onclick=\"email('" + surveys[i]["observerEmail"] + "'>" + surveys[i]["observerFullName"] + "</div>";
 								htmlToAdd +=			"</div>";
 								htmlToAdd += 			"<div>";
 								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/" + surveys[i]["observaionMethod"].replace(/ /g, "").replace(surveys[i]["observaionMethod"][0], surveys[i]["observaionMethod"][0].toLowerCase()) + ".png');\"></div>";
