@@ -1567,10 +1567,10 @@
 				if(arthropodData[i][6]){checkCheckbox($("#silkTentCheckbox"));}
 				else{uncheckCheckbox($("#silkTentCheckbox"));}
 				
-				if(arthropodData[i][6]){checkCheckbox($("#sawflyCheckbox"));}
+				if(arthropodData[i][7]){checkCheckbox($("#sawflyCheckbox"));}
 				else{uncheckCheckbox($("#sawflyCheckbox"));}
 				
-				if(arthropodData[i][6]){checkCheckbox($("#beetleLarvaCheckbox"));}
+				if(arthropodData[i][8]){checkCheckbox($("#beetleLarvaCheckbox"));}
 				else{uncheckCheckbox($("#beetleLarvaCheckbox"));}
 				
 				if(arthropodData[i][0] == "caterpillar"){$("#caterpillarOptionsGroup")[0].style.display = "block";}
