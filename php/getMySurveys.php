@@ -37,6 +37,8 @@
 							"hairy" => $arthropodSightings[$j]->getHairy(),
 							"rolled" => $arthropodSightings[$j]->getRolled(),
 							"tented" => $arthropodSightings[$j]->getTented(),
+							"sawfly" => $arthropodSightings[$j]->getSawfly(),
+							"beetleLarva" => $arthropodSightings[$j]->getBeetleLarva(),
 						);
 					}
 				}
