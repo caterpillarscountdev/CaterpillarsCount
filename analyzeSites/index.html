@@ -20,12 +20,25 @@
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=1"></script>
+		<style>
+			#sitesLoading{
+				background:#e6e6e6;
+				text-align:center;
+				padding:16px;
+				border-radius:4px;
+    				overflow:hidden;
+			}
+			#sitesLoading img{
+				height:22px;
+			}
+		</style>
 		<script>
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
+				populateSites();
 			});
       
-      function populateSites(){
+      			function populateSites(){
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function() {
 					if (this.readyState == 4 && this.status == 200) {
@@ -55,11 +68,11 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/getOwnedSitesLIGHT.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
+				xhttp.open("GET", "../php/getAllSitesLIGHT.php", true);
 				xhttp.send();
 			}
       
-      function toggleMaxHeight(elements){
+      			function toggleMaxHeight(elements){
 				//switch the max height of all elements specified as "elements" between 0px and 250px
 				elements = $(elements);
 				for(var i = 0; i < elements.length; i++){
@@ -264,7 +277,7 @@
 							<img src="../images/rolling.svg"/>
 						</div>
 					</div>
-        </div>
+				</div>
 			</div>
 		</main>
 		<footer>
