@@ -865,7 +865,7 @@
 								htmlToAdd += 		"<div>";
 								htmlToAdd += 			"<div>";
 								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/userIcon.png');\"></div>";
-								htmlToAdd += 				"<div onclick=\"email('" + surveys[i]["observerFullName"] + "', '" + surveys[i]["observerEmail"] + "'>" + surveys[i]["observerFullName"] + "</div>";
+								htmlToAdd += 				"<div class=\"underline pointer\" onclick=\"email('" + surveys[i]["observerFullName"] + "', '" + surveys[i]["observerEmail"] + "');\">" + surveys[i]["observerFullName"] + "</div>";
 								htmlToAdd +=			"</div>";
 								htmlToAdd += 			"<div>";
 								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/" + surveys[i]["observaionMethod"].replace(/ /g, "").replace(surveys[i]["observaionMethod"][0], surveys[i]["observaionMethod"][0].toLowerCase()) + ".png');\"></div>";
