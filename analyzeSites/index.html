@@ -437,14 +437,6 @@
 									htmlToAdd += "<div>";
 									htmlToAdd += 	"<div class=\"title\">Surveys started in:</div>";
 									htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["firstSurveyYear"] + "</div>";
-									htmlToAdd += 		"<div class=\"smallSelect\">";
-									htmlToAdd +=			"<div class=\"selected\">" + siteAnalysis["firstSurveyYear"] + "</div>";
-									htmlToAdd +=			"<div class=\"options\">";
-									for(var i = 0; i < siteAnalysis["availableYears"].length; i++){
-										htmlToAdd +=			"<div onclick=\"smallSelectOption(this);graphYear('" + siteAnalysis["availableYears"][i] + "');\">" + siteAnalysis["availableYears"][i] + "</div>";
-									}
-									htmlToAdd +=			"</div>";
-									htmlToAdd += 		"</div>";
 									htmlToAdd += "</div>";
 
 									htmlToAdd += "<div>";
@@ -458,7 +450,16 @@
 									lastYear = Number(siteAnalysis["mostRecentSurveyDate"].split("-")[0]);
 
 									htmlToAdd += "<div>";
-									htmlToAdd += 	"<div class=\"title\">Surveys in " + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + ":</div>";
+									htmlToAdd += 	"<div class=\"title\">Surveys in ";
+									htmlToAdd += 	"	<div class=\"smallSelect\">";
+									htmlToAdd +=			"<div class=\"selected\">" + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + "</div>";
+									htmlToAdd +=			"<div class=\"options\">";
+									for(var i = 0; i < siteAnalysis["availableYears"].length; i++){
+										htmlToAdd +=			"<div onclick=\"smallSelectOption(this);graphYear('" + siteAnalysis["availableYears"][i] + "');\">" + siteAnalysis["availableYears"][i] + "</div>";
+									}
+									htmlToAdd +=			"</div>";
+									htmlToAdd += 		"</div>";
+									htmlToAdd += 	":</div>";
 									htmlToAdd += 	"<div class=\"stat\" id=\"surveysEachWeek\">";
 									htmlToAdd += 		"<div class=\"stat\" id=\"surveysEachWeekBars\">";
 									var maxSurveys = Math.max(...siteAnalysis["surveysEachWeek"]);
