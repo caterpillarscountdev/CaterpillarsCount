@@ -111,6 +111,7 @@
 			
 			#analysis #surveysEachWeek{
 				position:relative;
+				display:block;
 			}
 			
 			#analysis #surveysEachWeekBars{
@@ -123,6 +124,8 @@
 				height:50px;
 				min-height:50px;
 				margin-top:10px;
+				position:relative;
+				z-index:0;
 			}
 			
 			.weeklySurveysBar{
@@ -142,12 +145,16 @@
 			#analysis #monthBackgrounds{
 				position:relative;
 				width:100%;
-				z-index:-1;
+				z-index:0;
 				height:100%;
+				position:absolute;
+				top:0px;
+				left:0px;
 			}
 			
 			#analysis #monthBackgrounds>div{
 				height:100%;
+				float:left;
 			}
 			
 			#analysis #monthBackgrounds>div:nth-of-type(even){
