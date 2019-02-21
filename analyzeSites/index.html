@@ -90,6 +90,15 @@
 			#analysisPanel{
 				display:none;
 			}
+			
+			#analysis .title{
+				font-weight:bold;
+				padding-right:5px;
+			}
+			
+			#analysis .title, #analysis .stat{
+				display:inline-block;
+			}
 		</style>
 		<script>
 			$(document).ready(function(){
@@ -249,7 +258,29 @@
 						if(data.indexOf("true|") == 0){
 							if(thisCallNumber == callNumber){
 								var siteAnalysis = JSON.parse(data.replace("true|", ""));
-								$("#analysis")[0].innerHTML = data.replace("true|", "");
+								
+								var htmlToAdd = "<div class=\"title\">Site name:</div>";
+								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["name"] + "</div>";
+								
+								htmlToAdd += "<div class=\"title\">Site authority emails:</div>";
+								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["emails"] + "</div>";
+								
+								htmlToAdd += "<div class=\"title\">Year of first survey:</div>";
+								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["firstSurveyYear"] + "</div>";
+								
+								htmlToAdd += "<div class=\"title\">Number of plants:</div>";
+								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["plantCount"] + "</div>";
+								
+								htmlToAdd += "<div class=\"title\">Number of observers:</div>";
+								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["observerCount"] + "</div>";
+								
+								htmlToAdd += "<div class=\"title\">Most recent survey:</div>";
+								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["mostRecentSurveyDate"] + "</div>";
+								
+								htmlToAdd += "<div class=\"title\">Surveys in " + siteAnalysis["mostRecentSurveyDate"].split("-")[2] + ":</div>";
+								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["surveysEachWeek"] + "</div>";
+								
+								$("#analysis")[0].innerHTML = htmlToAdd;
 								$("#analysisPanel")[0].style.display = "block";
 							}
 						}
