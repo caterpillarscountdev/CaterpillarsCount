@@ -110,12 +110,19 @@
 			}
 			
 			#analysis #surveysEachWeek{
+				position:relative;
+			}
+			
+			#analysis #surveysEachWeekBars{
 				display:table;
 				width:100%;
 				background-image:url("../images/translucentLine.png");
-				background-size:auto 3px;
+				background-size:auto 2px;
 				background-repeat:repeat-x;
 				background-position:center;
+				height:50px;
+				min-height:50px;
+				margin-top:10px;
 			}
 			
 			.weeklySurveysBar{
@@ -130,6 +137,33 @@
 				background:#00d9ae;
 				border-radius:4px;
 				overflow:hidden;
+			}
+			
+			#analysis #monthBackgrounds{
+				position:relative;
+				width:100%;
+				z-index:-1;
+				height:100%;
+			}
+			
+			#analysis #monthBackgrounds>div{
+				height:100%;
+			}
+			
+			#analysis #monthBackgrounds>div:nth-of-type(even){
+				background:rgba(0,0,0,0.1);
+			}
+			
+			#jan, #mar, #may, #jul, #aug, #oct, #dec{
+				width:8.493%;
+			}
+			
+			#apr, #jun, #sep, #nov{
+				width:8.219%;
+			}
+			
+			#feb{
+				width:7.671%;
 			}
 		</style>
 		<script>
@@ -324,14 +358,34 @@
 								htmlToAdd += "<div>";
 								htmlToAdd += 	"<div class=\"title\">Surveys in " + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + ":</div>";
 								htmlToAdd += 	"<div class=\"stat\" id=\"surveysEachWeek\">";
+								htmlToAdd += 		"<div class=\"stat\" id=\"surveysEachWeekBars\">";
 								var maxSurveys = Math.max(...siteAnalysis["surveysEachWeek"]);
-								for(var i = 0; i < 54; i++){
+								for(var i = 0; i < siteAnalysis["surveysEachWeek"].length; i++){
 									var barHeight = 0;
 									if(maxSurveys > 0){
 										barHeight = (siteAnalysis["surveysEachWeek"][i]/maxSurveys) * 100;
 									}
-									htmlToAdd += 	"<div class=\"weeklySurveysBar\"><div style=\"height:" + barHeight + "px;\"></div></div>";
+									var surveyS = "s";
+									if(siteAnalysis["surveysEachWeek"][i] == 1){
+										surveyS = "";
+									}
+									htmlToAdd += 	"<div class=\"weeklySurveysBar\" title=\"" + siteAnalysis["surveysEachWeek"][i] + " survey" + surveyS + "\"><div style=\"height:" + barHeight + "px;\"></div></div>";
 								}
+								htmlToAdd += 	"</div>";
+								htmlToAdd += 	"<div id=\"monthBackgrounds\">";
+								htmlToAdd += 		"<div id=\"jan\"></div>";
+								htmlToAdd += 		"<div id=\"feb\"></div>";
+								htmlToAdd += 		"<div id=\"mar\"></div>";
+								htmlToAdd += 		"<div id=\"apr\"></div>";
+								htmlToAdd += 		"<div id=\"may\"></div>";
+								htmlToAdd += 		"<div id=\"jun\"></div>";
+								htmlToAdd += 		"<div id=\"jul\"></div>";
+								htmlToAdd += 		"<div id=\"aug\"></div>";
+								htmlToAdd += 		"<div id=\"sep\"></div>";
+								htmlToAdd += 		"<div id=\"oct\"></div>";
+								htmlToAdd += 		"<div id=\"nov\"></div>";
+								htmlToAdd += 		"<div id=\"dec\"></div>";
+								htmlToAdd += 	"</div>";
 								htmlToAdd += "</div>";
 								
 								$("#analysis")[0].innerHTML = htmlToAdd;
