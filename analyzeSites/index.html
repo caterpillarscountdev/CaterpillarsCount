@@ -108,6 +108,20 @@
 			#analysis .title, #analysis .stat{
 				display:inline-block;
 			}
+			
+			#surveysEachWeek{
+				display:table;
+				width:100%;
+			}
+			
+			.weeklySurveysBar{
+				display:table-cell;
+				vertical-align:middle;
+				width:1.85%;
+				background:#19ffab;
+				border-radius:4px;
+				overflow:hidden;
+			}
 		</style>
 		<script>
 			$(document).ready(function(){
@@ -300,7 +314,15 @@
 								
 								htmlToAdd += "<div>";
 								htmlToAdd += 	"<div class=\"title\">Surveys in " + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + ":</div>";
-								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["surveysEachWeek"] + "</div>";
+								htmlToAdd += 	"<div class=\"stat\" id=\"surveysEachWeek\">";
+								var maxSurveys = Math.max(...siteAnalysis["surveysEachWeek"]);
+								for(var i = 0; i < 54; i++){
+									var barHeight = 0;
+									if(maxSurveys > 0){
+										barHeight = (siteAnalysis["surveysEachWeek"]/maxSurveys) * 100;
+									}
+									htmlToAdd += 	"<div class=\"weelySurveysBar\" style=\"height:" + barHeight + "px;\"></div>";;
+								}
 								htmlToAdd += "</div>";
 								
 								$("#analysis")[0].innerHTML = htmlToAdd;
