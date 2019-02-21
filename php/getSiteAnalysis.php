@@ -71,6 +71,7 @@
 		
 		$siteArray = array(
 			"name" => $site->getName(),
+			"url" => $site->getURL(),
 			"authorities" => $authorities,
 			"firstSurveyYear" => $firstSurveyYear,
 			"plantCount" => $plantCount,
