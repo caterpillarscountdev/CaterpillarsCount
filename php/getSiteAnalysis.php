@@ -65,6 +65,15 @@
 			}
 		}
 		
+		//available years
+		$availableYears = array();
+		$query = mysqli_query($dbconn, "SELECT DISTINCT YEAR(Survey.LocalDate) AS Year FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' ORDER BY YEAR(Survey.LocalDate) ASC");
+		if(mysqli_num_rows($query) > 0){
+			while($row = mysqli_fetch_assoc($query)){
+				$availableYears[] = $row["Year"];
+			}
+		}
+		
 		mysqli_close($dbconn);
 		
 		$siteArray = array(
@@ -75,7 +84,8 @@
 			"plantCount" => $plantCount,
 			"observerCount" => $observerCount,
 			"mostRecentSurveyDate" => $mostRecentSurveyDate,
-			"surveysEachWeek" => $surveysEachWeek
+			"surveysEachWeek" => $surveysEachWeek,
+			"availableYears" => $availableYears
 		);
 		die("true|" . json_encode($siteArray));
 	}
