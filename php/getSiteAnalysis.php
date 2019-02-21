@@ -11,6 +11,16 @@
 		
 		//Email of site owner and managers
 		$emails = $site->getAuthorityEmails();
+		$creator = $site->getCreator();
+		$authorities = array(array($creator->getFullName(), $creator->getEmail()));
+		$managerRequests = ManagerRequest::findManagerRequestsBySite($site);
+		for($i = 0; $i < count($managerRequests); $i++){
+			if($managerRequests[$i]->getStatus() == "Approved"){
+				$manager = $managerRequests[$i]->getManager();
+				$authorities[] = array($manager->getFullName(), $manager->getEmail());
+			}
+		}
+		return $authorityEmails;
 		
 		//Year of site creation
 		$firstSurveyYear = "N/A";
@@ -61,7 +71,7 @@
 		
 		$siteArray = array(
 			"name" => $site->getName(),
-			"emails" => $emails,
+			"authorities" => $authorities,
 			"firstSurveyYear" => $firstSurveyYear,
 			"plantCount" => $plantCount,
 			"observerCount" => $observerCount,
