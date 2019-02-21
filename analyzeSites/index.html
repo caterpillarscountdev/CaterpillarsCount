@@ -378,6 +378,7 @@
 			var lastSiteID = "";
 			var callNumber = 0;
 			var yearGraphNumber = 0;
+			var lastYear = 0;
 			var authorityEmails = [];
 			function analyze(){
 				var siteID = getSelectValue($("#siteSelect"));
@@ -452,8 +453,9 @@
 									if(mostRecentSurvey != "N/A"){
 										mostRecentSurvey = Number(mostRecentSurvey.split("-")[1]) + "/" + Number(mostRecentSurvey.split("-")[2]) + "/" + mostRecentSurvey.split("-")[0].substring(2);
 									}
-									htmlToAdd += 	"<div class=\"stat\">" + Number(siteAnalysis["mostRecentSurveyDate"].split("-")[1]) + "/" + Number(siteAnalysis["mostRecentSurveyDate"].split("-")[2]) + "/" + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + "</div>";
+									htmlToAdd += 	"<div class=\"stat\">" + mostRecentSurvey + "</div>";
 									htmlToAdd += "</div>";
+									lastYear = Number(siteAnalysis["mostRecentSurveyDate"].split("-")[0]);
 
 									htmlToAdd += "<div>";
 									htmlToAdd += 	"<div class=\"title\">Surveys in " + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + ":</div>";
@@ -514,56 +516,59 @@
 			}
 			
 			function graphYear(year){
-				var thisYearGraphNumber = ++yearGraphNumber;
-				$("#surveysEachWeek")[0].innerHTML = "<div class=\"loading\"><img src=\"../images/rolling.svg\"/></div>";
-				$.get("../php/getWeeklySurveysByYear.php?year=" + year, function(data){
-					//success
-					if(data.indexOf("true|") == 0){
-						if(thisYearGraphNumber == yearGraphNumber){
-							var surveysEachWeek = JSON.parse(data.replace("true|", ""));
-							var htmlToAdd = "<div class=\"stat\" id=\"surveysEachWeekBars\">";
-							var maxSurveys = Math.max(...surveysEachWeek);
-							for(var i = 0; i < surveysEachWeek.length; i++){
-								var barHeight = 0;
-								if(maxSurveys > 0){
-									barHeight = (surveysEachWeek[i]/maxSurveys) * 100;
-								}
-								var title = "";
-								if(surveysEachWeek[i] > 0){
-									var surveyS = "s";
-									if(surveysEachWeek[i] == 1){
-										surveyS = "";
+				if(Number(year) != lastYear){
+					lastYear = Number(year);
+					var thisYearGraphNumber = ++yearGraphNumber;
+					$("#surveysEachWeek")[0].innerHTML = "<div class=\"loading\"><img src=\"../images/rolling.svg\"/></div>";
+					$.get("../php/getWeeklySurveysByYear.php?siteID=" + getSelectValue($("#siteSelect")) + "&year=" + year, function(data){
+						//success
+						if(data.indexOf("true|") == 0){
+							if(thisYearGraphNumber == yearGraphNumber){
+								var surveysEachWeek = JSON.parse(data.replace("true|", ""));
+								var htmlToAdd = "<div class=\"stat\" id=\"surveysEachWeekBars\">";
+								var maxSurveys = Math.max(...surveysEachWeek);
+								for(var i = 0; i < surveysEachWeek.length; i++){
+									var barHeight = 0;
+									if(maxSurveys > 0){
+										barHeight = (surveysEachWeek[i]/maxSurveys) * 100;
 									}
-									title = " title=\"" + surveysEachWeek[i] + " survey" + surveyS + "\"";
+									var title = "";
+									if(surveysEachWeek[i] > 0){
+										var surveyS = "s";
+										if(surveysEachWeek[i] == 1){
+											surveyS = "";
+										}
+										title = " title=\"" + surveysEachWeek[i] + " survey" + surveyS + "\"";
+									}
+									htmlToAdd += 	"<div class=\"weeklySurveysBar\"" + title + "><div style=\"height:" + barHeight + "px;\"></div></div>";
 								}
-								htmlToAdd += 	"<div class=\"weeklySurveysBar\"" + title + "><div style=\"height:" + barHeight + "px;\"></div></div>";
+								htmlToAdd += 	"</div>";
+								htmlToAdd += 	"<div id=\"monthBackgrounds\">";
+								htmlToAdd += 		"<div id=\"jan\"></div>";
+								htmlToAdd += 		"<div id=\"feb\"></div>";
+								htmlToAdd += 		"<div id=\"mar\"></div>";
+								htmlToAdd += 		"<div id=\"apr\"></div>";
+								htmlToAdd += 		"<div id=\"may\"></div>";
+								htmlToAdd += 		"<div id=\"jun\"></div>";
+								htmlToAdd += 		"<div id=\"jul\"></div>";
+								htmlToAdd += 		"<div id=\"aug\"></div>";
+								htmlToAdd += 		"<div id=\"sep\"></div>";
+								htmlToAdd += 		"<div id=\"oct\"></div>";
+								htmlToAdd += 		"<div id=\"nov\"></div>";
+								htmlToAdd += 		"<div id=\"dec\"></div>";
+								htmlToAdd += 	"</div>";
+								$("#surveysEachWeek")[0].innerHTML = htmlToAdd;
 							}
-							htmlToAdd += 	"</div>";
-							htmlToAdd += 	"<div id=\"monthBackgrounds\">";
-							htmlToAdd += 		"<div id=\"jan\"></div>";
-							htmlToAdd += 		"<div id=\"feb\"></div>";
-							htmlToAdd += 		"<div id=\"mar\"></div>";
-							htmlToAdd += 		"<div id=\"apr\"></div>";
-							htmlToAdd += 		"<div id=\"may\"></div>";
-							htmlToAdd += 		"<div id=\"jun\"></div>";
-							htmlToAdd += 		"<div id=\"jul\"></div>";
-							htmlToAdd += 		"<div id=\"aug\"></div>";
-							htmlToAdd += 		"<div id=\"sep\"></div>";
-							htmlToAdd += 		"<div id=\"oct\"></div>";
-							htmlToAdd += 		"<div id=\"nov\"></div>";
-							htmlToAdd += 		"<div id=\"dec\"></div>";
-							htmlToAdd += 	"</div>";
-							$("#surveysEachWeek")[0].innerHTML = htmlToAdd;
 						}
-					}
-					else{
-						queueNotice("error", data.replace("false|", ""));
-					}
-				})
-				.fail(function(){
-					//error
-					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
-				});
+						else{
+							queueNotice("error", data.replace("false|", ""));
+						}
+					})
+					.fail(function(){
+						//error
+						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+					});
+				}
 			}
 			
 			function emailAuthorities(){
