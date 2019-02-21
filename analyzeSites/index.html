@@ -174,6 +174,16 @@
 			#feb{
 				width:7.671%;
 			}
+			
+			.promptInput{
+				margin-top:10px;
+				font-size:14px;
+				color:#555;
+				border:0px none transparent;
+				padding:10px 0px 0px 0px;
+				width:100%;
+				outline:none;
+			}
 		</style>
 		<script>
 			$(document).ready(function(){
@@ -323,6 +333,7 @@
 			
 			var lastSiteID = "";
 			var callNumber = 0;
+			var authorityEmails = [];
 			function analyze(){
 				var siteID = getSelectValue($("#siteSelect"));
 				if(siteID != lastSiteID){
@@ -334,14 +345,25 @@
 							if(thisCallNumber == callNumber){
 								var siteAnalysis = JSON.parse(data.replace("true|", ""));
 								
+								var authorityNames = [];
+								authorityEmails = [];
+								for(var i = 0; i < siteAnalysis["authorities"].length; i++){
+									authorityNames[authorityNames.length] = siteAnalysis["authorities"][i][0];
+									authorityEmails[authorityEmails.length] = siteAnalysis["authorities"][i][1].split("@");
+								}
+								
 								var htmlToAdd = "<div>";
 								htmlToAdd += 	"<div class=\"title\">Site:</div>";
-								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["name"] + "</div>";
+								var siteName = siteAnalysis["name"];
+								if(siteAnalysis["url"].length > 0){
+									siteName = "<a href=\"" + siteAnalysis["url"] + "\" target=\"_blank\">" + siteAnalysis["name"] + </a>;
+								}
+								htmlToAdd += 	"<div class=\"stat\">" + siteName + "</div>";
 								htmlToAdd += "</div>";
 								
 								htmlToAdd += "<div>";
 								htmlToAdd += 	"<div class=\"title\">Site authorities:</div>";
-								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["emails"].join(", ") + "</div>";
+								htmlToAdd += 	"<div class=\"stat highlighted underline pointer\" onclick=\"emailAuthorities();\">" + authorityNames.join(", ") + "</div>";
 								htmlToAdd += "</div>";
 								
 								htmlToAdd += "<div>";
@@ -354,52 +376,60 @@
 								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["observerCount"] + "</div>";
 								htmlToAdd += "</div>";
 								
-								htmlToAdd += "<div>";
-								htmlToAdd += 	"<div class=\"title\">Surveys started in:</div>";
-								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["firstSurveyYear"] + "</div>";
-								htmlToAdd += "</div>";
-								
-								htmlToAdd += "<div>";
-								htmlToAdd += 	"<div class=\"title\">Most recent survey:</div>";
-								var mostRecentSurvey = Number(siteAnalysis["mostRecentSurveyDate"];
-								if(mostRecentSurvey != "N/A"){
-									mostRecentSurvey = Number(mostRecentSurvey.split("-")[1]) + "/" + Number(mostRecentSurvey.split("-")[2]) + "/" + mostRecentSurvey.split("-")[0];
+								if(siteAnalysis["firstSurveyYear"] == "N/A"){
+									htmlToAdd += "<div>";
+									htmlToAdd += 	"<div class=\"title\">Surveys:</div>";
+									htmlToAdd += 	"<div class=\"stat\">None yet!</div>";
+									htmlToAdd += "</div>";
 								}
-								htmlToAdd += 	"<div class=\"stat\">" + Number(siteAnalysis["mostRecentSurveyDate"].split("-")[1]) + "/" + Number(siteAnalysis["mostRecentSurveyDate"].split("-")[2]) + "/" + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + "</div>";
-								htmlToAdd += "</div>";
-								
-								htmlToAdd += "<div>";
-								htmlToAdd += 	"<div class=\"title\">Surveys in " + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + ":</div>";
-								htmlToAdd += 	"<div class=\"stat\" id=\"surveysEachWeek\">";
-								htmlToAdd += 		"<div class=\"stat\" id=\"surveysEachWeekBars\">";
-								var maxSurveys = Math.max(...siteAnalysis["surveysEachWeek"]);
-								for(var i = 0; i < siteAnalysis["surveysEachWeek"].length; i++){
-									var barHeight = 0;
-									if(maxSurveys > 0){
-										barHeight = (siteAnalysis["surveysEachWeek"][i]/maxSurveys) * 100;
+								else{
+									htmlToAdd += "<div>";
+									htmlToAdd += 	"<div class=\"title\">Surveys started in:</div>";
+									htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["firstSurveyYear"] + "</div>";
+									htmlToAdd += "</div>";
+
+									htmlToAdd += "<div>";
+									htmlToAdd += 	"<div class=\"title\">Most recent survey:</div>";
+									var mostRecentSurvey = Number(siteAnalysis["mostRecentSurveyDate"];
+									if(mostRecentSurvey != "N/A"){
+										mostRecentSurvey = Number(mostRecentSurvey.split("-")[1]) + "/" + Number(mostRecentSurvey.split("-")[2]) + "/" + mostRecentSurvey.split("-")[0];
 									}
-									var surveyS = "s";
-									if(siteAnalysis["surveysEachWeek"][i] == 1){
-										surveyS = "";
+									htmlToAdd += 	"<div class=\"stat\">" + Number(siteAnalysis["mostRecentSurveyDate"].split("-")[1]) + "/" + Number(siteAnalysis["mostRecentSurveyDate"].split("-")[2]) + "/" + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + "</div>";
+									htmlToAdd += "</div>";
+
+									htmlToAdd += "<div>";
+									htmlToAdd += 	"<div class=\"title\">Surveys in " + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + ":</div>";
+									htmlToAdd += 	"<div class=\"stat\" id=\"surveysEachWeek\">";
+									htmlToAdd += 		"<div class=\"stat\" id=\"surveysEachWeekBars\">";
+									var maxSurveys = Math.max(...siteAnalysis["surveysEachWeek"]);
+									for(var i = 0; i < siteAnalysis["surveysEachWeek"].length; i++){
+										var barHeight = 0;
+										if(maxSurveys > 0){
+											barHeight = (siteAnalysis["surveysEachWeek"][i]/maxSurveys) * 100;
+										}
+										var surveyS = "s";
+										if(siteAnalysis["surveysEachWeek"][i] == 1){
+											surveyS = "";
+										}
+										htmlToAdd += 	"<div class=\"weeklySurveysBar\" title=\"" + siteAnalysis["surveysEachWeek"][i] + " survey" + surveyS + "\"><div style=\"height:" + barHeight + "px;\"></div></div>";
 									}
-									htmlToAdd += 	"<div class=\"weeklySurveysBar\" title=\"" + siteAnalysis["surveysEachWeek"][i] + " survey" + surveyS + "\"><div style=\"height:" + barHeight + "px;\"></div></div>";
+									htmlToAdd += 	"</div>";
+									htmlToAdd += 	"<div id=\"monthBackgrounds\">";
+									htmlToAdd += 		"<div id=\"jan\"></div>";
+									htmlToAdd += 		"<div id=\"feb\"></div>";
+									htmlToAdd += 		"<div id=\"mar\"></div>";
+									htmlToAdd += 		"<div id=\"apr\"></div>";
+									htmlToAdd += 		"<div id=\"may\"></div>";
+									htmlToAdd += 		"<div id=\"jun\"></div>";
+									htmlToAdd += 		"<div id=\"jul\"></div>";
+									htmlToAdd += 		"<div id=\"aug\"></div>";
+									htmlToAdd += 		"<div id=\"sep\"></div>";
+									htmlToAdd += 		"<div id=\"oct\"></div>";
+									htmlToAdd += 		"<div id=\"nov\"></div>";
+									htmlToAdd += 		"<div id=\"dec\"></div>";
+									htmlToAdd += 	"</div>";
+									htmlToAdd += "</div>";
 								}
-								htmlToAdd += 	"</div>";
-								htmlToAdd += 	"<div id=\"monthBackgrounds\">";
-								htmlToAdd += 		"<div id=\"jan\"></div>";
-								htmlToAdd += 		"<div id=\"feb\"></div>";
-								htmlToAdd += 		"<div id=\"mar\"></div>";
-								htmlToAdd += 		"<div id=\"apr\"></div>";
-								htmlToAdd += 		"<div id=\"may\"></div>";
-								htmlToAdd += 		"<div id=\"jun\"></div>";
-								htmlToAdd += 		"<div id=\"jul\"></div>";
-								htmlToAdd += 		"<div id=\"aug\"></div>";
-								htmlToAdd += 		"<div id=\"sep\"></div>";
-								htmlToAdd += 		"<div id=\"oct\"></div>";
-								htmlToAdd += 		"<div id=\"nov\"></div>";
-								htmlToAdd += 		"<div id=\"dec\"></div>";
-								htmlToAdd += 	"</div>";
-								htmlToAdd += "</div>";
 								
 								$("#analysis")[0].innerHTML = htmlToAdd;
 								$("#analysisPanel")[0].style.display = "block";
@@ -420,6 +450,15 @@
 				callNumber++;
 				$("#analysis")[0].innerHTML = "";
 				$("#analysisPanel")[0].style.display = "";
+			}
+			
+			function emailAuthorities(){
+				var fullAuthorityEmails = [];
+				for(var i = 0; i < authorityEmails.length; i++){
+					fullAuthorityEmails[i] = authorityEmails[i].join("@");
+				}
+				promptConfirm("Here are the site authority email addresses:<br/><input type=\"text\" class=\"promptInput\" value=\"" + fullAuthorityEmails.join(', ') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Nevermind.", "Got it!", function(){}, function(){});
+				$(".promptInput").eq(0)[0].select();
 			}
 		</script>
 	</head>
