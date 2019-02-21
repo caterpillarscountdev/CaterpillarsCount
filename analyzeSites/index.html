@@ -390,7 +390,7 @@
 
 									htmlToAdd += "<div>";
 									htmlToAdd += 	"<div class=\"title\">Most recent survey:</div>";
-									var mostRecentSurvey = Number(siteAnalysis["mostRecentSurveyDate"];
+									var mostRecentSurvey = siteAnalysis["mostRecentSurveyDate"];
 									if(mostRecentSurvey != "N/A"){
 										mostRecentSurvey = Number(mostRecentSurvey.split("-")[1]) + "/" + Number(mostRecentSurvey.split("-")[2]) + "/" + mostRecentSurvey.split("-")[0];
 									}
