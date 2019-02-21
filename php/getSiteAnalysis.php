@@ -41,7 +41,7 @@
 		}
 		
 		//surveys each week, separated by year
-		$query = mysqli_query($dbconn, "SELECT WEEK("2017-01-01") AS StartWeek, WEEK("2017-12-31") AS EndWeek");
+		$query = mysqli_query($dbconn, "SELECT WEEK(\"" . substr($mostRecentSurveyDate, 0, 4) . "-01-01\") AS StartWeek, WEEK(\"" . substr($mostRecentSurveyDate, 0, 4) . "-12-31\") AS EndWeek");
 		$row = mysqli_fetch_assoc($query);
 		$startWeek = intval($row["StartWeek"]);
 		$endWeek = intval($row["EndWeek"]);
