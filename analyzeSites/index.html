@@ -104,13 +104,12 @@
 								if((a["name"] + " (" + a["region"] + ")").toLowerCase() > (b["name"] + " (" + b["region"] + ")").toLowerCase()){return 1;}
 								return 0;
 							});
-							var htmlToAdd = "<div class=\"select\">";
-							htmlToAdd += "<div class=\"option selected\" onclick=\"selectOption(this);\">	<div class=\"value\"></div>			<div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/selectIcons/notselected.png');\"></div>		<div class=\"text\">Not selected</div></div></div>";
+							var htmlToAdd = "<div class=\"select\" id=\"siteSelect\">";
+							htmlToAdd += "<div class=\"option selected\" onclick=\"selectOption(this);stopAnalysis();\">	<div class=\"value\"></div>			<div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/selectIcons/notselected.png');\"></div>		<div class=\"text\">Not selected</div></div></div>";
 							for(var i = 0; i < ownedSites.length; i++){
-								htmlToAdd += "<div class=\"option\" onclick=\"selectOption(this);\">	<div class=\"value\">" + ownedSites[i]["id"] + "</div>			<div class=\"shown\"><div class=\"image\"></div>		<div class=\"text\">" + ownedSites[i]["name"] + " (" + ownedSites[i]["region"] + ")</div></div></div>";
+								htmlToAdd += "<div class=\"option\" onclick=\"selectOption(this);analyze();\">	<div class=\"value\">" + ownedSites[i]["id"] + "</div>			<div class=\"shown\"><div class=\"image\"></div>		<div class=\"text\">" + ownedSites[i]["name"] + " (" + ownedSites[i]["region"] + ")</div></div></div>";
 								//htmlToAdd += "<option value=\"" + ownedSites[i]["id"] + "\">" + ownedSites[i]["name"] + " (" + ownedSites[i]["region"] + ")</option>";
 							}
-							htmlToAdd += "<div class=\"option\" onclick=\"window.location = '../createNewSite';\"><div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/plus.png');\"></div>		<div class=\"text italic\">CREATE NEW SITE</div></div></div>";
 							htmlToAdd += "</div>";
 							$("#sites")[0].innerHTML = htmlToAdd;
 						}
@@ -233,6 +232,37 @@
 					}
 				}
 			}
+			
+			var lastSiteID = "";
+			var callNumber = 0;
+			function analyze(){
+				var siteID = getSelectValue($("#siteSelect"));
+				if(siteID != lastSiteID){
+					lastSiteID = siteID;
+					var thisCallNumber = ++callNumber;
+					$.get("../php/getSiteAnalysis.php?siteID=" + siteID, function(data){
+						//success
+						if(data.indexOf("true|") == 0){
+							if(thisCallNumber == callNumber){
+								var siteAnalysis = JSON.parse(data.replace("true|", ""));
+								$("#analysis")[0].innerHTML = siteID;
+							}
+						}
+						else{
+							queueNotice("error", data.replace("false|", ""));
+						}
+					})
+					.fail(function(){
+						//error
+						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+					});
+				}
+			}
+			
+			function stopAnalysis(){
+				callNumber++;
+				$("#analysis")[0].innerHTML = "";
+			}
 		</script>
 	</head>
 	<body>
@@ -332,6 +362,7 @@
 							<img src="../images/rolling.svg"/>
 						</div>
 					</div>
+					<div id="analysis"></div>
 				</div>
 			</div>
 		</main>
