@@ -114,6 +114,19 @@
 				display:block;
 			}
 			
+			#analysis #surveysEachWeek .loading{
+				background:rgba(0,0,0,0.1);
+				display:block;
+				border-radius:4px;
+				overflow:hidden;
+				padding:20px;
+				text-align:center;
+			}
+			
+			#analysis #surveysEachWeek .loading img{
+				height:22px;
+			}
+			
 			#analysis #surveysEachWeekBars{
 				display:table;
 				width:100%;
@@ -184,6 +197,37 @@
 				width:100%;
 				outline:none;
 			}
+			
+			.smallSelect{
+    				position:relative;
+        			display:inline-block;
+				text-decoration:inherit;
+    			}
+   			.smallSelect .selected{
+				border-radius:4px;
+				text-decoration:inherit;
+    			}
+    			.smallSelect .options{
+    				position:absolute;
+        			top:0px;
+				left:-5px;
+        			background:white;
+        			min-width:100%;
+        			border-radius:5px;
+        			overflow:hidden;
+        			border:1px solid #ddd;
+        			border-bottom:2px solid #ddd;
+        			font-size:12px;
+        			display:none;
+				z-index:1;
+    			}
+    			.smallSelect .options>div{
+    				padding:5px;
+        			cursor:pointer;
+    			}
+    			.smallSelect .options>div:hover{
+    				background:#ebfeff;
+    			}
 		</style>
 		<script>
 			$(document).ready(function(){
@@ -333,14 +377,17 @@
 			
 			var lastSiteID = "";
 			var callNumber = 0;
+			var yearGraphNumber = 0;
 			var authorityEmails = [];
 			function analyze(){
 				var siteID = getSelectValue($("#siteSelect"));
 				if(siteID != lastSiteID){
 					lastSiteID = siteID;
 					var thisCallNumber = ++callNumber;
+					yearGraphNumber++;
 					
 					$("#analysis")[0].innerHTML = "<img src=\"../images/rollingBlack.svg\" style=\"height:22px;display:block;margin:auto;opacity:.2;\"/>";
+					$("#analysisPanel")[0].style.display = "block";
 					
 					$.get("../php/getSiteAnalysis.php?siteID=" + siteID, function(data){
 						//success
@@ -389,13 +436,21 @@
 									htmlToAdd += "<div>";
 									htmlToAdd += 	"<div class=\"title\">Surveys started in:</div>";
 									htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["firstSurveyYear"] + "</div>";
+									htmlToAdd += 		"<div class=\"smallSelect\">";
+									htmlToAdd +=			"<div class=\"selected\">" + siteAnalysis["firstSurveyYear"] + "</div>";
+									htmlToAdd +=			"<div class=\"options\">";
+									for(var i = 0; i < siteAnalysis["availableYears"].length; i++){
+										htmlToAdd +=			"<div onclick=\"smallSelectOption(this);graphYear('" + siteAnalysis["availableYears"][i] + "');\">" + siteAnalysis["availableYears"][i] + "</div>";
+									}
+									htmlToAdd +=			"</div>";
+									htmlToAdd += 		"</div>";
 									htmlToAdd += "</div>";
 
 									htmlToAdd += "<div>";
 									htmlToAdd += 	"<div class=\"title\">Most recent survey:</div>";
 									var mostRecentSurvey = siteAnalysis["mostRecentSurveyDate"];
 									if(mostRecentSurvey != "N/A"){
-										mostRecentSurvey = Number(mostRecentSurvey.split("-")[1]) + "/" + Number(mostRecentSurvey.split("-")[2]) + "/" + mostRecentSurvey.split("-")[0];
+										mostRecentSurvey = Number(mostRecentSurvey.split("-")[1]) + "/" + Number(mostRecentSurvey.split("-")[2]) + "/" + mostRecentSurvey.split("-")[0].substring(2);
 									}
 									htmlToAdd += 	"<div class=\"stat\">" + Number(siteAnalysis["mostRecentSurveyDate"].split("-")[1]) + "/" + Number(siteAnalysis["mostRecentSurveyDate"].split("-")[2]) + "/" + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + "</div>";
 									htmlToAdd += "</div>";
@@ -439,7 +494,6 @@
 								}
 								
 								$("#analysis")[0].innerHTML = htmlToAdd;
-								$("#analysisPanel")[0].style.display = "block";
 							}
 						}
 						else{
@@ -459,6 +513,59 @@
 				$("#analysisPanel")[0].style.display = "";
 			}
 			
+			function graphYear(year){
+				var thisYearGraphNumber = ++yearGraphNumber;
+				$("#surveysEachWeek")[0].innerHTML = "<div class=\"loading\"><img src=\"../images/rolling.svg\"/></div>";
+				$.get("../php/getWeeklySurveysByYear.php?year=" + year, function(data){
+					//success
+					if(data.indexOf("true|") == 0){
+						if(thisYearGraphNumber == yearGraphNumber){
+							var surveysEachWeek = JSON.parse(data.replace("true|", ""));
+							var htmlToAdd = "<div class=\"stat\" id=\"surveysEachWeekBars\">";
+							var maxSurveys = Math.max(...surveysEachWeek);
+							for(var i = 0; i < surveysEachWeek.length; i++){
+								var barHeight = 0;
+								if(maxSurveys > 0){
+									barHeight = (surveysEachWeek[i]/maxSurveys) * 100;
+								}
+								var title = "";
+								if(surveysEachWeek[i] > 0){
+									var surveyS = "s";
+									if(surveysEachWeek[i] == 1){
+										surveyS = "";
+									}
+									title = " title=\"" + surveysEachWeek[i] + " survey" + surveyS + "\"";
+								}
+								htmlToAdd += 	"<div class=\"weeklySurveysBar\"" + title + "><div style=\"height:" + barHeight + "px;\"></div></div>";
+							}
+							htmlToAdd += 	"</div>";
+							htmlToAdd += 	"<div id=\"monthBackgrounds\">";
+							htmlToAdd += 		"<div id=\"jan\"></div>";
+							htmlToAdd += 		"<div id=\"feb\"></div>";
+							htmlToAdd += 		"<div id=\"mar\"></div>";
+							htmlToAdd += 		"<div id=\"apr\"></div>";
+							htmlToAdd += 		"<div id=\"may\"></div>";
+							htmlToAdd += 		"<div id=\"jun\"></div>";
+							htmlToAdd += 		"<div id=\"jul\"></div>";
+							htmlToAdd += 		"<div id=\"aug\"></div>";
+							htmlToAdd += 		"<div id=\"sep\"></div>";
+							htmlToAdd += 		"<div id=\"oct\"></div>";
+							htmlToAdd += 		"<div id=\"nov\"></div>";
+							htmlToAdd += 		"<div id=\"dec\"></div>";
+							htmlToAdd += 	"</div>";
+							$("#surveysEachWeek")[0].innerHTML = htmlToAdd;
+						}
+					}
+					else{
+						queueNotice("error", data.replace("false|", ""));
+					}
+				})
+				.fail(function(){
+					//error
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+				});
+			}
+			
 			function emailAuthorities(){
 				var fullAuthorityEmails = [];
 				for(var i = 0; i < authorityEmails.length; i++){
@@ -466,6 +573,20 @@
 				}
 				promptConfirm("Here are the site authority email addresses:<br/><input type=\"text\" class=\"promptInput\" value=\"" + fullAuthorityEmails.join(', ') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Nevermind.", "Got it!", function(){}, function(){});
 				$(".promptInput").eq(0)[0].select();
+			}
+			
+			$(document).click(function(){
+				$(".smallSelect .options").fadeOut(0);
+			});
+			function showSmallSelectOptions(selectedOption){
+				setTimeout(function(){
+					//$('.smallSelect .options').css({display:"none"});
+					$(selectedOption).parent().find('.options').eq(0).css({display:"block"});
+				}, 1);
+			}
+			function smallSelectOption(option){
+				//$(option).parent().fadeOut(0);
+				$(option).parent().parent().find('.selected').eq(0)[0].innerHTML = option.innerHTML.replace("<br/>", " ").replace("<br>", " ");
 			}
 		</script>
 	</head>
