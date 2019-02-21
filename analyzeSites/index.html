@@ -245,7 +245,7 @@
 						if(data.indexOf("true|") == 0){
 							if(thisCallNumber == callNumber){
 								var siteAnalysis = JSON.parse(data.replace("true|", ""));
-								$("#analysis")[0].innerHTML = siteID;
+								$("#analysis")[0].innerHTML = siteAnalysis["description"];
 							}
 						}
 						else{
