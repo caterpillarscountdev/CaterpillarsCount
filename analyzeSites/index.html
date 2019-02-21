@@ -118,6 +118,9 @@
 				display:table-cell;
 				vertical-align:middle;
 				width:1.85%;
+			}
+			.weeklySurveysBar>div{
+				width:100%;
 				background:#19ffab;
 				border-radius:4px;
 				overflow:hidden;
@@ -321,7 +324,7 @@
 									if(maxSurveys > 0){
 										barHeight = (siteAnalysis["surveysEachWeek"][i]/maxSurveys) * 100;
 									}
-									htmlToAdd += 	"<div class=\"weeklySurveysBar\" style=\"height:" + barHeight + "px;\"></div>";;
+									htmlToAdd += 	"<div class=\"weeklySurveysBar\"><div style=\"height:" + barHeight + "px;\"></div></div>";
 								}
 								htmlToAdd += "</div>";
 								
