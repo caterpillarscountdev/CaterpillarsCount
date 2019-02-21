@@ -89,6 +89,15 @@
 			
 			#analysisPanel{
 				display:none;
+				font-family: 'Roboto Slab', serif;
+			}
+			
+			#analysis>div{
+				margin-bottom:20px;
+			}
+			
+			#analysis>div:last-of-type{
+				margin-bottom:0px;
 			}
 			
 			#analysis .title{
@@ -259,26 +268,40 @@
 							if(thisCallNumber == callNumber){
 								var siteAnalysis = JSON.parse(data.replace("true|", ""));
 								
-								var htmlToAdd = "<div class=\"title\">Site name:</div>";
-								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["name"] + "</div>";
+								var htmlToAdd = "<div>";
+								htmlToAdd += 	"<div class=\"title\">Site name:</div>";
+								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["name"] + "</div>";
+								htmlToAdd += "</div>";
 								
-								htmlToAdd += "<div class=\"title\">Site authority emails:</div>";
-								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["emails"] + "</div>";
+								htmlToAdd += "<div>";
+								htmlToAdd += 	"<div class=\"title\">Site authority emails:</div>";
+								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["emails"].join(", ") + "</div>";
+								htmlToAdd += "</div>";
 								
-								htmlToAdd += "<div class=\"title\">Year of first survey:</div>";
-								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["firstSurveyYear"] + "</div>";
+								htmlToAdd += "<div>";
+								htmlToAdd += 	"<div class=\"title\">Year of first survey:</div>";
+								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["firstSurveyYear"] + "</div>";
+								htmlToAdd += "</div>";
 								
-								htmlToAdd += "<div class=\"title\">Number of plants:</div>";
-								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["plantCount"] + "</div>";
+								htmlToAdd += "<div>";
+								htmlToAdd += 	"<div class=\"title\">Number of plants:</div>";
+								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["plantCount"] + "</div>";
+								htmlToAdd += "</div>";
 								
-								htmlToAdd += "<div class=\"title\">Number of observers:</div>";
-								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["observerCount"] + "</div>";
+								htmlToAdd += "<div>";
+								htmlToAdd += 	"<div class=\"title\">Number of observers:</div>";
+								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["observerCount"] + "</div>";
+								htmlToAdd += "</div>";
 								
-								htmlToAdd += "<div class=\"title\">Most recent survey:</div>";
-								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["mostRecentSurveyDate"] + "</div>";
+								htmlToAdd += "<div>";
+								htmlToAdd += 	"<div class=\"title\">Most recent survey:</div>";
+								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["mostRecentSurveyDate"] + "</div>";
+								htmlToAdd += "</div>";
 								
-								htmlToAdd += "<div class=\"title\">Surveys in " + siteAnalysis["mostRecentSurveyDate"].split("-")[2] + ":</div>";
-								htmlToAdd += "<div class=\"stat\">" + siteAnalysis["surveysEachWeek"] + "</div>";
+								htmlToAdd += "<div>";
+								htmlToAdd += 	"<div class=\"title\">Surveys in " + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + ":</div>";
+								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["surveysEachWeek"] + "</div>";
+								htmlToAdd += "</div>";
 								
 								$("#analysis")[0].innerHTML = htmlToAdd;
 								$("#analysisPanel")[0].style.display = "block";
