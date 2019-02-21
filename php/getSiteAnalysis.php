@@ -41,14 +41,19 @@
 		}
 		
 		//surveys each week, separated by year
+		$query = mysqli_query($dbconn, "SELECT WEEK("2017-01-01") AS StartWeek, WEEK("2017-12-31") AS EndWeek");
+		$row = mysqli_fetch_assoc($query);
+		$startWeek = intval($row["StartWeek"]);
+		$endWeek = intval($row["EndWeek"]);
+		
 		$surveysEachWeek = array();
-		for($i = 0; $i < 54; $i++){
+		for($i = $startWeek; $i <= $endWeek; $i++){
 			$surveysEachWeek[] = 0;
 		}
 		if($mostRecentSurveyDate != "N/A"){
 			$query = mysqli_query($dbconn, "SELECT WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND YEAR(Survey.LocalDate)=YEAR('$mostRecentSurveyDate') GROUP BY WEEK(Survey.LocalDate, 1)");
 			while($row = mysqli_fetch_assoc($query)){
-				$surveysEachWeek[intval($row["Week"])] = intval($row["SurveyCount"]);
+				$surveysEachWeek[intval($row["Week"]) - $startWeek] = intval($row["SurveyCount"]);
 			}
 		}
 		
