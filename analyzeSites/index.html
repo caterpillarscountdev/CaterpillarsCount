@@ -86,6 +86,10 @@
 			.select .option .shown .text{
 				display:inline-block;
 			}
+			
+			#analysisPanel{
+				display:none;
+			}
 		</style>
 		<script>
 			$(document).ready(function(){
@@ -245,7 +249,8 @@
 						if(data.indexOf("true|") == 0){
 							if(thisCallNumber == callNumber){
 								var siteAnalysis = JSON.parse(data.replace("true|", ""));
-								$("#analysis")[0].innerHTML = siteAnalysis["description"];
+								$("#analysis")[0].innerHTML = data.replace("true|", "");
+								$("#analysisPanel")[0].style.display = "block";
 							}
 						}
 						else{
@@ -262,6 +267,7 @@
 			function stopAnalysis(){
 				callNumber++;
 				$("#analysis")[0].innerHTML = "";
+				$("#analysisPanel")[0].style.display = "";
 			}
 		</script>
 	</head>
@@ -362,6 +368,10 @@
 							<img src="../images/rolling.svg"/>
 						</div>
 					</div>
+				</div>
+			</div>
+			<div class="panel" id="analysisPanel">
+				<div class="content">
 					<div id="analysis"></div>
 				</div>
 			</div>
