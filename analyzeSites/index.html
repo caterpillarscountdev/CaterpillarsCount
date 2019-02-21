@@ -339,6 +339,9 @@
 				if(siteID != lastSiteID){
 					lastSiteID = siteID;
 					var thisCallNumber = ++callNumber;
+					
+					$("#analysis")[0].innerHTML = "<img src=\"../images/rollingBlack.svg\" style=\"height:22px;display:block;margin:auto;opacity:.2;\"/>";
+					
 					$.get("../php/getSiteAnalysis.php?siteID=" + siteID, function(data){
 						//success
 						if(data.indexOf("true|") == 0){
