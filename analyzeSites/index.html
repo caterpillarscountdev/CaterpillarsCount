@@ -319,7 +319,7 @@
 								for(var i = 0; i < 54; i++){
 									var barHeight = 0;
 									if(maxSurveys > 0){
-										barHeight = (siteAnalysis["surveysEachWeek"]/maxSurveys) * 100;
+										barHeight = (siteAnalysis["surveysEachWeek"][i]/maxSurveys) * 100;
 									}
 									htmlToAdd += 	"<div class=\"weelySurveysBar\" style=\"height:" + barHeight + "px;\"></div>";;
 								}
