@@ -356,7 +356,7 @@
 								htmlToAdd += 	"<div class=\"title\">Site:</div>";
 								var siteName = siteAnalysis["name"];
 								if(siteAnalysis["url"].length > 0){
-									siteName = "<a href=\"" + siteAnalysis["url"] + "\" target=\"_blank\">" + siteAnalysis["name"] + "</a>";
+									siteName = "<a href=\"" + siteAnalysis["url"] + "\" target=\"_blank\" class=\"highlighted\">" + siteAnalysis["name"] + "</a>";
 								}
 								htmlToAdd += 	"<div class=\"stat\">" + siteName + "</div>";
 								htmlToAdd += "</div>";
@@ -407,11 +407,15 @@
 										if(maxSurveys > 0){
 											barHeight = (siteAnalysis["surveysEachWeek"][i]/maxSurveys) * 100;
 										}
-										var surveyS = "s";
-										if(siteAnalysis["surveysEachWeek"][i] == 1){
-											surveyS = "";
+										var title = "";
+										if(siteAnalysis["surveysEachWeek"][i] > 0){
+											var surveyS = "s";
+											if(siteAnalysis["surveysEachWeek"][i] == 1){
+												surveyS = "";
+											}
+											title = " title=\"" + siteAnalysis["surveysEachWeek"][i] + " survey" + surveyS + "\"";
 										}
-										htmlToAdd += 	"<div class=\"weeklySurveysBar\" title=\"" + siteAnalysis["surveysEachWeek"][i] + " survey" + surveyS + "\"><div style=\"height:" + barHeight + "px;\"></div></div>";
+										htmlToAdd += 	"<div class=\"weeklySurveysBar\"" + title + "><div style=\"height:" + barHeight + "px;\"></div></div>";
 									}
 									htmlToAdd += 	"</div>";
 									htmlToAdd += 	"<div id=\"monthBackgrounds\">";
