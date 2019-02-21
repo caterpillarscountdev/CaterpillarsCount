@@ -10,7 +10,6 @@
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		
 		//Email of site owner and managers
-		$emails = $site->getAuthorityEmails();
 		$creator = $site->getCreator();
 		$authorities = array(array($creator->getFullName(), $creator->getEmail()));
 		$managerRequests = ManagerRequest::findManagerRequestsBySite($site);
@@ -20,7 +19,6 @@
 				$authorities[] = array($manager->getFullName(), $manager->getEmail());
 			}
 		}
-		return $authorityEmails;
 		
 		//Year of site creation
 		$firstSurveyYear = "N/A";
