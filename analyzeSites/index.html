@@ -206,6 +206,7 @@
    			.smallSelect .selected{
 				border-radius:4px;
 				text-decoration:inherit;
+				background:rgba(0,0,0,0.2);
     			}
     			.smallSelect .options{
     				position:absolute;
@@ -452,7 +453,7 @@
 									htmlToAdd += "<div>";
 									htmlToAdd += 	"<div class=\"title\">Surveys in ";
 									htmlToAdd += 	"	<div class=\"smallSelect\">";
-									htmlToAdd +=			"<div class=\"selected\">" + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + "</div>";
+									htmlToAdd +=			"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + "</div>";
 									htmlToAdd +=			"<div class=\"options\">";
 									for(var i = 0; i < siteAnalysis["availableYears"].length; i++){
 										htmlToAdd +=			"<div onclick=\"smallSelectOption(this);graphYear('" + siteAnalysis["availableYears"][i] + "');\">" + siteAnalysis["availableYears"][i] + "</div>";
