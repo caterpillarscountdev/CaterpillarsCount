@@ -102,7 +102,6 @@
 			
 			#analysis .title{
 				font-weight:bold;
-				text-transform:uppercase;
 				padding-right:5px;
 			}
 			
@@ -270,33 +269,33 @@
 								var siteAnalysis = JSON.parse(data.replace("true|", ""));
 								
 								var htmlToAdd = "<div>";
-								htmlToAdd += 	"<div class=\"title\">Site name:</div>";
+								htmlToAdd += 	"<div class=\"title\">Site:</div>";
 								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["name"] + "</div>";
 								htmlToAdd += "</div>";
 								
 								htmlToAdd += "<div>";
-								htmlToAdd += 	"<div class=\"title\">Site authority emails:</div>";
+								htmlToAdd += 	"<div class=\"title\">Site authorities:</div>";
 								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["emails"].join(", ") + "</div>";
 								htmlToAdd += "</div>";
 								
 								htmlToAdd += "<div>";
-								htmlToAdd += 	"<div class=\"title\">Number of plants:</div>";
+								htmlToAdd += 	"<div class=\"title\">Plants:</div>";
 								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["plantCount"] + "</div>";
 								htmlToAdd += "</div>";
 								
 								htmlToAdd += "<div>";
-								htmlToAdd += 	"<div class=\"title\">Number of observers:</div>";
+								htmlToAdd += 	"<div class=\"title\">Observers:</div>";
 								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["observerCount"] + "</div>";
 								htmlToAdd += "</div>";
 								
 								htmlToAdd += "<div>";
-								htmlToAdd += 	"<div class=\"title\">Year of first survey:</div>";
+								htmlToAdd += 	"<div class=\"title\">Surveys started in:</div>";
 								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["firstSurveyYear"] + "</div>";
 								htmlToAdd += "</div>";
 								
 								htmlToAdd += "<div>";
 								htmlToAdd += 	"<div class=\"title\">Most recent survey:</div>";
-								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["mostRecentSurveyDate"] + "</div>";
+								htmlToAdd += 	"<div class=\"stat\">" + Number(siteAnalysis["mostRecentSurveyDate"].split("-")[1]) + "/" + Number(siteAnalysis["mostRecentSurveyDate"].split("-")[2]) + "/" + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + "</div>";
 								htmlToAdd += "</div>";
 								
 								htmlToAdd += "<div>";
