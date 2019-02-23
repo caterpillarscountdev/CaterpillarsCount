@@ -668,7 +668,7 @@
 				if(fullName.length > 0 && fullName[fullName.length - 1] == 's'){
 					possessiveS = "";
 				}
-				promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join("@") + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Nevermind.", "Got it!", function(){}, function(){});
+				promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join("@") + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Got it!", function(){}, function(){});
 				$(".promptInput").eq(0)[0].select();
 			}
 
@@ -862,13 +862,13 @@
 								htmlToAdd +=	"</div>";
 								htmlToAdd += 	"<div class=\"siteInfo\" style=\"background:" + surveys[i]["color"] + ";\"><div class=\"editable\" style=\"font-weight:bold;text-transform:uppercase;\" oninput=\"populatePlant(this);\">" + surveys[i]["plantCode"] + "</div><span class=\"plantCodeData\">: <a href=\"https://www.google.com/maps/search/?api=1&query=" + surveys[i]["siteCoordinates"] + "\" target=\"_blank\">" + surveys[i]["siteName"] + " (" + surveys[i]["siteRegion"] + ")</a>, Circle " + surveys[i]["circle"] + ", " + surveys[i]["plantSpecies"] + "</span><div class=\"date\" style=\"display:none;\">" + getReadableDate(surveys[i]["localDate"]) + "</div><div class=\"time\"><div class=\"editable\" onblur=\"forceTime(this);\">" + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "</div></div><div class=\"options\"><div";
 								if($("#batchDeleteDropdown")[0].style.maxHeight != "" && $("#batchDeleteDropdown")[0].style.maxHeight != "0px"){
-									htmlToAdd += " style=\"display:none;\"><img src=\"../images/editWhite.png\" style=\"height:12px;padding-top:1px;\" onclick=\"editSurvey(" + surveys[i]["id"] + ");\"/></div><div style=\"display:none;\"><img src=\"../images/deleteWhite.png\" style=\"height:13px;\" onclick=\"promptConfirm('Are you sure you want to delete " + surveys[i]["observerFullName"] + "\\'s " + surveys[i]["plantCode"] + " survey from " + getReadableDate(surveys[i]["localDate"]) + " at " + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "? You will not be able to undo this action.', 'Nevermind.', 'Yes, I am sure!', function(){}, function(){deleteSurvey(" + surveys[i]["id"] + ");});\"/></div><div><div class=\"checkboxHolder\" style=\"display:block;\"><div class=\"checkbox"
+									htmlToAdd += " style=\"display:none;\"><img src=\"../images/editWhite.png\" style=\"height:12px;padding-top:1px;\" onclick=\"editSurvey(" + surveys[i]["id"] + ");\"/></div><div style=\"display:none;\"><img src=\"../images/deleteWhite.png\" style=\"height:13px;\" onclick=\"promptConfirm('Are you sure you want to delete " + surveys[i]["observerFullName"] + "\\'s " + surveys[i]["plantCode"] + " survey from " + getReadableDate(surveys[i]["localDate"]) + " at " + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "? You will not be able to undo this action.', 'Never mind.', 'Yes, I am sure!', function(){}, function(){deleteSurvey(" + surveys[i]["id"] + ");});\"/></div><div><div class=\"checkboxHolder\" style=\"display:block;\"><div class=\"checkbox"
 									if(isSelected(surveys[i]["id"])){
 										htmlToAdd += " checked";
 									}
 								}
 								else{
-									htmlToAdd += "><img src=\"../images/editWhite.png\" style=\"height:12px;padding-top:1px;\" onclick=\"editSurvey(" + surveys[i]["id"] + ");\"/></div><div><img src=\"../images/deleteWhite.png\" style=\"height:13px;\" onclick=\"promptConfirm('Are you sure you want to delete " + surveys[i]["observerFullName"] + "\\'s " + surveys[i]["plantCode"] + " survey from " + getReadableDate(surveys[i]["localDate"]) + " at " + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "? You will not be able to undo this action.', 'Nevermind.', 'Yes, I am sure!', function(){}, function(){deleteSurvey(" + surveys[i]["id"] + ");});\"/></div><div><div class=\"checkboxHolder\"><div class=\"checkbox"
+									htmlToAdd += "><img src=\"../images/editWhite.png\" style=\"height:12px;padding-top:1px;\" onclick=\"editSurvey(" + surveys[i]["id"] + ");\"/></div><div><img src=\"../images/deleteWhite.png\" style=\"height:13px;\" onclick=\"promptConfirm('Are you sure you want to delete " + surveys[i]["observerFullName"] + "\\'s " + surveys[i]["plantCode"] + " survey from " + getReadableDate(surveys[i]["localDate"]) + " at " + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "? You will not be able to undo this action.', 'Never mind.', 'Yes, I am sure!', function(){}, function(){deleteSurvey(" + surveys[i]["id"] + ");});\"/></div><div><div class=\"checkboxHolder\"><div class=\"checkbox"
 								}
 								htmlToAdd +=	"\" onclick=\"toggleCheckbox($(this));toggleSelected($(this), " + surveys[i]["id"] + ");\"></div></div></div></div></div>";
 								htmlToAdd += 	"<div class=\"surveyInfo\">";
@@ -1619,7 +1619,7 @@
 					message = "Take a moment to make sure you have selected the correct survey. Are you sure you want to delete this survey? You will not be able to undo this action.";
 				}
 				batchDeleting = true;
-				promptConfirm(message, 'Nevermind.', 'Yes, I am sure!', function(){batchDeleting = false;}, function(){
+				promptConfirm(message, 'Never mind.', 'Yes, I am sure!', function(){batchDeleting = false;}, function(){
 					$.get("../php/deleteSurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&selected=" + JSON.stringify(selected) + "&unselected=" + JSON.stringify(unselected), function(data){
 						//success
 						deselectAll();
@@ -1833,7 +1833,7 @@
 									saveSurvey(surveyID);
 								}
 								else{
-									promptConfirm("Enter site password to save:<div><input type=\"password\" style=\"width:100%;border:1px solid #ccc;border-bottom:2px solid #ccc;border-radius:5px;padding:10px;font-size:17px;margin-top:10px;\" id=\"sitePassword\"/></div>", "Nevermind.", "CONTINUE!", function(){setLoadingButton($("#saveSurveyButton")[0], "Save changes", false);savingSurvey = false;}, function(){
+									promptConfirm("Enter site password to save:<div><input type=\"password\" style=\"width:100%;border:1px solid #ccc;border-bottom:2px solid #ccc;border-radius:5px;padding:10px;font-size:17px;margin-top:10px;\" id=\"sitePassword\"/></div>", "Never mind.", "CONTINUE!", function(){setLoadingButton($("#saveSurveyButton")[0], "Save changes", false);savingSurvey = false;}, function(){
 										var sitePassword = $("#sitePassword")[0].value;
 										$.get("../php/validateUserPlant.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + editablePlantCodeDiv.innerHTML + "&password=" + encodeURIComponent(sitePassword), function(data){
 											//success
