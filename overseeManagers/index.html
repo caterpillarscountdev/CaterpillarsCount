@@ -221,7 +221,7 @@
 				if(fullName.length > 0 && fullName[fullName.length - 1] == 's'){
 					possessiveS = "";
 				}
-				promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join('@') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Nevermind.", "Got it!", function(){}, function(){});
+				promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join('@') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Got it!", function(){}, function(){});
 				$(".promptInput").eq(0)[0].select();
 			}
 			
@@ -308,10 +308,10 @@
 									htmlToAdd += "<img src=\"" + crownSRC + "\" onclick=\"toggleCreatorPermissions('" + managers[i]["managerID"] + "');\"/>";
 									if(managers[i]["status"] == "Approved"){
 										newApprovedManagersArray[newApprovedManagersArray.length] = managers[i];
-										htmlToAdd += "<div onclick=\"promptConfirm('Are you sure you want to terminate " + managers[i]["fullName"] + "\\'s management position at this site? ', 'Nevermind.', 'Continue. I am sure!', function(){}, function(){terminate('" + managers[i]["managerID"] + "');});\">&times;</div>";
+										htmlToAdd += "<div onclick=\"promptConfirm('Are you sure you want to terminate " + managers[i]["fullName"] + "\\'s management position at this site? ', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + managers[i]["managerID"] + "');});\">&times;</div>";
 									}
 									else if(managers[i]["status"] == "Pending"){
-										htmlToAdd += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + managers[i]["fullName"] + "\\'s management services at this site? ', 'Nevermind.', 'Continue. I am sure!', function(){}, function(){terminate('" + managers[i]["managerID"] + "');});\">&times;</div>";
+										htmlToAdd += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + managers[i]["fullName"] + "\\'s management services at this site? ', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + managers[i]["managerID"] + "');});\">&times;</div>";
 									}
 									else{
 										htmlToAdd += " (request denied)<div onclick=\"terminate('" + managers[i]["managerID"] + "');\">&times;</div>";
@@ -429,14 +429,14 @@
 								crownSRC = $("#manager" + newManager["managerID"]).find("img").eq(0)[0].src;
 								var innerHTMLToReplaceWith = "<span class=\"highlighted pointer underline\" onclick=\"email('" + newManager["fullName"].replace(/'/g, "\\'") + "', ['" + newManager["email"].split("@")[0].replace(/'/g, "\\'") + "', '" + newManager["email"].split("@")[1].replace(/'/g, "\\'") + "']);\">" + newManager["fullName"] + "</span>";
 								innerHTMLToReplaceWith += "<img src=\"" + crownSRC + "\" onclick=\"toggleCreatorPermissions('" + newManager["managerID"] + "');\"/>";
-								innerHTMLToReplaceWith += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + newManager["fullName"] + "\\'s management services at this site?', 'Nevermind.', 'Continue. I am sure!', function(){}, function(){terminate('" + newManager["managerID"] + "');});\">&times;</div>";
+								innerHTMLToReplaceWith += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + newManager["fullName"] + "\\'s management services at this site?', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + newManager["managerID"] + "');});\">&times;</div>";
 								$("#manager" + newManager["managerID"])[0].innerHTML = innerHTMLToReplaceWith;
 							}
 							else{
 								var htmlToAdd = "<div id=\"manager" + newManager["managerID"] + "\">";
 								htmlToAdd += "<span class=\"highlighted pointer underline\" onclick=\"email('" + newManager["fullName"].replace(/'/g, "\\'") + "', ['" + newManager["email"].split("@")[0].replace(/'/g, "\\'") + "', '" + newManager["email"].split("@")[1].replace(/'/g, "\\'") + "']);\">" + newManager["fullName"] + "</span>";
 								htmlToAdd += "<img src=\"" + crownSRC + "\" onclick=\"toggleCreatorPermissions('" + newManager["managerID"] + "');\"/>";
-								htmlToAdd += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + newManager["fullName"] + "\\'s management services at this site?', 'Nevermind.', 'Continue. I am sure!', function(){}, function(){terminate('" + newManager["managerID"] + "');});\">&times;</div>";
+								htmlToAdd += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + newManager["fullName"] + "\\'s management services at this site?', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + newManager["managerID"] + "');});\">&times;</div>";
 								htmlToAdd += "</div>";
 								$("#managers").append(htmlToAdd);
 							}
