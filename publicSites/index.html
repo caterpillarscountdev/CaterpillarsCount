@@ -183,7 +183,7 @@
                 					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\">" + publicSites[i]["region"] + "</div></div>";
                 					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\">" + siteName + "</div></div>";
                 					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\">" + publicSites[i]["description"] + "</div></div>";
-                					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\"><span class=\"highlighted pointer underline\" onclick=\"email(['" + publicSites[i]["creatorEmailParts"][0] + "', '" + publicSites[i]["creatorEmailParts"][1] + "'], '" + publicSites[i]["siteName"] + "');\">Email us!</span></div></div>";
+                					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\"><span class=\"highlighted pointer underline\" onclick=\"email(['" + publicSites[i]["creatorEmailParts"][0].replace(/'/g, "\\'") + "', '" + publicSites[i]["creatorEmailParts"][1].replace(/'/g, "\\'") + "'], '" + publicSites[i]["siteName"].replace(/'/g, "\\'") + "');\">Email us!</span></div></div>";
                 					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\"><a class=\"highlighted\" href=\"https://www.google.com/maps/search/?api=1&query=" + publicSites[i]["latitude"] + "," + publicSites[i]["longitude"] + "\" target=\"_blank\">Map us!</a></div></div>";
                 					htmlToAdd += "</div>";
               					}
