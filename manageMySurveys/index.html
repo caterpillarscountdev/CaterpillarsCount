@@ -979,8 +979,8 @@
 									if(surveys[i]["arthropodSightings"][j]["quantity"] == 1){
 										htmlToAdd += 			"<div class=\"smallSelect\">";
 										var selectedGroup = singular(surveys[i]["arthropodSightings"][j]["group"]);
-										if(selectedGroup == "bee/wasp/sawfly"){
-											selectedGroup = "bee";
+										if(selectedGroup == "bee"){
+											selectedGroup = "bee/wasp/sawfly";
 										}
 										htmlToAdd +=				"<div class=\"selected\">" + selectedGroup + "</div>";
 										htmlToAdd +=				"<div class=\"options\">";
