@@ -37,7 +37,7 @@
 	}
 	
 	//Email of managers
-	$query = mysqli_query($dbconn, "SELECT CONCAT(User.FirstName, " ", User.LastName) AS FullName, User.Email, ManagerRequest.SiteFK FROM ManagerRequest JOIN User ON ManagerRequest.UserFKOfManager=User.ID WHERE ManagerRequest.Status='Approved'");
+	$query = mysqli_query($dbconn, "SELECT CONCAT(User.FirstName, ' ', User.LastName) AS FullName, User.Email, ManagerRequest.SiteFK FROM ManagerRequest JOIN User ON ManagerRequest.UserFKOfManager=User.ID WHERE ManagerRequest.Status='Approved'");
 	while($row = mysqli_fetch_assoc($query)){
 		if(array_key_exists($row["SiteFK"], $data)){
 			$data[$row["SiteFK"]]["authorities"][] = array($row["FullName"], $row["Email"]);
