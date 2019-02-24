@@ -1054,11 +1054,16 @@
 										htmlToAdd +=		" style=\"display:none;\"";
 									}
 									htmlToAdd +=			">";
+									
+									var sawflyLarvaText = "It is a sawfly larva";
+									if(surveys[i]["arthropodSightings"][j]["quantity"] > 1){
+										sawflyLarvaText = "These are sawfly larvae";
+									}
 									if(surveys[i]["arthropodSightings"][j]["sawfly"]){
-								   		htmlToAdd += 			"<div><div class=\"toggleable true beeOption\">In sawfly larva form</div></div>";
+								   		htmlToAdd += 			"<div><div class=\"toggleable true beeOption\">" + sawflyLarvaText + "</div></div>";
 									}
 									else{
-								   		htmlToAdd += 			"<div><div class=\"toggleable false beeOption\">In sawfly larva form</div></div>";
+								   		htmlToAdd += 			"<div><div class=\"toggleable false beeOption\">" + sawflyLarvaText + "</div></div>";
 									}
 									htmlToAdd +=			"</div>";
 									htmlToAdd +=			"<div class=\"beetleOptions\"";
@@ -1442,7 +1447,7 @@
 				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In a silk tent</div></div>";
 				htmlToAdd +=			"</div>";
 				htmlToAdd +=			"<div class=\"beeOptions\" style=\"display:none;\">";
-				htmlToAdd += 				"<div><div class=\"toggleable false beeOption\">In sawfly larva form</div></div>";
+				htmlToAdd += 				"<div><div class=\"toggleable false beeOption\">These are sawfly larvae</div></div>";
 				htmlToAdd +=			"</div>";
 				htmlToAdd +=			"<div class=\"beetleOptions\" style=\"display:none;\">";
 				htmlToAdd += 				"<div><div class=\"toggleable false beetleOption\">In larva form</div></div>";
