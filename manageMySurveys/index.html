@@ -1920,7 +1920,7 @@
 				for(var i = 0; i < arthropodSightings.length; i++){
 					var quantity = Number(arthropodSightings.eq(i).find(".editable").eq(0)[0].innerHTML);
 					var length = Number(arthropodSightings.eq(i).find(".editable").eq(1)[0].innerHTML);
-					var group = singular(arthropodSightings.eq(i).find(".selected").eq(0)[0].innerHTML.replace("flies", "fly").replace("bees/wasps/sawflies", "bee").replace("bee/wasp/sawfly", "bee")).replace("daddylongleg", "daddylonglegs").replace("moth", "moths").replace("truebug", "truebugs");
+					var group = singular(arthropodSightings.eq(i).find(".selected").eq(0)[0].innerHTML.replace("bees/wasps/sawflies", "bee").replace("flies", "fly").replace("bee/wasp/sawfly", "bee")).replace("daddylongleg", "daddylonglegs").replace("moth", "moths").replace("truebug", "truebugs");
 					var hairy = false;
 					var leafRoll = false;
 					var silkTent = false;
