@@ -3,91 +3,78 @@
   	
 	require_once('orm/resources/Keychain.php');
 	require_once('orm/Site.php');
-  
-	$siteID = intval($_GET["siteID"]);
-	$site = Site::findByID($siteID);
-	if(is_object($site) && get_class($site) == "Site"){
-		$dbconn = (new Keychain)->getDatabaseConnection();
-		
-		//Email of site owner and managers
-		$creator = $site->getCreator();
-		$authorities = array(array($creator->getFullName(), $creator->getEmail()));
-		$managerRequests = ManagerRequest::findManagerRequestsBySite($site);
-		for($i = 0; $i < count($managerRequests); $i++){
-			if($managerRequests[$i]->getStatus() == "Approved"){
-				$manager = $managerRequests[$i]->getManager();
-				$authorities[] = array($manager->getFullName(), $manager->getEmail());
+	
+	$dbconn = (new Keychain)->getDatabaseConnection();
+	
+	$data = array();
+	$sites = Site::findAll();
+	$query = mysqli_query($dbconn, "SELECT WEEK(\"" . substr($mostRecentSurveyDate, 0, 4) . "-01-01\") AS StartWeek, WEEK(\"" . substr($mostRecentSurveyDate, 0, 4) . "-12-31\") AS EndWeek");
+	$row = mysqli_fetch_assoc($query);
+	$startWeek = intval($row["StartWeek"]);
+	$endWeek = intval($row["EndWeek"]);
+	$query = mysqli_query($dbconn, "SELECT YEAR(MIN(Survey.LocalDate)) AS FirstSurveyYear, YEAR(MAX(Survey.LocalDate)) AS LastSurveyYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK<>'2'");
+	$row = mysqli_fetch_assoc($query);
+	$firstSurveyYear = $row["FirstSurveyYear"];
+	$lastSurveyYear = $row["LastSurveyYear"];
+	for($i = 0; $i < count($sites); $i++){
+		if($sites[$i]->getID() != 2){
+			$surveysEachWeek = array();
+			for($i = $startWeek; $i <= $endWeek; $i++){
+				$surveysEachWeek[] = 0;
 			}
-		}
-		
-		//Year of site creation
-		$firstSurveyYear = "N/A";
-		$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' ORDER BY YEAR(Survey.LocalDate) ASC LIMIT 1");
-		if(mysqli_num_rows($query) > 0){
-			$firstSurveyYear = mysqli_fetch_assoc($query)["Year"];
-		}
-		
-		//Number of survey locations at the site
-		$plantCount = 0;
-		$query = mysqli_query($dbconn, "SELECT COUNT(*) AS PlantCount FROM Plant WHERE SiteFK='$siteID' AND Circle>'0'");
-		if(mysqli_num_rows($query) > 0){
-			$plantCount = mysqli_fetch_assoc($query)["PlantCount"];
-		}
-		
-		//Number of unique users
-		$observerCount = 0;
-		$query = mysqli_query($dbconn, "SELECT COUNT(DISTINCT Survey.UserFKOfObserver) AS ObserverCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID'");
-		if(mysqli_num_rows($query) > 0){
-			$observerCount = mysqli_fetch_assoc($query)["ObserverCount"];
-		}
-		
-		//Most recent survey date
-		$mostRecentSurveyDate = "N/A";
-		$query = mysqli_query($dbconn, "SELECT Survey.LocalDate AS MostRecentSurveyDate FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' ORDER BY Survey.LocalDate DESC LIMIT 1");
-		if(mysqli_num_rows($query) > 0){
-			$mostRecentSurveyDate = mysqli_fetch_assoc($query)["MostRecentSurveyDate"];
-		}
-		
-		//surveys each week, separated by year
-		$query = mysqli_query($dbconn, "SELECT WEEK(\"" . substr($mostRecentSurveyDate, 0, 4) . "-01-01\") AS StartWeek, WEEK(\"" . substr($mostRecentSurveyDate, 0, 4) . "-12-31\") AS EndWeek");
-		$row = mysqli_fetch_assoc($query);
-		$startWeek = intval($row["StartWeek"]);
-		$endWeek = intval($row["EndWeek"]);
-		
-		$surveysEachWeek = array();
-		for($i = $startWeek; $i <= $endWeek; $i++){
-			$surveysEachWeek[] = 0;
-		}
-		if($mostRecentSurveyDate != "N/A"){
-			$query = mysqli_query($dbconn, "SELECT WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND YEAR(Survey.LocalDate)=YEAR('$mostRecentSurveyDate') GROUP BY WEEK(Survey.LocalDate, 1)");
+			$query = mysqli_query($dbconn, "SELECT WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $sites[$i]->getID() . "' AND YEAR(Survey.LocalDate)='$lastSurveyYear' GROUP BY WEEK(Survey.LocalDate, 1)");
 			while($row = mysqli_fetch_assoc($query)){
 				$surveysEachWeek[intval($row["Week"]) - $startWeek] = intval($row["SurveyCount"]);
 			}
+
+			$data[(string)$sites[$i]->getID()] = array(
+				"name" => $sites[$i]->getName(),
+				"url" => $sites[$i]->getURL(),
+				"authorities" => array($sites[$i]->getCreator()->getFullName(), $sites[$i]->getCreator()->getEmail()),
+				"surveysEachWeek" => $surveysEachWeek
+			);
 		}
-		
-		//available years
-		$availableYears = array();
-		$query = mysqli_query($dbconn, "SELECT DISTINCT YEAR(Survey.LocalDate) AS Year FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' ORDER BY YEAR(Survey.LocalDate) ASC");
-		if(mysqli_num_rows($query) > 0){
-			while($row = mysqli_fetch_assoc($query)){
-				$availableYears[] = $row["Year"];
-			}
-		}
-		
-		mysqli_close($dbconn);
-		
-		$siteArray = array(
-			"name" => $site->getName(),
-			"url" => $site->getURL(),
-			"authorities" => $authorities,
-			"firstSurveyYear" => $firstSurveyYear,
-			"plantCount" => $plantCount,
-			"observerCount" => $observerCount,
-			"mostRecentSurveyDate" => $mostRecentSurveyDate,
-			"surveysEachWeek" => $surveysEachWeek,
-			"availableYears" => $availableYears
-		);
-		die("true|" . json_encode($siteArray));
 	}
-	die("false|We could not find this site.");
+	
+	//Email of managers
+	$query = mysqli_query($dbconn, "SELECT CONCAT(User.FirstName, " ", User.LastName) AS FullName, User.Email, ManagerRequest.SiteFK FROM ManagerRequest JOIN User ON ManagerRequest.UserFKOfManager=User.ID WHERE ManagerRequest.Status='Approved'");
+	while($row = mysqli_fetch_assoc($query)){
+		if(array_key_exists($row["SiteFK"], $data)){
+			$data[$row["SiteFK"]]["authorities"][] = array($row["FullName"], $row["Email"]);
+		}
+	}
+	
+	//Year of site creation
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, YEAR(MIN(LocalDate)) AS FirstYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
+	while($row = mysqli_fetch_assoc($query)){
+		if(array_key_exists($row["SiteFK"], $data)){
+			$data[$row["SiteFK"]]["firstSurveyYear"] = $row["FirstYear"];
+		}
+	}
+	
+	//Number of survey locations at the site
+	$query = mysqli_query($dbconn, "SELECT SiteFK, COUNT(*) AS PlantCount FROM Plant WHERE Circle>'0' GROUP BY SiteFK");
+	while($row = mysqli_fetch_assoc($query)){
+		if(array_key_exists($row["SiteFK"], $data)){
+			$data[$row["SiteFK"]]["plantCount"] = $row["PlantCount"];
+		}
+	}
+	
+	//Number of unique users
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT Survey.UserFKOfObserver) AS ObserverCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
+	while($row = mysqli_fetch_assoc($query)){
+		if(array_key_exists($row["SiteFK"], $data)){
+			$data[$row["SiteFK"]]["observerCount"] = $row["ObserverCount"];
+		}
+	}
+	
+	//Most recent survey date
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(LocalDate) AS MostRecentSurveyDate FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
+	while($row = mysqli_fetch_assoc($query)){
+		if(array_key_exists($row["SiteFK"], $data)){
+			$data[$row["SiteFK"]]["mostRecentSurveyDate"] = $row["MostRecentSurveyDate"];
+		}
+	}
+
+	die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $siteArray)));
 ?>
