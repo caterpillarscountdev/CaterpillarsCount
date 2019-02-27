@@ -23,7 +23,7 @@
 	for($i = 0; $i < count($sites); $i++){
 		if($sites[$i]->getID() != 2){
 			$surveysEachWeek = array();
-			for($i = $startWeek; $i <= $endWeek; $i++){
+			for($j = $startWeek; $j <= $endWeek; $j++){
 				$surveysEachWeek[] = 0;
 			}
 			$query = mysqli_query($dbconn, "SELECT WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $sites[$i]->getID() . "' AND YEAR(Survey.LocalDate)='$lastSurveyYear' GROUP BY WEEK(Survey.LocalDate, 1)");
