@@ -101,13 +101,17 @@
 						var data = JSON.parse(data.replace("true|", ""));
 						firstYear = data[0];
 						lastYear = data[1];
+						var authorities = [];
+						for(var i = 0; i < data[2][siteID]["authorities"].length; i++){
+							authorities[i] = data[2][siteID]["authorities"][i];
+						}
 						for (var siteID in data[2]){
 							if(data[2].hasOwnProperty(siteID)){
 								siteData[siteData.length] = {
 									"siteID": siteID,
 									"name": data[2][siteID]["name"],
 									"url": data[2][siteID]["url"],
-									"authorities": data[2][siteID]["authorities"],
+									"authorities": authorities,
 									"surveysEachWeek": data[2][siteID]["surveysEachWeek"],
 									"firstSurveyYear": data[2][siteID]["firstSurveyYear"],
 									"plantCount": data[2][siteID]["plantCount"],
