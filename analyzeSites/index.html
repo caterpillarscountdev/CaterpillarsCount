@@ -156,6 +156,7 @@
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["mostRecentSurveyDate"] + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["surveysEachWeek"].join(", ") + "</div>";
 					htmlToAdd += "</div>";
+					$("#analytics")[0].innerHTML = htmlToAdd;
 				}
 			}
 			
