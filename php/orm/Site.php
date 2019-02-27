@@ -219,9 +219,13 @@ class Site
 		return $sitesArray;
 	}
 	
-	public static function findAll(){
+	public static function findAll($start = 0, $limit = 0){
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT * FROM `Site`");
+		$limitSQL = " LIMIT $start, $limit";
+		if($limit == 0){
+			$limitSQL = "";
+		}
+		$query = mysqli_query($dbconn, "SELECT * FROM `Site`" . $limitSQL);
 		mysqli_close($dbconn);
 		
 		$sitesArray = array();
