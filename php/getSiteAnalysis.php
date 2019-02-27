@@ -39,7 +39,7 @@
 			$data[(string)$sites[$i]->getID()] = array(
 				"name" => $sites[$i]->getName(),
 				"url" => $sites[$i]->getURL(),
-				"authorities" => array($sites[$i]->getCreator()->getFullName(), $sites[$i]->getCreator()->getEmail()),
+				"authorities" => array(array($sites[$i]->getCreator()->getFullName(), $sites[$i]->getCreator()->getEmail())),
 				"surveysEachWeek" => $surveysEachWeek,
 				"firstSurveyYear" => "N/A",
 				"plantCount" => 0,
