@@ -31,165 +31,6 @@
 			#sitesLoading img{
 				height:22px;
 			}
-			
-			.select{
-				width:100%;
-				-webkit-appearance: none;
-    				-moz-appearance: none;
-    				appearance: none;
-    				border-radius:4px;
-    				overflow:hidden;
-    				background:#fff;
-				border:1px solid #ddd;
-				border-bottom:2px solid #ddd;
-				color:#aaa;
-				box-sizing:border-box;
-				margin-top:5px;
-				cursor:pointer;
-			}
-			.select{
-				padding:0px;
-				color:#aaa;
-				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-			}
-			.select .option{
-				max-height:0px;
-				overflow:hidden;
-			}
-			.select .option.selected{
-				max-height:250px;
-				overflow:hidden;
-			}
-			.select .option .value{
-				display:none;
-			}
-			.select .option .shown{
-				padding:16px;
-				position:relative;
-				font-size:16px;
-			}
-			.select .option:nth-of-type(even){
-				background:#f7f7f7;
-			}
-			.select .option .shown .image{
-				height:34px;
-				width:34px;
-				background-size:contain;
-				background-repeat:no-repeat;
-				background-position:center;
-				display:inline-block;
-				opacity:.4;
-				position:absolute;
-				right:20px;
-				top:10px;
-			}
-			.select .option .shown .text{
-				display:inline-block;
-			}
-			
-			#analysisPanel{
-				display:none;
-				font-family: 'Roboto Slab', serif;
-			}
-			
-			#analysis>div{
-				margin-bottom:20px;
-			}
-			
-			#analysis>div:last-of-type{
-				margin-bottom:0px;
-			}
-			
-			#analysis .title{
-				font-weight:bold;
-				padding-right:5px;
-			}
-			
-			#analysis .title, #analysis .stat{
-				display:inline-block;
-			}
-			
-			#analysis #surveysEachWeek{
-				position:relative;
-				display:block;
-			}
-			
-			#analysis #surveysEachWeek .loading{
-				background:rgba(0,0,0,0.05);
-				display:block;
-				border-radius:4px;
-				overflow:hidden;
-				padding:20px;
-				text-align:center;
-				margin-top:15px;
-				margin-bottom:38px;
-			}
-			
-			#analysis #surveysEachWeek .loading img{
-				height:22px;
-			}
-			
-			#analysis #surveysEachWeekBars{
-				display:table;
-				width:100%;
-				background-image:url("../images/translucentLine.png");
-				background-size:auto 2px;
-				background-repeat:repeat-x;
-				background-position:center;
-				height:100px;
-				min-height:100px;
-				margin-top:15px;
-				position:relative;
-				z-index:1;
-			}
-			
-			.weeklySurveysBar{
-				display:table-cell;
-				vertical-align:middle;
-				width:1.85%;
-				padding:1px;
-				box-sizing:border-box;
-			}
-			.weeklySurveysBar>div{
-				width:100%;
-				background:#00d9ae;
-				border-radius:4px;
-				overflow:hidden;
-			}
-			
-			#analysis #monthBackgrounds{
-				position:relative;
-				width:100%;
-				z-index:0;
-				height:100%;
-				position:absolute;
-				top:0px;
-				left:0px;
-			}
-			
-			#analysis #monthBackgrounds>div{
-				height:100%;
-				float:left;
-				border-radius:4px;
-				overflow:hidden;
-			}
-			
-			#analysis #monthBackgrounds>div:nth-of-type(even){
-				background:rgba(0,0,0,0.025);
-			}
-			
-			#jan, #mar, #may, #jul, #aug, #oct, #dec{
-				width:8.493%;
-			}
-			
-			#apr, #jun, #sep, #nov{
-				width:8.219%;
-			}
-			
-			#feb{
-				width:7.671%;
-			}
-			
 			.promptInput{
 				margin-top:10px;
 				font-size:14px;
@@ -236,367 +77,50 @@
 		<script>
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-				populateSites();
+				loadTable();
 			});
-      
-      			function populateSites(){
-				var xhttp = new XMLHttpRequest();
-				xhttp.onreadystatechange = function() {
-					if (this.readyState == 4 && this.status == 200) {
-						if(this.responseText.indexOf("true") == 0){
-							var ownedSites = JSON.parse(this.responseText.replace("true|", ""));
-							ownedSites.sort(function(a, b){
-								if((a["name"] + " (" + a["region"] + ")").toLowerCase() < (b["name"] + " (" + b["region"] + ")").toLowerCase()){return -1;}
-								if((a["name"] + " (" + a["region"] + ")").toLowerCase() > (b["name"] + " (" + b["region"] + ")").toLowerCase()){return 1;}
-								return 0;
-							});
-							var htmlToAdd = "<div class=\"select\" id=\"siteSelect\">";
-							htmlToAdd += "<div class=\"option selected\" onclick=\"selectOption(this);stopAnalysis();\">	<div class=\"value\"></div>			<div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/selectIcons/notselected.png');\"></div>		<div class=\"text\">Not selected</div></div></div>";
-							for(var i = 0; i < ownedSites.length; i++){
-								htmlToAdd += "<div class=\"option\" onclick=\"selectOption(this);analyze();\">	<div class=\"value\">" + ownedSites[i]["id"] + "</div>			<div class=\"shown\"><div class=\"image\"></div>		<div class=\"text\">" + ownedSites[i]["name"] + " (" + ownedSites[i]["region"] + ")</div></div></div>";
-								//htmlToAdd += "<option value=\"" + ownedSites[i]["id"] + "\">" + ownedSites[i]["name"] + " (" + ownedSites[i]["region"] + ")</option>";
-							}
-							htmlToAdd += "</div>";
-							$("#sites")[0].innerHTML = htmlToAdd;
-						}
-						else{
-							var getSitesError = this.responseText.replace("false|", "");
-							queueNotice("error", getSitesError);
-							if(getSitesError == "Your log in dissolved. Maybe you logged in on another device."){
-								logOut();
-							}
-						}
-					}
-				};
-				xhttp.open("GET", "../php/getAllSitesLIGHT.php", true);
-				xhttp.send();
-			}
-      
-      			function toggleMaxHeight(elements){
-				//switch the max height of all elements specified as "elements" between 0px and 250px
-				elements = $(elements);
-				for(var i = 0; i < elements.length; i++){
-					if(elements.eq(i)[0].style.maxHeight != "250px"){
-						elements.eq(i).stop().animate({maxHeight:"250px"});
-					}
-					else{
-						elements.eq(i).stop().animate({maxHeight:"0px"});
-					}
-				}
-			}
-			var selectToggling = false;
-			function autoOpenSelect(selectElement){
-				if(!selectToggling){
-					selectToggling = true;
-					if(getSelectValue(selectElement) == ""){
-						if($(selectElement)[0].className.indexOf("active") > -1){
-							var activeClassName = $(selectElement)[0].className.substring($(selectElement)[0].className.indexOf("active"));
-							if(activeClassName.indexOf(" ") > -1){
-								activeClassName = activeClassName.substring(0, activeClassName.indexOf(" "));
-							}
-							$(selectElement)[0].className = $(selectElement)[0].className.replace(activeClassName, "").trim();
-						}
-						$(selectElement)[0].className = $(selectElement)[0].className + " active" + (getYPosition(selectElement) - 100);
-						elements = $(selectElement).find(".option").animate({maxHeight:"250px"}, "swing", function(){selectToggling = false;});
-					}
-				}
-			}
-			function selectOption(optionElement){
-				if(!selectToggling){
-					selectToggling = true;
-					//select an option in a custiom .select or open the custom .select
-					if(optionElement.parentNode.className.indexOf("active") > -1){
-						var preScrollTop = Number(optionElement.parentNode.className.replace(/\D/g, ""));
-						optionElement.parentNode.className = optionElement.parentNode.className.replace("active" + preScrollTop, "").trim();
-						$('html, body').animate({ scrollTop: preScrollTop }, 400);
-					}
-					else{
-						optionElement.parentNode.className = optionElement.parentNode.className + " active" + $(document).scrollTop();
-					}
-					toggleMaxHeight($(optionElement.parentNode).find(".option"));
-					var selectedElement = $(optionElement.parentNode).find(".selected").eq(0)[0];
-					selectedElement.className = selectedElement.className.replace("selected", "").trim();
-					optionElement.className = optionElement.className + " selected";
-					$(optionElement).stop().animate({maxHeight:"250px"}, "swing", function(){selectToggling = false});
-				}
-			}
-			function setSelectValue(selectElement, val){
-				//set the value of a custom .select and show the selected option
-				selectElement = $(selectElement)[0];
-				var options = selectElement.getElementsByClassName("option");
-				for(var i = 0; i < options.length; i++){
-					options[i].className = "option";
-					options[i].style.maxHeight = "0px";
-					options[i].style.overflow = "hidden";
-					if(options[i].getElementsByClassName("value")[0].innerHTML == val){
-						options[i].className = "option selected";
-						options[i].style.maxHeight = "250px";
-						options[i].style.overflow = "hidden";
-					}
-				}
-			}
-			function getSelectValue(selectElement){
-				//return the value of a custom .select
-				if($(selectElement).find(".selected .value").length < 1){
-					return "";
-				}
-				return $(selectElement).find(".selected .value")[0].innerHTML;
-			}
-			function getSelectText(selectElement){
-				//return the show text of a custom .select
-				return $(selectElement).find(".selected .text")[0].innerHTML;
-			}
-			function getSelectTextByValue(selectElement, val){
-				//given the value of a custom .select, return that values corresponding text
-				selectElement = $(selectElement)[0];
-				var options = selectElement.getElementsByClassName("option");
-				for(var i = 0; i < options.length; i++){
-					if($(options[i]).find(".value").eq(0)[0].innerHTML == val){
-						return $(options[i]).find(".text").eq(0)[0].innerHTML;
-					}
-				}
-			}
-			function getSelectValueByText(selectElement, txt){
-				//given the value of a custom .select, return that values corresponding text
-				selectElement = $(selectElement)[0];
-				var options = selectElement.getElementsByClassName("option");
-				for(var i = 0; i < options.length; i++){
-					if($(options[i]).find(".text").eq(0)[0].innerHTML == txt){
-						return $(options[i]).find(".value").eq(0)[0].innerHTML;
-					}
-				}
-			}
-			function getSelectImageByText(selectElement, txt){
-				//given the value of a custom .select, return that values corresponding text
-				selectElement = $(selectElement)[0];
-				var options = selectElement.getElementsByClassName("option");
-				for(var i = 0; i < options.length; i++){
-					if($(options[i]).find(".text").eq(0)[0].innerHTML == txt){
-						bgimg = $(options[i]).find(".image").eq(0)[0].style.backgroundImage;
-						return bgimg.substring(bgimg.indexOf("(") + 1, bgimg.lastIndexOf(")")).replace(/"/g, "").replace(/'/g, "");
-						//TODO: remove this line. "
-					}
-				}
-			}
 			
-			var lastSiteID = "";
-			var callNumber = 0;
-			var yearGraphNumber = 0;
+			var firstYear = 0;
 			var lastYear = 0;
-			var authorityEmails = [];
-			function analyze(){
-				var siteID = getSelectValue($("#siteSelect"));
-				if(siteID != lastSiteID){
-					lastSiteID = siteID;
-					var thisCallNumber = ++callNumber;
-					yearGraphNumber++;
-					
-					$("#analysis")[0].innerHTML = "<img src=\"../images/rollingBlack.svg\" style=\"height:22px;display:block;margin:auto;opacity:.2;\"/>";
-					$("#analysisPanel")[0].style.display = "block";
-					
-					$.get("../php/getSiteAnalysis.php?siteID=" + siteID, function(data){
-						//success
-						if(data.indexOf("true|") == 0){
-							if(thisCallNumber == callNumber){
-								var siteAnalysis = JSON.parse(data.replace("true|", ""));
-								
-								var authorityNames = [];
-								authorityEmails = [];
-								for(var i = 0; i < siteAnalysis["authorities"].length; i++){
-									authorityNames[authorityNames.length] = siteAnalysis["authorities"][i][0];
-									authorityEmails[authorityEmails.length] = siteAnalysis["authorities"][i][1].split("@");
-								}
-								
-								var htmlToAdd = "<div>";
-								htmlToAdd += 	"<div class=\"title\">Site:</div>";
-								var siteName = siteAnalysis["name"];
-								if(siteAnalysis["url"].length > 0){
-									siteName = "<a href=\"" + siteAnalysis["url"] + "\" target=\"_blank\" class=\"highlighted\">" + siteAnalysis["name"] + "</a>";
-								}
-								htmlToAdd += 	"<div class=\"stat\">" + siteName + "</div>";
-								htmlToAdd += "</div>";
-								
-								htmlToAdd += "<div>";
-								htmlToAdd += 	"<div class=\"title\">Site authorities:</div>";
-								htmlToAdd += 	"<div class=\"stat highlighted underline pointer\" onclick=\"emailAuthorities();\">" + authorityNames.join(", ") + "</div>";
-								htmlToAdd += "</div>";
-								
-								htmlToAdd += "<div>";
-								htmlToAdd += 	"<div class=\"title\">Plants:</div>";
-								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["plantCount"] + "</div>";
-								htmlToAdd += "</div>";
-								
-								htmlToAdd += "<div>";
-								htmlToAdd += 	"<div class=\"title\">Observers:</div>";
-								htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["observerCount"] + "</div>";
-								htmlToAdd += "</div>";
-								
-								if(siteAnalysis["firstSurveyYear"] == "N/A"){
-									htmlToAdd += "<div>";
-									htmlToAdd += 	"<div class=\"title\">Surveys:</div>";
-									htmlToAdd += 	"<div class=\"stat\">None yet!</div>";
-									htmlToAdd += "</div>";
-								}
-								else{
-									htmlToAdd += "<div>";
-									htmlToAdd += 	"<div class=\"title\">Surveys started in:</div>";
-									htmlToAdd += 	"<div class=\"stat\">" + siteAnalysis["firstSurveyYear"] + "</div>";
-									htmlToAdd += "</div>";
-
-									htmlToAdd += "<div>";
-									htmlToAdd += 	"<div class=\"title\">Most recent survey:</div>";
-									var mostRecentSurvey = siteAnalysis["mostRecentSurveyDate"];
-									if(mostRecentSurvey != "N/A"){
-										mostRecentSurvey = Number(mostRecentSurvey.split("-")[1]) + "/" + Number(mostRecentSurvey.split("-")[2]) + "/" + mostRecentSurvey.split("-")[0].substring(2);
-									}
-									htmlToAdd += 	"<div class=\"stat\">" + mostRecentSurvey + "</div>";
-									htmlToAdd += "</div>";
-									lastYear = Number(siteAnalysis["mostRecentSurveyDate"].split("-")[0]);
-
-									htmlToAdd += "<div>";
-									htmlToAdd += 	"<div class=\"title\">Surveys in ";
-									htmlToAdd += 	"	<div class=\"smallSelect\">";
-									htmlToAdd +=			"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + siteAnalysis["mostRecentSurveyDate"].split("-")[0] + "</div>";
-									htmlToAdd +=			"<div class=\"options\">";
-									for(var i = 0; i < siteAnalysis["availableYears"].length; i++){
-										htmlToAdd +=			"<div onclick=\"smallSelectOption(this);graphYear('" + siteAnalysis["availableYears"][i] + "');\">" + siteAnalysis["availableYears"][i] + "</div>";
-									}
-									htmlToAdd +=			"</div>";
-									htmlToAdd += 		"</div>";
-									htmlToAdd += 	":</div>";
-									htmlToAdd += 	"<div class=\"stat\" id=\"surveysEachWeek\">";
-									htmlToAdd += 		"<div class=\"stat\" id=\"surveysEachWeekBars\">";
-									var maxSurveys = Math.max(...siteAnalysis["surveysEachWeek"]);
-									for(var i = 0; i < siteAnalysis["surveysEachWeek"].length; i++){
-										var barHeight = 0;
-										if(maxSurveys > 0){
-											barHeight = (siteAnalysis["surveysEachWeek"][i]/maxSurveys) * 100;
-										}
-										var title = "";
-										if(siteAnalysis["surveysEachWeek"][i] > 0){
-											var surveyS = "s";
-											if(siteAnalysis["surveysEachWeek"][i] == 1){
-												surveyS = "";
-											}
-											title = " title=\"" + siteAnalysis["surveysEachWeek"][i] + " survey" + surveyS + "\"";
-										}
-										htmlToAdd += 	"<div class=\"weeklySurveysBar\"" + title + "><div style=\"height:" + barHeight + "px;\"></div></div>";
-									}
-									htmlToAdd += 	"</div>";
-									htmlToAdd += 	"<div id=\"monthBackgrounds\">";
-									htmlToAdd += 		"<div id=\"jan\"></div>";
-									htmlToAdd += 		"<div id=\"feb\"></div>";
-									htmlToAdd += 		"<div id=\"mar\"></div>";
-									htmlToAdd += 		"<div id=\"apr\"></div>";
-									htmlToAdd += 		"<div id=\"may\"></div>";
-									htmlToAdd += 		"<div id=\"jun\"></div>";
-									htmlToAdd += 		"<div id=\"jul\"></div>";
-									htmlToAdd += 		"<div id=\"aug\"></div>";
-									htmlToAdd += 		"<div id=\"sep\"></div>";
-									htmlToAdd += 		"<div id=\"oct\"></div>";
-									htmlToAdd += 		"<div id=\"nov\"></div>";
-									htmlToAdd += 		"<div id=\"dec\"></div>";
-									htmlToAdd += 	"</div>";
-									htmlToAdd += "</div>";
-								}
-								
-								$("#analysis")[0].innerHTML = htmlToAdd;
+			var siteData = [];
+			var loadChunk = 0;
+			function loadTable(){
+				$.get("../php/getSiteAnalysis.php?start=" + (50 * loadChunk++), function(data){
+					//success
+					if(data.indexOf("true|") == 0){
+						var data = JSON.parse(data.replace("true|", ""));
+						firstYear = data[0];
+						lastYear = data[1];
+						for (var siteID in data[2]){
+							if(data[2].hasOwnProperty(siteID)){
+								siteData[siteData.length] = {
+									"siteID": siteID,
+									"name": data[2][siteID]["name"],
+									"url": data[2][siteID]["url"],
+									"authorities": data[2][siteID]["authorities"],
+									"surveysEachWeek": data[2][siteID]["surveysEachWeek"],
+									"firstSurveyYear": data[2][siteID]["firstSurveyYear"],
+									"plantCount": data[2][siteID]["plantCount"],
+									"observerCount": data[2][siteID]["observerCount"],
+									"mostRecentSurveyDate": data[2][siteID]["mostRecentSurveyDate"]
+								};
 							}
 						}
-						else{
-							queueNotice("error", data.replace("false|", ""));
-						}
-					})
-					.fail(function(){
-						//error
-						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
-					});
-				}
-			}
-			
-			function stopAnalysis(){
-				callNumber++;
-				$("#analysis")[0].innerHTML = "";
-				$("#analysisPanel")[0].style.display = "";
-			}
-			
-			function graphYear(year){
-				if(Number(year) != lastYear){
-					lastYear = Number(year);
-					var thisYearGraphNumber = ++yearGraphNumber;
-					$("#surveysEachWeek")[0].innerHTML = "<div class=\"loading\"><img src=\"../images/rolling.svg\"/></div>";
-					$.get("../php/getWeeklySurveysByYear.php?siteID=" + getSelectValue($("#siteSelect")) + "&year=" + year, function(data){
-						//success
-						if(data.indexOf("true|") == 0){
-							if(thisYearGraphNumber == yearGraphNumber){
-								var surveysEachWeek = JSON.parse(data.replace("true|", ""));
-								var htmlToAdd = "<div class=\"stat\" id=\"surveysEachWeekBars\">";
-								var maxSurveys = Math.max(...surveysEachWeek);
-								for(var i = 0; i < surveysEachWeek.length; i++){
-									var barHeight = 0;
-									if(maxSurveys > 0){
-										barHeight = (surveysEachWeek[i]/maxSurveys) * 100;
-									}
-									var title = "";
-									if(surveysEachWeek[i] > 0){
-										var surveyS = "s";
-										if(surveysEachWeek[i] == 1){
-											surveyS = "";
-										}
-										title = " title=\"" + surveysEachWeek[i] + " survey" + surveyS + "\"";
-									}
-									htmlToAdd += 	"<div class=\"weeklySurveysBar\"" + title + "><div style=\"height:" + barHeight + "px;\"></div></div>";
-								}
-								htmlToAdd += 	"</div>";
-								htmlToAdd += 	"<div id=\"monthBackgrounds\">";
-								htmlToAdd += 		"<div id=\"jan\"></div>";
-								htmlToAdd += 		"<div id=\"feb\"></div>";
-								htmlToAdd += 		"<div id=\"mar\"></div>";
-								htmlToAdd += 		"<div id=\"apr\"></div>";
-								htmlToAdd += 		"<div id=\"may\"></div>";
-								htmlToAdd += 		"<div id=\"jun\"></div>";
-								htmlToAdd += 		"<div id=\"jul\"></div>";
-								htmlToAdd += 		"<div id=\"aug\"></div>";
-								htmlToAdd += 		"<div id=\"sep\"></div>";
-								htmlToAdd += 		"<div id=\"oct\"></div>";
-								htmlToAdd += 		"<div id=\"nov\"></div>";
-								htmlToAdd += 		"<div id=\"dec\"></div>";
-								htmlToAdd += 	"</div>";
-								$("#surveysEachWeek")[0].innerHTML = htmlToAdd;
-							}
+						if(data[3]){
+							$("#analysis")[0].innerHTML = JSON.stringify(siteData);
 						}
 						else{
-							queueNotice("error", data.replace("false|", ""));
+							loadTable();
 						}
-					})
-					.fail(function(){
-						//error
-						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
-					});
-				}
-			}
-			
-			function emailAuthorities(){
-				var fullAuthorityEmails = [];
-				for(var i = 0; i < authorityEmails.length; i++){
-					fullAuthorityEmails[i] = authorityEmails[i].join("@");
-				}
-				promptConfirm("Here are the site authority email addresses:<br/><input type=\"text\" class=\"promptInput\" value=\"" + fullAuthorityEmails.join(', ') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Got it!", function(){}, function(){});
-				$(".promptInput").eq(0)[0].select();
-			}
-			
-			$(document).click(function(){
-				$(".smallSelect .options").fadeOut(0);
-			});
-			function showSmallSelectOptions(selectedOption){
-				setTimeout(function(){
-					//$('.smallSelect .options').css({display:"none"});
-					$(selectedOption).parent().find('.options').eq(0).css({display:"block"});
-				}, 1);
-			}
-			function smallSelectOption(option){
-				//$(option).parent().fadeOut(0);
-				$(option).parent().parent().find('.selected').eq(0)[0].innerHTML = option.innerHTML.replace("<br/>", " ").replace("<br>", " ");
+					}
+					else{
+						queueNotice("error", data.replace("false|", ""));
+					}
+				})
+				.fail(function(){
+					//error
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please reload the page to try again.");
+				});
 			}
 		</script>
 	</head>
@@ -690,18 +214,12 @@
 		<main>
 			<div class="panel">
 				<h2>Analyze Sites</h2>
-				<div class="tagline">Select a site for analysis.</div>
 				<div class="content">
-					<div id="sites">
+					<div id="analysis">
 						<div id="sitesLoading">
 							<img src="../images/rolling.svg"/>
 						</div>
 					</div>
-				</div>
-			</div>
-			<div class="panel" id="analysisPanel">
-				<div class="content">
-					<div id="analysis"></div>
 				</div>
 			</div>
 		</main>
