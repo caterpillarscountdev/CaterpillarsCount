@@ -3,11 +3,14 @@
   	
 	require_once('orm/resources/Keychain.php');
 	require_once('orm/Site.php');
+
+	$start = $_GET["start"];
+	$LIMIT = 10;
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
 	$data = array();
-	$sites = Site::findAll();
+	$sites = Site::findAll($start, $LIMIT);
 	$query = mysqli_query($dbconn, "SELECT WEEK(\"" . substr($mostRecentSurveyDate, 0, 4) . "-01-01\") AS StartWeek, WEEK(\"" . substr($mostRecentSurveyDate, 0, 4) . "-12-31\") AS EndWeek");
 	$row = mysqli_fetch_assoc($query);
 	$startWeek = intval($row["StartWeek"]);
@@ -16,6 +19,7 @@
 	$row = mysqli_fetch_assoc($query);
 	$firstSurveyYear = $row["FirstSurveyYear"];
 	$lastSurveyYear = $row["LastSurveyYear"];
+	$siteIDs = array();
 	for($i = 0; $i < count($sites); $i++){
 		if($sites[$i]->getID() != 2){
 			$surveysEachWeek = array();
@@ -26,6 +30,8 @@
 			while($row = mysqli_fetch_assoc($query)){
 				$surveysEachWeek[intval($row["Week"]) - $startWeek] = intval($row["SurveyCount"]);
 			}
+			
+			$siteIDs[] = $sites[$i]->getID();
 
 			$data[(string)$sites[$i]->getID()] = array(
 				"name" => $sites[$i]->getName(),
@@ -37,7 +43,7 @@
 	}
 	
 	//Email of managers
-	$query = mysqli_query($dbconn, "SELECT CONCAT(User.FirstName, ' ', User.LastName) AS FullName, User.Email, ManagerRequest.SiteFK FROM ManagerRequest JOIN User ON ManagerRequest.UserFKOfManager=User.ID WHERE ManagerRequest.Status='Approved'");
+	$query = mysqli_query($dbconn, "SELECT CONCAT(User.FirstName, ' ', User.LastName) AS FullName, User.Email, ManagerRequest.SiteFK FROM ManagerRequest JOIN User ON ManagerRequest.UserFKOfManager=User.ID WHERE ManagerRequest.Status='Approved' AND ManagerRequest.SiteFK IN (" . implode(", ", $siteIDs) . ")");
 	while($row = mysqli_fetch_assoc($query)){
 		if(array_key_exists($row["SiteFK"], $data)){
 			$data[$row["SiteFK"]]["authorities"][] = array($row["FullName"], $row["Email"]);
@@ -45,7 +51,7 @@
 	}
 	
 	//Year of site creation
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, YEAR(MIN(LocalDate)) AS FirstYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, YEAR(MIN(LocalDate)) AS FirstYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (" . implode(", ", $siteIDs) . ") GROUP BY Plant.SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
 		if(array_key_exists($row["SiteFK"], $data)){
 			$data[$row["SiteFK"]]["firstSurveyYear"] = $row["FirstYear"];
@@ -53,7 +59,7 @@
 	}
 	
 	//Number of survey locations at the site
-	$query = mysqli_query($dbconn, "SELECT SiteFK, COUNT(*) AS PlantCount FROM Plant WHERE Circle>'0' GROUP BY SiteFK");
+	$query = mysqli_query($dbconn, "SELECT SiteFK, COUNT(*) AS PlantCount FROM Plant WHERE Circle>'0' AND SiteFK IN (" . implode(", ", $siteIDs) . ") GROUP BY SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
 		if(array_key_exists($row["SiteFK"], $data)){
 			$data[$row["SiteFK"]]["plantCount"] = $row["PlantCount"];
@@ -61,7 +67,7 @@
 	}
 	
 	//Number of unique users
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT Survey.UserFKOfObserver) AS ObserverCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT Survey.UserFKOfObserver) AS ObserverCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (" . implode(", ", $siteIDs) . ") GROUP BY Plant.SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
 		if(array_key_exists($row["SiteFK"], $data)){
 			$data[$row["SiteFK"]]["observerCount"] = $row["ObserverCount"];
@@ -69,7 +75,7 @@
 	}
 	
 	//Most recent survey date
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(LocalDate) AS MostRecentSurveyDate FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(LocalDate) AS MostRecentSurveyDate FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (" . implode(", ", $siteIDs) . ") GROUP BY Plant.SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
 		if(array_key_exists($row["SiteFK"], $data)){
 			$data[$row["SiteFK"]]["mostRecentSurveyDate"] = $row["MostRecentSurveyDate"];
