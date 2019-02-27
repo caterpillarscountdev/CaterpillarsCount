@@ -169,7 +169,7 @@
 				for(var i = 0; i < siteData.length; i++){
 					if(Number(siteData[i]["siteID"]) == Number(siteID)){
 						for(var j = 0; j < siteData[i]["authorities"]; j++){
-							fullAuthorityEmails[j] = siteData[i]["authorities"][j][1].join("@");
+							fullAuthorityEmails[j] = siteData[i]["authorities"][j][1];
 						}
 					}
 				}
