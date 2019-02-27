@@ -92,5 +92,5 @@
 		}
 	}
 
-	die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $siteArray)));
+	die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $data)));
 ?>
