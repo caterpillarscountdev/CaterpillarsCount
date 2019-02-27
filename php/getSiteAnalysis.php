@@ -11,14 +11,14 @@
 	
 	$data = array();
 	$sites = Site::findAll($start, $LIMIT);
-	$query = mysqli_query($dbconn, "SELECT WEEK(\"" . substr($mostRecentSurveyDate, 0, 4) . "-01-01\") AS StartWeek, WEEK(\"" . substr($mostRecentSurveyDate, 0, 4) . "-12-31\") AS EndWeek");
-	$row = mysqli_fetch_assoc($query);
-	$startWeek = intval($row["StartWeek"]);
-	$endWeek = intval($row["EndWeek"]);
 	$query = mysqli_query($dbconn, "SELECT YEAR(MIN(Survey.LocalDate)) AS FirstSurveyYear, YEAR(MAX(Survey.LocalDate)) AS LastSurveyYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK<>'2'");
 	$row = mysqli_fetch_assoc($query);
 	$firstSurveyYear = $row["FirstSurveyYear"];
 	$lastSurveyYear = $row["LastSurveyYear"];
+	$query = mysqli_query($dbconn, "SELECT WEEK(\"" . $lastSurveyYear . "-01-01\") AS StartWeek, WEEK(\"" . $lastSurveyYear . "-12-31\") AS EndWeek");
+	$row = mysqli_fetch_assoc($query);
+	$startWeek = intval($row["StartWeek"]);
+	$endWeek = intval($row["EndWeek"]);
 	$siteIDs = array();
 	$lastCall = ($start + $LIMIT) >= intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site"))["Count"]);
 	for($i = 0; $i < count($sites); $i++){
