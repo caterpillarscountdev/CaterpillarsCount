@@ -5,7 +5,7 @@
 	require_once('orm/Site.php');
 
 	$start = $_GET["start"];
-	$LIMIT = 10;
+	$LIMIT = $_GET["limit"];
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
