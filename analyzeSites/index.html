@@ -168,9 +168,10 @@
 				var fullAuthorityEmails = [];
 				for(var i = 0; i < siteData.length; i++){
 					if(Number(siteData[i]["siteID"]) == Number(siteID)){
-						for(var j = 0; j < siteData[i]["authorities"]; j++){
+						for(var j = 0; j < siteData[i]["authorities"].length; j++){
 							fullAuthorityEmails[j] = siteData[i]["authorities"][j][1];
 						}
+						break;
 					}
 				}
 				promptConfirm("Here are the site authority email addresses:<br/><input type=\"text\" class=\"promptInput\" value=\"" + fullAuthorityEmails.join(', ') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Copy to clipboard!", function(){}, function(){
