@@ -679,7 +679,11 @@ class Site
 	}
 	
 	public function sendPrintTagsEmailTo($user){
-		if(in_array($this, $user->getSites())){
+		$sites = $user->getSites();
+		for($i = 0; $i < count($sites); $i++){
+			$sites[$i] = $sites[$i]->getID();
+		}
+		if(in_array(intval($this->id), $sites)){
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$plants = $this->getPlants();
 			$numberOfCircles = (count($plants) / 5);
