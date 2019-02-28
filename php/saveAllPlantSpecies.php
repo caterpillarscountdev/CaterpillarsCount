@@ -24,7 +24,11 @@
 		if(!is_object($site) || get_class($site) != "Site"){
 			die("false|Could not find site associated with these plants.");
 		}
-		if(!in_array($site, $user->getSites())){
+		$sites = $user->getSites();
+		for($i = 0; $i < count($sites); $i++){
+			$sites[$i] = $sites[$i]->getID();
+		}
+		if(!in_array($site->getID(), $sites)){
 			die("false|You do not have permission to edit the plants in this site.");
 		}
 		
