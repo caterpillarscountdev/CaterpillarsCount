@@ -14,7 +14,11 @@
 		if(is_object($site) && get_class($site) == "Site"){
 			$user = User::findBySignInKey($email, $salt);
 			if(is_object($user) && get_class($user) == "User"){
-				if(in_array($site, $user->getSites())){
+				$sites = $user->getSites();
+				for($i = 0; $i < count($sites); $i++){
+					$sites[$i] = $sites[$i]->getID();
+				}
+				if(in_array($site->getID(), $sites)){
 					$newPlants = $site->addCircle();
 					if($newPlants !== false){
 						$newPlants = array(
