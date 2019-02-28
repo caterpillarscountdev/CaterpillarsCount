@@ -16,7 +16,7 @@
 			$sites[$i] = $sites[$i]->getID();
 		}
 		$site = Site::findByName($siteName);
-		if(is_object($site) && get_class($site) == "Site" && in_array($site, $sites)){
+		if(is_object($site) && get_class($site) == "Site" && in_array($site->getID(), $sites)){
 			if($site->passwordIsCorrect($newPassword)){
 				die("false|That is already " . $siteName . "'s password.");
 			}
