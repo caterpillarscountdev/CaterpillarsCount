@@ -409,8 +409,9 @@
 			}
 			
 			var loadingGraphs = false;
-			function loadGraphs(year){
-				if(Number(year) == Number(currentYear) || loadingGraphs){return false;}
+			function loadGraphs(year, allowCurrentYear){
+				allowCurrentYear = allowCurrentYear || false;
+				if((Number(year) == Number(currentYear) && !allowCurrentYear) || loadingGraphs){return false;}
 				loadingGraphs = true;
 				currentYear = year;
 				
@@ -435,13 +436,15 @@
 								}
 							}
 						}
+						
+						loadingGraphs = false;
+						
 						if(data[1]){
 							showTable(lastSortingKey);
 							loadChunk = 0;
-							loadingGraphs = false;
 						}
 						else{
-							loadGraphs(year);
+							loadGraphs(year, true);
 						}
 					}
 					else{
