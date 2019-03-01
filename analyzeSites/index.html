@@ -436,8 +436,9 @@
 							}
 						}
 						if(data[1]){
-							loadChunk = 0;
 							showTable(lastSortingKey);
+							loadChunk = 0;
+							loadingGraphs = false;
 						}
 						else{
 							loadGraphs(year);
@@ -445,16 +446,14 @@
 					}
 					else{
 						queueNotice("error", data.replace("false|", ""));
+						loadingGraphs = false;
 					}
 				})
 				.fail(function(){
 					//error
 					loadChunk = 0;
-					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please reload the page to try again.");
-				})
-				.always(function(){
-					//complete
 					loadingGraphs = false;
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please reload the page to try again.");
 				});
 			}
 			
