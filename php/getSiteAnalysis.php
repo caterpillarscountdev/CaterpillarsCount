@@ -48,7 +48,7 @@
 			);
 		}
 		else if(count($sites) == 1){
-			die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $data)));
+			die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $data, true)));
 		}
 	}
 	
