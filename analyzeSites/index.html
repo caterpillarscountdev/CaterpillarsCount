@@ -163,8 +163,8 @@
 				background-size:auto 2px;
 				background-repeat:repeat-x;
 				background-position:center;
-				height:100px;
-				min-height:100px;
+				height:65px;
+				min-height:65px;
 				margin-top:10px;
 				position:relative;
 				z-index:1;
@@ -271,23 +271,21 @@
 			}
 			
 			function showTable(sortingIndex){
-				var htmlToAdd = "";
+				var htmlToAdd = "<div class=\"table\" style=\"background:#333;color:#fff;border-radius:4px 4px 0px 0px;overflow:hidden;\">";
+				htmlToAdd += 	"<div class=\"cell\">Site name</div>";
+				htmlToAdd += 	"<div class=\"cell\">Authorities</div>";
+				htmlToAdd += 	"<div class=\"cell\">Since</div>";
+				htmlToAdd += 	"<div class=\"cell\">Plants</div>";
+				htmlToAdd += 	"<div class=\"cell\">Users</div>";
+				htmlToAdd += 	"<div class=\"cell\">Last Survey</div>";
+				htmlToAdd += 	"<div class=\"cell\">" + lastYear + " survey pattern</div>";
+				htmlToAdd += "</div>";
 				
 				for(var i = 0; i < siteData.length; i++){
 					var authorityNames = [];
 					for(var j = 0; j < siteData[i]["authorities"].length; j++){
 						authorityNames[authorityNames.length] = siteData[i]["authorities"][j][0];
 					}
-					
-					htmlToAdd += "<div class=\"table\" style=\"background:#333;color:#fff;border-radius:4px 4px 0px 0px;overflow:hidden;\">";
-					htmlToAdd += 	"<div class=\"cell\">Site name</div>";
-					htmlToAdd += 	"<div class=\"cell\">Authorities</div>";
-					htmlToAdd += 	"<div class=\"cell\">Since</div>";
-					htmlToAdd += 	"<div class=\"cell\">Plants</div>";
-					htmlToAdd += 	"<div class=\"cell\">Users</div>";
-					htmlToAdd += 	"<div class=\"cell\">Last Survey</div>";
-					htmlToAdd += 	"<div class=\"cell\">" + lastYear + " survey pattern</div>";
-					htmlToAdd += "</div>";
 					
 					htmlToAdd += "<div class=\"table\">";
 					if(siteData[i]["url"] == ""){
