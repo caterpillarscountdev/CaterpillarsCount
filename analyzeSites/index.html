@@ -279,6 +279,16 @@
 						authorityNames[authorityNames.length] = siteData[i]["authorities"][j][0];
 					}
 					
+					htmlToAdd += "<div class=\"table\" style=\"background:#333;color:#fff;border-radius:4px 4px 0px 0px;overflow:hidden;\">";
+					htmlToAdd += 	"<div class=\"cell\">Site name</div>";
+					htmlToAdd += 	"<div class=\"cell\">Authorities</div>";
+					htmlToAdd += 	"<div class=\"cell\">Since</div>";
+					htmlToAdd += 	"<div class=\"cell\">Plants</div>";
+					htmlToAdd += 	"<div class=\"cell\">Users</div>";
+					htmlToAdd += 	"<div class=\"cell\">Last Survey</div>";
+					htmlToAdd += 	"<div class=\"cell\">" + lastYear + " survey pattern</div>";
+					htmlToAdd += "</div>";
+					
 					htmlToAdd += "<div class=\"table\">";
 					if(siteData[i]["url"] == ""){
 						htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["name"] + "</div>";
@@ -290,7 +300,11 @@
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["firstSurveyYear"] + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["plantCount"] + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["observerCount"] + "</div>";
-					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["mostRecentSurveyDate"].substring(5).replace("-", "/") + "/" + siteData[i]["mostRecentSurveyDate"].substring(2, 4) + "</div>";
+					var mostRecentDate = siteData[i]["mostRecentSurveyDate"];
+					if(mostRecentDate != "N/A"){
+						mostRecentDate += siteData[i]["mostRecentSurveyDate"].substring(5).replace("-", "/") + "/" + siteData[i]["mostRecentSurveyDate"].substring(2, 4);
+					}
+					htmlToAdd += 	"<div class=\"cell\">" + mostRecentDate + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">";
 					htmlToAdd += 		"<div class=\"stat\" id=\"surveysEachWeek\">";
 					htmlToAdd += 			"<div class=\"stat\" id=\"surveysEachWeekBars\">";
@@ -298,7 +312,7 @@
 					for(var j = 0; j < siteData[i]["surveysEachWeek"].length; j++){
 						var barHeight = 0;
 						if(maxSurveys > 0){
-							barHeight = (siteData[i]["surveysEachWeek"][j]/maxSurveys) * 100;
+							barHeight = (siteData[i]["surveysEachWeek"][j]/maxSurveys) * 65;
 						}
 						var title = "";
 						if(siteData[i]["surveysEachWeek"][j] > 0){
