@@ -311,15 +311,15 @@
 					}
 					else if(sortingKey == "plantCount" || sortingKey == "observerCount" || sortingKey == "firstSurveyYear"){
 						//numerical sort
-						return Number(a[sortingKey].replace(/\D/g, "")) - Number(b[sortingKey].replace(/\D/g, ""));
+						return Number(b[sortingKey].replace(/\D/g, "")) - Number(a[sortingKey].replace(/\D/g, ""));
 					}
 					else if(sortingKey == "mostRecentSurveyDate"){
 						//date sort
-						return Date(a[sortingKey]) - new Date(b[sortingKey]);
+						return (new Date(b[sortingKey].replace("N/A", "1900-01-01"))) - (new Date(a[sortingKey].replace("N/A", "1900-01-01")));
 					}
 					else{
 						//graph sort
-						return ((a["surveysEachWeek"].reduce(getSum) > 0) ? 1 : 0) - ((b["surveysEachWeek"].reduce(getSum) > 0) ? 1 : 0);
+						return ((b["surveysEachWeek"].reduce(getSum) > 0) ? 1 : 0) - ((a["surveysEachWeek"].reduce(getSum) > 0) ? 1 : 0);
 					}
 				});
 				
