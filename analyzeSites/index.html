@@ -46,7 +46,7 @@
 			.cell:nth-of-type(3), .cell:nth-of-type(4), .cell:nth-of-type(5), .cell:nth-of-type(6){
 				text-align:right;
 			}
-			.cell:nth-of-type(1){
+			.cell:nth-of-type(7){
 				text-align:center;
 			}
 			
@@ -291,7 +291,7 @@
 				htmlToAdd += 	"<div class=\"cell\">Plants</div>";
 				htmlToAdd += 	"<div class=\"cell\">Users</div>";
 				htmlToAdd += 	"<div class=\"cell\">Since</div>";
-				htmlToAdd += 	"<div class=\"cell\">Through</div>";
+				htmlToAdd += 	"<div class=\"cell\">Until</div>";
 				htmlToAdd += 	"<div class=\"cell\">" + lastYear + " survey pattern</div>";
 				htmlToAdd += "</div>";
 				
@@ -314,7 +314,7 @@
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["firstSurveyYear"] + "</div>";
 					var mostRecentDate = siteData[i]["mostRecentSurveyDate"];
 					if(mostRecentDate != "N/A"){
-						mostRecentDate += mostRecentDate.substring(5).replace("-", "/") + "/" + mostRecentDate.substring(2, 4);
+						mostRecentDate = Number(mostRecentDate.substring(5, 7)) + "/" + Number(mostRecentDate.substring(8, 10)) + "/" + mostRecentDate.substring(2, 4);
 					}
 					htmlToAdd += 	"<div class=\"cell\">" + mostRecentDate + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">";
