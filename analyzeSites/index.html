@@ -409,17 +409,19 @@
 			}
 			
 			var loadingGraphs = false;
-			function loadGraphs(year, allowCurrentYear){
-				allowCurrentYear = allowCurrentYear || false;
-				if((Number(year) == Number(currentYear) && !allowCurrentYear) || loadingGraphs){return false;}
+			function loadGraphs(year, consecutiveCall){
+				consecutiveCall = consecutiveCall || false;
+				if((Number(year) == Number(currentYear) && !consecutiveCall) || loadingGraphs){return false;}
 				loadingGraphs = true;
 				currentYear = year;
 				
 				$("#analysis")[0].innerHTML = "<div id=\"sitesLoading\"><img src=\"../images/rolling.svg\"/></div>";
 				
 				//clear year data from siteData
-				for(var i = 0; i < siteData.length; i++){
-					siteData[i]["surveysEachWeek"] = [0];
+				if(!consecutiveCall){
+					for(var i = 0; i < siteData.length; i++){
+						siteData[i]["surveysEachWeek"] = [0];
+					}
 				}
 				
 				$.get("../php/getWeeklySurveysByYear.php?start=" + (50 * loadChunk++) + "&year=" + year, function(data){
