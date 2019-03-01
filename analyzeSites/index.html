@@ -113,7 +113,7 @@
    			.smallSelect .selected{
 				border-radius:4px;
 				text-decoration:inherit;
-				background:rgba(0,0,0,0.1);
+				background:rgba(255,255,255,0.22);
 				cursor:pointer;
     			}
     			.smallSelect .options{
@@ -147,11 +147,6 @@
 				display:table-cell;
 				vertical-align:middle;
 			}
-			
-			
-			
-			
-			
 			
 			#analysis #surveysEachWeek{
 				position:relative;
@@ -500,6 +495,20 @@
 					}
 				});
 				$(".promptInput").eq(0)[0].select();
+			}
+			
+			$(document).click(function(){
+				$(".smallSelect .options").fadeOut(0);
+			});
+			function showSmallSelectOptions(selectedOption){
+				setTimeout(function(){
+					//$('.smallSelect .options').css({display:"none"});
+					$(selectedOption).parent().find('.options').eq(0).css({display:"block"});
+				}, 1);
+			}
+			function smallSelectOption(option){
+				//$(option).parent().fadeOut(0);
+				$(option).parent().parent().find('.selected').eq(0)[0].innerHTML = option.innerHTML.replace("<br/>", " ").replace("<br>", " ");
 			}
 		</script>
 	</head>
