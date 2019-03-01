@@ -294,19 +294,19 @@
 					htmlToAdd += 	"<div class=\"cell\">";
 					htmlToAdd += 		"<div class=\"stat\" id=\"surveysEachWeek\">";
 					htmlToAdd += 			"<div class=\"stat\" id=\"surveysEachWeekBars\">";
-					var maxSurveys = Math.max(...siteAnalysis["surveysEachWeek"]);
-					for(var i = 0; i < siteAnalysis["surveysEachWeek"].length; i++){
+					var maxSurveys = Math.max(...siteData[i]["surveysEachWeek"]);
+					for(var i = 0; i < siteData[i]["surveysEachWeek"].length; i++){
 						var barHeight = 0;
 						if(maxSurveys > 0){
-							barHeight = (siteAnalysis["surveysEachWeek"][i]/maxSurveys) * 100;
+							barHeight = (siteData[i]["surveysEachWeek"][i]/maxSurveys) * 100;
 						}
 						var title = "";
-						if(siteAnalysis["surveysEachWeek"][i] > 0){
+						if(siteData[i]["surveysEachWeek"][i] > 0){
 							var surveyS = "s";
-							if(siteAnalysis["surveysEachWeek"][i] == 1){
+							if(siteData[i]["surveysEachWeek"][i] == 1){
 								surveyS = "";
 							}
-							title = " title=\"" + siteAnalysis["surveysEachWeek"][i] + " survey" + surveyS + "\"";
+							title = " title=\"" + siteData[i]["surveysEachWeek"][i] + " survey" + surveyS + "\"";
 						}
 						htmlToAdd += 			"<div class=\"weeklySurveysBar\"" + title + "><div style=\"height:" + barHeight + "px;\"></div></div>";
 					}
