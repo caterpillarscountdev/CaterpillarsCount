@@ -244,6 +244,7 @@
 			
 			var firstYear = 0;
 			var lastYear = 0;
+			var currentYear = 0;
 			var siteData = [];
 			var loadChunk = 0;
 			function loadTable(){
@@ -253,6 +254,7 @@
 						var data = JSON.parse(data.replace("true|", ""));
 						firstYear = data[0];
 						lastYear = data[1];
+						currentYear = lastYear;
 						for (var siteID in data[2]){
 							if(data[2].hasOwnProperty(siteID)){
 								var authorities = [];
@@ -273,6 +275,7 @@
 							}
 						}
 						if(data[3]){
+							loadChunk = 0;
 							showTable("name");
 						}
 						else{
@@ -290,9 +293,11 @@
 			}
 			
 			var showingTable = false;
+			var lastSortingKey = "name";
 			function showTable(sortingKey){
 				if(showingTable){return false;}
 				showingTable = true;
+				lastSortingKey = sortingKey;
 				
 				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;border-radius:4px 4px 0px 0px;overflow:hidden;\">";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('name');\"" + ((sortingKey == "name") ? " style=\"text-decoration:underline;\"" : "") + ">Site name</div>";
@@ -401,6 +406,56 @@
 					$("#analysis")[0].innerHTML = htmlToAdd;
 					showingTable = false;
 				}
+			}
+			
+			var loadingGraphs = false;
+			function loadGraphs(year){
+				if(year == currentYear || loadingGraphs){return false;}
+				loadingGraphs = true;
+				currentYear = year;
+				
+				$("#analysis")[0].innerHTML = "<div id=\"sitesLoading\"><img src=\"../images/rolling.svg\"/></div>";
+				
+				//clear year data from siteData
+				for(var i = 0; i < siteData.length; i++){
+					siteData[i]["surveysEachWeek"] = [0];
+				}
+				
+				$.get("../php/getWeeklySurveysByYear.php?start=" + (50 * loadChunk++) + "&year=" + year, function(data){
+					//success
+					if(data.indexOf("true|") == 0){
+						var data = JSON.parse(data.replace("true|", ""));
+						for (var siteID in data[0]){
+							if(data[0].hasOwnProperty(siteID)){
+								for(var i = 0; i < siteData.length; i++){
+									if(siteData[i]["siteID"].toString() == siteID.toString()){
+										siteData[i]["surveysEachWeek"] = data[0][siteID]["surveysEachWeek"];
+										break;
+									}
+								}
+							}
+						}
+						if(data[1]){
+							loadChunk = 0;
+							showTable(lastSortingKey);
+						}
+						else{
+							loadGraphs(year);
+						}
+					}
+					else{
+						queueNotice("error", data.replace("false|", ""));
+					}
+				})
+				.fail(function(){
+					//error
+					loadChunk = 0;
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please reload the page to try again.");
+				})
+				.always(function(){
+					//complete
+					loadingGraphs = false;
+				});
 			}
 			
 			function emailAuthorities(siteID){
