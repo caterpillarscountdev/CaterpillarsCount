@@ -315,6 +315,7 @@
 					}
 					else if(sortingKey == "mostRecentSurveyDate"){
 						//date sort
+						return Date(a[sortingKey]) - new Date(b[sortingKey]);
 					}
 					else{
 						//graph sort
