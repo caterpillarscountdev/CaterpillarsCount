@@ -289,7 +289,11 @@
 				});
 			}
 			
+			var showingTable = false;
 			function showTable(sortingKey){
+				if(showingTable){return false;}
+				showingTable = true;
+				
 				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;border-radius:4px 4px 0px 0px;overflow:hidden;\">";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('name');\"" + ((sortingKey == "name") ? " style=\"text-decoration:underline;\"" : "") + ">Site name</div>";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('authorities');\"" + ((sortingKey == "authorities") ? " style=\"text-decoration:underline;\"" : "") + ">Authorities</div>";
@@ -301,7 +305,21 @@
 				htmlToAdd += "</div>";
 				
 				siteData.sort(function(a, b){
-					if(sortingKey == "name" || sortingKey == "authorities"){
+					if(sortingKey == "authorities"){
+						//authorities sort
+						var aAuthorityNames = [];
+						var bAuthorityNames = [];
+						for(var i = 0; i < a[sortingKey].length; i++){
+							aAuthorityNames[aAuthorityNames.length] = a[sortingKey][i][0];
+						}
+						for(var i = 0; i < b[sortingKey].length; i++){
+							bAuthorityNames[bAuthorityNames.length] = b[sortingKey][i][0];
+						}
+						if(aAuthorityNames.join(", ").toLowerCase() < bAuthorityNames.join(", ").toLowerCase()){return -1;}
+						if(aAuthorityNames.join(", ").toLowerCase() > bAuthorityNames.join(", ").toLowerCase()){return 1;}
+						return 0;
+					}
+					else if(sortingKey == "name"){
 						//alphabetical sort
 						if(a[sortingKey].toLowerCase() < b[sortingKey].toLowerCase()){return -1;}
 						if(a[sortingKey].toLowerCase() > b[sortingKey].toLowerCase()){return 1;}
@@ -381,6 +399,7 @@
 					htmlToAdd += 	"</div>";
 					htmlToAdd += "</div>";
 					$("#analysis")[0].innerHTML = htmlToAdd;
+					showingTable = false;
 				}
 			}
 			
