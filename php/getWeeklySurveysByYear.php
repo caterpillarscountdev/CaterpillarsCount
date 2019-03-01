@@ -33,7 +33,7 @@
 			$data[(string)$sites[$i]->getID()] = $surveysEachWeek;
 		}
 		else if(count($sites) == 1){
-			die("true|" . json_encode(array($data, true));
+			die("true|" . json_encode(array($data, true)));
 		}
 	}
 	die("true|" . json_encode(array($data, $lastCall)));
