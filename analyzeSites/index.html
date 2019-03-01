@@ -133,6 +133,7 @@
     			.smallSelect .options>div{
     				padding:5px;
         			cursor:pointer;
+				color:#333;
     			}
     			.smallSelect .options>div:hover{
     				background:#ebfeff;
@@ -294,7 +295,7 @@
 				showingTable = true;
 				lastSortingKey = sortingKey;
 				
-				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;border-radius:4px 4px 0px 0px;overflow:hidden;\">";
+				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;border-radius:4px 4px 0px 0px;\">";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('name');\"" + ((sortingKey == "name") ? " style=\"text-decoration:underline;\"" : "") + ">Site name</div>";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('authorities');\"" + ((sortingKey == "authorities") ? " style=\"text-decoration:underline;\"" : "") + ">Authorities</div>";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('plantCount');\"" + ((sortingKey == "plantCount") ? " style=\"text-decoration:underline;\"" : "") + ">Plants</div>";
@@ -311,6 +312,16 @@
 				htmlToAdd +=			"</div>";
 				htmlToAdd += 		"</div>";
 				htmlToAdd += 	"<span onclick=\"showTable('surveysEachWeek');\"> survey pattern</span></div>";
+				htmlToAdd += "</div>";
+				
+				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;\">";
+				htmlToAdd += 	"<div class=\"cell\"></div>";
+				htmlToAdd += 	"<div class=\"cell\"></div>";
+				htmlToAdd += 	"<div class=\"cell\"></div>";
+				htmlToAdd += 	"<div class=\"cell\"></div>";
+				htmlToAdd += 	"<div class=\"cell\"></div>";
+				htmlToAdd += 	"<div class=\"cell\"></div>";
+				htmlToAdd += 	"<div class=\"cell\" style=\"font-size:12px;\"><div style=\"float:left;\">Jan</div><div style=\"float:right;\">Dec</div><div style=\"clear:both;\"></div></div>";
 				htmlToAdd += "</div>";
 				
 				siteData.sort(function(a, b){
