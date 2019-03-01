@@ -3,6 +3,7 @@
   	
 	require_once('orm/resources/Keychain.php');
 	require_once('orm/Site.php');
+	$year = intval($_GET["year"]);
 	$start = intval($_GET["start"]);
 	$LIMIT = 50;
 	
@@ -10,7 +11,7 @@
 	
 	$data = array();
 	$sites = Site::findAll($start, $LIMIT);
-	$query = mysqli_query($dbconn, "SELECT WEEK(\"" . $lastSurveyYear . "-01-01\") AS StartWeek, WEEK(\"" . $lastSurveyYear . "-12-31\") AS EndWeek");
+	$query = mysqli_query($dbconn, "SELECT WEEK(\"" . $year . "-01-01\") AS StartWeek, WEEK(\"" . $year . "-12-31\") AS EndWeek");
 	$row = mysqli_fetch_assoc($query);
 	$startWeek = intval($row["StartWeek"]);
 	$endWeek = intval($row["EndWeek"]);
@@ -22,7 +23,7 @@
 			for($j = $startWeek; $j <= $endWeek; $j++){
 				$surveysEachWeek[] = 0;
 			}
-			$query = mysqli_query($dbconn, "SELECT WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $sites[$i]->getID() . "' AND YEAR(Survey.LocalDate)='$lastSurveyYear' GROUP BY WEEK(Survey.LocalDate, 1)");
+			$query = mysqli_query($dbconn, "SELECT WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $sites[$i]->getID() . "' AND YEAR(Survey.LocalDate)='$year' GROUP BY WEEK(Survey.LocalDate, 1)");
 			if(mysqli_num_rows($query) > 0){
 				while($row = mysqli_fetch_assoc($query)){
 					$surveysEachWeek[intval($row["Week"]) - $startWeek] = intval($row["SurveyCount"]);
