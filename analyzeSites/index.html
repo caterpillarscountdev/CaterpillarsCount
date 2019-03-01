@@ -335,7 +335,7 @@
 					}
 					else{
 						//graph sort
-						return ((b["surveysEachWeek"].reduce(getSum) > 0) ? 1 : 0) - ((a["surveysEachWeek"].reduce(getSum) > 0) ? 1 : 0);
+						return b["surveysEachWeek"].reduce(getSum) - a["surveysEachWeek"].reduce(getSum);
 					}
 				});
 				
