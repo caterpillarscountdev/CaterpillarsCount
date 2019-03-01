@@ -428,6 +428,7 @@
 						for (var siteID in data[0]){
 							if(data[0].hasOwnProperty(siteID)){
 								for(var i = 0; i < siteData.length; i++){
+									console.log(siteData[i]["siteID"].toString() + " " + siteID.toString() + " " + siteData[i]["siteID"].toString() == siteID.toString());
 									if(siteData[i]["siteID"].toString() == siteID.toString()){
 										siteData[i]["surveysEachWeek"] = data[0][siteID]["surveysEachWeek"];
 										break;
