@@ -32,6 +32,11 @@
 				height:22px;
 			}
 			
+			.table.header .cell{
+				text-align:center;
+				color:#fff;
+			}
+			
 			.table:nth-of-type(even){
 				background:#eee;
 			}
@@ -271,13 +276,13 @@
 			}
 			
 			function showTable(sortingIndex){
-				var htmlToAdd = "<div class=\"table\" style=\"background:#333;color:#fff;border-radius:4px 4px 0px 0px;overflow:hidden;\">";
+				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;border-radius:4px 4px 0px 0px;overflow:hidden;\">";
 				htmlToAdd += 	"<div class=\"cell\">Site name</div>";
 				htmlToAdd += 	"<div class=\"cell\">Authorities</div>";
-				htmlToAdd += 	"<div class=\"cell\">Since</div>";
 				htmlToAdd += 	"<div class=\"cell\">Plants</div>";
 				htmlToAdd += 	"<div class=\"cell\">Users</div>";
-				htmlToAdd += 	"<div class=\"cell\">Last Survey</div>";
+				htmlToAdd += 	"<div class=\"cell\">Since</div>";
+				htmlToAdd += 	"<div class=\"cell\">Through</div>";
 				htmlToAdd += 	"<div class=\"cell\">" + lastYear + " survey pattern</div>";
 				htmlToAdd += "</div>";
 				
@@ -295,12 +300,12 @@
 						htmlToAdd += 	"<div class=\"cell\"><a href=\"" + siteData[i]["url"] + "\" target=\"_blank\" class=\"highlighted\">" + siteData[i]["name"] + "</a></div>";
 					}
 					htmlToAdd += 	"<div class=\"cell\"><span class=\"highlighted pointer\" onclick=\"emailAuthorities('" + siteData[i]["siteID"] + "');\">" + authorityNames.join(", ") + "</span></div>";
-					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["firstSurveyYear"] + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["plantCount"] + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["observerCount"] + "</div>";
+					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["firstSurveyYear"] + "</div>";
 					var mostRecentDate = siteData[i]["mostRecentSurveyDate"];
 					if(mostRecentDate != "N/A"){
-						mostRecentDate += siteData[i]["mostRecentSurveyDate"].substring(5).replace("-", "/") + "/" + siteData[i]["mostRecentSurveyDate"].substring(2, 4);
+						mostRecentDate += mostRecentDate + "/" + mostRecentDate.substring(2, 4);
 					}
 					htmlToAdd += 	"<div class=\"cell\">" + mostRecentDate + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">";
