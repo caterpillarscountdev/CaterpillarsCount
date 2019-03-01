@@ -70,14 +70,14 @@
 				max-width:7%;
 			}
 			.table .cell:nth-of-type(6){
-				width:7%;
-				min-width:7%;
-				max-width:7%;
+				width:10%;
+				min-width:10%;
+				max-width:10%;
 			}
 			.table .cell:nth-of-type(7){
-				width:32%;
-				min-width:32%;
-				max-width:32%;
+				width:29%;
+				min-width:29%;
+				max-width:29%;
 			}
 			
 			.promptInput{
@@ -131,6 +131,90 @@
 			.cell{
 				display:table-cell;
 				vertical-align:middle;
+			}
+			
+			
+			
+			
+			
+			
+			#analysis #surveysEachWeek{
+				position:relative;
+				display:block;
+			}
+			
+			#analysis #surveysEachWeek .loading{
+				background:rgba(0,0,0,0.1);
+				display:block;
+				border-radius:4px;
+				overflow:hidden;
+				padding:20px;
+				text-align:center;
+			}
+			
+			#analysis #surveysEachWeek .loading img{
+				height:22px;
+			}
+			
+			#analysis #surveysEachWeekBars{
+				display:table;
+				width:100%;
+				background-image:url("../images/translucentLine.png");
+				background-size:auto 2px;
+				background-repeat:repeat-x;
+				background-position:center;
+				height:100px;
+				min-height:100px;
+				margin-top:10px;
+				position:relative;
+				z-index:1;
+			}
+			
+			.weeklySurveysBar{
+				display:table-cell;
+				vertical-align:middle;
+				width:1.85%;
+				padding:1px;
+				box-sizing:border-box;
+			}
+			.weeklySurveysBar>div{
+				width:100%;
+				background:#00d9ae;
+				border-radius:4px;
+				overflow:hidden;
+			}
+			
+			#analysis #monthBackgrounds{
+				position:relative;
+				width:100%;
+				z-index:0;
+				height:100%;
+				position:absolute;
+				top:0px;
+				left:0px;
+			}
+			
+			#analysis #monthBackgrounds>div{
+				height:100%;
+				float:left;
+				border-radius:4px;
+				overflow:hidden;
+			}
+			
+			#analysis #monthBackgrounds>div:nth-of-type(even){
+				background:rgba(0,0,0,0.025);
+			}
+			
+			#jan, #mar, #may, #jul, #aug, #oct, #dec{
+				width:8.493%;
+			}
+			
+			#apr, #jun, #sep, #nov{
+				width:8.219%;
+			}
+			
+			#feb{
+				width:7.671%;
 			}
 		</style>
 		<script>
@@ -202,12 +286,47 @@
 					else{
 						htmlToAdd += 	"<div class=\"cell\"><a href=\"" + siteData[i]["url"] + "\" target=\"_blank\" class=\"highlighted\">" + siteData[i]["name"] + "</a></div>";
 					}
-					htmlToAdd += 	"<div class=\"cell\"><span class=\"highlighted pointer\" onclick=\"emailAuthorities('" + siteData[i]["siteID"] + "');\">" + authorityNames + "</span></div>";
+					htmlToAdd += 	"<div class=\"cell\"><span class=\"highlighted pointer\" onclick=\"emailAuthorities('" + siteData[i]["siteID"] + "');\">" + authorityNames.join(", ") + "</span></div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["firstSurveyYear"] + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["plantCount"] + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["observerCount"] + "</div>";
-					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["mostRecentSurveyDate"] + "</div>";
-					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["surveysEachWeek"].join(", ") + "</div>";
+					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["mostRecentSurveyDate"].substring(5).replace("-", "/") + "/" + siteData[i]["mostRecentSurveyDate"].substring(2, 4) + "</div>";
+					htmlToAdd += 	"<div class=\"cell\">";
+					htmlToAdd += 		"<div class=\"stat\" id=\"surveysEachWeek\">";
+					htmlToAdd += 			"<div class=\"stat\" id=\"surveysEachWeekBars\">";
+					var maxSurveys = Math.max(...siteAnalysis["surveysEachWeek"]);
+					for(var i = 0; i < siteAnalysis["surveysEachWeek"].length; i++){
+						var barHeight = 0;
+						if(maxSurveys > 0){
+							barHeight = (siteAnalysis["surveysEachWeek"][i]/maxSurveys) * 100;
+						}
+						var title = "";
+						if(siteAnalysis["surveysEachWeek"][i] > 0){
+							var surveyS = "s";
+							if(siteAnalysis["surveysEachWeek"][i] == 1){
+								surveyS = "";
+							}
+							title = " title=\"" + siteAnalysis["surveysEachWeek"][i] + " survey" + surveyS + "\"";
+						}
+						htmlToAdd += 			"<div class=\"weeklySurveysBar\"" + title + "><div style=\"height:" + barHeight + "px;\"></div></div>";
+					}
+					htmlToAdd += 			"</div>";
+					htmlToAdd += 			"<div id=\"monthBackgrounds\">";
+					htmlToAdd += 				"<div id=\"jan\"></div>";
+					htmlToAdd += 				"<div id=\"feb\"></div>";
+					htmlToAdd += 				"<div id=\"mar\"></div>";
+					htmlToAdd += 				"<div id=\"apr\"></div>";
+					htmlToAdd += 				"<div id=\"may\"></div>";
+					htmlToAdd += 				"<div id=\"jun\"></div>";
+					htmlToAdd += 				"<div id=\"jul\"></div>";
+					htmlToAdd += 				"<div id=\"aug\"></div>";
+					htmlToAdd += 				"<div id=\"sep\"></div>";
+					htmlToAdd += 				"<div id=\"oct\"></div>";
+					htmlToAdd += 				"<div id=\"nov\"></div>";
+					htmlToAdd += 				"<div id=\"dec\"></div>";
+					htmlToAdd += 			"</div>";
+					htmlToAdd += 		"</div>";
+					htmlToAdd += 	"</div>";
 					htmlToAdd += "</div>";
 					$("#analysis")[0].innerHTML = htmlToAdd;
 				}
