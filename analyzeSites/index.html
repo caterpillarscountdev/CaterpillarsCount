@@ -290,8 +290,6 @@
 			}
 			
 			function showTable(sortingKey){
-				$("#analysis")[0].innerHTML = "<div id=\"sitesLoading\"><img src=\"../images/rolling.svg\"/></div>";
-				
 				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;border-radius:4px 4px 0px 0px;overflow:hidden;\">";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('name');\"" + ((sortingKey == "name") ? " style=\"text-decoration:underline;\"" : "") + ">Site name</div>";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('authorities');\"" + ((sortingKey == "authorities") ? " style=\"text-decoration:underline;\"" : "") + ">Authorities</div>";
@@ -311,7 +309,7 @@
 					}
 					else if(sortingKey == "plantCount" || sortingKey == "observerCount" || sortingKey == "firstSurveyYear"){
 						//numerical sort
-						return Number(b[sortingKey].replace(/\D/g, "")) - Number(a[sortingKey].replace(/\D/g, ""));
+						return Number(b[sortingKey].toString().replace(/\D/g, "")) - Number(a[sortingKey].toString().replace(/\D/g, ""));
 					}
 					else if(sortingKey == "mostRecentSurveyDate"){
 						//date sort
