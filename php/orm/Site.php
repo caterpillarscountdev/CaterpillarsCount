@@ -526,7 +526,7 @@ class Site
 		}
 		mysqli_close($dbconn);
 		
-		if($user->getEmail() == "plocharczykweb@gmail.com" || $user->getEmail() == "hurlbert@bio.unc.edu"){
+		if(User::isSuperUser($user)){
 			return true;
 		}
 		return false;
@@ -711,7 +711,7 @@ class Site
 	
 	public function hasCreatorPermissions($user){
 		if(is_object($user) && get_class($user) == "User"){
-			if($user->getEmail() == $this->getCreator()->getEmail() || $user->getEmail() == "plocharczykweb@gmail.com" || $user->getEmail() == "hurlbert@bio.unc.edu"){
+			if($user->getEmail() == $this->getCreator()->getEmail() || User::isSuperUser($user->getEmail())){
 				return true;
 			}
 			
