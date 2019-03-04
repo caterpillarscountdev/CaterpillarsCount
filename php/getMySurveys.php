@@ -44,7 +44,7 @@
 				}
 				$surveysArray[] = array(
 					"id" => $surveys[$i]->getID(),
-					"editable" => ($surveys[$i]->getPlant()->getSite()->isAuthority($user) || $surveys[$i]->getSubmissionTimestamp() >= (time() - (2 * 7 * 24 * 60 * 60)) || $user->getEmail() == "plocharczykweb@gmail.com" || $user->getEmail() == "hurlbert@bio.unc.edu"),
+					"editable" => ($surveys[$i]->getPlant()->getSite()->isAuthority($user) || $surveys[$i]->getSubmissionTimestamp() >= (time() - (2 * 7 * 24 * 60 * 60)) || User::isSuperUser($user->getEmail())),
 					"observerID" => $surveys[$i]->getObserver()->getID(),
 					"observerFullName" => $surveys[$i]->getObserver()->getFullName(),
 					"observerEmail" => $surveys[$i]->getObserver()->getEmail(),
