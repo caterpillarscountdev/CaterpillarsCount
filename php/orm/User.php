@@ -617,5 +617,19 @@ class User
 		}
 		return false;
 	}
+	
+	public function isSuperUser($user){//accepts user object or email address as parameter
+		$email = $user;
+		if(is_object($user) && get_class($user) == "User"){
+			$email = $user->getEmail();
+		}
+		return in_array($email, array(
+			"plocharczykweb@gmail.com", 
+			"hurlbert@bio.unc.edu", 
+			"gdicecco@live.unc.edu", 
+			"ssnell@live.unc.edu", 
+			"sarah.yelton@unc.edu"
+		));
+	}
 }		
 ?>
