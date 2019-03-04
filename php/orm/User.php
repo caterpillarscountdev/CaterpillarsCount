@@ -618,7 +618,7 @@ class User
 		return false;
 	}
 	
-	public function isSuperUser($user){//accepts user object or email address as parameter
+	public static function isSuperUser($user){//accepts user object or email address as parameter
 		$email = $user;
 		if(is_object($user) && get_class($user) == "User"){
 			$email = $user->getEmail();
