@@ -9,6 +9,11 @@
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
+	$siteCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site"))["Count"]);
+	if($start >= $siteCount){
+		die("false|Number of sites exceeded.");
+	}
+
 	$data = array();
 	$sites = Site::findAll($start, $LIMIT);
 	$query = mysqli_query($dbconn, "SELECT YEAR(MIN(Survey.LocalDate)) AS FirstSurveyYear, YEAR(MAX(Survey.LocalDate)) AS LastSurveyYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK<>'2'");
@@ -20,7 +25,7 @@
 	$startWeek = intval($row["StartWeek"]);
 	$endWeek = intval($row["EndWeek"]);
 	$siteIDs = array();
-	$lastCall = ($start + $LIMIT) >= intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site"))["Count"]);
+	$lastCall = ($start + $LIMIT) >= $siteCount;
 	for($i = 0; $i < count($sites); $i++){
 		if($sites[$i]->getID() != 2){
 			$surveysEachWeek = array();
