@@ -4,7 +4,7 @@
 	$salt = $_GET["salt"];
   
   	$user = User::findBySignInKey($email, $salt);
-	if(is_object($user) && get_class($user) == "User" && ($user->getEmail() == "plocharczykweb@gmail.com" || $user->getEmail() == "hurlbert@bio.unc.edu")){
+	if(is_object($user) && get_class($user) == "User" && (User::isSuperUser($user->getEmail()))){
     		$files = array_values(scandir("../" . getenv("USER_BACKUPS")));
     		for($i = (count($files) - 1); $i >= 0; $i--){
 			if(strpos($files[$i], ".csv") === false){
