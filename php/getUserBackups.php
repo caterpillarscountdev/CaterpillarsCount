@@ -16,5 +16,5 @@
     		}
     		die("true|" . json_encode(array_values($files)));
   	}
-  	die("false|Please log in with a developer account to view this page.");
+  	die("false|Please log in with a developer account before accessing this page.");
 ?>
