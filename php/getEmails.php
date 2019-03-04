@@ -7,7 +7,7 @@
 	
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
-    		if($user->getEmail() == "plocharczykweb@gmail.com" || $user->getEmail() == "hurlbert@bio.unc.edu" || $user->getEmail() == "sarah.yelton@unc.edu" || $user->getEmail() == "ssnell@live.unc.edu" || $user->getEmail() == "gdicecco@live.unc.edu"){
+    		if(User::isSuperUser($user->getEmail())){
       			$dbconn = (new Keychain)->getDatabaseConnection();
       
       			//get all emails
@@ -15,11 +15,10 @@
       			$emailsArray = array();
 		  	while($row = mysqli_fetch_assoc($query)){
 				if(trim($row["Email"]) != ""){
-						$superUsers = array("plocharczykweb@gmail.com", "hurlbert@bio.unc.edu");
           					$emailsArray[(string)$row["ID"]] = array(
             					"email" => $row["Email"], 
-            					"authority" => in_array($row["Email"], $superUsers),
-            					"activeAuthority" => in_array($row["Email"], $superUsers),
+            					"authority" => User::isSuperUser($row["Email"]),
+            					"activeAuthority" => User::isSuperUser($row["Email"]),
           				);
         			}
 		  	}
