@@ -268,7 +268,7 @@ class User
 		if($this->deleted){return null;}
 		
 		//Super users
-		if($this->email == "plocharczykweb@gmail.com" || $this->email == "hurlbert@bio.unc.edu"){
+		if(self::isSuperUser($this->email)){
 			return Site::findAll();
 		}
 		
