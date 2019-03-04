@@ -129,52 +129,52 @@
 
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-
-				if(window.localStorage.getItem("email") == ["plocharczykweb", "gmail.com"].join("@") || window.localStorage.getItem("email") == ["hurlbert", "bio.unc.edu"].join("@") || window.localStorage.getItem("email") == ["sarah.yelton", "unc.edu"].join("@") || window.localStorage.getItem("email") == ["ssnell", "live.unc.edu"].join("@") || window.localStorage.getItem("email") == ["gdicecco", "live.unc.edu"].join("@")){
-				   	$(".superUsersOnly").stop().fadeIn(0);
-					$.get("../php/getEmails.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
-						//success
-						if(data.indexOf("true|") == 0){
-							var emails = JSON.parse(data.replace("true|", ""));
-							var allEmails = [];
-							var authorityEmails = [];
-							var activeAuthorityEmails = [];
-							for (var i in emails) {
-								if (emails.hasOwnProperty(i)) {
-									// do stuff
-									allEmails[allEmails.length] = emails[i]["email"];
-									if(emails[i]["authority"]){
-										authorityEmails[authorityEmails.length] = emails[i]["email"];
-									}
-									if(emails[i]["activeAuthority"]){
-										activeAuthorityEmails[activeAuthorityEmails.length] = emails[i]["email"];
-									}
+				
+				$.get("../php/getEmails.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+					//success
+					if(data.indexOf("true|") == 0){
+						$(".superUsersOnly").stop().fadeIn(0);
+						
+						var emails = JSON.parse(data.replace("true|", ""));
+						var allEmails = [];
+						var authorityEmails = [];
+						var activeAuthorityEmails = [];
+						for (var i in emails) {
+							if (emails.hasOwnProperty(i)) {
+								// do stuff
+								allEmails[allEmails.length] = emails[i]["email"];
+								if(emails[i]["authority"]){
+									authorityEmails[authorityEmails.length] = emails[i]["email"];
+								}
+								if(emails[i]["activeAuthority"]){
+									activeAuthorityEmails[activeAuthorityEmails.length] = emails[i]["email"];
 								}
 							}
-							$("#everyoneCount")[0].innerHTML = allEmails.length;
-							$("#siteAuthoritiesCount")[0].innerHTML = authorityEmails.length;
-							$("#siteActiveAuthoritiesCount")[0].innerHTML = activeAuthorityEmails.length;
-							$("#everyone")[0].value = allEmails.join(", ");
-							$("#siteAuthorities")[0].value = authorityEmails.join(", ");
-							$("#siteActiveAuthorities")[0].value = activeAuthorityEmails.join(", ");
-							$("#getEmailsLoading")[0].style.display = "none";
-							$("#emails")[0].style.display = "block";
 						}
-						else{
-							var getEmailsError = data.replace("false|", "");
+						$("#everyoneCount")[0].innerHTML = allEmails.length;
+						$("#siteAuthoritiesCount")[0].innerHTML = authorityEmails.length;
+						$("#siteActiveAuthoritiesCount")[0].innerHTML = activeAuthorityEmails.length;
+						$("#everyone")[0].value = allEmails.join(", ");
+						$("#siteAuthorities")[0].value = authorityEmails.join(", ");
+						$("#siteActiveAuthorities")[0].value = activeAuthorityEmails.join(", ");
+						$("#getEmailsLoading")[0].style.display = "none";
+						$("#emails")[0].style.display = "block";
+					}
+					else{
+						var getEmailsError = data.replace("false|", "");
+						if(getEmailsError != "You do not have permission to get emails from the Caterpillars Count! database."){
 							queueNotice("error", getEmailsError);
-							$("#getEmailsSetting").stop().fadeOut();
 							if(getEmailsError == "Your log in dissolved. Maybe you logged in on another device."){
 								logOut();
 							}
 						}
-					})
-					.fail(function(){
-						//error
-						queueNotice("error", "Your request to get emails from the Caterpillars Count! database did not process. You may have a weak internet connection, or our servers might be busy. Please refresh the page to try again.");
-						$("#getEmailsSetting").stop().fadeOut();
-					});
-				}
+					}
+				})
+				.fail(function(){
+					//error
+					queueNotice("error", "Your request to get emails from the Caterpillars Count! database did not process. You may have a weak internet connection, or our servers might be busy. Please refresh the page to try again.");
+					$("#getEmailsSetting").stop().fadeOut();
+				});
 				
 				$.get("../php/getPrivacySettings.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + encodeURIComponent(window.localStorage.getItem("salt")), function(data){
 					if(data.indexOf("true|") == 0){
