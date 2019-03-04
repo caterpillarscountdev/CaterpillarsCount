@@ -255,7 +255,7 @@
 			}
 			
 			function dispatchChunkCall(chunk){
-				chunksProcessing[chunksProcessing].length = chunk;
+				chunksProcessing[chunksProcessing.length] = chunk;
 				$.get("../php/getSiteAnalysis.php?start=" + (50 * chunk), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
