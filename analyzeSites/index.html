@@ -221,15 +221,15 @@
 				background:rgba(0,0,0,0.025);
 			}
 			
-			#jan, #mar, #may, #jul, #aug, #oct, #dec{
+			.jan, .mar, .may, .jul, .aug, .oct, .dec{
 				width:8.493%;
 			}
 			
-			#apr, #jun, #sep, #nov{
+			.apr, .jun, .sep, .nov{
 				width:8.219%;
 			}
 			
-			#feb{
+			.feb{
 				width:7.671%;
 			}
 		</style>
@@ -316,7 +316,7 @@
 				}
 				htmlToAdd +=			"</div>";
 				htmlToAdd += 		"</div>";
-				htmlToAdd += 	"<span onclick=\"showTable('surveysEachWeek');\"> survey pattern</span></div>";
+				htmlToAdd += 	"<span onclick=\"showTable('surveysEachWeek');\"> relative survey effort</span></div>";
 				htmlToAdd += "</div>";
 				
 				htmlToAdd += "<div class=\"header table\" style=\"background:#777;\">";
@@ -326,7 +326,20 @@
 				htmlToAdd += 	"<div class=\"cell\"></div>";
 				htmlToAdd += 	"<div class=\"cell\"></div>";
 				htmlToAdd += 	"<div class=\"cell\"></div>";
-				htmlToAdd += 	"<div class=\"cell\" style=\"font-size:9px;background:#444;border-radius:0px 0px 0px 4px;\"><div style=\"float:left;\">Jan</div><div style=\"float:right;\">Dec</div><div style=\"clear:both;\"></div></div>";
+				htmlToAdd += 	"<div class=\"cell\" style=\"font-size:8px;background:#444;border-radius:0px 0px 0px 4px;text-align:center;\">";
+				htmlToAdd += 		"<div class=\"jan\">Jan</div>";
+				htmlToAdd += 		"<div class=\"feb\">Feb</div>";
+				htmlToAdd += 		"<div class=\"mar\">Mar</div>";
+				htmlToAdd += 		"<div class=\"apr\">Apr</div>";
+				htmlToAdd += 		"<div class=\"may\">May</div>";
+				htmlToAdd += 		"<div class=\"jun\">Jun</div>";
+				htmlToAdd += 		"<div class=\"jul\">Jul</div>";
+				htmlToAdd += 		"<div class=\"aug\">Aug</div>";
+				htmlToAdd += 		"<div class=\"sep\">Sep</div>";
+				htmlToAdd += 		"<div class=\"oct\">Oct</div>";
+				htmlToAdd += 		"<div class=\"nov\">Nov</div>";
+				htmlToAdd += 		"<div class=\"dec\">Dec</div>";
+				htmlToAdd += 	"</div>";
 				htmlToAdd += "</div>";
 				
 				siteData.sort(function(a, b){
@@ -407,18 +420,18 @@
 					}
 					htmlToAdd += 			"</div>";
 					htmlToAdd += 			"<div id=\"monthBackgrounds\">";
-					htmlToAdd += 				"<div id=\"jan\"></div>";
-					htmlToAdd += 				"<div id=\"feb\"></div>";
-					htmlToAdd += 				"<div id=\"mar\"></div>";
-					htmlToAdd += 				"<div id=\"apr\"></div>";
-					htmlToAdd += 				"<div id=\"may\"></div>";
-					htmlToAdd += 				"<div id=\"jun\"></div>";
-					htmlToAdd += 				"<div id=\"jul\"></div>";
-					htmlToAdd += 				"<div id=\"aug\"></div>";
-					htmlToAdd += 				"<div id=\"sep\"></div>";
-					htmlToAdd += 				"<div id=\"oct\"></div>";
-					htmlToAdd += 				"<div id=\"nov\"></div>";
-					htmlToAdd += 				"<div id=\"dec\"></div>";
+					htmlToAdd += 				"<div class=\"jan\"></div>";
+					htmlToAdd += 				"<div class=\"feb\"></div>";
+					htmlToAdd += 				"<div class=\"mar\"></div>";
+					htmlToAdd += 				"<div class=\"apr\"></div>";
+					htmlToAdd += 				"<div class=\"may\"></div>";
+					htmlToAdd += 				"<div class=\"jun\"></div>";
+					htmlToAdd += 				"<div class=\"jul\"></div>";
+					htmlToAdd += 				"<div class=\"aug\"></div>";
+					htmlToAdd += 				"<div class=\"sep\"></div>";
+					htmlToAdd += 				"<div class=\"oct\"></div>";
+					htmlToAdd += 				"<div class=\"nov\"></div>";
+					htmlToAdd += 				"<div class=\"dec\"></div>";
 					htmlToAdd += 			"</div>";
 					htmlToAdd += 		"</div>";
 					htmlToAdd += 	"</div>";
