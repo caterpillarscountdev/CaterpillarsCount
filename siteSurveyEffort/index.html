@@ -306,12 +306,12 @@
 				lastSortingKey = sortingKey;
 				
 				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;border-radius:4px 4px 0px 0px;\">";
-				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('name');\"" + ((sortingKey == "name") ? " style=\"text-decoration:underline;\"" : "") + ">Site name</div>";
-				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('authorities');\"" + ((sortingKey == "authorities") ? " style=\"text-decoration:underline;\"" : "") + ">Authorities</div>";
-				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('plantCount');\"" + ((sortingKey == "plantCount") ? " style=\"text-decoration:underline;\"" : "") + ">Plants</div>";
-				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('observerCount');\"" + ((sortingKey == "observerCount") ? " style=\"text-decoration:underline;\"" : "") + ">Users</div>";
-				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('firstSurveyYear');\"" + ((sortingKey == "firstSurveyYear") ? " style=\"text-decoration:underline;\"" : "") + ">Since</div>";
-				htmlToAdd += 	"<div class=\"cell\" onclick=\"showTable('mostRecentSurveyDate');\"" + ((sortingKey == "mostRecentSurveyDate") ? " style=\"text-decoration:underline;\"" : "") + ">Until</div>";
+				htmlToAdd += 	"<div class=\"cell\" onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}showTable('name');\"" + ((sortingKey == "name") ? " style=\"text-decoration:underline;\"" : "") + ">Site name</div>";
+				htmlToAdd += 	"<div class=\"cell\" onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}showTable('authorities');\"" + ((sortingKey == "authorities") ? " style=\"text-decoration:underline;\"" : "") + ">Authorities</div>";
+				htmlToAdd += 	"<div class=\"cell\" onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}showTable('plantCount');\"" + ((sortingKey == "plantCount") ? " style=\"text-decoration:underline;\"" : "") + ">Plants</div>";
+				htmlToAdd += 	"<div class=\"cell\" onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}showTable('observerCount');\"" + ((sortingKey == "observerCount") ? " style=\"text-decoration:underline;\"" : "") + ">Users</div>";
+				htmlToAdd += 	"<div class=\"cell\" onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}showTable('firstSurveyYear');\"" + ((sortingKey == "firstSurveyYear") ? " style=\"text-decoration:underline;\"" : "") + ">Since</div>";
+				htmlToAdd += 	"<div class=\"cell\" onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}showTable('mostRecentSurveyDate');\"" + ((sortingKey == "mostRecentSurveyDate") ? " style=\"text-decoration:underline;\"" : "") + ">Until</div>";
 				htmlToAdd += 	"<div class=\"cell\"" + ((sortingKey == "surveysEachWeek") ? " style=\"text-decoration:underline;\"" : "") + ">";
 				htmlToAdd += 	"	<div class=\"smallSelect\">";
 				htmlToAdd +=			"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + currentYear + "</div>";
@@ -321,7 +321,7 @@
 				}
 				htmlToAdd +=			"</div>";
 				htmlToAdd += 		"</div>";
-				htmlToAdd += 	"<span onclick=\"showTable('surveysEachWeek');\"> relative survey effort</span></div>";
+				htmlToAdd += 	"<span onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}showTable('surveysEachWeek');\"> relative survey effort</span></div>";
 				htmlToAdd += "</div>";
 				
 				htmlToAdd += "<div class=\"header table\" style=\"background:#777;\">";
@@ -446,6 +446,10 @@
 				}
 			}
 			
+			function showTableLoading(){
+				$("#analysis")[0].innerHTML = "<div id=\"sitesLoading\"><img src=\"../images/rolling.svg\"/></div>";
+			}
+			
 			var loadingGraphs = false;
 			function loadGraphs(year, consecutiveCall){
 				consecutiveCall = consecutiveCall || false;
@@ -453,7 +457,7 @@
 				loadingGraphs = true;
 				currentYear = year;
 				
-				$("#analysis")[0].innerHTML = "<div id=\"sitesLoading\"><img src=\"../images/rolling.svg\"/></div>";
+				showTableLoading();
 				
 				//clear year data from siteData
 				if(!consecutiveCall){
