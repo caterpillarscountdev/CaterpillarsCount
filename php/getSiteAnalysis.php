@@ -5,7 +5,7 @@
 	require_once('orm/Site.php');
 
 	$start = intval($_GET["start"]);
-	$LIMIT = 10;
+	$LIMIT = 50;
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
@@ -67,41 +67,14 @@
 		}
 	}
 	
-	//Year of site creation
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, YEAR(MIN(LocalDate)) AS FirstYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (" . implode(", ", $siteIDs) . ") GROUP BY Plant.SiteFK");
+	//Number of survey locations at the site, number of unique users, and year of site creation
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(LocalDate) AS MostRecentSurveyDate, COUNT(DISTINCT Plant.ID) AS PlantCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS ObserverCount, YEAR(MIN(LocalDate)) AS FirstYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (" . implode(", ", $siteIDs) . ") GROUP BY Plant.SiteFK");
 	if(mysqli_num_rows($query) > 0){
 		while($row = mysqli_fetch_assoc($query)){
 			if(array_key_exists($row["SiteFK"], $data)){
 				$data[$row["SiteFK"]]["firstSurveyYear"] = $row["FirstYear"];
-			}
-		}
-	}
-	
-	//Number of survey locations at the site
-	$query = mysqli_query($dbconn, "SELECT SiteFK, COUNT(*) AS PlantCount FROM Plant WHERE Circle>'0' AND SiteFK IN (" . implode(", ", $siteIDs) . ") GROUP BY SiteFK");
-	if(mysqli_num_rows($query) > 0){
-		while($row = mysqli_fetch_assoc($query)){
-			if(array_key_exists($row["SiteFK"], $data)){
-				$data[$row["SiteFK"]]["plantCount"] = $row["PlantCount"];
-			}
-		}
-	}
-	
-	//Number of unique users
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT Survey.UserFKOfObserver) AS ObserverCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (" . implode(", ", $siteIDs) . ") GROUP BY Plant.SiteFK");
-	if(mysqli_num_rows($query) > 0){
-		while($row = mysqli_fetch_assoc($query)){
-			if(array_key_exists($row["SiteFK"], $data)){
 				$data[$row["SiteFK"]]["observerCount"] = $row["ObserverCount"];
-			}
-		}
-	}
-	
-	//Most recent survey date
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(LocalDate) AS MostRecentSurveyDate FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (" . implode(", ", $siteIDs) . ") GROUP BY Plant.SiteFK");
-	if(mysqli_num_rows($query) > 0){
-		while($row = mysqli_fetch_assoc($query)){
-			if(array_key_exists($row["SiteFK"], $data)){
+				$data[$row["SiteFK"]]["plantCount"] = $row["PlantCount"];
 				$data[$row["SiteFK"]]["mostRecentSurveyDate"] = $row["MostRecentSurveyDate"];
 			}
 		}
