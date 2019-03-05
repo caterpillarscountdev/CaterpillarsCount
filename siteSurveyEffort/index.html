@@ -442,12 +442,14 @@
 					htmlToAdd += 	"</div>";
 					htmlToAdd += "</div>";
 					$("#analysis")[0].innerHTML = htmlToAdd;
+					$("#sitesLoading")[0].style.display = "none";
 					showingTable = false;
 				}
 			}
 			
 			function showTableLoading(){
-				$("#analysis")[0].innerHTML = "<div id=\"sitesLoading\"><img src=\"../images/rolling.svg\"/></div>";
+				$("#analysis")[0].innerHTML = "";
+				$("#sitesLoading")[0].style.display = "";
 			}
 			
 			var loadingGraphs = false;
@@ -641,11 +643,10 @@
 			<div class="panel">
 				<h2>Site Survey Effort</h2>
 				<div class="content">
-					<div id="analysis">
-						<div id="sitesLoading">
-							<img src="../images/rolling.svg"/>
-						</div>
+					<div id="sitesLoading">
+						<img src="../images/rolling.svg"/>
 					</div>
+					<div id="analysis"></div>
 				</div>
 			</div>
 		</main>
