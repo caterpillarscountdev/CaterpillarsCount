@@ -26,7 +26,7 @@
 	$siteIDs = array();
 	$lastCall = ($start + $LIMIT) >= $siteCount;
 
-	$sitesQuery = mysqli_query($dbconn, "SELECT Site.ID AS SiteID, Site.Name AS SiteName, Site.URL AS SiteURL, CONCAT(User.FirstName, ' ', User.LastName) AS CreatorFullName, User.Email AS CreatorEmail FROM `Site` JOIN User ON Site.UserFKOfCreator=User.ID LIMIT $start, $limit");//Site::findAll($start, $LIMIT);
+	$sitesQuery = mysqli_query($dbconn, "SELECT Site.ID AS SiteID, Site.Name AS SiteName, Site.URL AS SiteURL, CONCAT(User.FirstName, ' ', User.LastName) AS CreatorFullName, User.Email AS CreatorEmail FROM `Site` JOIN User ON Site.UserFKOfCreator=User.ID LIMIT $start, $LIMIT");//Site::findAll($start, $LIMIT);
 	if(mysqli_num_rows($sitesQuery) > 0){
 		while($siteRow = mysqli_fetch_assoc($sitesQuery)){
 			if(intval($siteRow["SiteID"]) != 2){
