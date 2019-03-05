@@ -247,16 +247,8 @@
 			var currentYear = 0;
 			var siteData = [];
 			var loadChunk = 0;
-			var chunksProcessing = [];
 			function loadTable(){
-				for(var i = 0; i < 10; i++){
-					dispatchChunkCall(loadChunk++);
-				}
-			}
-			
-			function dispatchChunkCall(chunk){
-				chunksProcessing[chunksProcessing.length] = chunk;
-				$.get("../php/getSiteAnalysis.php?start=" + (10 * chunk), function(data){
+				$.get("../php/getSiteAnalysis.php?start=" + (50 * loadChunk++), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						var data = JSON.parse(data.replace("true|", ""));
@@ -282,50 +274,22 @@
 								};
 							}
 						}
-						
-						var chunkIndex = chunksProcessing.indexOf(chunk);
-						if(chunkIndex > -1) {
-							chunksProcessing.splice(chunkIndex, 1);
-						}
-						
 						if(data[3]){
-							showTableWhenReady("name");
+							loadChunk = 0;
+							showTable("name");
 						}
 						else{
 							loadTable();
 						}
 					}
 					else{
-						var error = data.replace("false|", "");
-						if(error == "Number of sites exceeded."){
-							var chunkIndex = chunksProcessing.indexOf(chunk);
-							if(chunkIndex > -1) {
-								chunksProcessing.splice(chunkIndex, 1);
-							}
-							showTableWhenReady("name");
-						}
-						else{
-							queueNotice("error", error);
-						}
+						queueNotice("error", data.replace("false|", ""));
 					}
 				})
 				.fail(function(){
 					//error
 					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please reload the page to try again.");
 				});
-			}
-			
-			var waitingToShowTable = false;
-			function showTableWhenReady(sortingKey){
-				if(!waitingToShowTable){
-					var chunksProcessedCheck = setInterval(function(){
-						if(chunksProcessing.length == 0){
-							clearInterval(chunksProcessedCheck);
-							loadChunk = 0;
-							showTable(sortingKey);
-						}
-					},100);
-				}
 			}
 			
 			var showingTable = false;
