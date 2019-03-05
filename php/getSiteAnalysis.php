@@ -23,7 +23,7 @@
 	$row = mysqli_fetch_assoc($query);
 	$startWeek = intval($row["StartWeek"]);
 	$endWeek = intval($row["EndWeek"]);
-	$siteIDs = array();
+	$siteIDs = array(0);
 	$lastCall = ($start + $LIMIT) >= $siteCount;
 
 	$sitesQuery = mysqli_query($dbconn, "SELECT Site.ID AS SiteID, Site.Name AS SiteName, Site.URL AS SiteURL, CONCAT(User.FirstName, ' ', User.LastName) AS CreatorFullName, User.Email AS CreatorEmail FROM `Site` JOIN User ON Site.UserFKOfCreator=User.ID LIMIT $start, $LIMIT");//Site::findAll($start, $LIMIT);
@@ -62,7 +62,7 @@
 		}
 	}
 
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE YEAR(Survey.LocalDate)='$lastSurveyYear' GROUP BY CONCAT(Plant.SiteFK, ' ', WEEK(Survey.LocalDate, 1))");
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE YEAR(Survey.LocalDate)='$lastSurveyYear' AND Plant.SiteFK IN (" . implode(", ", $siteIDs) . ") GROUP BY CONCAT(Plant.SiteFK, ' ', WEEK(Survey.LocalDate, 1))");
 	if(mysqli_num_rows($query) > 0){
 		while($row = mysqli_fetch_assoc($query)){
 			$data[(string)$row["SiteFK"]]["surveysEachWeek"][intval($row["Week"]) - $startWeek] = intval($row["SurveyCount"]);
