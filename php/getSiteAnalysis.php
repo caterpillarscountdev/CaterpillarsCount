@@ -9,7 +9,7 @@
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
-	$siteCount = ;
+	$siteCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site"))["Count"]);
 	if($start >= $siteCount){
 		die("false|Number of sites exceeded.");
 	}
