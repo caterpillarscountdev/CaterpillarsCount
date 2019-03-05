@@ -34,12 +34,14 @@
 				for($j = $startWeek; $j <= $endWeek; $j++){
 					$surveysEachWeek[] = 0;
 				}
+				/*
 				$query = mysqli_query($dbconn, "SELECT WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . intval($siteRow["SiteID"]) . "' AND YEAR(Survey.LocalDate)='$lastSurveyYear' GROUP BY WEEK(Survey.LocalDate, 1)");
 				if(mysqli_num_rows($query) > 0){
 					while($row = mysqli_fetch_assoc($query)){
 						$surveysEachWeek[intval($row["Week"]) - $startWeek] = intval($row["SurveyCount"]);
 					}
 				}
+				*/
 
 				$siteIDs[] = intval($siteRow["SiteID"]);
 
@@ -57,6 +59,13 @@
 			else if(mysqli_num_rows($sitesQuery) == 1){
 				die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $data, true)));
 			}
+		}
+	}
+
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE YEAR(Survey.LocalDate)='$lastSurveyYear' GROUP BY CONCAT(Plant.SiteFK, " ", WEEK(Survey.LocalDate, 1))");
+	if(mysqli_num_rows($query) > 0){
+		while($row = mysqli_fetch_assoc($query)){
+			$data[(string)$row["SiteFK"]]["surveysEachWeek"][intval($row["Week"]) - $startWeek] = intval($row["SurveyCount"]);
 		}
 	}
 	
