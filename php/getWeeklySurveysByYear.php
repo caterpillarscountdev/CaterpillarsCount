@@ -25,7 +25,7 @@
 				$surveysEachWeek[] = 0;
 			}
 			
-			if($sites[$i]->getID() != 2){
+			if(intval($row["ID"]) != 2){
 				$siteIDs[] = $row["ID"];
 				$data[(string)$row["ID"]] = $surveysEachWeek;
 			}
