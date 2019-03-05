@@ -9,13 +9,12 @@
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
-	$siteCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site"))["Count"]);
+	$siteCount = ;
 	if($start >= $siteCount){
 		die("false|Number of sites exceeded.");
 	}
 
 	$data = array();
-	$sites = Site::findAll($start, $LIMIT);
 	$query = mysqli_query($dbconn, "SELECT YEAR(MIN(Survey.LocalDate)) AS FirstSurveyYear, YEAR(MAX(Survey.LocalDate)) AS LastSurveyYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK<>'2'");
 	$row = mysqli_fetch_assoc($query);
 	$firstSurveyYear = $row["FirstSurveyYear"];
@@ -26,34 +25,38 @@
 	$endWeek = intval($row["EndWeek"]);
 	$siteIDs = array();
 	$lastCall = ($start + $LIMIT) >= $siteCount;
-	for($i = 0; $i < count($sites); $i++){
-		if($sites[$i]->getID() != 2){
-			$surveysEachWeek = array();
-			for($j = $startWeek; $j <= $endWeek; $j++){
-				$surveysEachWeek[] = 0;
-			}
-			$query = mysqli_query($dbconn, "SELECT WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $sites[$i]->getID() . "' AND YEAR(Survey.LocalDate)='$lastSurveyYear' GROUP BY WEEK(Survey.LocalDate, 1)");
-			if(mysqli_num_rows($query) > 0){
-				while($row = mysqli_fetch_assoc($query)){
-					$surveysEachWeek[intval($row["Week"]) - $startWeek] = intval($row["SurveyCount"]);
-				}
-			}
-			
-			$siteIDs[] = $sites[$i]->getID();
 
-			$data[(string)$sites[$i]->getID()] = array(
-				"name" => $sites[$i]->getName(),
-				"url" => $sites[$i]->getURL(),
-				"authorities" => array(array($sites[$i]->getCreator()->getFullName(), $sites[$i]->getCreator()->getEmail())),
-				"surveysEachWeek" => $surveysEachWeek,
-				"firstSurveyYear" => "N/A",
-				"plantCount" => 0,
-				"observerCount" => 0,
-				"mostRecentSurveyDate" => "N/A"
-			);
-		}
-		else if(count($sites) == 1){
-			die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $data, true)));
+	$sitesQuery = mysqli_query($dbconn, "SELECT Site.ID AS SiteID, Site.Name AS SiteName, Site.URL AS SiteURL, CONCAT(User.FirstName, " ", User.LastName) AS CreatorFullName, User.Email AS CreatorEmail FROM `Site` JOIN User ON Site.UserFKOfCreator=User.ID LIMIT $start, $limit");//Site::findAll($start, $LIMIT);
+	if(mysqli_num_rows($sitesQuery) > 0){
+		while($siteRow = mysqli_fetch_assoc($sitesQuery)){
+			if(intval($siteRow["SiteID"]) != 2){
+				$surveysEachWeek = array();
+				for($j = $startWeek; $j <= $endWeek; $j++){
+					$surveysEachWeek[] = 0;
+				}
+				$query = mysqli_query($dbconn, "SELECT WEEK(Survey.LocalDate, 1) AS Week, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $sites[$i]->getID() . "' AND YEAR(Survey.LocalDate)='$lastSurveyYear' GROUP BY WEEK(Survey.LocalDate, 1)");
+				if(mysqli_num_rows($query) > 0){
+					while($row = mysqli_fetch_assoc($query)){
+						$surveysEachWeek[intval($row["Week"]) - $startWeek] = intval($row["SurveyCount"]);
+					}
+				}
+
+				$siteIDs[] = intval($siteRow["SiteID"]);
+
+				$data[(string)$siteRow["SiteID"]] = array(
+					"name" => $siteRow["SiteName"],
+					"url" => $siteRow["SiteURL"],
+					"authorities" => array(array($siteRow["CreatorFullName"], $siteRow["CreatorEmail"])),
+					"surveysEachWeek" => $surveysEachWeek,
+					"firstSurveyYear" => "N/A",
+					"plantCount" => 0,
+					"observerCount" => 0,
+					"mostRecentSurveyDate" => "N/A"
+				);
+			}
+			else if(mysqli_num_rows($sitesQuery) == 1){
+				die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $data, true)));
+			}
 		}
 	}
 	
