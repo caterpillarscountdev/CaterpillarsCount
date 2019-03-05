@@ -254,7 +254,7 @@
 			var siteData = [];
 			var loadChunk = 0;
 			function loadTable(){
-				$.get("../php/getSiteAnalysis.php?start=" + (50 * loadChunk++), function(data){
+				$.get("../php/getSiteAnalysis.php?start=" + (500 * loadChunk++), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						var data = JSON.parse(data.replace("true|", ""));
@@ -462,7 +462,7 @@
 					}
 				}
 				
-				$.get("../php/getWeeklySurveysByYear.php?start=" + (50 * loadChunk++) + "&year=" + year, function(data){
+				$.get("../php/getWeeklySurveysByYear.php?start=" + (500 * loadChunk++) + "&year=" + year, function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						var data = JSON.parse(data.replace("true|", ""));
