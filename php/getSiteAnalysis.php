@@ -27,7 +27,7 @@
 			}
 		}
 		
-		$userRestriction = " WHERE ID IN (" . implode(", ", $siteIDs) . ")";
+		$userRestriction = " WHERE Site.ID IN (" . implode(", ", $siteIDs) . ")";
 		if(User::isSuperUser($user)){
 			$userRestriction = "";
 		}
@@ -50,7 +50,7 @@
 			die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $data, true)));
 		}
 
-		$sitesQuery = mysqli_query($dbconn, "SELECT Site.ID AS SiteID, Site.Name AS SiteName, Site.Active AS Active, Site.URL AS SiteURL, CONCAT(User.FirstName, ' ', User.LastName) AS CreatorFullName, User.Email AS CreatorEmail FROM `Site` JOIN User ON Site.UserFKOfCreator=User.ID WHERE Site.ID IN (" . implode(", ", $siteIDs) . ") LIMIT $start, $LIMIT");
+		$sitesQuery = mysqli_query($dbconn, "SELECT Site.ID AS SiteID, Site.Name AS SiteName, Site.Active AS Active, Site.URL AS SiteURL, CONCAT(User.FirstName, ' ', User.LastName) AS CreatorFullName, User.Email AS CreatorEmail FROM `Site` JOIN User ON Site.UserFKOfCreator=User.ID" . $userRestriction . " LIMIT $start, $LIMIT");
 		if(mysqli_num_rows($sitesQuery) > 0){
 			while($siteRow = mysqli_fetch_assoc($sitesQuery)){
 				if(intval($siteRow["SiteID"]) != 2){
