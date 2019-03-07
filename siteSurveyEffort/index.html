@@ -384,6 +384,10 @@
 				});
 				
 				for(var i = 0; i < siteData.length; i++){
+					if((!siteData[i]["active"] && siteData[i]["surveysEachWeek"].reduce(getSum) == 0) || Number(siteData[i]["firstSurveyYear"]) > Number(currentYear)){
+						continue;
+					}
+					
 					var authorityNames = [];
 					for(var j = 0; j < siteData[i]["authorities"].length; j++){
 						authorityNames[authorityNames.length] = siteData[i]["authorities"][j][0];
