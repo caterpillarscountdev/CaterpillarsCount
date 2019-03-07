@@ -388,10 +388,12 @@
 					}
 				});
 				
+				var shown = 0;
 				for(var i = 0; i < siteData.length; i++){
 					if((siteData[i]["active"] === false && siteData[i]["surveysEachWeek"].reduce(getSum) == 0) || Number(siteData[i]["firstSurveyYear"]) > Number(currentYear)){
 						continue;
 					}
+					shown++;
 					
 					var authorityNames = [];
 					for(var j = 0; j < siteData[i]["authorities"].length; j++){
@@ -451,10 +453,19 @@
 					htmlToAdd += 		"</div>";
 					htmlToAdd += 	"</div>";
 					htmlToAdd += "</div>";
-					$("#analysis")[0].innerHTML = htmlToAdd;
-					$("#sitesLoading")[0].style.display = "none";
-					showingTable = false;
 				}
+				if(shown == 0){
+					htmlToAdd += "<div class=\"cell\">No results.</div>";
+					htmlToAdd += "<div class=\"cell\"></div>";
+					htmlToAdd += "<div class=\"cell\"></div>";
+					htmlToAdd += "<div class=\"cell\"></div>";
+					htmlToAdd += "<div class=\"cell\"></div>";
+					htmlToAdd += "<div class=\"cell\"></div>";
+					htmlToAdd += "<div class=\"cell\"></div>";
+				}
+				$("#analysis")[0].innerHTML = htmlToAdd;
+				$("#sitesLoading")[0].style.display = "none";
+				showingTable = false;
 			}
 			
 			function showTableLoading(){
