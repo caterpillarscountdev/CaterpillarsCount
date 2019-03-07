@@ -46,7 +46,6 @@
 		$lastCall = ($start + $LIMIT) >= $siteCount;
 		
 		if($start >= $siteCount){
-			die("false|Number of sites exceeded.");
 			die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $data, true)));
 		}
 
