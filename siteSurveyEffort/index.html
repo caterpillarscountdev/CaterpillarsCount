@@ -385,7 +385,6 @@
 				});
 				
 				for(var i = 0; i < siteData.length; i++){
-					console.log(siteData[i]["active"]);
 					if((siteData[i]["active"] === false && siteData[i]["surveysEachWeek"].reduce(getSum) == 0) || Number(siteData[i]["firstSurveyYear"]) > Number(currentYear)){
 						continue;
 					}
