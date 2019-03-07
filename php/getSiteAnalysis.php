@@ -27,11 +27,12 @@
 			}
 		}
 		
-		$siteCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site WHERE ID IN (" . implode(", ", $siteIDs) . ")"))["Count"]);
-		if($start >= $siteCount){
-			die("false|Number of sites exceeded.");
+		$userRestriction = " WHERE ID IN (" . implode(", ", $siteIDs) . ")";
+		if(User::isSuperUser($user)){
+			$userRestriction = "";
 		}
-
+		$siteCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site" . $userRestriction))["Count"]);
+		
 		$data = array();
 		$query = mysqli_query($dbconn, "SELECT YEAR(MIN(Survey.LocalDate)) AS FirstSurveyYear, YEAR(MAX(Survey.LocalDate)) AS LastSurveyYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK<>'2'");
 		$row = mysqli_fetch_assoc($query);
@@ -43,6 +44,11 @@
 		$endWeek = intval($row["EndWeek"]);
 		$siteIDsThisIteration = array(0);
 		$lastCall = ($start + $LIMIT) >= $siteCount;
+		
+		if($start >= $siteCount){
+			die("false|Number of sites exceeded.");
+			die("true|" . json_encode(array($firstSurveyYear, $lastSurveyYear, $data, true)));
+		}
 
 		$sitesQuery = mysqli_query($dbconn, "SELECT Site.ID AS SiteID, Site.Name AS SiteName, Site.Active AS Active, Site.URL AS SiteURL, CONCAT(User.FirstName, ' ', User.LastName) AS CreatorFullName, User.Email AS CreatorEmail FROM `Site` JOIN User ON Site.UserFKOfCreator=User.ID WHERE Site.ID IN (" . implode(", ", $siteIDs) . ") LIMIT $start, $LIMIT");
 		if(mysqli_num_rows($sitesQuery) > 0){
