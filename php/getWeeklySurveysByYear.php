@@ -15,7 +15,7 @@
 	if(is_object($user) && get_class($user) == "User"){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		
-		$query = mysqli_query($dbconn, "SELECT `SiteFK` FROM `ManagerRequest` WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `Status`='Approved'");
+		$query = mysqli_query($dbconn, "SELECT `SiteFK` FROM `ManagerRequest` WHERE `UserFKOfManager`='" . $user->getID() . "' AND `Status`='Approved'");
 		$siteIDs = array(0);
 		while($row = mysqli_fetch_assoc($query)){
 			$siteIDs[] = intval($row["SiteFK"]);
