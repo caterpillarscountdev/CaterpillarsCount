@@ -255,7 +255,7 @@
 			var siteData = [];
 			var loadChunk = 0;
 			function loadTable(){
-				$.get("../php/getSiteAnalysis.php?start=" + (500 * loadChunk++), function(data){
+				$.get("../php/getSiteAnalysis.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&start=" + (500 * loadChunk++), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						var data = JSON.parse(data.replace("true|", ""));
@@ -291,7 +291,11 @@
 						}
 					}
 					else{
-						queueNotice("error", data.replace("false|", ""));
+						var error = data.replace("false|", "");
+						queueNotice("error", error);
+						if(error == "Your log in dissolved. Maybe you logged in on another device."){
+							logOut();
+						}
 					}
 				})
 				.fail(function(){
@@ -474,7 +478,7 @@
 					}
 				}
 				
-				$.get("../php/getWeeklySurveysByYear.php?start=" + (500 * loadChunk++) + "&year=" + year, function(data){
+				$.get("../php/getWeeklySurveysByYear.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&start=" + (500 * loadChunk++) + "&year=" + year, function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						var data = JSON.parse(data.replace("true|", ""));
@@ -500,7 +504,11 @@
 						}
 					}
 					else{
-						queueNotice("error", data.replace("false|", ""));
+						var error = data.replace("false|", "");
+						queueNotice("error", error);
+						if(error == "Your log in dissolved. Maybe you logged in on another device."){
+							logOut();
+						}
 						loadingGraphs = false;
 					}
 				})
