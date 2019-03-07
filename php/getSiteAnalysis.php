@@ -53,7 +53,7 @@
 					"firstSurveyYear" => "N/A",
 					"plantCount" => 0,
 					"observerCount" => 0,
-					"mostRecentSurveyDate" => "N/A"
+					"mostRecentSurveyDate" => "N/A",
 					"active" => filter_var($siteRow["Active"], FILTER_VALIDATE_BOOLEAN)
 				);
 			}
