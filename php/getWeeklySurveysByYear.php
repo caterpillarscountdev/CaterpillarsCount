@@ -28,15 +28,20 @@
 			}
 		}
 
+		$userRestriction = " WHERE ID IN (" . implode(", ", $siteIDs) . ")";
+		if(User::isSuperUser($user)){
+			$userRestriction = "";
+		}
+		
 		$data = array();
 		$query = mysqli_query($dbconn, "SELECT WEEK(\"" . $year . "-01-01\") AS StartWeek, WEEK(\"" . $year . "-12-31\") AS EndWeek");
 		$row = mysqli_fetch_assoc($query);
 		$startWeek = intval($row["StartWeek"]);
 		$endWeek = intval($row["EndWeek"]);
 		$siteIDsThisIteration = array();
-		$lastCall = ($start + $LIMIT) >= intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site WHERE ID IN (" . implode(", ", $siteIDs) . ")"))["Count"]);
+		$lastCall = ($start + $LIMIT) >= intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site" . $userRestriction))["Count"]);
 
-		$sitesQuery = mysqli_query($dbconn, "SELECT ID FROM Site WHERE ID IN (" . implode(", ", $siteIDs) . ") LIMIT $start, $LIMIT");
+		$sitesQuery = mysqli_query($dbconn, "SELECT ID FROM Site" . $userRestriction . " LIMIT $start, $LIMIT");
 		if(mysqli_num_rows($sitesQuery) > 0){
 			while($row = mysqli_fetch_assoc($sitesQuery)){
 				$surveysEachWeek = array();
