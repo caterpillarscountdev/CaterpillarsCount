@@ -457,13 +457,18 @@
 					htmlToAdd += "</div>";
 				}
 				if(shown == 0){
-					htmlToAdd += "<div class=\"cell\">No results.</div>";
-					htmlToAdd += "<div class=\"cell\"></div>";
-					htmlToAdd += "<div class=\"cell\"></div>";
-					htmlToAdd += "<div class=\"cell\"></div>";
-					htmlToAdd += "<div class=\"cell\"></div>";
-					htmlToAdd += "<div class=\"cell\"></div>";
-					htmlToAdd += "<div class=\"cell\"></div>";
+					htmlToAdd += "<div class=\"table\" style=\"background:#f7f7f7;\">"
+					htmlToAdd += 	"<div class=\"cell\">No results.</div>";
+					htmlToAdd += 	"<div class=\"cell\"></div>";
+					htmlToAdd += 	"<div class=\"cell\"></div>";
+					htmlToAdd += 	"<div class=\"cell\"></div>";
+					htmlToAdd += 	"<div class=\"cell\"></div>";
+					htmlToAdd += 	"<div class=\"cell\"></div>";
+					htmlToAdd += 	"<div class=\"cell\"></div>";
+					htmlToAdd += "</div>";
+					if(Number(firstYear) == 0){
+					   $(".header:nth-of-type(1) .cell").eq(6)[0].innerHTML = "Relative survey Effort";
+					}
 				}
 				$("#analysis")[0].innerHTML = htmlToAdd;
 				$("#sitesLoading")[0].style.display = "none";
