@@ -723,7 +723,7 @@
 				htmlToAdd += 	"	<div class=\"smallSelect\">";
 				htmlToAdd +=			"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + currentYear + "</div>";
 				htmlToAdd +=			"<div class=\"options\">";
-				for(var i = Number(firstYear); i <= Number(lastYear); i++){
+				for(var i = Number(lastYear); i >= Number(firstYear); i--){
 					htmlToAdd +=			"<div onclick=\"smallSelectOption(this);loadGraphs(" + i + ");\">" + i + "</div>";
 				}
 				htmlToAdd +=			"</div>";
