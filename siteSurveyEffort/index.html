@@ -324,6 +324,7 @@
 			}
 			
 			var showingTable = false;
+			var MAX_SHOWN_INITIALLY = 3;
 			var lastSortingKey = "name";
 			function showTable(sortingKey){
 				if(showingTable){return false;}
@@ -408,7 +409,6 @@
 				});
 				
 				var shown = 0;
-				var MAX_SHOWN_INITIALLY = 3;
 				for(var i = 0; i < siteData.length; i++){
 					var surveyCount = siteData[i]["surveysEachWeek"].reduce(getSum);
 					if((siteData[i]["active"] === false && surveyCount == 0) || Number(siteData[i]["firstSurveyYear"]) > Number(currentYear) || (Number(lastYear) > Number(currentYear) && surveyCount == 0)){
