@@ -810,11 +810,15 @@
 					}
 					
 					htmlToAdd += "<div class=\"table\" id=\"site" + siteData[i]["siteID"] + "\">";
-					if(siteData[i]["url"] == ""){
+					var url = siteData[i]["url"].trim();
+					if(url == ""){
 						htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["name"] + "</div>";
 					}
 					else{
-						htmlToAdd += 	"<div class=\"cell\"><a href=\"" + siteData[i]["url"] + "\" target=\"_blank\" class=\"highlighted\">" + siteData[i]["name"] + "</a></div>";
+						if(url.indexOf("http") != 0){
+							url = "http://" + url;
+						}
+						htmlToAdd += 	"<div class=\"cell\"><a href=\"" + url + "\" target=\"_blank\" class=\"highlighted\">" + siteData[i]["name"] + "</a></div>";
 					}
 					htmlToAdd += 	"<div class=\"cell\"><span class=\"highlighted pointer underline\" onclick=\"emailAuthorities('" + siteData[i]["siteID"] + "');\">" + authorityNames.join(", ") + "</span></div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["plantCount"] + "</div>";
