@@ -404,7 +404,8 @@
 						authorityNames[authorityNames.length] = siteData[i]["authorities"][j][0];
 					}
 					
-					htmlToAdd += "<div class=\"table\" id=\"site" + siteData[i]["siteID"] + "\"" + ((shown > MAX_SHOWN_INITIALLY) ? " style=\"max-height:0px;overflow:hidden;\"" : "") + ">";
+					htmlToAdd += ((shown > MAX_SHOWN_INITIALLY) ? "<div style=\"max-height:0px;overflow:hidden;\">" : "");
+					htmlToAdd += "<div class=\"table\" id=\"site" + siteData[i]["siteID"] + "\">";
 					if(siteData[i]["url"] == ""){
 						htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["name"] + "</div>";
 					}
@@ -469,6 +470,7 @@
 					htmlToAdd += 	"<div class=\"cell\"></div>";
 					htmlToAdd += "</div>";
 				}
+				htmlToAdd += ((shown > MAX_SHOWN_INITIALLY) ? "</div>" : "");
 				$("#analysis")[0].innerHTML = htmlToAdd;
 				if(Number(firstYear) == 0){
 				   $(".header:nth-of-type(1) .cell").eq(6)[0].innerHTML = "Relative survey Effort";
