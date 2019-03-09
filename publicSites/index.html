@@ -193,8 +193,12 @@
 						htmlToAdd += "<div class=\"tbody\">";
               					for(var i = 0; i < publicSites.length; i++){
 							var siteName = publicSites[i]["siteName"];
-							if(publicSites[i]["url"].trim() != ""){
-								siteName = "<a href=\"" + publicSites[i]["url"] + "\" target=\"_blank\" class=\"highlighted\">" + publicSites[i]["siteName"] + "</a>";
+							var url = publicSites[i]["url"].trim();
+							if(url != ""){
+								if(url.indexOf("http") != 0){
+									url = "http://" + url;
+								}
+								siteName = "<a href=\"" + url + "\" target=\"_blank\" class=\"highlighted\">" + publicSites[i]["siteName"] + "</a>";
 							}
                 					htmlToAdd += "<div class=\"row\">";
                 					htmlToAdd +=  "<div class=\"cell\"><div class=\"forceWrap\">" + publicSites[i]["region"] + "</div></div>";
