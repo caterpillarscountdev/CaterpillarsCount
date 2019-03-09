@@ -407,8 +407,14 @@
 					display:none;
 				}
 				
+				#monthLabels>div{
+					font-size:6px;
+				}
+				
 				#monthLabels .feb, #monthLabels .mar, #monthLabels .may, #monthLabels .jun, #monthLabels .jul, #monthLabels .sep, #monthLabels .oct, #monthLabels .nov{
-					display:none;
+					overflow: hidden;
+					opacity: 0;
+					max-height: 1px;
 				}
 				
 				.table .cell:nth-of-type(1){
