@@ -238,6 +238,23 @@
 				float:left;
 				text-transform: uppercase;
 			}
+			
+			#showMoreButton{
+				font-family: 'Roboto Slab', serif;
+				text-align: center;
+				margin-top: 20px;
+				color: #777;
+				text-transform: uppercase;
+				font-size: 12px;
+				display:none;
+			}
+			
+			#showMoreButton>div{
+				display: inline-block;
+				cursor: pointer;
+				padding: 5px;
+				text-decoration: underline;
+			}
 		</style>
 		<script>
 			requireLogIn();
@@ -404,7 +421,7 @@
 						authorityNames[authorityNames.length] = siteData[i]["authorities"][j][0];
 					}
 					
-					htmlToAdd += ((shown > MAX_SHOWN_INITIALLY) ? "<div style=\"max-height:0px;overflow:hidden;\">" : "");
+					htmlToAdd += ((shown > MAX_SHOWN_INITIALLY) ? "<div style=\"max-height:0px;overflow:hidden;\" class=\"extraRow\">" : "");
 					htmlToAdd += "<div class=\"table\" id=\"site" + siteData[i]["siteID"] + "\">";
 					if(siteData[i]["url"] == ""){
 						htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["name"] + "</div>";
@@ -470,7 +487,15 @@
 					htmlToAdd += 	"<div class=\"cell\"></div>";
 					htmlToAdd += "</div>";
 				}
-				htmlToAdd += ((shown > MAX_SHOWN_INITIALLY) ? "</div>" : "");
+				
+				if(shown > MAX_SHOWN_INITIALLY){
+					$("#showMoreButton")[0].style.display = "block";
+					htmlToAdd += "</div>";
+				}
+				else{
+					$("#showMoreButton")[0].style.display = "";
+				}
+				
 				$("#analysis")[0].innerHTML = htmlToAdd;
 				if(Number(firstYear) == 0){
 				   $(".header:nth-of-type(1) .cell").eq(6)[0].innerHTML = "Relative survey Effort";
@@ -587,6 +612,25 @@
 				//$(option).parent().fadeOut(0);
 				$(option).parent().parent().find('.selected').eq(0)[0].innerHTML = option.innerHTML.replace("<br/>", " ").replace("<br>", " ");
 			}
+			
+			var moreShown = 0;
+			function showMore(){
+				for(var i = 0; i < 5; i++){
+					var index = (i + moreShown + MAX_SHOWN_INITIALLY);
+					if(index < $(".extraRow").length){
+						$(".extraRow").eq(index).animate({maxHeight:"5000px"}, 2000);
+					}
+					else{
+						$("#showMoreButton")[0].style.display = "";
+						break;
+					}
+				}
+				moreShown += 5;
+				
+				if((i + moreShown + MAX_SHOWN_INITIALLY) == $(".extraRow").length){
+				   $("#showMoreButton")[0].style.display = "";
+				}
+			}
 		</script>
 	</head>
 	<body>
@@ -684,6 +728,9 @@
 						<img src="../images/rolling.svg"/>
 					</div>
 					<div id="analysis"></div>
+					<div id="showMoreButton">
+						<div onclick="showMore();">Show more</div>
+					</div>
 				</div>
 			</div>
 		</main>
