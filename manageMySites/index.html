@@ -131,45 +131,6 @@
 			.select .option .shown .text{
 				display:inline-block;
 			}
-
-
-
-			@media screen and (max-width: 620px) {
-				main button{
-					width:100%;
-				}
-
-				.siteOperationDiv:first-of-type{
-					margin-top:20px;
-				}
-
-				.siteOperationDiv{
-					width:100%;
-					padding:20px 40px;
-					font-size:18px;
-					border:0px none transparent;
-					color:#fff;
-					font-weight:bold;
-					background:#fed136;
-					opacity:1;
-					border-radius:5px;
-				}
-
-				.siteOperationDiv .table{
-					display:inline-block;
-					text-align:center;
-				}
-
-				.siteOperationDiv .caption{
-					display:inline-block;
-					text-align:center;
-				}
-
-				.siteOperationDiv img{
-					height:30px;
-					display:none;
-				}
-			}
 			
 			#effortLoading{
 				background:#e6e6e6;
@@ -404,6 +365,55 @@
 				cursor: pointer;
 				padding: 5px;
 				text-decoration: underline;
+			}
+			
+			@media screen and (max-width: 620px) {
+				main button{
+					width:100%;
+				}
+
+				.siteOperationDiv:first-of-type{
+					margin-top:20px;
+				}
+
+				.siteOperationDiv{
+					width:100%;
+					padding:20px 40px;
+					font-size:18px;
+					border:0px none transparent;
+					color:#fff;
+					font-weight:bold;
+					background:#fed136;
+					opacity:1;
+					border-radius:5px;
+				}
+
+				.siteOperationDiv .table{
+					display:inline-block;
+					text-align:center;
+				}
+
+				.siteOperationDiv .caption{
+					display:inline-block;
+					text-align:center;
+				}
+
+				.siteOperationDiv img{
+					height:30px;
+					display:none;
+				}
+				
+				.header:nth-of-type(2), .cell:nth-of-type(2), .cell:nth-of-type(3), .cell:nth-of-type(4), .cell:nth-of-type(5), .cell:nth-of-type(6){
+					display:none;
+				}
+				
+				.table .cell:nth-of-type(1){
+					width:37%;
+				}
+				
+				.table .cell:nth-of-type(7){
+					width:63%;
+				}
 			}
 		</style>
 		<script>
