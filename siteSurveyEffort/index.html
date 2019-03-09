@@ -324,12 +324,14 @@
 			}
 			
 			var showingTable = false;
+			var moreShown = 0;
 			var MAX_SHOWN_INITIALLY = 3;
 			var lastSortingKey = "name";
 			function showTable(sortingKey){
 				if(showingTable){return false;}
 				showingTable = true;
 				lastSortingKey = sortingKey;
+				moreShown = 0;
 				
 				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;border-radius:4px 4px 0px 0px;\">";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}setTimeout(function(){showTable('name');}, 1);\"" + ((sortingKey == "name") ? " style=\"text-decoration:underline;\"" : "") + ">Site name</div>";
@@ -613,10 +615,9 @@
 				$(option).parent().parent().find('.selected').eq(0)[0].innerHTML = option.innerHTML.replace("<br/>", " ").replace("<br>", " ");
 			}
 			
-			var moreShown = 0;
 			function showMore(){
 				for(var i = 0; i < 5; i++){
-					var index = (i + moreShown + MAX_SHOWN_INITIALLY);
+					var index = (i + moreShown);
 					if(index < $(".extraRow").length){
 						$(".extraRow").eq(index).animate({maxHeight:"5000px"}, 2000);
 					}
@@ -627,7 +628,7 @@
 				}
 				moreShown += 5;
 				
-				if((i + moreShown + MAX_SHOWN_INITIALLY) == $(".extraRow").length){
+				if((i + moreShown) == $(".extraRow").length){
 				   $("#showMoreButton")[0].style.display = "";
 				}
 			}
