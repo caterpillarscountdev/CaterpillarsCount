@@ -451,7 +451,7 @@
 							var onlyOwnsOneSite = (ownedSites.length == 1);
 							
 							var htmlToAdd = "<div class=\"select\">";
-							htmlToAdd += "<div class=\"option" + (onlyOwnsOneSite ? "" : " selected") + "\" onclick=\"selectOption(this);\">	<div class=\"value\"></div>			<div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/selectIcons/notselected.png');\"></div>		<div class=\"text\">Not selected</div></div></div>";
+							htmlToAdd += "<div class=\"option" + (onlyOwnsOneSite ? "" : " selected") + "\" onclick=\"selectOption(this);\">	<div class=\"value\"></div>			<div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/selectIcons/notselected.png');\"></div>		<div class=\"text\">Site not selected</div></div></div>";
 							for(var i = 0; i < ownedSites.length; i++){
 								htmlToAdd += "<div class=\"option" + (onlyOwnsOneSite ? " selected" : "") + "\" onclick=\"selectOption(this);\">	<div class=\"value\">" + ownedSites[i]["id"] + "</div>			<div class=\"shown\"><div class=\"image\"></div>		<div class=\"text\">" + ownedSites[i]["name"] + " (" + ownedSites[i]["region"] + ")</div></div></div>";
 								//htmlToAdd += "<option value=\"" + ownedSites[i]["id"] + "\">" + ownedSites[i]["name"] + " (" + ownedSites[i]["region"] + ")</option>";
