@@ -350,7 +350,7 @@
 				text-transform: uppercase;
 			}
 			
-			#showMoreButton{
+			#showAllButton{
 				font-family: 'Roboto Slab', serif;
 				text-align: center;
 				margin-top: 20px;
@@ -360,7 +360,7 @@
 				display:none;
 			}
 			
-			#showMoreButton>div{
+			#showAllButton>div{
 				display: inline-block;
 				cursor: pointer;
 				padding: 5px;
@@ -704,7 +704,7 @@
 			}
 			
 			var showingTable = false;
-			var moreShown = 0;
+			var allShown = false;
 			var MAX_SHOWN_INITIALLY = 3;
 			var lastSortingKey = "name";
 			function showTable(sortingKey){
@@ -802,11 +802,8 @@
 						authorityNames[authorityNames.length] = siteData[i]["authorities"][j][0];
 					}
 					
-					if(shown > (MAX_SHOWN_INITIALLY + moreShown)){
+					if(shown > MAX_SHOWN_INITIALLY && !allShown){
 					   htmlToAdd += "<div style=\"max-height:0px;overflow:hidden;\" class=\"extraRow\">";
-				   	}
-				   	else if(shown > MAX_SHOWN_INITIALLY){
-					   htmlToAdd += "<div class=\"extraRow\">";
 					}
 					
 					htmlToAdd += "<div class=\"table\" id=\"site" + siteData[i]["siteID"] + "\">";
@@ -879,15 +876,8 @@
 					htmlToAdd += "</div>";
 				}
 				
-				if(shown > MAX_SHOWN_INITIALLY){
+				if(shown > MAX_SHOWN_INITIALLY && !allShown){
 					htmlToAdd += "</div>";
-				}
-				
-				if(shown > (MAX_SHOWN_INITIALLY + moreShown)){
-					$("#showMoreButton")[0].style.display = "block";
-				}
-				else{
-					$("#showMoreButton")[0].style.display = "";
 				}
 				
 				$("#analysis")[0].innerHTML = htmlToAdd;
@@ -1007,22 +997,10 @@
 				$(option).parent().parent().find('.selected').eq(0)[0].innerHTML = option.innerHTML.replace("<br/>", " ").replace("<br>", " ");
 			}
 			
-			function showMore(){
-				for(var i = 0; i < 5; i++){
-					var index = (i + moreShown);
-					if(index < $(".extraRow").length){
-						$(".extraRow").eq(index).animate({maxHeight:"5000px"}, 2000);
-					}
-					else{
-						$("#showMoreButton")[0].style.display = "";
-						break;
-					}
-				}
-				moreShown += 5;
-				
-				if((i + moreShown) == $(".extraRow").length){
-				   $("#showMoreButton")[0].style.display = "";
-				}
+			function showAll(){
+				$(".extraRow").stop().animate({maxHeight:"5000px"}, 2000);
+				$("#showAllButton")[0].style.display = "";
+				allShown = true;
 			}
 		</script>
 	</head>
@@ -1122,8 +1100,8 @@
 						<img src="../images/rolling.svg"/>
 					</div>
 					<div id="analysis"></div>
-					<div id="showMoreButton">
-						<div onclick="showMore();">Show more</div>
+					<div id="showAllButton">
+						<div onclick="showAll();">Show all</div>
 					</div>
 				</div>
 				<div class="content" style="margin-top:35px;">
