@@ -34,10 +34,10 @@
 		$siteCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site" . $userRestriction))["Count"]);
 		
 		$data = array();
-		$query = mysqli_query($dbconn, "SELECT YEAR(MIN(Survey.LocalDate)) AS FirstSurveyYear, YEAR(MAX(Survey.LocalDate)) AS LastSurveyYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK<>'2'" . str_replace("WHERE Site.ID", "AND Plant.SiteFK", $userRestriction));
+		$query = mysqli_query($dbconn, "SELECT YEAR(MIN(Survey.LocalDate)) AS FirstSurveyYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK<>'2'" . str_replace("WHERE Site.ID", "AND Plant.SiteFK", $userRestriction));
 		$row = mysqli_fetch_assoc($query);
 		$firstSurveyYear = $row["FirstSurveyYear"];
-		$lastSurveyYear = $row["LastSurveyYear"];
+		$lastSurveyYear = date('Y');
 		$query = mysqli_query($dbconn, "SELECT WEEK(\"" . $lastSurveyYear . "-01-01\") AS StartWeek, WEEK(\"" . $lastSurveyYear . "-12-31\") AS EndWeek");
 		$row = mysqli_fetch_assoc($query);
 		$startWeek = intval($row["StartWeek"]);
