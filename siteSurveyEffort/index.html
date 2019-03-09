@@ -391,6 +391,7 @@
 				});
 				
 				var shown = 0;
+				var MAX_SHOWN_INITIALLY = 3;
 				for(var i = 0; i < siteData.length; i++){
 					var surveyCount = siteData[i]["surveysEachWeek"].reduce(getSum);
 					if((siteData[i]["active"] === false && surveyCount == 0) || Number(siteData[i]["firstSurveyYear"]) > Number(currentYear) || (Number(lastYear) > Number(currentYear) && surveyCount == 0)){
@@ -403,7 +404,7 @@
 						authorityNames[authorityNames.length] = siteData[i]["authorities"][j][0];
 					}
 					
-					htmlToAdd += "<div class=\"table\" id=\"site" + siteData[i]["siteID"] + "\">";
+					htmlToAdd += "<div class=\"table\" id=\"site" + siteData[i]["siteID"] + "\"" + ((shown > MAX_SHOWN_INITIALLY) ? " style=\"max-height:0px;overflow:hidden;\"" : "") + ">";
 					if(siteData[i]["url"] == ""){
 						htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["name"] + "</div>";
 					}
@@ -459,7 +460,7 @@
 				}
 				if(shown == 0){
 					htmlToAdd += "<div class=\"table\" style=\"background:#f7f7f7;\">"
-					htmlToAdd += 	"<div class=\"cell\">No results.</div>";
+					htmlToAdd += 	"<div class=\"cell\">No effort found.</div>";
 					htmlToAdd += 	"<div class=\"cell\"></div>";
 					htmlToAdd += 	"<div class=\"cell\"></div>";
 					htmlToAdd += 	"<div class=\"cell\"></div>";
