@@ -21,14 +21,14 @@
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=1"></script>
 		<style>
-			#sitesLoading{
+			#effortLoading{
 				background:#e6e6e6;
 				text-align:center;
 				padding:16px;
 				border-radius:4px;
     				overflow:hidden;
 			}
-			#sitesLoading img{
+			#effortLoading img{
 				height:22px;
 			}
 			
@@ -511,13 +511,13 @@
 				   $(".header:nth-of-type(1) .cell").eq(6)[0].innerHTML = "Relative survey Effort";
 				}
 				
-				$("#sitesLoading")[0].style.display = "none";
+				$("#effortLoading")[0].style.display = "none";
 				showingTable = false;
 			}
 			
 			function showTableLoading(){
 				$("#analysis")[0].innerHTML = "";
-				$("#sitesLoading")[0].style.display = "";
+				$("#effortLoading")[0].style.display = "";
 			}
 			
 			var loadingGraphs = false;
@@ -733,7 +733,7 @@
 			<div class="panel">
 				<h2>Site Survey Effort</h2>
 				<div class="content">
-					<div id="sitesLoading">
+					<div id="effortLoading">
 						<img src="../images/rolling.svg"/>
 					</div>
 					<div id="analysis"></div>
