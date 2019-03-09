@@ -393,7 +393,7 @@
 				var shown = 0;
 				for(var i = 0; i < siteData.length; i++){
 					var surveyCount = siteData[i]["surveysEachWeek"].reduce(getSum);
-					if((siteData[i]["active"] === false && surveyCount == 0) || Number(siteData[i]["firstSurveyYear"]) > Number(currentYear) || (Number(siteData[i]["lastSurveyYear"]) > Number(currentYear) && surveyCount == 0)){
+					if((siteData[i]["active"] === false && surveyCount == 0) || Number(siteData[i]["firstSurveyYear"]) > Number(currentYear) || (Number(lastYear) > Number(currentYear) && surveyCount == 0)){
 						continue;
 					}
 					shown++;
