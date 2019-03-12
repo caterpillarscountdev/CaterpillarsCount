@@ -563,7 +563,7 @@ class Site
 	
 	
 
-//validity ensurance
+//validity insurance
 	public static function validName($dbconn, $name){
 		$name = self::validNameFormat($dbconn, $name);
 		if($name === false || is_object(self::findByName($name))){
