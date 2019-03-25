@@ -1,6 +1,7 @@
 <?php
 	require_once("orm/Site.php");
 	require_once('orm/resources/Keychain.php');
+	require_once('resultMemory.php');
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 
@@ -14,6 +15,17 @@
 	$arthropod = mysqli_real_escape_string($dbconn, rawurldecode($_GET["arthropod"]));//% if all
 	$minSize = intval($_GET["minSize"]);
 	$plantSpecies = mysqli_real_escape_string($dbconn, rawurldecode($_GET["plantSpecies"]));//% if all
+
+	$HIGH_TRAFFIC_MODE = true;
+	$SAVE_TIME_LIMIT = 20;
+	
+	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $includeWetLeaves . ($occurrenceInsteadOfDensity ? 1 : 0) . str_replace("%", "all", $observationMethod) . $monthStart . $monthEnd . $yearStart . $yearEnd . str_replace("%", "all", $arthropod) . $minSize . str_replace("%", "all", $plantSpecies));
+	if($HIGH_TRAFFIC_MODE){
+		$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
+		if($save !== null){
+			die($save);
+		}
+	}
 
 	$sites = Site::findAll();
 	$sitesArray = array();
@@ -132,5 +144,9 @@
 			}
 		}
 	}
-	die(json_encode(array_values($sitesArray)));
+	$result = json_encode(array_values($sitesArray));
+	if($HIGH_TRAFFIC_MODE){
+		save($baseFileName, $result);
+	}
+	die($result);
 ?>
