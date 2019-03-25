@@ -6,6 +6,7 @@
 	$HIGH_TRAFFIC_MODE = true;
 	$SAVE_TIME_LIMIT = 20;
 	
+	$baseFileName = basename(__FILE__, '.php');
 	if($HIGH_TRAFFIC_MODE){
 		$save = getSave(basename(__FILE__, '.php'), $SAVE_TIME_LIMIT);
 		if($save !== null){
@@ -83,7 +84,7 @@
 	
 	$result = json_encode(array_values($rankingsArray));
 	if($HIGH_TRAFFIC_MODE){
-		save(basename(__FILE__, '.php'), $result);
+		save($baseFileName, $result);
 	}
 	die($result);
 	
