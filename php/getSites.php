@@ -1,5 +1,4 @@
 <?php
-	require_once("orm/Site.php");
 	require_once('orm/resources/Keychain.php');
 	require_once('resultMemory.php');
 	
@@ -26,15 +25,14 @@
 			die($save);
 		}
 	}
-
-	$sites = Site::findAll();
 	$sitesArray = array();
-	for($i = 0; $i < count($sites); $i++){
-		$sitesArray[strval($sites[$i]->getID())] = array(
-			"ID" => $sites[$i]->getID(),
-			"Name" => $sites[$i]->getName(),
-			"Coordinates" => $sites[$i]->getLatitude() . "," . $sites[$i]->getLongitude(),
-			"Description" => $sites[$i]->getDescription(),
+	$query = mysqli_query($dbconn, "SELECT `ID`, `Name`, `Latitude`, `Longitude`, `Description` FROM `Site`");
+	while($row = mysqli_fetch_assoc($query)){
+		$sitesArray[strval($row["ID"])] = array(
+			"ID" => intval($row["ID"]),
+			"Name" => $row["Name"],
+			"Coordinates" => $row["Latitude()"] . "," . $row["Longitude"],
+			"Description" => $row["Description"],
 		);
 	}
 
