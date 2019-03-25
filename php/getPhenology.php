@@ -1,6 +1,10 @@
 <?php
 	require_once('orm/resources/Keychain.php');
 	require_once('orm/Site.php');
+	require_once('resultMemory.php');
+		
+	$HIGH_TRAFFIC_MODE = true;
+	$SAVE_TIME_LIMIT = 20;
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
@@ -30,6 +34,16 @@
 		if(!is_object($site) || get_class($site) != "Site"){continue;}
 		$arthropod = mysqli_real_escape_string($dbconn, $lines[$i]["arthropod"]);
 		$year = intval($lines[$i]["year"]);
+		
+		//CHECK FOR SAVE
+		$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . str_replace('%', 'all', $arthropod) . $year);
+		if($HIGH_TRAFFIC_MODE){
+			$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
+			if($save !== null){
+				$weightedLines[$readableArthropods[$arthropod] . " at " . $site->getName() . " in " . $year] = json_decode($save);
+				continue;
+			}
+		}
     
     		$dateWeights = array();
     
@@ -58,7 +72,11 @@
 		for($j = 0; $j < count($dateWeights); $j++){
 			$dateWeights[$j] = array($dateWeights[$j][0], round((($dateWeights[$j][1] / $dateWeights[$j][3]) * 100), 2), round(($dateWeights[$j][2] / $dateWeights[$j][3]), 2));
 		}
-    
+    		
+		//SAVE RESULT
+		if($HIGH_TRAFFIC_MODE){
+			save($baseFileName, json_encode($dateWeights));
+		}
     		$weightedLines[$readableArthropods[$arthropod] . " at " . $site->getName() . " in " . $year] = $dateWeights;
   	}
   	mysqli_close($dbconn);
