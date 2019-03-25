@@ -1,7 +1,21 @@
 <?php
 	require_once('orm/resources/Keychain.php');
 	require_once('orm/Site.php');
+	require_once('resultMemory.php');
+	
 	$siteID = intval($_GET["siteID"]);
+
+	$HIGH_TRAFFIC_MODE = true;
+	$SAVE_TIME_LIMIT = 20;
+	
+	$baseFileName = basename(__FILE__, '.php') . $siteID;
+	if($HIGH_TRAFFIC_MODE){
+		$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
+		if($save !== null){
+			die($save);
+		}
+	}
+
 	$siteRestriction = "<>2";
 	if($siteID > 0){$siteRestriction = "=" . $siteID;}
 	
@@ -75,7 +89,10 @@
 			}
 		}
 	}
-
-	die("true|" . json_encode(array_values($rankingsArray)));
 	
+	$result = "true|" . json_encode(array_values($rankingsArray));
+	if($HIGH_TRAFFIC_MODE){
+		save($baseFileName, $result);
+	}
+	die($result);
 ?>
