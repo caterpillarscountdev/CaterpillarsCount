@@ -1,6 +1,5 @@
 <?php
 	require_once('orm/resources/Keychain.php');
-	require_once('orm/Site.php');
 	require_once('resultMemory.php');
 
 	$HIGH_TRAFFIC_MODE = true;
@@ -58,16 +57,16 @@
 	}
 	mysqli_close($dbconn);
 	
-	$allSites = Site::findAll();
-	for($j = 0; $j < count($allSites); $j++){
-		if(is_object($allSites[$j]) && get_class($allSites[$j]) == "Site" && $allSites[$j]->getID() != 2 && !array_key_exists(strval($allSites[$j]->getID()), $rankingsArray)){
+	$query = mysqli_query($dbconn, "SELECT `ID`, `OpenToPublic`, `Latitude`, `Longitude`, `Name`, `Region` FROM `Site`");
+	while($row = mysqli_fetch_assoc($query)){
+		if(intval($row["ID"]) != 2 && !array_key_exists(strval($row["ID"]), $rankingsArray)){
 			$coordinates = "NONE";
-			if($allSites[$j]->getOpenToPublic()){
-				$coordinates = $allSites[$j]->getLatitude() . "," . $allSites[$j]->getLongitude();
+			if($row["OpenToPublic"]){
+				$coordinates = $row["Latitude"] . "," . $row["Longitude"];
 			}
-			$rankingsArray[strval($allSites[$j]->getID())] = array(
-				"ID" => $allSites[$j]->getID(),
-				"Name" => $allSites[$j]->getName() . " (" . $allSites[$j]->getRegion() . ")",
+			$rankingsArray[strval($row["ID"])] = array(
+				"ID" => $row["ID"],
+				"Name" => $row["Name"] . " (" . $row["Region"] . ")",
 				"Coordinates" => $coordinates,
 				"Week" => 0,
 				"UniqueDatesThisWeek" => 0,
