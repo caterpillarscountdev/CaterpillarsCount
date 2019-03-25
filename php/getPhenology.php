@@ -1,6 +1,5 @@
 <?php
 	require_once('orm/resources/Keychain.php');
-	require_once('orm/Site.php');
 	require_once('resultMemory.php');
 		
 	$HIGH_TRAFFIC_MODE = true;
@@ -30,8 +29,11 @@
   	$weightedLines = array();
   	for($i = 0; $i < count($lines); $i++){
 		$siteID = intval($lines[$i]["siteID"]);
-		$site = Site::findByID($siteID);
-		if(!is_object($site) || get_class($site) != "Site"){continue;}
+		$query = mysqli_query($dbconn, "SELECT `Name` FROM `Site` WHERE `ID`='$siteID' LIMIT 1");
+		if(mysql_num_rows($query) == 0){
+			continue;
+		}
+		$siteName = mysqli_fetch_assoc($query)["Name"];
 		$arthropod = mysqli_real_escape_string($dbconn, $lines[$i]["arthropod"]);
 		$year = intval($lines[$i]["year"]);
 		
@@ -40,7 +42,7 @@
 		if($HIGH_TRAFFIC_MODE){
 			$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
 			if($save !== null){
-				$weightedLines[$readableArthropods[$arthropod] . " at " . $site->getName() . " in " . $year] = json_decode($save);
+				$weightedLines[$readableArthropods[$arthropod] . " at " . $siteName . " in " . $year] = json_decode($save);
 				continue;
 			}
 		}
@@ -77,7 +79,7 @@
 		if($HIGH_TRAFFIC_MODE){
 			save($baseFileName, json_encode($dateWeights));
 		}
-    		$weightedLines[$readableArthropods[$arthropod] . " at " . $site->getName() . " in " . $year] = $dateWeights;
+    		$weightedLines[$readableArthropods[$arthropod] . " at " . $siteName . " in " . $year] = $dateWeights;
   	}
   	mysqli_close($dbconn);
   	die("true|" . json_encode($weightedLines));//in the form of: [LABEL: [[LOCAL_DATE, OCCURRENCE, DENSITY]]] //example: ["All arthropods at Example Site in 2018": [[2018-08-09, 30, 2.51], [2018-08-12, 25, 3.1]], [[2018-08-15, 21.3, 0.12], [2018-09-02, 70, 0.7]]]
