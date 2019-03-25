@@ -1,6 +1,17 @@
 <?php
 	require_once('orm/resources/Keychain.php');
 	require_once('orm/Site.php');
+	require_once('resultMemory.php');
+
+	$HIGH_TRAFFIC_MODE = true;
+	$SAVE_TIME_LIMIT = 20;
+	
+	if($HIGH_TRAFFIC_MODE){
+		$save = getSave(basename(__FILE__, '.php'), $SAVE_TIME_LIMIT);
+		if($save !== null){
+			die($save);
+		}
+	}
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	$query = mysqli_query($dbconn, "SELECT Site.ID, Site.Name, Site.Region, Site.Latitude, Site.Longitude, Site.OpenToPublic, SUM(CASE WHEN Survey.LocalDate >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) THEN 1 ELSE 0 END) AS Week, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(DATE_FORMAT(CURDATE(),'%Y-%m'), '-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS Month, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS Year, Count(*) AS Total, COUNT(DISTINCT Survey.LocalDate) AS TotalUniqueDates FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK=Site.ID WHERE Site.ID<>2 GROUP BY Site.ID ORDER BY Year DESC");
@@ -69,7 +80,11 @@
 			);
 		}
 	}
-
-	die(json_encode(array_values($rankingsArray)));
+	
+	$result = json_encode(array_values($rankingsArray));
+	if($HIGH_TRAFFIC_MODE){
+		save(basename(__FILE__, '.php'), $result);
+	}
+	die($result);
 	
 ?>
