@@ -1,6 +1,5 @@
 <?php
  	require_once('orm/resources/Keychain.php');
- 	require_once('orm/Site.php');
 	require_once('resultMemory.php');
    
  	$siteIDs = json_decode($_GET["siteIDs"]);
@@ -34,9 +33,11 @@
  		$arthropodPercents = array();
  		for($i = 0; $i < count($siteIDs); $i++){
  			$siteID = intval($siteIDs[$i]);
-			$site = Site::findByID($siteID);
- 			if(!is_object($site) || get_class($site) != "Site"){continue;}
- 			$siteName = $site->getName();
+			$query = mysqli_query($dbconn, "SELECT `Name` FROM `Site` WHERE `ID`='$siteID' LIMIT 1");
+			if(mysql_num_rows($query) == 0){
+				continue;
+			}
+			$siteName = mysqli_fetch_assoc($query)["Name"];
 			
 			//CHECK FOR SAVE
 			$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . str_replace("site", "none", $breakdown) . $comparisonMetric);
