@@ -1,10 +1,14 @@
 <?php
  	require_once('orm/resources/Keychain.php');
  	require_once('orm/Site.php');
+	require_once('resultMemory.php');
    
  	$siteIDs = json_decode($_GET["siteIDs"]);
  	$breakdown = $_GET["breakdown"]; //site, year, plant species, none
  	$comparisonMetric = $_GET["comparisonMetric"]; //occurrence, absoluteDensity, relativeProportion
+
+	$HIGH_TRAFFIC_MODE = true;
+	$SAVE_TIME_LIMIT = 20;
    
  	$dbconn = (new Keychain)->getDatabaseConnection();
  	$readableArthropods = array(
@@ -30,9 +34,19 @@
  		$arthropodPercents = array();
  		for($i = 0; $i < count($siteIDs); $i++){
  			$siteID = intval($siteIDs[$i]);
- 			$site = Site::findByID($siteID);
+			$site = Site::findByID($siteID);
  			if(!is_object($site) || get_class($site) != "Site"){continue;}
  			$siteName = $site->getName();
+			
+			//CHECK FOR SAVE
+			$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . str_replace("site", "none", $breakdown) . $comparisonMetric);
+			if($HIGH_TRAFFIC_MODE){
+				$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
+				if($save !== null){
+					$arthropodPercents[strval($siteName)] = json_decode($save);
+					continue;
+				}
+			}
  			
  			if($comparisonMetric == "occurrence"){
 				//surveys with arthropod at site
@@ -50,6 +64,10 @@
 				$keys = array_keys($arthropodSurveys);
 				for($i = 0; $i < count($keys); $i++){
 					$arthropodOccurrence[$readableArthropods[$keys[$i]]] = round(($arthropodSurveys[$keys[$i]] / $totalSurveyCount) * 100, 2);
+				}
+				//SAVE
+				if($HIGH_TRAFFIC_MODE){
+					save($baseFileName, json_encode($arthropodOccurrence));
 				}
  				$arthropodPercents[strval($siteName)] = $arthropodOccurrence;
  			}
@@ -70,6 +88,10 @@
 				for($i = 0; $i < count($keys); $i++){
 					$arthropodAbsoluteDensity[$readableArthropods[$keys[$i]]] = round(($arthropodCounts[$keys[$i]] / $surveyCount) * 1, 2);
 				}
+ 				//SAVE
+				if($HIGH_TRAFFIC_MODE){
+					save($baseFileName, json_encode($arthropodAbsoluteDensity));
+				}
  				$arthropodPercents[strval($siteName)] = $arthropodAbsoluteDensity;
  			}
  			else{//relativeProportion
@@ -89,12 +111,25 @@
 				for($i = 0; $i < count($keys); $i++){
 					$arthropodRelativeProportion[$readableArthropods[$keys[$i]]] = round(($arthropodCounts[$keys[$i]] / $allArthropodsCount) * 100, 2);
 				}
+ 				//SAVE
+				if($HIGH_TRAFFIC_MODE){
+					save($baseFileName, json_encode($arthropodRelativeProportion));
+				}
  				$arthropodPercents[strval($siteName)] = $arthropodRelativeProportion;
  			}
  		}
  		die("true|" . json_encode($arthropodPercents));
  	}
  	else if($breakdown == "year"){
+		//CHECK FOR SAVE
+		$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . $breakdown . $comparisonMetric);
+		if($HIGH_TRAFFIC_MODE){
+			$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
+			if($save !== null){
+				die($save);
+			}
+		}
+		
 		if($comparisonMetric == "occurrence"){
  			$arthropodOccurrencesSet = array();
  			$arthropodSurveyCounts = array();
@@ -126,7 +161,11 @@
  			uksort($arthropodOccurrencesSet, function($a, $b){
 				return intval($a) - intval($b);
 			});
- 			die("true|" . json_encode($arthropodOccurrencesSet));
+			$result = "true|" . json_encode($arthropodOccurrencesSet);
+			if($HIGH_TRAFFIC_MODE){
+				save($baseFileName, $result);
+			}
+ 			die($result);
  		}
  		else if($comparisonMetric == "absoluteDensity"){
  			$arthropodDensitiesSet = array();
@@ -159,7 +198,11 @@
  			uksort($arthropodDensitiesSet, function($a, $b){
 				return intval($a) - intval($b);
 			});
- 			die("true|" . json_encode($arthropodDensitiesSet));
+			$result = "true|" . json_encode($arthropodDensitiesSet);
+			if($HIGH_TRAFFIC_MODE){
+				save($baseFileName, $result);
+			}
+ 			die($result);
  		}
  		else{//relative proportion
 			$arthropodRelativeProportionsSet = array();
@@ -192,10 +235,23 @@
  			uksort($arthropodRelativeProportionsSet, function($a, $b){
 				return intval($a) - intval($b);
 			});
- 			die("true|" . json_encode($arthropodRelativeProportionsSet));
+			$result = "true|" . json_encode($arthropodRelativeProportionsSet);
+			if($HIGH_TRAFFIC_MODE){
+				save($baseFileName, $result);
+			}
+ 			die($result);
  		}
  	}
  	else{//plant species
+		//CHECK FOR SAVE
+		$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . $breakdown . $comparisonMetric);
+		if($HIGH_TRAFFIC_MODE){
+			$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
+			if($save !== null){
+				die($save);
+			}
+		}
+		
 		$totalDensity = array();
 		$query = mysqli_query($dbconn, "SELECT Plant.Species, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY Plant.Species");
 		while($row = mysqli_fetch_assoc($query)){
@@ -242,7 +298,11 @@
 				global $order;
 				return array_search(substr($b, 0, strrpos($b, " (")), $order) - array_search(substr($a, 0, strrpos($a, " (")), $order);
 			});
- 			die("true|" . json_encode($arthropodOccurrencesSet));
+			$result = "true|" . json_encode($arthropodOccurrencesSet);
+			if($HIGH_TRAFFIC_MODE){
+				save($baseFileName, $result);
+			}
+ 			die($result);
  		}
  		else if($comparisonMetric == "absoluteDensity"){
  			$arthropodDensitiesSet = array();
@@ -278,7 +338,11 @@
 				global $order;
 				return array_search(substr($b, 0, strrpos($b, " (")), $order) - array_search(substr($a, 0, strrpos($a, " (")), $order);
 			});
- 			die("true|" . json_encode($arthropodDensitiesSet));
+			$result = "true|" . json_encode($arthropodDensitiesSet);
+			if($HIGH_TRAFFIC_MODE){
+				save($baseFileName, $result);
+			}
+ 			die($result);
  		}
  		else{//relative proportion
 			$arthropodRelativeProportionsSet = array();
@@ -314,7 +378,11 @@
 				global $order;
 				return array_search(substr($b, 0, strrpos($b, " (")), $order) - array_search(substr($a, 0, strrpos($a, " (")), $order);
 			});
- 			die("true|" . json_encode($arthropodRelativeProportionsSet));
+			$result = "true|" . json_encode($arthropodRelativeProportionsSet);
+			if($HIGH_TRAFFIC_MODE){
+				save($baseFileName, $result);
+			}
+ 			die($result);
  		}
  	}
  ?>
