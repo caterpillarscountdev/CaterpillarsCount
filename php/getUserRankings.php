@@ -1,6 +1,6 @@
 <?php
 	require_once('orm/resources/Keychain.php');
-	require_once('orm/Site.php');
+	require_once('orm/User.php');
 	require_once('resultMemory.php');
 	
 	$siteID = intval($_GET["siteID"]);
