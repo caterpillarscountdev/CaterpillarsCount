@@ -3,7 +3,7 @@
 	require_once('resultMemory.php');
 
 	$HIGH_TRAFFIC_MODE = true;
-	$SAVE_TIME_LIMIT = 20;
+	$SAVE_TIME_LIMIT = 60;
 	
 	$baseFileName = basename(__FILE__, '.php');
 	if($HIGH_TRAFFIC_MODE){
