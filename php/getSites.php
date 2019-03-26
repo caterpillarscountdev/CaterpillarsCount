@@ -26,8 +26,10 @@
 		}
 	}
 	$sitesArray = array();
+	$siteIDs = array();
 	$query = mysqli_query($dbconn, "SELECT `ID`, `Name`, `Latitude`, `Longitude`, `Description` FROM `Site`");
 	while($row = mysqli_fetch_assoc($query)){
+		$siteIDs[] = strval($row["ID"]);
 		$sitesArray[strval($row["ID"])] = array(
 			"ID" => intval($row["ID"]),
 			"Name" => $row["Name"],
@@ -97,48 +99,48 @@
 	}
 	mysqli_close($dbconn);
 
-	for($i = 0; $i < count($sites); $i++){
-		if(!array_key_exists("SurveyCount", $sitesArray[strval($sites[$i]->getID())])){
-			$sitesArray[strval($sites[$i]->getID())]["SurveyCount"] = 0;
+	for($i = 0; $i < count($siteIDs); $i++){
+		if(!array_key_exists("SurveyCount", $sitesArray[$siteIDs[$i]])){
+			$sitesArray[$siteIDs[$i]]["SurveyCount"] = 0;
 		}
-		if(!array_key_exists("FilteredSurveyCount", $sitesArray[strval($sites[$i]->getID())])){
-			$sitesArray[strval($sites[$i]->getID())]["FilteredSurveyCount"] = 0;
+		if(!array_key_exists("FilteredSurveyCount", $sitesArray[$siteIDs[$i]])){
+			$sitesArray[$siteIDs[$i]]["FilteredSurveyCount"] = 0;
 		}
-		if(!array_key_exists("UserCount", $sitesArray[strval($sites[$i]->getID())])){
-			$sitesArray[strval($sites[$i]->getID())]["UserCount"] = 0;
+		if(!array_key_exists("UserCount", $sitesArray[$siteIDs[$i]])){
+			$sitesArray[$siteIDs[$i]]["UserCount"] = 0;
 		}
-		if(!array_key_exists("ArthropodGroupCount", $sitesArray[strval($sites[$i]->getID())])){
-			$sitesArray[strval($sites[$i]->getID())]["ArthropodGroupCount"] = 0;
+		if(!array_key_exists("ArthropodGroupCount", $sitesArray[$siteIDs[$i]])){
+			$sitesArray[$siteIDs[$i]]["ArthropodGroupCount"] = 0;
 		}
-		if(!array_key_exists("ArthropodCount", $sitesArray[strval($sites[$i]->getID())])){
-			$sitesArray[strval($sites[$i]->getID())]["ArthropodCount"] = 0;
+		if(!array_key_exists("ArthropodCount", $sitesArray[$siteIDs[$i]])){
+			$sitesArray[$siteIDs[$i]]["ArthropodCount"] = 0;
 		}
-		if(!array_key_exists("CaterpillarCount", $sitesArray[strval($sites[$i]->getID())])){
-			$sitesArray[strval($sites[$i]->getID())]["CaterpillarCount"] = 0;
+		if(!array_key_exists("CaterpillarCount", $sitesArray[$siteIDs[$i]])){
+			$sitesArray[$siteIDs[$i]]["CaterpillarCount"] = 0;
 		}
-		if(!array_key_exists("Caterpillars", $sitesArray[strval($sites[$i]->getID())])){
-			$sitesArray[strval($sites[$i]->getID())]["Caterpillars"] = "0%";
+		if(!array_key_exists("Caterpillars", $sitesArray[$siteIDs[$i]])){
+			$sitesArray[$siteIDs[$i]]["Caterpillars"] = "0%";
 		}
-		if(!array_key_exists("MostRecentDateTime", $sitesArray[strval($sites[$i]->getID())])){
-			$sitesArray[strval($sites[$i]->getID())]["MostRecentDateTime"] = "Never";
+		if(!array_key_exists("MostRecentDateTime", $sitesArray[$siteIDs[$i]])){
+			$sitesArray[$siteIDs[$i]]["MostRecentDateTime"] = "Never";
 		}
-		if(!array_key_exists("RawValue", $sitesArray[strval($sites[$i]->getID())])){
-			if($sitesArray[strval($sites[$i]->getID())]["MostRecentDateTime"] == "Never"){
-				$sitesArray[strval($sites[$i]->getID())]["RawValue"] = "No Surveys";
+		if(!array_key_exists("RawValue", $sitesArray[$siteIDs[$i]])){
+			if($sitesArray[$siteIDs[$i]]["MostRecentDateTime"] == "Never"){
+				$sitesArray[$siteIDs[$i]]["RawValue"] = "No Surveys";
 			}
 			else if($occurrenceInsteadOfDensity){
-				$sitesArray[strval($sites[$i]->getID())]["RawValue"] = "0%";
+				$sitesArray[$siteIDs[$i]]["RawValue"] = "0%";
 			}
 			else{
-				$sitesArray[strval($sites[$i]->getID())]["RawValue"] = 0;
+				$sitesArray[$siteIDs[$i]]["RawValue"] = 0;
 			}
 		}
-		if(!array_key_exists("Weight", $sitesArray[strval($sites[$i]->getID())])){
+		if(!array_key_exists("Weight", $sitesArray[$siteIDs[$i]])){
 			if($occurrenceInsteadOfDensity){
-				$sitesArray[strval($sites[$i]->getID())]["Weight"] = 0;
+				$sitesArray[$siteIDs[$i]]["Weight"] = 0;
 			}
 			else{
-				$sitesArray[strval($sites[$i]->getID())]["Weight"] = $minLoggedDensity * .99;
+				$sitesArray[$siteIDs[$i]]["Weight"] = $minLoggedDensity * .99;
 			}
 		}
 	}
