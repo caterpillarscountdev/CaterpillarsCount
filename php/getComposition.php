@@ -7,7 +7,7 @@
  	$comparisonMetric = $_GET["comparisonMetric"]; //occurrence, absoluteDensity, relativeProportion
 
 	$HIGH_TRAFFIC_MODE = true;
-	$SAVE_TIME_LIMIT = 20;
+	$SAVE_TIME_LIMIT = 60;
    
  	$dbconn = (new Keychain)->getDatabaseConnection();
  	$readableArthropods = array(
