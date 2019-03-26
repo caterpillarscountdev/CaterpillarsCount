@@ -55,7 +55,6 @@
 	while($row = mysqli_fetch_assoc($query)){
 		$rankingsArray[strval($row["SiteFK"])]["Caterpillars"] = round(((floatval($row["Caterpillars"]) / floatval($rankingsArray[strval($row["SiteFK"])]["Total"])) * 100), 2) . "%";
 	}
-	mysqli_close($dbconn);
 	
 	$query = mysqli_query($dbconn, "SELECT `ID`, `OpenToPublic`, `Latitude`, `Longitude`, `Name`, `Region` FROM `Site`");
 	while($row = mysqli_fetch_assoc($query)){
@@ -80,6 +79,7 @@
 			);
 		}
 	}
+	mysqli_close($dbconn);
 	
 	$result = json_encode(array_values($rankingsArray));
 	if($HIGH_TRAFFIC_MODE){
