@@ -16,7 +16,7 @@
 	$plantSpecies = mysqli_real_escape_string($dbconn, rawurldecode($_GET["plantSpecies"]));//% if all
 
 	$HIGH_TRAFFIC_MODE = true;
-	$SAVE_TIME_LIMIT = 20;
+	$SAVE_TIME_LIMIT = 60;
 	
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $includeWetLeaves . ($occurrenceInsteadOfDensity ? 1 : 0) . str_replace("%", "all", $observationMethod) . $monthStart . $monthEnd . $yearStart . $yearEnd . str_replace("%", "all", $arthropod) . $minSize . str_replace("%", "all", $plantSpecies));
 	if($HIGH_TRAFFIC_MODE){
