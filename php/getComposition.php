@@ -34,7 +34,7 @@
  		for($i = 0; $i < count($siteIDs); $i++){
  			$siteID = intval($siteIDs[$i]);
 			$query = mysqli_query($dbconn, "SELECT `Name` FROM `Site` WHERE `ID`='$siteID' LIMIT 1");
-			if(mysql_num_rows($query) == 0){
+			if(mysqli_num_rows($query) == 0){
 				continue;
 			}
 			$siteName = mysqli_fetch_assoc($query)["Name"];
