@@ -31,7 +31,7 @@
 		$sitesArray[strval($row["ID"])] = array(
 			"ID" => intval($row["ID"]),
 			"Name" => $row["Name"],
-			"Coordinates" => $row["Latitude()"] . "," . $row["Longitude"],
+			"Coordinates" => $row["Latitude"] . "," . $row["Longitude"],
 			"Description" => $row["Description"],
 		);
 	}
