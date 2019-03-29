@@ -3006,7 +3006,7 @@
 			
 			function showMapDownloadButton(){
 				$("#mapDownloadButton")[0].style.cursor = "pointer";
-				$("#mapDownloadButton")[0].onclick = function(){downloadMapData();submitClassificationToSciStarter();};
+				$("#mapDownloadButton")[0].onclick = function(){queueNotice('alert', 'We have disabled this feature during this demo to reduce the toll on our server.');};
 				$("#mapDownloadButton").stop().animate({opacity:"1"});
 			}
 			
@@ -3216,7 +3216,7 @@
 			</div>
 		</div>
 		<header>
-			<h1><a href="../">Caterpillars Count!</a></h1>
+			<h1>Caterpillars Count!</h1>
 			<div id="hamburger" onclick="toggleNav();">
 				<div></div>
 				<div></div>
@@ -3283,7 +3283,7 @@
 							<button id="userSwitchButton" onclick="switchRankingsTo('user');">User</button>
 						</div>
 					</div>
-					<p id="nameMaskNotice">Visit your <a href="../settings" class="highlighted">Settings</a> page and click on "Privacy" to hide your name from these leaderboards.</p>
+					<p id="nameMaskNotice">Visit your Settings page and click on "Privacy" to hide your name from these leaderboards.</p>
 					<div id="rankingsRoundedTop"></div>
 					<div id="superHeader">
 						<div>Surveys this...</div>
@@ -3411,7 +3411,7 @@
 						<div id="siteStats"></div>
 						
 						<h3>User Leaderboard</h3>
-						<p style="font-size:10px;text-align:left;margin:-15px 0px 20px 0px;">Visit your <a href="../settings" style="color:#999;">Settings</a> page and click on "Privacy" to hide your name from leaderboards like these.</p>
+						<p style="font-size:10px;text-align:left;margin:-15px 0px 20px 0px;">Visit your Settings page and click on "Privacy" to hide your name from leaderboards like these.</p>
 						<div id="siteUserSuperHeader">
 							<div>Surveys this...</div>
 						</div>
@@ -3426,7 +3426,7 @@
 							<div id="lineGraph">
 								<div class="chartExplanation">Click on the y-axis label to change the phenology metric being plotted.</div>
 								<div style="height:500px;margin-top:40px;position:relative;">
-									<div class="downloadChartButton" onclick="downloadPhenologyData();">
+									<div class="downloadChartButton" onclick="queueNotice('alert', 'We have disabled this feature during this demo to reduce the toll on our server.');">
 										<div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
 										<div class="downloadText">Download</div>
 									</div>
@@ -3447,7 +3447,7 @@
 							<div id="barGraph">
 								<div class="chartExplanation">Click on the y-axis label to change the composition metric being plotted. You can get a breakdown of arthropod composition for this site by year or plant species by clicking the "Site" label on the x-axis, or you can add additional sites for comparison by clicking "add".</div>
 								<div style="height:500px;margin-top:40px;position:relative;">
-									<div class="downloadChartButton" onclick="downloadCompositionData();">
+									<div class="downloadChartButton" onclick="queueNotice('alert', 'We have disabled this feature during this demo to reduce the toll on our server.');">
 										<div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
 										<div class="downloadText">Download</div>
 									</div>
@@ -3509,7 +3509,7 @@
 			
 			<div>Contact us: <a href="mailto:caterpillarscount@gmail.com">caterpillarscount@gmail.com</a></div>
 		
-			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
+			<div onclick="queueNotice('alert', 'Please stay on this page during the demo to reduce the toll on our server.');">View our privacy policy</div>
 		</footer>
 	</body>
 </html>
