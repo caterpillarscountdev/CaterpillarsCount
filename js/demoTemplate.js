@@ -150,38 +150,14 @@ var noticeQueue = [];
 			
 			var showingLoggedInNav = false;
 			function showLoggedInNav(){
-				if(!showingLoggedInNav){
 					if(window.localStorage.getItem("email") === null || window.localStorage.getItem("salt") === null){
 						$("nav").eq(0)[0].className = "";
 						return false;
 					}
-					
-					showingLoggedInNav = true;
-					//if we have credentials saved to localStorage and arent already doing so, verify them and show logged in nav if valid
-					var xhttp = new XMLHttpRequest();
-					xhttp.onreadystatechange = function() {
-						if (this.readyState == 4 && this.status == 200) {
-							showingLoggedInNav = false;
-							if(this.responseText == "true"){
-								$("nav>ul>li:last-of-type").eq(0)[0].onclick = function(){
-									accessSubMenu($("nav>ul>li:last-of-type").eq(0)[0]);
-								}
-								$("nav>ul>li:last-of-type").eq(0).find("span").eq(0)[0].innerHTML = "My Account";
-							}
-							$("nav").eq(0)[0].className = "";
-						}
-					};
-					if($("h1").eq(0)[0].innerHTML == "Caterpillars Count!"){
-						xhttp.open("GET", "php/autoLogIn.php?email=" + window.localStorage.getItem("email") + "&salt=" + window.localStorage.getItem("salt"), true);
+					$("nav>ul>li:last-of-type").eq(0)[0].onclick = function(){
+						accessSubMenu($("nav>ul>li:last-of-type").eq(0)[0]);
 					}
-					else if($("h1").eq(0)[0].innerHTML.indexOf("../../") > -1){
-						xhttp.open("GET", "../../php/autoLogIn.php?email=" + window.localStorage.getItem("email") + "&salt=" + window.localStorage.getItem("salt"), true);
-					}
-					else{
-						xhttp.open("GET", "../php/autoLogIn.php?email=" + window.localStorage.getItem("email") + "&salt=" + window.localStorage.getItem("salt"), true);
-					}
-					xhttp.send();
-				}
+					$("nav>ul>li:last-of-type").eq(0).find("span").eq(0)[0].innerHTML = "My Account";
 			}
 			
 			function logOut(){
@@ -348,29 +324,6 @@ var noticeQueue = [];
 					$("header").stop().animate({backgroundColor:"transparent", paddingTop:"25px", paddingBottom:"25px"});
 					$("nav>ul>li>ul").stop().animate({backgroundColor:"transparent", opacity:".9"});
 					$("nav>ul>li>ul>li").stop().animate({borderColor:"rgba(255,255,255,.1)"});
-				}
-			}
-			
-			function showScrollAnimationElements(){
-				var scrollAnimationElements = $(".scrollAnimationElement");
-				for(var i = 0; i < scrollAnimationElements.length; i++){
-					var element = scrollAnimationElements[i];
-					
-					var elementTopLine = $(element).offset().top;
-					var elementBottomLine = (elementTopLine + element.clientHeight);
-					var topLine = $(window).scrollTop();
-					var bottomLine = (topLine + window.innerHeight);
-					
-					if(((elementTopLine - 100) > topLine && elementTopLine < bottomLine) || ((elementBottomLine + 50) < bottomLine && elementBottomLine > topLine) || (elementTopLine < topLine && elementBottomLine > bottomLine)){
-						if(element.className.indexOf("fadeInOnScroll") > -1){
-							var delay = 0;
-							if($(window).width() > 1018 && element.className.indexOf("delay") > -1){
-								var startingAtDelay = element.className.substring(element.className.indexOf("delay"))  + " ";
-								delay = Number(startingAtDelay.substring(5, startingAtDelay.indexOf(" ")));
-							}
-							$(element).delay(delay).animate({opacity:"1"}, 1000);
-						}
-					}
 				}
 			}
 			
