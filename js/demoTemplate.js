@@ -276,7 +276,6 @@ var noticeQueue = [];
 			
 			$(window).scroll(function(){
 				setHeaderCollapse();
-				showScrollAnimationElements();
 			});
 			
 			var lastWindowWidth = $(window).width();
