@@ -1,3 +1,4 @@
+			var HIGH_TRAFFIC_MODE = true;
 			var noticeQueue = [];
 			var showingQueue = false;
 			function queueNotice(type, message){
@@ -237,7 +238,9 @@
 						managerRequestsQueuing = false;
 					}
 					else{
-						setTimeout(queueManagerRequests, 1000);
+						if(!HIGH_TRAFFIC_MODE){
+							setTimeout(queueManagerRequests, 1000);
+						}
 					}
 				});
 			}
