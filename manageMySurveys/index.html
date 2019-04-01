@@ -331,14 +331,58 @@
 			#iconBar{
 				text-align:right;
 				background:#eee;
+				padding:20px;
 			}
-
+			
 			#iconBar>img{
 				height:25px;
 				opacity:.5;
 				cursor:pointer;
-				padding:20px;
 				float:right;
+				display:none;
+			}
+			#batchDeleteIcon{
+				padding-right:20px;
+			}
+			
+			.iconButton{
+				display:table;
+				background:#fed136;
+				padding:10px;
+				color:#fff;
+				font-family:'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				font-weight:bold;
+				text-transform:uppercase;
+				border-radius:4px;
+				overflow:hidden;
+				border-bottom:2px solid rgba(0,0,0,0.1);
+				cursor:pointer;
+				width:auto;
+				box-sizing:border-box;
+				float:right;
+			}
+			
+			#batchDeleteIconButton{
+				margin-right:20px;
+				background:#ccc;
+			}
+			
+			.iconButton>div{
+				display:table-cell;
+				vertical-align:middle;
+			}
+			.iconButton img{
+				height:23px;
+				width:23px;
+				background-position:center;
+				background-size:contain;
+				background-repeat:no-repeat;
+			}
+			.iconButton>div{
+				padding-left:10px;
+				padding-right:3px;
+				font-size:17px;
+				padding-top:2px;
 			}
 
 			#filtersDropdown, #batchDeleteDropdown{
@@ -573,6 +617,13 @@
 			}
 
 			@media screen and (max-width: 900px) {
+				.iconButton{
+					display:none;
+				}
+				#iconBar>img{
+					display:block;
+				}
+				
 				#surveys .survey .headInfo{
 					display:block;
 				}
@@ -2262,8 +2313,16 @@
 		<main>
 			<div class="panel" style="padding:0px;">
 				<div id="iconBar">
-					<img src="../images/delete.png" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
 					<img src="../images/filterIcon.png" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));"/>
+					<img src="../images/delete.png" id="batchDeleteIcon" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
+					<div class="iconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
+						<img src="../images/filterIconWhite.png"/>
+						<div>Filters</div>
+					</div>
+					<div class="iconButton" id="batchDeleteIconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
+						<img src="../images/deleteWhite.png"/>
+						<div>Batch delete</div>
+					</div>
 					<div class="clearBoth"></div>
 				</div>
 				<div id="batchDeleteDropdown">
