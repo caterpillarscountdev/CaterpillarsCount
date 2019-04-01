@@ -353,11 +353,14 @@
 				overflow:hidden;
 				border-bottom:2px solid rgba(0,0,0,0.1);
 				cursor:pointer;
-				width:180px;
+				width:auto;
 				box-sizing:border-box;
+				float:right;
+				margin:20px 0px;
 			}
-			.iconButton:first-of-type{
+			.iconButton:last-of-type{
 				margin-right:20px;
+				background:#ccc;
 			}
 			.iconButton>div{
 				display:table-cell;
@@ -2299,12 +2302,12 @@
 			<div class="panel" style="padding:0px;">
 				<div id="iconBar">
 					<div class="iconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
-						<img src="../images/delete.png"/>
-						<div>Filters</div>
+						<img src="../images/deleteWhite.png"/>
+						<div>Batch delete</div>
 					</div>
 					<div class="iconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
-						<img src="../images/filterIcon.png"/>
-						<div>Batch delete</div>
+						<img src="../images/filterIconWhite.png"/>
+						<div>Filters</div>
 					</div>
 					<div class="clearBoth"></div>
 				</div>
