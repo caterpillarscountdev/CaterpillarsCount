@@ -331,14 +331,7 @@
 			#iconBar{
 				text-align:right;
 				background:#eee;
-			}
-
-			#iconBar>img{
-				height:25px;
-				opacity:.5;
-				cursor:pointer;
 				padding:20px;
-				float:right;
 			}
 			
 			.iconButton{
@@ -358,10 +351,12 @@
 				float:right;
 				margin:20px 0px;
 			}
-			.iconButton:last-of-type{
+			
+			#batchDeleteIconButton{
 				margin-right:20px;
 				background:#ccc;
 			}
+			
 			.iconButton>div{
 				display:table-cell;
 				vertical-align:middle;
@@ -2301,13 +2296,13 @@
 		<main>
 			<div class="panel" style="padding:0px;">
 				<div id="iconBar">
-					<div class="iconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
-						<img src="../images/deleteWhite.png"/>
-						<div>Batch delete</div>
-					</div>
 					<div class="iconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
 						<img src="../images/filterIconWhite.png"/>
 						<div>Filters</div>
+					</div>
+					<div class="iconButton" id="batchDeleteIconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
+						<img src="../images/deleteWhite.png"/>
+						<div>Batch delete</div>
 					</div>
 					<div class="clearBoth"></div>
 				</div>
