@@ -334,9 +334,18 @@
 				padding:20px;
 			}
 			
+			#iconBar>img{
+				height:25px;
+				opacity:.5;
+				cursor:pointer;
+				float:right;
+			}
+			#batchDeleteIcon{
+				padding-right:20px;
+			}
+			
 			.iconButton{
 				background:#fed136;
-				display:table;
 				padding:10px;
 				color:#fff;
 				font-family:'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -349,7 +358,7 @@
 				width:auto;
 				box-sizing:border-box;
 				float:right;
-				margin:20px 0px;
+				display:none;
 			}
 			
 			#batchDeleteIconButton{
@@ -607,6 +616,13 @@
 			}
 
 			@media screen and (max-width: 900px) {
+				.iconButton{
+					display:table;
+				}
+				#iconBar>img{
+					display:none;
+				}
+				
 				#surveys .survey .headInfo{
 					display:block;
 				}
@@ -2296,6 +2312,8 @@
 		<main>
 			<div class="panel" style="padding:0px;">
 				<div id="iconBar">
+					<img src="../images/delete.png" id="batchDeleteIcon" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
+					<img src="../images/filterIcon.png" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));"/>
 					<div class="iconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
 						<img src="../images/filterIconWhite.png"/>
 						<div>Filters</div>
