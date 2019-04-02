@@ -329,12 +329,16 @@
 			}
 
 			#iconBar{
-				text-align:right;
 				background:#eee;
 				padding:20px;
 			}
 			
-			#iconBar>img{
+			#iconBar>div{
+				text-align:right;
+				display:none;
+			}
+			
+			#iconBar>div>img{
 				height:25px;
 				opacity:.5;
 				cursor:pointer;
@@ -844,7 +848,7 @@
 							closeHeight($('#filtersDropdown'));
 							closeHeight($("#editExtras"));
 							$("#pageNav").fadeIn(0);
-							$("#iconBar>img").fadeIn(300);
+							$("#iconBar>div").fadeIn(300);
 							$(".loading").fadeOut(0);
 							$("#surveys").fadeIn(0);
 
@@ -1573,7 +1577,7 @@
 				backupSurveyDate = $("#" + id + " .date").eq(0)[0].innerHTML;
 
 				//hide iconBar icons
-				$("#iconBar>img").fadeOut(200);
+				$("#iconBar>div").fadeOut(200);
 
 				//hide other surveys
 				$(".survey").stop().css({overflow:"hidden", maxHeight:"1000px"});
