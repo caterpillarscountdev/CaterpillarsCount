@@ -624,7 +624,7 @@
 				.iconButton{
 					display:none;
 				}
-				#iconBar>img{
+				#iconBar>div>img{
 					display:block;
 				}
 				
@@ -2317,17 +2317,19 @@
 		<main>
 			<div class="panel" style="padding:0px;">
 				<div id="iconBar">
-					<img src="../images/filterIcon.png" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));"/>
-					<img src="../images/delete.png" id="batchDeleteIcon" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
-					<div class="iconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
-						<img src="../images/filterIconWhite.png"/>
-						<div>Filter surveys</div>
+					<div>
+						<img src="../images/filterIcon.png" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));"/>
+						<img src="../images/delete.png" id="batchDeleteIcon" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
+						<div class="iconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
+							<img src="../images/filterIconWhite.png"/>
+							<div>Filter surveys</div>
+						</div>
+						<div class="iconButton" id="batchDeleteIconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
+							<img src="../images/deleteWhite.png"/>
+							<div>Batch delete</div>
+						</div>
+						<div class="clearBoth"></div>
 					</div>
-					<div class="iconButton" id="batchDeleteIconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
-						<img src="../images/deleteWhite.png"/>
-						<div>Batch delete</div>
-					</div>
-					<div class="clearBoth"></div>
 				</div>
 				<div id="batchDeleteDropdown">
 					<div>
