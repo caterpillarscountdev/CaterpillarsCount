@@ -335,6 +335,7 @@
 			
 			#iconBar>div{
 				text-align:right;
+				min-height:45px;
 				display:none;
 			}
 			
@@ -507,7 +508,7 @@
 			}
 
 			#dateFilter>div:first-of-type>div{
-				padding:16px;
+				padding:16px 5px;
 				float:left;
 				width:33.33%;
 				box-sizing:border-box;
@@ -623,6 +624,9 @@
 			@media screen and (max-width: 900px) {
 				.iconButton{
 					display:none;
+				}
+				#iconBar>div{
+					min-height:25px;
 				}
 				#iconBar>div>img{
 					display:block;
