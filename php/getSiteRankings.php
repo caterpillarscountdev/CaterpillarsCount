@@ -16,26 +16,29 @@
 	}
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
-	$query = mysqli_query($dbconn, "SELECT Site.ID, Site.Name, Site.Region, Site.Latitude, Site.Longitude, Site.OpenToPublic, SUM(CASE WHEN Survey.LocalDate >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) THEN 1 ELSE 0 END) AS Week, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(DATE_FORMAT(CURDATE(),'%Y-%m'), '-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS Month, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS Year, Count(*) AS Total, COUNT(DISTINCT Survey.LocalDate) AS TotalUniqueDates FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK=Site.ID WHERE Site.ID<>2 AND Total>='$MIN_SURVEY_REQUIREMENT' GROUP BY Site.ID ORDER BY Year DESC");
+	$query = mysqli_query($dbconn, "SELECT Site.ID, Site.Name, Site.Region, Site.Latitude, Site.Longitude, Site.OpenToPublic, SUM(CASE WHEN Survey.LocalDate >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) THEN 1 ELSE 0 END) AS Week, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(DATE_FORMAT(CURDATE(),'%Y-%m'), '-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS Month, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS Year, Count(*) AS Total, COUNT(DISTINCT Survey.LocalDate) AS TotalUniqueDates FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK=Site.ID WHERE Site.ID<>2 GROUP BY Site.ID ORDER BY Year DESC");
 		
 	$rankingsArray = array();
   	$i = 1;
 	while($row = mysqli_fetch_assoc($query)){
-    		$openToPublic = $row["OpenToPublic"];
-		$rankingsArray[strval($row["ID"])] = array(
-      			"ID" => $row["ID"],
-      			"Name" => $row["Name"] . " (" . $row["Region"] . ")",
-      			"Coordinates" => $row["Latitude"] . "," . $row["Longitude"],
-      			"Week" => intval($row["Week"]),
-			"UniqueDatesThisWeek" => 0,
-      			"Month" => intval($row["Month"]),
-			"UniqueDatesThisMonth" => 0,
-      			"Year" => intval($row["Year"]),
-			"UniqueDatesThisYear" => 0,
-      			"Total" => intval($row["Total"]),
-      			"TotalUniqueDates" => intval($row["TotalUniqueDates"]),
-			"Caterpillars" => "0%",
-    		);
+		$total = intval($row["Total"]);
+		if($total >= $MIN_SURVEY_REQUIREMENT){
+			$openToPublic = $row["OpenToPublic"];
+			$rankingsArray[strval($row["ID"])] = array(
+				"ID" => $row["ID"],
+				"Name" => $row["Name"] . " (" . $row["Region"] . ")",
+				"Coordinates" => $row["Latitude"] . "," . $row["Longitude"],
+				"Week" => intval($row["Week"]),
+				"UniqueDatesThisWeek" => 0,
+				"Month" => intval($row["Month"]),
+				"UniqueDatesThisMonth" => 0,
+				"Year" => intval($row["Year"]),
+				"UniqueDatesThisYear" => 0,
+				"Total" => $total,
+				"TotalUniqueDates" => intval($row["TotalUniqueDates"]),
+				"Caterpillars" => "0%",
+			);
+		}
 	}
 	
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT LocalDate) AS UniqueDatesThisWeek FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND Plant.SiteFK<>2 AND Survey.LocalDate >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) GROUP BY Plant.SiteFK");
