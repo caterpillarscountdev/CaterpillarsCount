@@ -1456,7 +1456,7 @@
 					$('#siteUserLeaderboard tr td>div').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).css({overflow:'visible'});
 				});
 				$('#siteUserLeaderboard tr td').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).stop().animate({padding:'5px 7px'}, 300);
-				if(numberOfShownRankings >= $('#siteUserLeaderboard tr').length){
+				if(numberOfShownRankings >= ($('#siteUserLeaderboard tr').length - 1)){
 					$("#showMoreSiteUserRankings").fadeOut(200);
 				}
 			}
@@ -2139,14 +2139,14 @@
 						$('#rankings tr td>div').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).css({overflow:'visible'});
 					});
 					$('#rankings tr td').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).stop().animate({padding:'5px 7px'}, 300);
-					if(numberOfShownRankings >= $('#rankings tr').length){
+					if(numberOfShownRankings >= ($('#rankings tr').length - 1)){
 						$("#showMoreRankings").fadeOut(200);
 					}
 				}
 				else{
 					$('#rankings tr td>div').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).stop().css({maxHeight:'500px', overflow:'visible'});
 					$('#rankings tr td').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).stop().css({padding:'5px 7px'});
-					if(numberOfShownRankings >= $('#rankings tr').length){
+					if(numberOfShownRankings >= ($('#rankings tr').length - 1)){
 						$("#showMoreRankings").fadeOut(0);
 					}
 				}
