@@ -243,7 +243,7 @@
 					});
 				}
 				else{
-					promptConfirm("<strong>Copy " + fullName + "'" + possessiveS + " email address here:</strong><br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join('@') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Got it!", function(){}, function(){});
+					promptConfirm("Here is " + fullName + "'" + possessiveS + " email address:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join('@') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Got it!", function(){}, function(){});
 					$('.promptInput').eq(0)[0].outerHTML = $('.promptInput').eq(0)[0].outerHTML;
 				}
 				$(".promptInput").eq(0)[0].select();
