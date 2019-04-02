@@ -1463,27 +1463,58 @@
 			
 			function populateSiteUserLeaderboard(sortingMetric, keepCurrentNumberShown){
 				var rankings = siteUserRankings.sort(function(a, b){
-					a = a[sortingMetric];
-					b = b[sortingMetric];
+					var aVal = a[sortingMetric];
+					var bVal = b[sortingMetric];
 					var order = -1;
 					if(sortingMetric == "Name"){
 						order = 1;
-						a = a.toLowerCase();
-						b = b.toLowerCase();
-						if(a == "(anonymous user)") return 1;
-						if(b == "(anonymous user)") return -1;
+						aVal = aVal.toLowerCase();
+						bVal = bVal.toLowerCase();
+						if(aVal == "(anonymous user)") return 1;
+						if(bVal == "(anonymous user)") return -1;
 					}
 					else{
 						if(sortingMetric == "Caterpillars"){
-							a = Number(a.replace("%", ''));
-							b = Number(b.replace("%", ''));
+							aVal = aVal.replace("%", '');
+							bVal = bVal.replace("%", '');
 						}
-						a = Number(a);
-						b = Number(b);
+						aVal = Number(aVal);
+						bVal = Number(bVal);
 					}
 					
-					if(a < b) return -1 * order;
-					if(a > b) return 1 * order;
+					if(aVal < bVal) return -1 * order;
+					if(aVal > bVal) return 1 * order;
+					
+					if(sortingMetric != "Caterpillars"){
+						aVal = Number(a["Caterpillars"].replace("%", ''));
+						bVal = Number(b["Caterpillars"].replace("%", ''));
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Week"){
+						aVal = Number(a["Week"]);
+						bVal = Number(b["Week"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Month"){
+						aVal = Number(a["Month"]);
+						bVal = Number(b["Month"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Year"){
+						aVal = Number(a["Year"]);
+						bVal = Number(b["Year"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Total"){
+						aVal = Number(a["Total"]);
+						bVal = Number(b["Total"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
 					return 0;
 				});
 				var htmlToAdd = 	"<table>";
@@ -1966,28 +1997,59 @@
 					lastUserSortingMetric = sortingMetric;
 				}
 				rankings = rankings.sort(function(a, b){
-					a = a[sortingMetric];
-					b = b[sortingMetric];
+					var aVal = a[sortingMetric];
+					var bVal = b[sortingMetric];
 					
 					var order = -1;
 					if(sortingMetric == "Name"){
 						order = 1;
-						a = a.toLowerCase();
-						b = b.toLowerCase();
-						if(a == "(anonymous user)") return 1;
-						if(b == "(anonymous user)") return -1;
+						aVal = aVal.toLowerCase();
+						bVal = bVal.toLowerCase();
+						if(aVal == "(anonymous user)") return 1;
+						if(bVal == "(anonymous user)") return -1;
 					}
 					else{
 						if(sortingMetric == "Caterpillars"){
-							a = Number(a.replace("%", ''));
-							b = Number(b.replace("%", ''));
+							aVal = aVal.replace("%", '');
+							bVal = bVal.replace("%", '');
 						}
-						a = Number(a);
-						b = Number(b);
+						aVal = Number(aVal);
+						bVal = Number(bVal);
 					}
 					
-					if(a < b) return -1 * order;
-					if(a > b) return 1 * order;
+					if(aVal < bVal) return -1 * order;
+					if(aVal > bVal) return 1 * order;
+					
+					if(sortingMetric != "Caterpillars"){
+						aVal = Number(a["Caterpillars"].replace("%", ''));
+						bVal = Number(b["Caterpillars"].replace("%", ''));
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Week"){
+						aVal = Number(a["Week"]);
+						bVal = Number(b["Week"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Month"){
+						aVal = Number(a["Month"]);
+						bVal = Number(b["Month"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Year"){
+						aVal = Number(a["Year"]);
+						bVal = Number(b["Year"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Total"){
+						aVal = Number(a["Total"]);
+						bVal = Number(b["Total"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
 					return 0;
 				});
 				var htmlToAdd = 	"<table>";
