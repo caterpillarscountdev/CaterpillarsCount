@@ -727,24 +727,31 @@
 				if(fullName.length > 0 && fullName[fullName.length - 1] == 's'){
 					possessiveS = "";
 				}
-				promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join("@") + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Copy to clipboard!", function(){}, function(){
+				if(getDeviceType() == "desktop"){
+					promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join("@") + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Copy to clipboard!", function(){}, function(){
+						$('.promptInput').eq(0)[0].outerHTML = $('.promptInput').eq(0)[0].outerHTML;
+						$('.promptInput').eq(0)[0].select();
+						var copied = true;
+						try{
+							document.execCommand("copy");
+						}
+						catch(err){
+							copied = false;
+							setTimeout(function(){
+								promptConfirm("<strong>Sorry! We had trouble copying that for you. Please manually right-click and copy the email address here:</strong><br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join('@') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Got it!", function(){}, function(){});
+								$('.promptInput').eq(0)[0].outerHTML = $('.promptInput').eq(0)[0].outerHTML;
+								$(".promptInput").eq(0)[0].select();
+							}, 1);
+						}
+						if(copied){
+							queueNotice("confirmation", "Copied to clipboard!");
+						}
+					});
+				}
+				else{
+					promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join('@') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Got it!", function(){}, function(){});
 					$('.promptInput').eq(0)[0].outerHTML = $('.promptInput').eq(0)[0].outerHTML;
-					$('.promptInput').eq(0)[0].select();
-					var copied = true;
-					try{
-						document.execCommand("copy");
-					}
-					catch(err){
-						copied = false;
-						setTimeout(function(){
-							promptConfirm("<strong>Sorry! We had trouble copying that for you. Please manually right-click and copy the email address here:</strong><br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join('@') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Got it!", function(){}, function(){});
-							$(".promptInput").eq(0)[0].select();
-						}, 1);
-					}
-					if(copied){
-						queueNotice("confirmation", "Copied to clipboard!");
-					}
-				});
+				}
 				$(".promptInput").eq(0)[0].select();
 			}
 
