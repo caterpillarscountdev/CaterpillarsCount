@@ -12,7 +12,7 @@
 			border-radius:0px;
 			border:5px solid;
 			border-top:38px solid;
-			border-bottom:17px solid;
+			border-bottom:13px solid;
 			position:relative;
 		}
 		.tag>div:nth-of-type(1), .tag>div:nth-of-type(2){
@@ -33,12 +33,12 @@
 			background:#fff;
 			text-align:center;
 			font-size:50px;
-			padding:0px 14px;
+			padding:0px 16px;
 		}
 		
 		.urlStamp{
 			position:absolute;
-			bottom:0px;
+			bottom:-18px;
 			left:13px;
 		}
 		
@@ -119,7 +119,7 @@
 					echo	"</div>";
 					echo	"<div class=\"urlStamp\">";
 					echo 		"<svg width=\"200\" height=\"20\" viewBox=\"0 0 300 24\">";
-					echo 			"<text x=\"50%\" y=\"14\" text-anchor=\"middle\" font-weight='bold' font-size='16px' fill='#ffffff' font-family=\"font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\">";
+					echo 			"<text x=\"50%\" y=\"14\" text-anchor=\"middle\" font-weight='bold' font-size='12px' fill='#ffffff' font-family=\"font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\">";
 					echo 				"caterpillarscount.unc.edu";
 					echo 			"</text>";
 					echo 		"</svg>";
