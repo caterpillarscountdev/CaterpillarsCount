@@ -4,7 +4,7 @@
 			text-align:center;
 			margin: 0px;
 		}
-		body>div{
+		.tag{
 			font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
 			padding:3px;
 			display:inline-block;
@@ -12,17 +12,19 @@
 			border-radius:0px;
 			border:5px solid;
 			border-top:38px solid;
+			border-bottom:17px solid;
+			position:relative;
 		}
-		body>div>div:nth-of-type(1), body>div>div:nth-of-type(2){
+		.tag>div:nth-of-type(1), .tag>div:nth-of-type(2){
 			color:#333;
 			padding:5px;
 			text-align:center;
 			font-weight:bold;
 		}
-		body>div>div:nth-of-type(1){
+		.tag>div:nth-of-type(1){
 			margin-top:-42px;
 		}
-		body>div>div:nth-of-type(2){
+		.tag>div:nth-of-type(2){
 			margin-top:-16px;
 		}
 		
@@ -34,8 +36,10 @@
 			padding:0px 14px;
 		}
 		
-		body>div>div:nth-of-type(5){
-			
+		.urlStamp{
+			position:absolute;
+			bottom:0px;
+			left:13px;
 		}
 		
 		@page {
@@ -97,14 +101,14 @@
 					
 					echo "<div style=\"border-color:$color;\" class=\"tag\">";
 					echo	"<div>";
-					echo 		"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200px\" height=\"20px\" viewBox=\"0 0 300 24\">";
+					echo 		"<svg width=\"200px\" height=\"20px\" viewBox=\"0 0 300 24\">";
 					echo 			"<text textLength=\"290\" lengthAdjust=\"spacing\" x=\"5\" y=\"14\" text-decoration='underline' font-weight='bold' font-size='16px' fill='#ffffff' font-family=\"font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\">";
 					echo 				$line1;
 					echo 			"</text>";
 					echo 		"</svg>";
 					echo	"</div>";
 					echo	"<div>";
-					echo 		"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200px\" height=\"20px\" viewBox=\"0 0 300 24\">";
+					echo 		"<svg width=\"200px\" height=\"20px\" viewBox=\"0 0 300 24\">";
 					echo 			"<text textLength=\"290\" lengthAdjust=\"spacing\" x=\"5\" y=\"14\" text-decoration='underline' font-weight='bold' font-size='16px' fill='#ffffff' font-family=\"font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\">";
 					echo 				$line2;
 					echo 			"</text>";
@@ -113,10 +117,10 @@
 					echo	"<div class=\"whiteBox\">";
 					echo 		"<div style='color:$color;'>" . $plants[$i]->getCode() . "</div>";
 					echo	"</div>";
-					echo	"<div>";
-					echo 		"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200px\" height=\"20px\" viewBox=\"0 0 300 24\">";
-					echo 			"<text textLength=\"290\" lengthAdjust=\"spacing\" x=\"5\" y=\"14\" text-decoration='underline' font-weight='bold' font-size='16px' fill='#ffffff' font-family=\"font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\">";
-					echo 				"caterpillarscount.unc.edu"
+					echo	"<div class=\"urlStamp\">";
+					echo 		"<svg width=\"200\" height=\"20\" viewBox=\"0 0 300 24\">";
+					echo 			"<text x=\"50%\" y=\"14\" text-anchor=\"middle\" font-weight='bold' font-size='16px' fill='#ffffff' font-family=\"font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\">";
+					echo 				"caterpillarscount.unc.edu";
 					echo 			"</text>";
 					echo 		"</svg>";
 					echo	"</div>";
