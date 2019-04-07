@@ -39,7 +39,7 @@
 		.urlStamp{
 			position:absolute;
 			bottom:-18px;
-			left:13px;
+			left:8px;
 		}
 		
 		@page {
