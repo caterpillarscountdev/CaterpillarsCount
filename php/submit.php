@@ -115,7 +115,7 @@
 				}
 				
 				if($site->getName() != "Example Site"){
-					submitToSciStarter($user->getEmail(), "collection", null, $survey->getLocalDate() . "T" . $survey->getLocalTime(), 300, 2, null);
+					//submitToSciStarter($user->getEmail(), "collection", null, $survey->getLocalDate() . "T" . $survey->getLocalTime(), 300, 2, null);
 				}
 				
 				if($arthropodSightingFailures != ""){
