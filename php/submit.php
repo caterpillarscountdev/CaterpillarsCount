@@ -1,8 +1,7 @@
 <?php
 	header('Access-Control-Allow-Origin: *');
-	
+
 	require_once('submitToINaturalist.php');
-	require_once('submitToSciStarter.php');
 	require_once('orm/User.php');
 	require_once('orm/Plant.php');
 	require_once('orm/Survey.php');
@@ -114,14 +113,10 @@
 					}
 				}
 				
-				if($site->getName() != "Example Site"){
-					submitToSciStarter($user->getEmail(), "collection", null, $survey->getLocalDate() . "T" . $survey->getLocalTime(), 300, 2, null);
+				if($arthropodSightingFailures == ""){
+					die("true|");
 				}
-				
-				if($arthropodSightingFailures != ""){
-					die("false|" . $arthropodSightingFailures);
-				}
-				die("true|");
+				die("false|" . $arthropodSightingFailures);
 			}
 			die("false|" . $survey);
 		}

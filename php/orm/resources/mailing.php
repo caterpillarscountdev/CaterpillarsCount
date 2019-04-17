@@ -248,7 +248,7 @@
 			$siteParagraphs .= "<p style=\"margin: 10px 0; padding: 0; color: #808080; font-family: Helvetica; font-size: 16px; line-height: 150%; text-align: left;\">Click&nbsp;<a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/observations?place_id=any&subview=grid&field:Site%20Name=" . cleanParam($sites[$i]->getName()) . "\" target=\"_blank\"><span style=\"color: #6faf6d;\">here</span></a> to see all participants' photos submitted from " . $sites[$i]->getName() . " which were submitted to iNaturalist.</p>";
 		}
 		
-		$usersINaturalistParagraph = "Remember that any arthropod photos you take with the app as a part of your surveys get sent automatically to <a href=\"https://www.inaturalist.org/\">iNaturalist.org</a> where they might get identified by experts!";
+		$usersINaturalistParagraph = "Remember that any arthropod photos you take with the app as a part of your surveys get sent automatically to <a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/\">iNaturalist.org</a> where they might get identified by experts!";
 		if($userHasINaturalistObservations){
 			$usersINaturalistParagraph = "<a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=" . $iNaturalistObserverID . "\" target=\"_blank\"><span style=\"color: #6faf6d;\">Here</span></a> is a link to arthropod photos you have taken which were submitted to iNaturalist. Maybe someone has identified them for you!";
 		}
