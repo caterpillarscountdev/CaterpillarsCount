@@ -207,11 +207,15 @@ class ArthropodSighting
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$photoURL = self::validPhotoURL($dbconn, $photoURL);
 			if($photoURL !== false){
+				/*
+				//NOT DONE WITH CRON
 				$needToSendToINaturalist = 1;
 				if($photoURL == "" || $this->survey->getPlant()->getSite()->getName() == "Example Site"){
 					$needToSendToINaturalist = 0;
 				}
 				mysqli_query($dbconn, "UPDATE ArthropodSighting SET PhotoURL='$photoURL', NeedToSendToINaturalist='$needToSendToINaturalist' WHERE ID='" . $this->id . "'");
+				*/
+				mysqli_query($dbconn, "UPDATE ArthropodSighting SET PhotoURL='$photoURL' WHERE ID='" . $this->id . "'");
 				mysqli_close($dbconn);
 				$this->photoURL = $photoURL;
 				return true;
