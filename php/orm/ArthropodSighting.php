@@ -206,8 +206,12 @@ class ArthropodSighting
 		{
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$photoURL = self::validPhotoURL($dbconn, $photoURL);
-			if($photoURL != false){
-				mysqli_query($dbconn, "UPDATE ArthropodSighting SET PhotoURL='$photoURL' WHERE ID='" . $this->id . "'");
+			if($photoURL !== false){
+				$needToAddToINaturalist = 1;
+				if($photoURL == ""){
+					$needToAddToINaturalist = 0;
+				}
+				mysqli_query($dbconn, "UPDATE ArthropodSighting SET PhotoURL='$photoURL', NeedToAddToINaturalist='$needToAddToINaturalist' WHERE ID='" . $this->id . "'");
 				mysqli_close($dbconn);
 				$this->photoURL = $photoURL;
 				return true;
