@@ -1,6 +1,6 @@
 <?php
-	require_once('orm/resources/Keychain.php');
-	require_once("orm/Plant.php");
+	require_once('/opt/app-root/src/php/orm/resources/Keychain.php');
+	require_once("/opt/app-root/src/php/orm/Plant.php");
 	
 	function rp($search, $replace, $subject){
 		return str_replace($search, $replace, $subject);
