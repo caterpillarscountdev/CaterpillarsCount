@@ -1,6 +1,6 @@
 <?php
-	require_once("orm/resources/Keychain.php");
-	require_once("submitToSciStarter.php");
+	require_once("/opt/app-root/src/php/orm/resources/Keychain.php");
+	require_once("/opt/app-root/src/php/submitToSciStarter.php");
 
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	$query = mysqli_query($dbconn, "SELECT Survey.ID AS SurveyID, User.Email, Survey.LocalDate, Survey.`LocalTime` FROM Survey JOIN User ON Survey.UserFKOfObserver=User.ID WHERE Survey.NeedToSendToSciStarter='1' ORDER BY RAND()");
