@@ -92,11 +92,11 @@
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
 		if(function_exists('curl_file_create')){//PHP 5.5+
-			$cFile = curl_file_create(realpath("../images/arthropods/" . $arthropodPhotoURL));
+			$cFile = curl_file_create("/opt/app-root/src/images/arthropods/" . $arthropodPhotoURL);
 		}
 		else{
 			curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
-			$cFile = '@' . realpath("../images/arthropods/" . $arthropodPhotoURL);
+			$cFile = '@' . "/opt/app-root/src/images/arthropods/" . $arthropodPhotoURL);
 		}
 		$post = array('access_token' => $token, 'observation_photo[observation_id]' => $observation["id"], 'file'=> $cFile);
 		curl_setopt($ch, CURLOPT_URL,"http://www.inaturalist.org/observation_photos");
