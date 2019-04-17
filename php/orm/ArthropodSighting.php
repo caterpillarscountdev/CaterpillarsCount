@@ -208,7 +208,7 @@ class ArthropodSighting
 			$photoURL = self::validPhotoURL($dbconn, $photoURL);
 			if($photoURL !== false){
 				$needToAddToINaturalist = 1;
-				if($photoURL == ""){
+				if($photoURL == "" || $this->survey->getPlant()->getSite()->getName() == "Example Site"){
 					$needToAddToINaturalist = 0;
 				}
 				mysqli_query($dbconn, "UPDATE ArthropodSighting SET PhotoURL='$photoURL', NeedToAddToINaturalist='$needToAddToINaturalist' WHERE ID='" . $this->id . "'");
