@@ -1,5 +1,4 @@
 <?php
-	/*
 	require_once('/opt/app-root/src/php/orm/resources/Keychain.php');
 	require_once("/opt/app-root/src/php/orm/Plant.php");
 	
@@ -147,5 +146,4 @@
 		}
 	}
 	mysqli_close($dbconn);
-	*/
 ?>
