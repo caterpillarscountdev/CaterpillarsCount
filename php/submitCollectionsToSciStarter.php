@@ -8,7 +8,7 @@
 	$query = mysqli_query($dbconn, "SELECT `temp` FROM ManagerRequest WHERE ID='16'");
 	$needToSend = filter_var(mysqli_fetch_assoc($query)["temp"], FILTER_VALIDATE_BOOLEAN);
 	if($needToSend){
-		submitINaturalistObservation("plocharczykweb", "BYE", "2019-04-18", "Visual", "", false, "bee", false, false, false, 1, 5, "32.jpeg", "", 50, 10, 2);
+		submitINaturalistObservation("plocharczykweb", "BYE", "2019-04-18", "Visual", "", false, "bee", false, false, false, 1, 5, "/32.jpeg", "", 50, 10, 2);
 		$query = mysqli_query($dbconn, "UPDATE ManagerRequest SET `temp`='0' WHERE ID='16'");
 	}
 	mysqli_close($dbconn);
