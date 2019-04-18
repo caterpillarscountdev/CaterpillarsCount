@@ -1,7 +1,6 @@
 <?php
 	header('Access-Control-Allow-Origin: *');
-
-	require_once('submitToINaturalist.php');
+	
 	require_once('orm/User.php');
 	require_once('orm/Plant.php');
 	require_once('orm/Survey.php');
@@ -99,13 +98,6 @@
 						$attachResult = attachPhotoToArthropodSighting($_FILES['file' . $i], $arthropodSighting);
 						if($attachResult != "File not uploaded." && $attachResult !== true){
 							$arthropodSightingFailures .= strval($attachResult);
-						}
-						if($arthropodSighting->getPhotoURL() != "" && $site->getName() != "Example Site"){
-							$observerID = $user->getINaturalistObserverID();
-							if($user->getHidden()){
-								$observerID = "anonymous";
-							}
-							submitINaturalistObservation($observerID, $plant->getCode(), $survey->getLocalDate(), $survey->getObservationMethod(), $survey->getNotes(), $survey->getWetLeaves(), $arthropodSighting->getGroup(), $arthropodSighting->getHairy(), $arthropodSighting->getRolled(), $arthropodSighting->getTented(), $arthropodSighting->getQuantity(), $arthropodSighting->getLength(), $arthropodSighting->getPhotoURL(), $arthropodSighting->getNotes(), $survey->getNumberOfLeaves(), $survey->getAverageLeafLength(), $survey->getHerbivoryScore());
 						}
 					}
 					else{
