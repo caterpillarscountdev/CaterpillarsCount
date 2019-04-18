@@ -92,7 +92,7 @@
 		$ch = curl_init();
 		$arthropodPhotoPath = "../images/arthropods/" . $arthropodPhotoURL;
 		if(strpos($arthropodPhotoURL, '/') !== false){
-			$arthropodPhotoPath = "/opt/app-root/src/images/arthropods/" . $arthropodPhotoURL;
+			$arthropodPhotoPath = "/opt/app-root/src/images/arthropods" . $arthropodPhotoURL;
 		}
 		
 		if(function_exists('curl_file_create')){//PHP 5.5+
