@@ -440,7 +440,7 @@ class User
 	
 	
 
-//validity insurance
+//validity ensurance
 	public static function validFirstName($dbconn, $firstName){
 		$firstName = mysqli_real_escape_string($dbconn, ucfirst(trim(rawurldecode($firstName))));
 		if(strlen($firstName) == 0 || strlen($firstName) > 255){
