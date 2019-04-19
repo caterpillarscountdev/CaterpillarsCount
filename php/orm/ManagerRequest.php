@@ -224,7 +224,7 @@ class ManagerRequest
 		}
   	}
 	
-	//validity insurance
+	//validity ensurance
 	public static function validManager($dbconn, $manager, $site){
 		if($site->getCreator() == $manager){
 			return false;
