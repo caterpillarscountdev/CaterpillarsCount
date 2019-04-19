@@ -285,7 +285,7 @@ class Plant
 	
 	
 
-//validity insurance
+//validity ensurance
 	public static function validSite($dbconn, $site){
 		if(is_object($site) && get_class($site) == "Site"){
 			return $site;
