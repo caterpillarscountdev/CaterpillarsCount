@@ -488,7 +488,7 @@ class Survey
 	
 	
 
-//validity insurance
+//validity ensurance
 	public static function validObserver($dbconn, $observer, $plant){
 		if(!is_object($plant) || get_class($plant) != "Plant" || !$plant->getSite()->validateUser($observer, "")){
 			return false;
