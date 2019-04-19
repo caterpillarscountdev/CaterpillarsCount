@@ -251,7 +251,7 @@ class ArthropodSighting
 	
 	
 
-//validity insurance
+//validity ensurance
 	public static function validSurvey($dbconn, $survey){
 		if(is_object($survey) && get_class($survey) == "Survey"){
 			return $survey;
