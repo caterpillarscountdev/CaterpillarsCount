@@ -1197,6 +1197,8 @@
 			var monthEnd = 12;
 			var yearStart = 1980;
 			var yearEnd = (new Date()).getFullYear();
+			var absoluteYearStart = yearStart;
+			var absoluteYearEnd = yearEnd;
 			function setSliders(){
 				$("#years")[0].innerHTML = "Loading...";
 
@@ -1218,6 +1220,7 @@
 					var currentYear = date.getFullYear();
 					var earliestYear = Math.min(Number(data), (currentYear - 1));
 					yearStart = earliestYear;
+					absoluteYearStart = earliestYear;
 					$("#yearsSlider").slider({
 						range: true,
 						min: earliestYear,
@@ -2434,7 +2437,7 @@
 				}
 
 				var yearOptions = "";
-				for(var i = yearEnd; i >= yearStart; i--){
+				for(var i = absoluteYearEnd; i >= absoluteYearStart; i--){
 					yearOptions += "<div onclick=\"smallSelectOption(this);\">" + i + "</div>";
 				}
 				$("#addNewSetLabel")[0].outerHTML = "<div class=\"label\">" +
