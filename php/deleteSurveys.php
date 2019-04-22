@@ -39,7 +39,7 @@
 		$failures = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS `Count` FROM Survey WHERE Survey.ID IN (-1, " . join(", ", $selected) . ")"))["Count"]);
 		
 		if($failures > 0){
-			if(count($surveyIDs) < 2){
+			if(count($selected) < 2){
 				die("false|You do not have the authority to delete this survey.");
 			}
 			else if($successes == 1){
