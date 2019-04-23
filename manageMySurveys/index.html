@@ -890,6 +890,11 @@
 								sites[sites.length] = "<a target=\"_blank\" href=\"https://www.inaturalist.org/observations?field:Site%20Name=" + cleanParam(data[4][i]) + "\">" + data[4][i] + "</a>";
 							}
 							if(sites.length > 0){
+								sites.sort(function(a, b){
+									if(a.toLowerCase().trim() < b.toLowerCase().trim()){return -1;}
+									if(a.toLowerCase().trim() > b.toLowerCase().trim()){return 1;}
+									return 0;
+								});
 								tagline += " You can find all photo observations submitted for a given site here: ";
 								var sitesString = sites[0];
 								if(sites.length == 2){
