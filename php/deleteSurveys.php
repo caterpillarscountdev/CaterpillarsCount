@@ -28,14 +28,13 @@
 			}
 		}
 		*/
-		
 		$dbconn = (new Keychain)->getDatabaseConnection();
+		$tryingToDeleteCount = (count($selected) - count($unselected));
 		$selected[] = "-1";
 		$userSiteIDs[] = "-1";
 		mysqli_query($dbconn, "DELETE ArthropodSighting FROM ArthropodSighting JOIN Survey on ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK=Site.ID WHERE Survey.ID IN (" . join(", ", $selected) . ") AND (Site.ID IN (" . join(", ", $userSiteIDs) . ") OR (Survey.UserFKOfObserver='" . $user->getID() . "' AND Survey.SubmissionTimestamp>='" . (time() - (2 * 7 * 24 * 60 * 60)) . "'))");
 		mysqli_query($dbconn, "DELETE Survey FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK=Site.ID WHERE Survey.ID IN (" . join(", ", $selected) . ") AND (Site.ID IN (" . join(", ", $userSiteIDs) . ") OR (Survey.UserFKOfObserver='" . $user->getID() . "' AND Survey.SubmissionTimestamp>='" . (time() - (2 * 7 * 24 * 60 * 60)) . "'))");
 		$successes = mysqli_affected_rows($dbconn);
-		$tryingToDeleteCount = (count($selected) - count($unselected));
 		
 		if($successes < $tryingToDeleteCount){
 			if(count($tryingToDeleteCount) < 2){
