@@ -3554,14 +3554,15 @@ array('5720', '178', '5', 'C', '3548', 'Red maple'),
 array('5721', '178', '5', 'D', '3549', 'Red oak'),
 array('5722', '178', '5', 'E', '3550', 'Red oak'));
 
-  for($j = 0; $j < 20; $j++){
-    $id = (1000000000 + $i + $j);
-    mysqli_query($dbconn, "INSERT INTO Plant (`ID`, `SiteFK`, `Circle`, `Orientation`, `Code`, `Species`) VALUES ('" . $id . "', '" . $plants[$i + $j][1] . "', '" . $plants[$i + $j][2] . "', '" . $plants[$i + $j][3] . "', '" . IDToCode($id) . "', '" . $plants[$i + $j][5] . "')");
+	$dbconn = (new Keychain)->getDatabaseConnection();
+  	for($j = 0; $j < 20; $j++){
+    		$id = (1000000000 + $i + $j);
+    		mysqli_query($dbconn, "INSERT INTO Plant (`ID`, `SiteFK`, `Circle`, `Orientation`, `Code`, `Species`) VALUES ('" . $id . "', '" . $plants[$i + $j][1] . "', '" . $plants[$i + $j][2] . "', '" . $plants[$i + $j][3] . "', '" . IDToCode($id) . "', '" . $plants[$i + $j][5] . "')");
 	}
   
-  $myfile = fopen("iteration.txt", "w");
-  fwrite($myfile, (($i + 20) . ""));
-  fclose($myfile);
+	$myfile = fopen("iteration.txt", "w");
+	fwrite($myfile, (($i + 20) . ""));
+	fclose($myfile);
   
   
   function IDToCode($id){
