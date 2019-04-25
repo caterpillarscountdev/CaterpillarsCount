@@ -49,8 +49,8 @@ class Plant
 		$MIN_ID = 703;//corresponds to "AAA"
 		$id = $MIN_ID;
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `Plant` ORDER BY `ID` ASC LIMIT 1");
-		if(mysqli_num_rows($query) == 1 && intval(mysqli_fetch_assoc($query)["ID"]) <= $MIN_ID){
-			$query = mysqli_query($dbconn, "SELECT t1.ID+1 AS NextID FROM `Plant` AS t1 LEFT JOIN `Plant` AS t2 ON t1.ID+1=t2.ID WHERE t2.ID IS NULL");
+		if(mysqli_num_rows($query) == 1){
+			$query = mysqli_query($dbconn, "SELECT t1.ID+1 AS NextID FROM `Plant` AS t1 LEFT JOIN `Plant` AS t2 ON t1.ID+1=t2.ID WHERE t2.ID IS NULL AND t1.ID+1>='$MIN_ID' ORDER BY t1.ID+1 ASC");
 			while($row = mysqli_fetch_assoc($query)){
 				$id = intval($row["NextID"]);
 				while(mysqli_num_rows(mysqli_query($dbconn, "SELECT `ID` FROM `Plant` WHERE `ID`='" . $id . "' LIMIT 1")) == 0){
