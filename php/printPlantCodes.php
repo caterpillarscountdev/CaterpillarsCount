@@ -40,6 +40,7 @@
 			position:absolute;
 			bottom:-18px;
 			left:8px;
+			right: 8px;
 		}
 		
 		@page {
