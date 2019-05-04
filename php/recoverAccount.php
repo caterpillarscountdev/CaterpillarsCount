@@ -14,5 +14,5 @@
 	else if(User::emailIsUnvalidated($email)){//check if email is unverified
 		die("Check your email to verify your account before recovering your password. Check spam if needed!");
 	}
-	die("That email is not attached to a Caterpillars Count account!");
+	die("That email is not attached to a Caterpillars Count! account!");
 ?>
