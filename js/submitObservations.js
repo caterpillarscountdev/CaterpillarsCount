@@ -1309,8 +1309,10 @@
 					
 					var formData = new FormData();
 					var arthropodBlobs = [];
+					var numberOfPhotosUploaded = 0;
 					for(var i = 0; i < arthropodData.length; i++){
 						if(arthropodData[i][9].length > 0){
+							numberOfPhotosUploaded++;
 							compressBase64Index(arthropodBlobs, i, 1750, 70, true, arthropodData[i][9]);
 						}
 						else{
@@ -1378,6 +1380,17 @@
 											logOut();
 										}
 									}
+								},
+								error: function(request, status, error){
+									//check for success?
+									var extraError = "";
+									if(numberOfPhotosUploaded == 1){
+										extraError = " If necessary, you can also delete your arthropod photo to lighten the load.";
+									}
+									else if(numberOfPhotosUploaded > 1){
+										extraError = " If necessary, you can also delete a couple arthropod photos to lighten the load.";
+									}
+									queueNotice("error", "We had trouble uploading this survey. It's possible that a part of this survey submitted but some was left out. We've been notified of this error and will address it. To make sure a full copy of the survey submits, you can try switching to a stronger wifi network if one is available and then tapping the \"Finish\" button again." + extraError);
 								},
 								complete: function() {
 									setLoadingButton($("#finishButton"), "Finish", false);
