@@ -1,7 +1,9 @@
 <?php
   $files = scandir("../backupInChunks");
   for($i = 0; $i < count($files); $i++){
-    unlink("../backupInChunks/" . $files[$i]);
+    if(strpos($files[$i], "backup") !== false && strpos($files[$i], "clear") !== false){
+      unlink("../backupInChunks/" . $files[$i]);
+    }
   }
   
   $files = scandir("../../backups");
