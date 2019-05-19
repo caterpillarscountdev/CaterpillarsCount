@@ -42,7 +42,7 @@
     }
     
     if($rowCount > ((++$iteration) * $CHUNK_SIZE)){
-      save($baseFileName, json_encode($iteration . ";" . $tableArray));
+      save($baseFileName, $iteration . ";" . json_encode($tableArray));
       return false;
     }
     
