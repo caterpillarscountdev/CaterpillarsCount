@@ -1,7 +1,13 @@
 <?php
   header('Access-Control-Allow-Origin: *');
+  
+	require_once('resultMemory.php');
   require_once('orm/resources/Keychain.php');
+  
   function getArrayFromTable($tableName){
+    $CHUNK_SIZE = 20000;
+    $baseFileName = $tableName . basename(__FILE__, '.php');
+    
     $tableArray = array();
     $dbconn = (new Keychain)->getDatabaseConnection();
     
@@ -11,17 +17,35 @@
     while ($row = mysqli_fetch_assoc($query)) $colHeaders[] = $row["COLUMN_NAME"];
     $tableArray[] = $colHeaders;
     
-    //ROWS
-    $query = mysqli_query($dbconn, "SELECT * FROM `" . $tableName . "`");
-    mysqli_close($dbconn);
-    
-    while ($row = mysqli_fetch_assoc($query)){
-      $rowArray = array();
-      for($i = 0; $i < count($colHeaders); $i++){
-        $rowArray[] = $row[$colHeaders[$i]];
-      }
-      $tableArray[] = $rowArray;
+    $iteration = 0;
+    $save = getSave($baseFileName, 60 * 60);
+    if($save !== null){
+      $iteration = substr($save, 0, strpos($save, ";"));
+      $tableArray = json_decode(substr($save, strpos($save, ";") + 1));
     }
+    
+    //ROWS
+    $query = mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM `" . $tableName . "`");
+    $rowCount = mysqli_fetch_assoc($query)["Count"];
+    
+    if($rowCount > (count($tableArray) - 1)){
+      $query = mysqli_query($dbconn, "SELECT * FROM `" . $tableName . "` LIMIT " . $iteration * $CHUNK_SIZE . ", " . $CHUNK_SIZE);
+      mysqli_close($dbconn);
+
+      while ($row = mysqli_fetch_assoc($query)){
+        $rowArray = array();
+        for($i = 0; $i < count($colHeaders); $i++){
+          $rowArray[] = $row[$colHeaders[$i]];
+        }
+        $tableArray[] = $rowArray;
+      }
+    }
+    
+    if($rowCount > ((++$iteration) * $CHUNK_SIZE)){
+      save($baseFileName, json_encode($iteration . ";" . $tableArray));
+      return false;
+    }
+    
     return $tableArray;
   }
   function createCSV($tableName, $tableArray) {
@@ -33,17 +57,26 @@
     foreach ($tableArray as $line) fputcsv($fp, $line);
   }
   function backup($tableName){
-    $tableArray = getArrayFromTable($tableName);
-    createCSV($tableName, $tableArray);
-  }
-  
-  $files = scandir("/opt/app-root/src/backups");
-  $backedUpToday = false;
-  for($i = 0; $i < count($files); $i++){
-    if(strpos($files[$i], date("Y-m-d")) !== false){
-      $backedUpToday = true;
+    if(!hasBeenBackedUpToday($tableName)){
+      $tableArray = getArrayFromTable($tableName);
+      if($tableArray !== false){
+        createCSV($tableName, $tableArray);
+      }
     }
   }
+
+  $files = scandir("/opt/app-root/src/backups");
+  function hasBeenBackedUpToday($tableName){
+    global $files;
+    for($i = 0; $i < count($files); $i++){
+      if($files[$i] == (date("Y-m-d") . "_" . $tableName)){
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  
   if(!$backedUpToday){
     //backup
     $dbconn = (new Keychain)->getDatabaseConnection();
