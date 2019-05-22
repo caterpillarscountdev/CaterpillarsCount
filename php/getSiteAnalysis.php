@@ -94,15 +94,24 @@
 				}
 			}
 		}
+		
+		//Plants
+		$query = mysqli_query($dbconn, "SELECT COUNT(*) AS PlantCount FROM Plant WHERE SiteFK IN (" . implode(", ", $siteIDsThisIteration) . ") GROUP BY SiteFK");
+		if(mysqli_num_rows($query) > 0){
+			while($row = mysqli_fetch_assoc($query)){
+				if(array_key_exists($row["SiteFK"], $data)){
+					$data[$row["SiteFK"]]["plantCount"][] = $row["PlantCount"];
+				}
+			}
+		}
 
 		//Number of survey locations at the site, number of unique users, and year of site creation
-		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(LocalDate) AS MostRecentSurveyDate, COUNT(DISTINCT Plant.ID) AS PlantCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS ObserverCount, YEAR(MIN(LocalDate)) AS FirstYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (" . implode(", ", $siteIDsThisIteration) . ") GROUP BY Plant.SiteFK");
+		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(LocalDate) AS MostRecentSurveyDate, COUNT(DISTINCT Survey.UserFKOfObserver) AS ObserverCount, YEAR(MIN(LocalDate)) AS FirstYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (" . implode(", ", $siteIDsThisIteration) . ") GROUP BY Plant.SiteFK");
 		if(mysqli_num_rows($query) > 0){
 			while($row = mysqli_fetch_assoc($query)){
 				if(array_key_exists($row["SiteFK"], $data)){
 					$data[$row["SiteFK"]]["firstSurveyYear"] = $row["FirstYear"];
 					$data[$row["SiteFK"]]["observerCount"] = $row["ObserverCount"];
-					$data[$row["SiteFK"]]["plantCount"] = $row["PlantCount"];
 					$data[$row["SiteFK"]]["mostRecentSurveyDate"] = $row["MostRecentSurveyDate"];
 				}
 			}
