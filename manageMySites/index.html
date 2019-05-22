@@ -157,6 +157,10 @@
 				background:#f7f7f7;
 			}
 			
+			#analysis .extraRow(odd)>.table{
+				background:#f7f7f7;
+			}
+			
 			.cell:nth-of-type(1), .cell:nth-of-type(2){
 				text-align:left;
 			}
@@ -169,7 +173,7 @@
 			
 			#analysis .table .cell{
 				word-wrap: break-word;
-				padding:10px 5px;
+				padding:3px 5px;
 				box-sizing:border-box;
 				font-family: 'Roboto Slab', serif;
 				color:#555;
@@ -266,12 +270,13 @@
 				vertical-align:middle;
 			}
 			
-			#analysis #surveysEachWeek{
+			#analysis .surveysEachWeek{
 				position:relative;
 				display:block;
+				margin-top:-10px;
 			}
 			
-			#analysis #surveysEachWeek .loading{
+			#analysis .surveysEachWeek .loading{
 				background:rgba(0,0,0,0.1);
 				display:block;
 				border-radius:4px;
@@ -280,11 +285,11 @@
 				text-align:center;
 			}
 			
-			#analysis #surveysEachWeek .loading img{
+			#analysis .surveysEachWeek .loading img{
 				height:22px;
 			}
 			
-			#analysis #surveysEachWeekBars{
+			#analysis .surveysEachWeekBars{
 				display:table;
 				width:100%;
 				background-image:url("../images/translucentLine.png");
@@ -827,8 +832,8 @@
 					}
 					htmlToAdd += 	"<div class=\"cell\">" + mostRecentDate + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">";
-					htmlToAdd += 		"<div class=\"stat\" id=\"surveysEachWeek\">";
-					htmlToAdd += 			"<div class=\"stat\" id=\"surveysEachWeekBars\">";
+					htmlToAdd += 		"<div class=\"stat surveysEachWeek\">";
+					htmlToAdd += 			"<div class=\"stat surveysEachWeekBars\">";
 					var maxSurveys = Math.max(...siteData[i]["surveysEachWeek"]);
 					for(var j = 0; j < siteData[i]["surveysEachWeek"].length; j++){
 						var barHeight = 0;
