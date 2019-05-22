@@ -259,10 +259,6 @@
     				background:#ebfeff;
     			}
 			
-			#analysis .header .table{
-				font-size:12px;
-			}
-			
 			#analysis .table{
 				display:table;
 				width:100%;
@@ -721,7 +717,7 @@
 				showingTable = true;
 				lastSortingKey = sortingKey;
 				
-				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;border-radius:4px 4px 0px 0px;\">";
+				var htmlToAdd = "<div class=\"header table\" style=\"background:#333;border-radius:4px 4px 0px 0px;font-size:12px;\">";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}setTimeout(function(){showTable('name');}, 1);\"" + ((sortingKey == "name") ? " style=\"text-decoration:underline;\"" : "") + ">Site name</div>";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}setTimeout(function(){showTable('authorities');}, 1);\"" + ((sortingKey == "authorities") ? " style=\"text-decoration:underline;\"" : "") + ">Authorities</div>";
 				htmlToAdd += 	"<div class=\"cell\" onclick=\"if(this.style.textDecoration != 'underline'){showTableLoading();}setTimeout(function(){showTable('plantCount');}, 1);\"" + ((sortingKey == "plantCount") ? " style=\"text-decoration:underline;\"" : "") + ">Plants</div>";
