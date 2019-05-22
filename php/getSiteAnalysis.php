@@ -96,7 +96,7 @@
 		}
 		
 		//Plants
-		$query = mysqli_query($dbconn, "SELECT COUNT(*) AS PlantCount FROM Plant WHERE SiteFK IN (" . implode(", ", $siteIDsThisIteration) . ") GROUP BY SiteFK");
+		$query = mysqli_query($dbconn, "SELECT SiteFK, COUNT(*) AS PlantCount FROM Plant WHERE SiteFK IN (" . implode(", ", $siteIDsThisIteration) . ") GROUP BY SiteFK");
 		if(mysqli_num_rows($query) > 0){
 			while($row = mysqli_fetch_assoc($query)){
 				if(array_key_exists($row["SiteFK"], $data)){
