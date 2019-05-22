@@ -100,7 +100,7 @@
 		if(mysqli_num_rows($query) > 0){
 			while($row = mysqli_fetch_assoc($query)){
 				if(array_key_exists($row["SiteFK"], $data)){
-					$data[$row["SiteFK"]]["plantCount"][] = $row["PlantCount"];
+					$data[$row["SiteFK"]]["plantCount"] = intval($row["PlantCount"]);
 				}
 			}
 		}
