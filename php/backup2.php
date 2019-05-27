@@ -2,48 +2,31 @@
   header('Access-Control-Allow-Origin: *');
   
   require_once('orm/resources/Keychain.php');
-  
-  $dbconn = (new Keychain)->getDatabaseConnection();
 
   ini_set('memory_limit', '-1');
 
-  function getArrayFromTable($tableName){
-    $tableArray = array();
-
+  function createCSV($tableName) {
     $dbconn = (new Keychain)->getDatabaseConnection();
     
-    //HEADERS
+    $headerSQLString = "";
     $query = mysqli_query($dbconn, "SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA`='CaterpillarsCount' AND `TABLE_NAME`='" . $tableName . "'");
     $colHeaders = array();
     while ($row = mysqli_fetch_assoc($query)) $colHeaders[] = $row["COLUMN_NAME"];
-    $tableArray[] = $colHeaders;
-    
-    //ROWS
-    $query = mysqli_query($dbconn, "SELECT * FROM `" . $tableName . "`");
-    mysqli_close($dbconn);
-    
-    while ($row = mysqli_fetch_assoc($query)){
-      $rowArray = array();
-      for($i = 0; $i < count($colHeaders); $i++){
-        $rowArray[] = $row[$colHeaders[$i]];
-      }
-      $tableArray[] = $rowArray;
+    if(count($colHeaders) > 0){
+      $headerSQLString = "SELECT " . implode(", ", $colHeaders) . " UNION ALL ";
     }
-    return $tableArray;
-  }
-
-  function createCSV($tableName, $tableArray) {
+    
     $directory = "backups";
     if($tableName == "User"){
       $directory = getenv("USER_BACKUPS");
     }
-    if(!$fp = fopen("/opt/app-root/src/" . $directory . "/" . date("Y-m-d") . "_" . $tableName . ".csv", 'w')) return false;
-    foreach ($tableArray as $line) fputcsv($fp, $line);
+    
+    mysqli_query($dbconn, $headerSQLString . "SELECT * INTO OUTFILE '/opt/app-root/src/" . $directory . "/" . date("Y-m-d") . "_" . $tableName . ".csv' FROM `" . $tableName . "`");
+    mysqli_close($dbconn);
   }
 
   function backup($tableName){
-    $tableArray = getArrayFromTable($tableName);
-    createCSV($tableName, $tableArray);
+    createCSV($tableName);
   }
   
   $files = scandir("/opt/app-root/src/backups");
@@ -102,12 +85,4 @@
       }
     }
   }
-
-  
-  $tableName  = 'mypet';
-  $backupFile = 'backup/mypet.sql';
-  $query      = "SELECT * INTO OUTFILE '$backupFile' FROM Survey";
-  $result = mysql_query($query);
-  
-  mysqli_close($dbconn);
 ?>
