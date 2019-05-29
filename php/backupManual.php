@@ -5,8 +5,8 @@
   
   ini_set('memory_limit', '-1');
   
-  $result = exec('/usr/local/bin/mysqldump --opt -u ' . getenv("HOST_USERNAME") . ' -p' . getenv("HOST_PASSWORD") . ' -h ' . getenv("CATERPILLARSV2_SERVICE_HOST") . ' ' . getenv("DATABASE_NAME") . ' > ../backupsManual/' . date("Y-m-d") . '.sql 2>&1', $output);
+  $result = exec('mysqldump --skip-lock-tables -h ' . getenv("CATERPILLARSV2_SERVICE_HOST") . ' -P ' . getenv("CATERPILLARSV2_SERVICE_PORT") . ' \-u ' . getenv("HOST_USERNAME") . ' --password="' . getenv("HOST_PASSWORD") . '" --all-databases > ../backupsManual/' . date("Y-m-d") . '.sql 2>&1', $output);
   if($output==''){/* no output is good */}
   else {/* we have something to log the output here*/}
-  echo $tableName . ": [" . var_dump($output) . "]";
+  var_dump($output);
 ?>
