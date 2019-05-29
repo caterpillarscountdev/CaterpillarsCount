@@ -14,7 +14,7 @@
     $result = exec("mysqldump " . getenv("DATABASE_NAME") . " --password=" . getenv("HOST_PASSWORD") . " --user=" . getenv("HOST_USERNAME") . " --single-transaction >../" . $directory . "/" . date("Y-m-d") . "_" . $tableName . ".csv", $output);
     if($output==''){/* no output is good */}
     else {/* we have something to log the output here*/}
-    echo $tableName . ": [" . $output . "]";
+    echo $tableName . ": [" . var_dump($output) . "]";
   }
   
   //backup
