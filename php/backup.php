@@ -6,7 +6,7 @@
 	ini_set('memory_limit', '-1');
   
   function getArrayFromTable($tableName){
-    $CHUNK_SIZE = 20000;
+    $CHUNK_SIZE = 9999999920000;
     $baseFileName = $tableName . basename(__FILE__, '.php');
     
     $tableArray = array();
