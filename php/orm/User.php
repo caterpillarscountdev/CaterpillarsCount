@@ -631,5 +631,16 @@ class User
 			"sarah.yelton@unc.edu"
 		));
 	}
+	
+	public function submitVirtualSurveyScore($score){
+		$score = intval($score);
+		if($score >= 0 && $score <= 1800){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			mysqli_query($dbconn, "INSERT INTO VirtualSurveyScore (`UserFK`, `Score`) VALUES ('" . $this->id . "', '$score')");
+			mysqli_close($dbconn);
+			return true;
+		}
+		return false;
+	}
 }		
 ?>
