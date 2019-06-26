@@ -1033,7 +1033,7 @@
 							if(this.src.indexOf(bugs[j][0]) > -1){
 								bugs[j][5] = this.height/this.width;
 								loaded++;
-								$("#progressBarFill").stop().animate({width:(((loaded / bugs.length) * 100) + "%")});
+								$("#progressBarFill").stop().animate({width:(((loaded / (bugs.length + branches.length)) * 100) + "%")});
 								break;
 							}
 						}
@@ -1041,8 +1041,17 @@
 					img.src = "images/bugs/" + bugs[i][0];
 				}
 				
+				for(var i = 0; i < branches.length; i++){
+					var img = new Image();
+					img.onload = function(){
+						loaded++;
+						$("#progressBarFill").stop().animate({width:(((loaded / (bugs.length + branches.length)) * 100) + "%")});
+					};
+					img.src = "images/branches/" + branches[i][0];
+				}
+				
 				var loadedCheck = setInterval(function(){
-					if(loaded == bugs.length){
+					if(loaded == (bugs.length + branches.length)){
 						clearInterval(loadedCheck);
 						$("#loading").fadeOut(200);
 					}
