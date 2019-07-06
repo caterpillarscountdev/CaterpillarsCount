@@ -1806,8 +1806,10 @@
 			
 			function submitScore(score){
 				$.get("../../php/submitVirtualSurveyScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + score, function(data){
-					var comparisons = JSON.parse(data);
-					$("#roundBreakdown .subheading").eq(0)[0].innerHTML += " You beat " + Math.round(Number(comparisons[0])) + "% of global scores this time around, and your best score is " + comparisons[1] + ".";
+					if(data.indexOf("true|") == 0){
+						var comparisons = JSON.parse(data.replace("true|", ""));
+						$("#roundBreakdown .subheading").eq(0)[0].innerHTML += " You beat " + Math.round(Number(comparisons[0])) + "% of global scores this time around, and your best score is " + comparisons[1] + ".";
+					}
 				});
 			}
 		</script>
