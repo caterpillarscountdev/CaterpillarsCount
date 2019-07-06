@@ -651,11 +651,17 @@ class User
 			$query = mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM VirtualSurveyScore");
 			$total = mysqli_fetch_assoc($query)["Count"];
 			
+			$lesserCount= 0;
 			$query = mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM VirtualSurveyScore WHERE Score<'$score'");
-			$lesserCount = mysqli_fetch_assoc($query)["Count"];
+			if(mysqli_num_rows($query) > 0){
+				$lesserCount = mysqli_fetch_assoc($query)["Count"];
+			}
 			
+			$best = $score;
 			$query = mysqli_query($dbconn, "SELECT Score FROM `VirtualSurveyScore` WHERE UserFK='" . $this->id . "' ORDER BY Score DESC LIMIT 1");
-			$best = mysqli_fetch_assoc($query)["Score"];
+			if(mysqli_num_rows($query) > 0){
+				$best = mysqli_fetch_assoc($query)["Score"];
+			}
 			
 			mysqli_close($dbconn);
 			
