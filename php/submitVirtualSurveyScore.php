@@ -8,7 +8,11 @@
   	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
 		if($user->submitVirtualSurveyScore($score)){
-			die("true|");
+			$comparisons = compareVirtualSurveyScore($score);
+			if($comparisons === false){
+				die("true|" . json_encode(array(0, 0)));
+			}
+			die("true|" . json_encode($comparisons));
         	}
         	die("false|We could not submit that score.");
   	}
