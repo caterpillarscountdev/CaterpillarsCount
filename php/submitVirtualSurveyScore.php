@@ -8,7 +8,7 @@
   	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
 		if($user->submitVirtualSurveyScore($score)){
-			$comparisons = compareVirtualSurveyScore($score);
+			$comparisons = $user->compareVirtualSurveyScore($score);
 			if($comparisons === false){
 				die("true|" . json_encode(array(0, 0)));
 			}
