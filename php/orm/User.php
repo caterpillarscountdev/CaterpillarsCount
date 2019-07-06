@@ -655,7 +655,7 @@ class User
 			$lesserCount = mysqli_fetch_assoc($query)["Count"];
 			
 			$query = mysqli_query($dbconn, "SELECT Score FROM `VirtualSurveyScore` WHERE UserFK='" . $this->id . "' ORDER BY Score DESC LIMIT 1");
-			$best = mysqli_fetch_assoc($query)["Count"];
+			$best = mysqli_fetch_assoc($query)["Score"];
 			
 			mysqli_close($dbconn);
 			
