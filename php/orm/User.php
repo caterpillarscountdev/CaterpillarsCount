@@ -642,5 +642,26 @@ class User
 		}
 		return false;
 	}
+	
+	public function compareVirtualSurveyScore($score){
+		$score = intval($score);
+		if($score >= 0 && $score <= 1800){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			
+			$query = mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM VirtualSurveyScore");
+			$total = mysqli_fetch_assoc($query)["Count"];
+			
+			$query = mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM VirtualSurveyScore WHERE Score<'$score'");
+			$lesserCount = mysqli_fetch_assoc($query)["Count"];
+			
+			$query = mysqli_query($dbconn, "SELECT Score FROM `VirtualSurveyScore` WHERE UserFK='" . $this->id . "' ORDER BY Score DESC LIMIT 1");
+			$best = mysqli_fetch_assoc($query)["Count"];
+			
+			mysqli_close($dbconn);
+			
+			return array((($lesserCount / $total) * 100), $best);
+		}
+		return false;
+	}
 }		
 ?>
