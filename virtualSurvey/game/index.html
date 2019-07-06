@@ -30,6 +30,17 @@
 				overflow:hidden;
 			}
 			
+			#clearBlock{
+				position:fixed;
+				top:0px;
+				left:0px;
+				width:100%;
+				height:100%;
+				background:transparent;
+				display:none;
+				z-index:9999;
+			}
+			
 			#toolBar{
 				position:fixed;
 				top:0px;
@@ -171,6 +182,25 @@
 				padding-bottom:40px;
 			}
 			
+			#playScreenDarkBox{
+				background:rgba(0,0,0,0.2);
+				border-radius:5px;
+				overflow:hidden;
+				margin:auto;
+				padding:20px 20px 12px 20px;
+				box-sizing:border-box;
+			}
+			
+			#gameInstructions{
+				width:550px;
+				max-width:100%;
+				padding:0px 20px 10px 20px;
+				box-sizing:border-box;
+				color:#ddd;
+				font-family: 'Open Sans', sans-serif;
+				font-size:14px;
+			}
+			
 			#playButton{
 				border:0px none transparent;
 				font-size:20px;
@@ -185,7 +215,7 @@
 				outline:none;
 			}
 			
-			#playButton, #nextBranchButton, #roundBreakdown .heading, #roundBreakdown .subheading{
+			#playScreenDarkBox, #nextBranchButton, #roundBreakdown .heading, #roundBreakdown .subheading{
 				max-width:600px;
 			}
 			
@@ -304,6 +334,21 @@
 			
 			#phoneError{
 				background:#eb3d68;
+			}
+			
+			.phoneNoticeButton{
+				width:70px;
+				margin:20px auto 0px auto;
+				padding:6px;
+				border:2px solid #fff;
+				border-radius:4px;
+				overflow:hidden;
+				font-size:13px;
+				background:rgba(255, 255, 255, 0.1);
+				background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+				background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%,rgba(255,255,255,0) 100%);
+				background: linear-gradient(to right, rgba(255,255,255,0.2) 0%,rgba(255,255,255,0) 100%);
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#33ffffff', endColorstr='#00ffffff',GradientType=1 );
 			}
 			
 			#appHeader{
@@ -563,8 +608,8 @@
 				position:fixed;
 				top:0px;
 				left:0px;
-				width:100px;
-				height:100px;
+				width:150px;
+				height:150px;
 				border-radius:99999px;
 				z-index:8;
 				overflow:hidden;
@@ -586,6 +631,9 @@
 				content:"Score: ";
 			}
 			
+			#possibleScore{
+				display:none;
+			}
 			#possibleScore:before{
 				content:" / ";
 			}
@@ -618,6 +666,9 @@
 				scaleRuler();
 				if(zoomedBug !== null){
 					zoomIn(zoomedBug);
+				}
+				if(magnifying){
+					generateLargerFrame();
 				}
 			});
 			
@@ -986,42 +1037,87 @@
 			];
 			
 			var bugs = [
-				["ant_insect-3624644_640_cutout.png","ant",2,4,0.05023547881],
-				["ants_fire-ants-1790262_1280_cutout.png","ant",2,4,0.3757062147],
-				["aphid-3230902_1920_cutout.png","aphid",2,2,0.04070981211],
-				["bees-and-wasps_482526_cutout.png","bee",2,10,0.2389813908],
-				["bees-and-wasps_7689477_cutout.png","bee",2,10,0.483234714],
-				["beetle_freeimage-117885267-high_cutout.png","beetle",10,25,0.3021091811],
-				["beetle_freeimage-17923302-high-cutout.png","beetle",10,25,0.3881666224],
-				["beetle_freeimage-25450546-high_cutout.png","beetle",10,25,0.3653846154],
-				["beetle_freeimage-28401935-high_cutout.png","beetle",10,25,0.4389555399],
-				["beetle_freeimage-31369110-high_cutout.png","beetle",6,20,0.7353228963],
-				["beetle_june-bug-1622740_640_cutout.png","beetle",3,7,0.4952978056],
-				["beetle_ladybug-1156915_640_cutout.png","beetle",2,4,0.1408450704],
-				["beetle_ladybug-1391741_640_cutout.png","beetle",2,4,0.2201257862],
-				["caterpillar_freeimage-15561819-high_cutout.png","caterpillar",3,35,0.7874186551],
-				["caterpillar_freeimage-17615546-high_cutout.png","caterpillar",3,35,0.5741265345],
-				["caterpillar_freeimage-17693071-high_cutout.png","caterpillar",3,35,0.4513960703],
-				["caterpillar_freeimage-19790984-high_cutout.png","caterpillar",3,35,0.6705767351],
-				["caterpillar_freeimage-20179959-high_cutout.png","caterpillar",8,20,2.172222222],
-				["caterpillar_freeimage-20422253-high_cutout.png","caterpillar",6,20,1.382621395],
-				["caterpillar_freeimage-5661526-high_cutout.png","caterpillar",3,35,0.8501799149],
-				["caterpillar_freeimage-597787-high_cutout.png","caterpillar",3,35,0.5541871921],
-				["caterpillar_freeimage-621694-high_cutout.png","caterpillar",5,15,0.69],
-				["caterpillar_freeimage-7804936-high_cutout.png","caterpillar",3,35,0.7417608286],
-				//["grasshopper_18656440_cutout.jpg","grasshopper",10,25,0.6640502355],
-				//["grasshopper_19602075_cutout.jpeg","grasshopper",10,25,0.2114467409],
-				["leafhopper_14721060_cutout.png","leafhopper",3,12,0.5142428786],
-				["leafhopper_7569786_cutout.png","leafhopper",3,12,0.4642857143],
-				["leafhopper_freeimage-5878255-high_cutout.png","leafhopper",7,20,0.5631313131],
-				["moth_18834522_cutout.png","moths",10,25,0.4980237154],
-				["moth_3237341_cutout.png","moths",10,25,0.9704697987],
-				["moth-1749434_640_cutout.png","moths",10,25,0.3076923077],
-				["moth-1749439_640_cutout.png","moths",10,25,0.3871473354],
-				["other_dragonfly-1967021_640_cutout.png","other|dragonfly",15,30,0.6066350711],
-				["spider_20145021_cutout.png","spider",4,12,0.3664795509],
-				["spider-432896_640_cutout.png","spider",4,12,0.2991266376],
-				["treubug_green-stinkwanze-221243_1280_cutout.png","truebugs",10,25,0.2586206897]
+				["ant-563286_1280_cutout.png","ant",2,8,0.8520737325788018],
+				["ant_insect-3624644_640_cutout.png","ant",2,8,0.28964600394954954],
+				["ants_fire-ants-1790262_1280_cutout.png","ant",2,8,0.42296485805849054],
+				["aphid-3230902_1920_cutout.png","aphid",2,5,0.2640636461189189],
+				["aphid_20293314_cutout.png","aphid",2,5,0.8704819275933735],
+				["bees-and-wasps_482526_cutout.png","bee",4,15,0.6932491336521247],
+				["bees-and-wasps_7689477_cutout.png","bee",4,15,0.6290241700881356],
+				["bees-and_wasps_2986318_cutout.png","bee",4,15,0.5747950820413934],
+				["beetle_colorado-potato-beetle-1803237_640_cutout.png","beetle",4,25,0.6521739130434783],
+				["beetle_freeimage-117885267-high_cutout.png","beetle",4,25,1.0398547024570675],
+				["beetle_freeimage-17923302-high-cutout.png","beetle",4,25,0.5827867108336626],
+				["beetle_freeimage-25450546-high_cutout.png","beetle",4,25,0.9288281812037382],
+				["beetle_freeimage-28401935-high_cutout.png","beetle",4,25,1.0765042868654844],
+				["beetle_freeimage-31369110-high_cutout.png","beetle",4,25,2.523215022086288],
+				["beetle_june-bug-1622740_640_cutout.png","beetle",4,25,0.9905956112],
+				["beetle_ladybug-1156915_640_cutout.png","beetle",4,25,1.0128184837752807],
+				["beetle_ladybug-1391741_640_cutout.png","beetle",4,25,0.9030801485128205],
+				["caterpillar_freeimage-15561819-high_cutout.png","caterpillar",4,35,0.9861430375268656],
+				["caterpillar_freeimage-17615546-high_cutout.png","caterpillar",4,35,1.6078713025428126],
+				["caterpillar_freeimage-17693071-high_cutout.png","caterpillar",4,35,0.9898634638050762],
+				["caterpillar_freeimage-17907021-high_cutout.png","caterpillar",4,35,1.4102309155790291],
+				["caterpillar_freeimage-19790984-high_cutout.png","caterpillar",4,35,1.5560142146410803],
+				["caterpillar_freeimage-20179959-high_cutout.png","caterpillar",4,35,4.632792526566371],
+				["caterpillar_freeimage-20422253-high_cutout.png","caterpillar",4,35,2.833038489903417],
+				["caterpillar_freeimage-26545320-high_cutout.png","caterpillar",4,35,0.6110735693945122],
+				["caterpillar_freeimage-29472052-high_cutout.png","caterpillar",4,35,1.1787521079086003],
+				["caterpillar_freeimage-3099893-high_cutout.png","caterpillar",4,35,0.9939308774902217],
+				["caterpillar_freeimage-3392574-high_cutout.png","caterpillar",4,35,1.0140757300353276],
+				["caterpillar_freeimage-5396086-high_cutout.png","caterpillar",4,35,1.0425286263903615],
+				["caterpillar_freeimage-5661526-high_cutout.png","caterpillar",4,35,0.9840816498013565],
+				["caterpillar_freeimage-597787-high_cutout.png","caterpillar",4,35,1.2011953514111788],
+				["caterpillar_freeimage-603799-high_cutout.png","caterpillar",4,35,4.052333376094581],
+				["caterpillar_freeimage-621694-high_cutout.png","caterpillar",4,35,1.1651112260734608],
+				["caterpillar_freeimage-632122-high_cutout.png","caterpillar",4,35,2.04],
+				["caterpillar_freeimage-6503436-high_cutout.png","caterpillar",4,35,1.4556646931750001],
+				["caterpillar_freeimage-7804936-high_cutout.png","caterpillar",3,35,1.0935245283018866],
+				["caterpillar_freeimage-7911683-high_cutout.png","caterpillar",4,35,1.3689957081545066],
+				["daddy-long-legs-2675120_640_cutout.png","daddylonglegs",4,15,0.8138009049773756],
+				["daddy-long-legs_4956032_cutout.png","daddylonglegs",4,15,0.1001335113],
+				["dragonfly_4901216_cutout.png","other|dragonfly|damselfly|dragon fly|damsel fly|odonata",15,30,1.023636363662078],
+				["fly_13355050_cutout.png","fly",3,15,0.7712933753630914],
+				["fly_bug-191085_640_cutout.png","fly",3,15,0.8482014388489207],
+				["fly_citroenpendel-hoverfly-2879849_640_cutout.png","fly",3,15,0.8930555555555555],
+				["fly_freeimage-119960831-high_cutout.png","fly",3,15,0.6819526627952662],
+				["grasshopper-1857137_640.png","grasshopper",5,25,0.8892100192678226],
+				["grasshopper-262616_640_cutout.png","grasshopper",5,25,0.7007797270955166],
+				["grasshopper-3343500_640_cutout.png","grasshopper",5,25,0.7909448818897638],
+				["grasshopper-3955387_640_cutout.png","grasshopper",5,25,0.6037037037037037],
+				["grasshopper_tettigonia-viridissima-2773063_640_cutout.png","grasshopper",5,25,0.9646017699115045],
+				["leafhopper-1626571_640_cutout.png","leafhopper",3,18,1.1579617834394904],
+				["leafhopper-562118_1280_cutout.png","leafhopper",3,18,0.9358550705907627],
+				["leafhopper_14721060_cutout.png","leafhopper",3,18,0.9999167083888888],
+				["leafhopper_7569786_cutout.png","leafhopper",3,18,1.2275432900810606],
+				["leafhopper_cicada-2003429_640_cutout.png","leafhopper",3,18,1.3710247349823321],
+				["leafhopper_freeimage-5878255-high_cutout.png","leafhopper",3,18,0.9413538368238805],
+				["leafhopper_insect-2581725_640_cutout.png","leafhopper",3,18,1.05390625],
+				["moth-1749434_640_cutout.png","moths",7,25,0.3424749163965217],
+				["moth-1749439_640_cutout.png","moths",7,25,0.614824552496278],
+				["moth-1749445_640.png","moths",7,25,1.0915101427658402],
+				["moth-1799612_640_cutout.png","moths",7,25,0.5643564356435643],
+				["moth_14802262_cutout.png","moths",7,25,0.8241469817267717],
+				["moth_17848810_cutout.png","moths",7,25,0.33611111106111113],
+				["moth_18834522_cutout.png","moths",7,25,0.7499651243670589],
+				["moth_3237341_cutout.png","moths",7,25,1.8744002709690817],
+				["other_dragonfly-1967021_640_cutout.png","other|dragonfly|damselfly|dragon fly|damsel fly|odonata",15,30,1.0243969538364117],
+				["other_dragonfly-54794_640_cutout.png","other|dragonfly|damselfly|dragon fly|damsel fly|odonata",15,30,1.0460921843687374],
+				["other_millipede_5113690_cutout.png","other|millipede|milipede|diplopoda",15,30,1.0294759825382096],
+				["spider-257759_640_cutout.png","spider",3,15,0.5925925925925926],
+				["spider-3965087_640_cutout.png","spider",3,15,0.6847826086956521],
+				["spider-432896_640_cutout.png","spider",3,15,0.6101129216246697],
+				["spider-771460_640_cutout.png","spider",3,15,0.5232634194427245],
+				["spider_20145021_cutout.png","spider",3,15,0.4987971130411379],
+				["spider_freeimage-661183-high_cutout.png","spider",3,15,0.3216276477591974],
+				["spider_nature-3063458_640_cutout.png","spider",3,15,0.44347826086956516],
+				["treubug_green-stinkwanze-221243_1280_cutout.png","truebugs",4,25,1.015443198822086],
+				["truebug_19764075_cutout.png","truebugs",4,25,1.1823204419889504],
+				["truebug_20212127_cutout.png","truebugs",4,25,0.8031496063547244],
+				["truebug_beetle-3441772_640.png","truebugs",4,25,1.4754187808780488],
+				["truebug_bug-1436910_640_cutout.png","truebugs",4,25,0.9401273885350319],
+				["truebug_bug-3761379_640_cutout.png","truebugs",4,25,0.6398963730569948],
+				["truebug_nymph_19521994_cutout.png","truebugs",4,25,0.5297841482203509]
 			];
 			
 			function loadBugImageHeightToWidthRatios(){
@@ -1101,6 +1197,8 @@
 				if(round == 0){
 					$("#currentRunningScore")[0].innerHTML = "0";
 				}
+				
+				activateMagnification();
 			}
 			
 			function addBug(){
@@ -1207,7 +1305,9 @@
 				$("#bugArea img").stop().css({opacity:"0"});
 				$("#spy").stop().animate({top: "0px", left: "0px", width: "100%", height: "100%"}, function(){
 					setGameDimensions();
-					$("#bugArea img").stop().animate({opacity:"1"});
+					$("#bugArea img").stop().animate({opacity:"1"}, function(){
+						activateMagnification();
+					});
 				});
 			}
 			
@@ -1382,7 +1482,7 @@
 			
 			function resumeTimer(){
 				$("#remainingTimeBar")[0].style.width = lastTimeBarWidthPercent + "%";
-				$("#remainingTimeBar").stop().animate({width:"0px"}, ((lastTimeBarWidthPercent / 100) * TOTAL_TIME * 1000), "linear", function(){
+				$("#remainingTimeBar").stop().animate({width:"0%"}, ((lastTimeBarWidthPercent / 100) * TOTAL_TIME * 1000), "linear", function(){
 					timedOut = true;
 					endRound();
 				});
@@ -1420,8 +1520,6 @@
 					$("#roundBreakdown .subheading").eq(0)[0].innerHTML += " In your last survey round, you spotted " + identifiedThisRound + " out of " + pickedBugs.length + " arthropods. In total, you left " + (Number($("#possibleScore")[0].innerHTML) - Number($("#currentRunningScore")[0].innerHTML) + " points on the table.");
 					
 					$("#nextBranchButton")[0].innerHTML = "PLAY AGAIN";
-					
-					$("#roundBreakdown").stop().animate({top:"0px"}, 200);
 				}
 				else{
 					if(timedOut){
@@ -1438,10 +1536,26 @@
 					$("#roundBreakdown .subheading").eq(0)[0].innerHTML = "You spotted " + identifiedThisRound + " out of " + pickedBugs.length + " arthropods on that branch and brought your total points up to " + $("#currentRunningScore")[0].innerHTML + ". So far, you've left " + (Number($("#possibleScore")[0].innerHTML) - Number($("#currentRunningScore")[0].innerHTML) + " points on the table.");
 					
 					$("#nextBranchButton")[0].innerHTML = "I'm ready for the next branch!";
-					
-					$("#roundBreakdown").stop().animate({top:"0px"}, 200);
 				}
-				resetTimer();
+				
+				pauseTimer();
+				$("#clearBlock")[0].style.display = "block";
+				if(identifiedThisRound == pickedBugs.length){
+					$("#roundBreakdown").stop().animate({top:"0px"}, 200, function(){
+						resetTimer();
+						$("#clearBlock")[0].style.display = "none";
+					});
+				}
+				else{
+					$("#spy").stop().animate({opacity:".2"});
+					setTimeout(function(){
+						$("#roundBreakdown").stop().animate({top:"0px"}, 200, function(){
+							resetTimer();
+							$("#clearBlock")[0].style.display = "none";
+							$("#spy").stop().css({opacity:"1"});
+						});
+					}, 1500);
+				}
 			}
 			
 			var magnifying = false;
@@ -1464,7 +1578,7 @@
 				var zoomBugAreaHeight = 0;
 				
 				if(zoomGameHeight > zoomGameWidth * (BRANCH_IMAGE_HEIGHT / BRANCH_IMAGE_WIDTH)){
-					zoomBaseY = (zoomBameHeight - (zoomGameWidth * (BRANCH_IMAGE_HEIGHT / BRANCH_IMAGE_WIDTH))) / 2;
+					zoomBaseY = (zoomGameHeight - (zoomGameWidth * (BRANCH_IMAGE_HEIGHT / BRANCH_IMAGE_WIDTH))) / 2;
 				}
 				else if(zoomGameHeight < zoomGameWidth * (BRANCH_IMAGE_HEIGHT / BRANCH_IMAGE_WIDTH)){
 					zoomBaseX = (zoomGameWidth - (zoomGameHeight * (BRANCH_IMAGE_WIDTH / BRANCH_IMAGE_HEIGHT))) / 2;
@@ -1508,11 +1622,13 @@
 			function deactivateMagnification(){
 				$("#magnifyButton").stop().css({background:"#aaa"});
 				destroyLargerFrame();
+				$("#bugArea")[0].style.cursor = "";
 			}
 			
 			function activateMagnification(){
 				$("#magnifyButton").stop().css({background:"#fed136"});
 				generateLargerFrame();
+				$("#bugArea")[0].style.cursor = "pointer";
 			}
 			
 			function toggleMagnification(){
@@ -1552,7 +1668,7 @@
 				
 				if(guessedGroup == "" && guessedOrderLength == 0){
 					$('#phone').stop().animate({scrollTop: 0}, 500);
-					$("#phoneError")[0].innerHTML = "Select an arthropod group and enter the length of the arthropod before saving.";
+					$("#phoneError .message")[0].innerHTML = "Select an arthropod group and enter the length of the arthropod before saving.";
 					$("#phoneError")[0].style.display = "block";
 					$("#phoneConfirmation")[0].style.display = "none";
 					$("#phoneNotice").stop().fadeIn(200);
@@ -1564,7 +1680,7 @@
 				}
 				else if(guessedGroup == ""){
 					$('#phone').stop().animate({scrollTop: 0}, 500);
-					$("#phoneError")[0].innerHTML = "Select an arthropod group before saving.";
+					$("#phoneError .message")[0].innerHTML = "Select an arthropod group before saving.";
 					$("#phoneError")[0].style.display = "block";
 					$("#phoneConfirmation")[0].style.display = "none";
 					$("#phoneNotice").stop().fadeIn(200);
@@ -1576,7 +1692,7 @@
 				}
 				else if(guessedOrderLength == 0){
 					$('#phone').stop().animate({scrollTop: 0}, 500);
-					$("#phoneError")[0].innerHTML = "Enter the length of this arthropod before saving.";
+					$("#phoneError .message")[0].innerHTML = "Enter the length of this arthropod before saving.";
 					$("#phoneError")[0].style.display = "block";
 					$("#phoneConfirmation")[0].style.display = "none";
 					$("#phoneNotice").stop().fadeIn(200);
@@ -1587,14 +1703,23 @@
 					return false;
 				}
 				
-				if(group == guessedGroup || (group.indexOf("other|") == 0 && guessedGroup == "other" && $("#orderNotes")[0].value.toLowerCase().indexOf(group.toLowerCase().replace("other|", "")) > -1)){
+				var correctlySpecifiedInNotes = false;
+				var acceptableAnswers = group.toLowerCase().replace("other|", "").split("|");
+				for(var i = 0; i < acceptableAnswers.length; i++){
+					if($("#orderNotes")[0].value.toLowerCase().indexOf(acceptableAnswers[i]) > -1){
+						correctlySpecifiedInNotes = true;
+						break;
+					}
+				}
+				
+				if(group == guessedGroup || (group.indexOf("other|") == 0 && guessedGroup == "other" && correctlySpecifiedInNotes)){
 					//got the group right
 					groupAccuracy = 1;
 				}
 				else if(guessedGroup == "other" && $("#orderNotes")[0].value.trim() == ""){
 					//didnt mention group in notes
 					$('#phone').stop().animate({scrollTop: 0}, 500);
-					$("#phoneError")[0].innerHTML = "Mention the arthropod group in the \"Notes\" section before saving. If you don't know the arthropod group, select \"Unidentified\" instead of \"Other\".";
+					$("#phoneError .message")[0].innerHTML = "Mention the arthropod group in the \"Notes\" section before saving. If you don't know the arthropod group, select \"Unidentified\" instead of \"Other\".";
 					$("#phoneError")[0].style.display = "block";
 					$("#phoneConfirmation")[0].style.display = "none";
 					$("#phoneNotice").stop().fadeIn(200);
@@ -1626,7 +1751,7 @@
 						pointsS = "";
 					}
 					confirmationMessage += " You have gained " + pointsAwarded + " point" + pointsS + "!";
-					$("#phoneConfirmation")[0].innerHTML = confirmationMessage;
+					$("#phoneConfirmation .message")[0].innerHTML = confirmationMessage;
 					$("#phoneConfirmation")[0].style.display = "block";
 					$("#phoneError")[0].style.display = "none";
 				}
@@ -1643,7 +1768,7 @@
 						pointsS = "";
 					}
 					errorMessage += " You have gained " + pointsAwarded + " point" + pointsS + ".";
-					$("#phoneError")[0].innerHTML = errorMessage;
+					$("#phoneError .message")[0].innerHTML = errorMessage;
 					$("#phoneError")[0].style.display = "block";
 					$("#phoneConfirmation")[0].style.display = "none";
 				}
@@ -1680,11 +1805,15 @@
 			}
 			
 			function submitScore(score){
-				$.get("../../php/submitVirtualSurveyScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + score, function(data){});
+				$.get("../../php/submitVirtualSurveyScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + score, function(data){
+					var comparisons = JSON.parse(data);
+					$("#roundBreakdown .subheading").eq(0)[0].innerHTML += " You beat " + Math.round(Number(comparisons[0])) + "% of global scores this time around, and your best score is " + comparisons[1] + ".";
+				});
 			}
 		</script>
 	</head>
 	<body>
+		<div id="clearBlock"></div>
 		<div id="loading">
 			<img src="images/logo.png" style="height:100px;display:block;margin:0px auto 40px auto;"/>
 			<div id="progressBar">
@@ -1695,7 +1824,10 @@
 		<div id="intro" style="top:0px;">
 			<div id="signatureLogo">Caterpillars Count!</div>
 			<div id="gameTitle">Virtual Survey</div>
-			<button onclick="startRound();" id="playButton" tabindex="-1">play</button>
+			<div id="playScreenDarkBox">
+				<div id="gameInstructions"><strong>Rack up as many points as you can</strong> by identifying all arthropods on each of three increasingly challenging branches! <strong>Remember</strong>, arthropod length is measured from the tip of the head to the bottom of the abdomen.</div>
+				<button onclick="startRound();" id="playButton" tabindex="-1">play</button>
+			</div>
 		</div>
 		
 		<div id="roundBreakdown" style="top:-100%;">
@@ -1706,7 +1838,7 @@
 		
 		<div id="toolBar">
 			<div id="runningScore"><span id="currentRunningScore">0</span><span id="possibleScore">--</span></div>
-			<button onclick="toggleMagnification();" id="magnifyButton" style="float:left;background:#aaa;" tabindex="-1">Magnifying glass</button>
+			<button onclick="toggleMagnification();" id="magnifyButton" style="float:left;background:#aaa;display:none;" tabindex="-1">Magnifying glass</button>
 			<button onclick="endRound();" style="background:#05e666;" tabindex="-1">Next branch</button>
 		</div>
 		
@@ -1728,296 +1860,8 @@
 		
 		<div id="ruler" style="display:none;">
 			<div>
-				<div style="margin-top:-20px;font-size:8px;border:1px solid #fff;border-radius:2px;display:inline-block;padding:0px 2px 1px 2px;opacity:.7;">cm</div>
-				<div>1</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>2</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>3</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>4</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>5</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>6</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>7</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>8</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>9</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
+				<div style="margin-top:-20px;font-size:8px;border:1px solid #fff;border-radius:2px;display:inline-block;padding:0px 2px 1px 2px;opacity:.7;">mm</div>
 				<div>10</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>11</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>12</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>13</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>14</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>15</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>16</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>17</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>18</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>19</div>
 				<div>
 					<div class="halfMark"></div>
 					<div class="smallMark"></div>
@@ -2049,151 +1893,439 @@
 				</div>
 			</div>
 			<div>
-				<div>21</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>22</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>23</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>24</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>25</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>26</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>27</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>28</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>29</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
 				<div>30</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>40</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>50</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>60</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>70</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>80</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>90</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>100</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>110</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>120</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>130</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>140</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>150</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>160</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>170</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>180</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>190</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>200</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>210</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>220</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>230</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>240</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>250</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>260</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>270</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>280</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>290</div>
+				<div>
+					<div class="halfMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="mainMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="smallMark"></div>
+					<div class="halfMark"></div>
+				</div>
+			</div>
+			<div>
+				<div>300</div>
 				<div>
 					<div class="halfMark"></div>
 					<div class="smallMark"></div>
@@ -2219,8 +2351,14 @@
 			</div>
 			<div id="phoneScreen">
 				<div id="phoneNotice" onclick="lookForNextBug();" style="display:none;">
-					<div id="phoneConfirmation"></div>
-					<div id="phoneError"></div>
+					<div id="phoneConfirmation">
+						<div class="message"></div>
+						<div class="phoneNoticeButton">OK</div>
+					</div>
+					<div id="phoneError">
+						<div class="message"></div>
+						<div class="phoneNoticeButton">OK</div>
+					</div>
 				</div>
 				<div id="appHeader">
 					<img src="images/logo.png" id="logo"/>
