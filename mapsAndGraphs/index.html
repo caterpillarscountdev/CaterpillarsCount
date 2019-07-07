@@ -320,6 +320,11 @@
 				margin-top:-30px;
 				margin-bottom:40px;
 			}
+			
+			#siteINaturalistLink{
+				font-size:18px;
+				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+			}
 
 			#selectedSitePanel h3:first-of-type{
 				margin-top:0px;
@@ -1287,6 +1292,20 @@
 					}
 				}
 			}
+			
+			function r(search, replace, subject){
+				return subject.replace(/search/g, replace);
+			}
+			function myUrlEncode(str) {
+	    			return r(" ", "%20", r(">", "%3E", r("!", "%21", r("*", "%2A", r("(", "%28", r(")", "%29", r(";", "%3B", r(":", "%3A", r("@", "%40", r("&", "%26", r("=", "%3D", r("+", "%2B", r("$", "%24", r(",", "%2C", r("/", "%2F", r("?", "%3F", r("%", "%25", str)))))))))))))))));
+			}
+			function cleanParam(param){
+				param = myUrlEncode(param.toString().trim().replace(/[^a-zA-Z0-9.!*();:@&=+$,\/?%>-]/gi, " ").trim().replace(/ +(?= )/g,' '));
+				if(param == ""){
+					return "None";
+				}
+				return param;
+			}
 
 			var map;
 			var markers = {};
@@ -1380,6 +1399,9 @@
 					else{
 						$("#lastSurveyed")[0].innerHTML = "Last surveyed <div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;display:inline-block;text-decoration:underline;\">" + diffDays + " days ago<div class=\"bottomTooltip\">" + getReadableDate(marker.siteInformation["MostRecentDateTime"].split(" ")[0]) + ", at " + getTwelveHourTime(marker.siteInformation["MostRecentDateTime"].split(" ")[1]) + "<div class=\"arrow\"></div></div></div>.";
 					}
+					
+					$("#siteINaturalistLink")[0].href = "https://www.inaturalist.org/observations?field:Site%20Name=" + cleanParam(marker.siteInformation["Name"]);
+					
 					$("#siteStats")[0].innerHTML = "<table id=\"desktopSiteStats\">" +
 							"<thead>" +
 								"<tr>" +
@@ -3491,6 +3513,12 @@
 					</div>
 					<div id="dataSection">
 						<div id="lastSurveyed"></div>
+						
+						<h3>iNaturalist Submissions</h3>
+						<div style="margin-top:-5px;">
+							<a href="#" id="siteINaturalistLink" target="_blank" class="highlighted">Click here to see all of the photo observations submitted at this site's iNaturalist page.</a>
+						</div>
+						
 						<h3>Site Summary</h3>
 
 						<div id="siteStats"></div>
