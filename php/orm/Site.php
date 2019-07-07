@@ -326,6 +326,17 @@ class Site
 		return filter_var($this->active, FILTER_VALIDATE_BOOLEAN);
 	}
 	
+	public function getWantsToReceiveEmails(){
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(YEAR(Survey.LocalDate)) AS MostRecentYear FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $this->id . "'");
+		mysqli_close($dbconn);
+		if(mysqli_num_rows($query) > 0 && ((intval(date("Y")) - intval($row["MostRecentYear"])) < 2)){
+			//if the site has surveyed in the past, and it hasn't been more than a year, return active preference
+			return $this->getActive();
+		}
+		return false;
+	}
+	
 	public function getObservationMethodPreset($user){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `ObservationMethod` FROM `SiteUserPreset` WHERE `UserFK`='" . intval($user->getID()) . "' AND `SiteFK`='" . $this->id . "' LIMIT 1");
