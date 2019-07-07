@@ -69,16 +69,16 @@
 			$dateWeights[$row["LocalDate"]][2] = intval($row["DailyArthropodSightings"]);
 		}
     
-		//divide
+		//finalize
 		$dateWeights = array_values($dateWeights);
-		for($j = 0; $j < count($dateWeights); $j++){
-			$dateWeights[$j] = array($dateWeights[$j][0], round((($dateWeights[$j][1] / $dateWeights[$j][3]) * 100), 2), round(($dateWeights[$j][2] / $dateWeights[$j][3]), 2));
-		}
-		
-		//remove data from dates with fewer than 5 surveys
 		for($j = (count($dateWeights) - 1); $j >= 0; $j--){
 			if($dateWeights[$j][3] < 5){
+				//remove data from dates with fewer than 5 surveys
 				array_splice($dateWeights, $j, 1);
+			}
+			else{
+				//divide
+				$dateWeights[$j] = array($dateWeights[$j][0], round((($dateWeights[$j][1] / $dateWeights[$j][3]) * 100), 2), round(($dateWeights[$j][2] / $dateWeights[$j][3]), 2));
 			}
 		}
     		
