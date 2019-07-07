@@ -114,7 +114,7 @@
 		for($i = 0; $i < count($sites); $i++){
 			if($sites[$i]->getID() != 2){
 				$sends = getSends(date("Y-m-d") . "|" . $sites[$i]->getID());
-				if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getNumberOfSurveysByYear(date("Y")) <= 2){
+				if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getWantsToReceiveEmails() && $sites[$i]->getNumberOfSurveysByYear(date("Y")) <= 2){
 					$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS Count FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND Survey.LocalDate>'" . date("Y") . "-06-13'");
 					if(intval(mysqli_fetch_assoc($query)["Count"]) == 0){
 						$emails = $sites[$i]->getAuthorityEmails();
@@ -310,7 +310,7 @@
 		else if(date("m/d") == "05/20"){
 			$sites = Site::findAll();
 			for($i = 0; $i < count($sites); $i++){
-				if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getLatitude() < 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
+				if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getWantsToReceiveEmails() && $sites[$i]->getLatitude() < 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
 					send4ToAuthorities($sites[$i]);
 				}
 			}
@@ -320,10 +320,10 @@
 			for($i = 0; $i < count($sites); $i++){
 				if($emailsSent < $MAX_EMAIL_SENDS){
 					$numberOfSurveysThisYear = $sites[$i]->getNumberOfSurveysByYear(date("Y"));
-					if($sites[$i]->getActive() && $sites[$i]->getLatitude() < 36.5 && $numberOfSurveysThisYear == 0){
+					if($sites[$i]->getWantsToReceiveEmails() && $sites[$i]->getLatitude() < 36.5 && $numberOfSurveysThisYear == 0){
 						send4ToAppAuthoritiesAnd5ToPaperAuthorities($sites[$i]);
 					}
-					else if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getLatitude() < 40.7 && $numberOfSurveysThisYear == 0){
+					else if($sites[$i]->getWantsToReceiveEmails() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getLatitude() < 40.7 && $numberOfSurveysThisYear == 0){
 						send4ToAuthorities($sites[$i]);
 					}
 				}
@@ -334,10 +334,10 @@
 			for($i = 0; $i < count($sites); $i++){
 				if($emailsSent < $MAX_EMAIL_SENDS){
 					$numberOfSurveysThisYear = $sites[$i]->getNumberOfSurveysByYear(date("Y"));
-					if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getLatitude() < 40.7 && $numberOfSurveysThisYear == 0){
+					if($sites[$i]->getWantsToReceiveEmails() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getLatitude() < 40.7 && $numberOfSurveysThisYear == 0){
 						send4ToAppAuthoritiesAnd5ToPaperAuthorities($sites[$i]);
 					}
-					else if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 40.7 && $numberOfSurveysThisYear == 0){
+					else if($sites[$i]->getWantsToReceiveEmails() && $sites[$i]->getLatitude() >= 40.7 && $numberOfSurveysThisYear == 0){
 						send4ToAuthorities($sites[$i]);
 					}
 				}
@@ -348,10 +348,10 @@
 			for($i = 0; $i < count($sites); $i++){
 				if($emailsSent < $MAX_EMAIL_SENDS){
 					$numberOfSurveysThisYear = $sites[$i]->getNumberOfSurveysByYear(date("Y"));
-					if($sites[$i]->getActive() && $sites[$i]->getLatitude() < 36.5 && $numberOfSurveysThisYear == 0){
+					if($sites[$i]->getWantsToReceiveEmails() && $sites[$i]->getLatitude() < 36.5 && $numberOfSurveysThisYear == 0){
 						send4ToAuthorities($sites[$i]);
 					}
-					else if($sites[$i]->getActive() && $sites[$i]->getLatitude() >= 40.7 && $numberOfSurveysThisYear == 0){
+					else if($sites[$i]->getWantsToReceiveEmails() && $sites[$i]->getLatitude() >= 40.7 && $numberOfSurveysThisYear == 0){
 						send4ToAppAuthoritiesAnd5ToPaperAuthorities($sites[$i]);
 					}
 				}
@@ -360,7 +360,7 @@
 		else if(date("m/d") == "06/17"){
 			$sites = Site::findAll();
 			for($i = 0; $i < count($sites); $i++){
-				if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getActive() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
+				if($emailsSent < $MAX_EMAIL_SENDS && $sites[$i]->getWantsToReceiveEmails() && $sites[$i]->getLatitude() >= 36.5 && $sites[$i]->getNumberOfSurveysByYear(date("Y")) == 0){
 					send4ToAuthorities($sites[$i]);
 				}
 			}
