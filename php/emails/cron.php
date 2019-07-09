@@ -171,20 +171,21 @@
 								}
 							}
 						}
+						$SURVEY_SUBSTANTIATION_THRESHOLD = 5;
 						$peakCaterpillarOccurrenceDate = "";
 						$peakCaterpillarOccurrence = 0;
 						$caterpillarOccurrenceArray = array();
-						$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, Count(DISTINCT ArthropodSighting.SurveyFK) AS SurveyCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND YEAR(Survey.LocalDate)=YEAR('$monday') GROUP BY Survey.LocalDate ORDER BY SurveyCount DESC, Survey.LocalDate ASC");
+						$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND YEAR(Survey.LocalDate)=YEAR('$monday') GROUP BY Survey.LocalDate ORDER BY SurveyCount DESC, Survey.LocalDate ASC");
 						while($dateSurveyRow = mysqli_fetch_assoc($query)){
 							$caterpillarOccurrenceArray[$dateSurveyRow["LocalDate"]] = $dateSurveyRow["SurveyCount"];
 						}
 						$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, Count(DISTINCT ArthropodSighting.SurveyFK) AS SurveyWithCaterpillarCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $sites[$i]->getID() . "' AND YEAR(Survey.LocalDate)=YEAR('$monday') AND ArthropodSighting.Group='caterpillar' GROUP BY Survey.LocalDate ORDER BY SurveyWithCaterpillarCount DESC, Survey.LocalDate ASC");
 						while($dateCaterpillarRow = mysqli_fetch_assoc($query)){
 							$occurrence = 0;
-							if(floatval($caterpillarOccurrenceArray[$dateCaterpillarRow["LocalDate"]]) != 0){
+							if(intval($caterpillarOccurrenceArray[$dateCaterpillarRow["LocalDate"]]) != 0){
 								$occurrence = round((floatval($dateCaterpillarRow["SurveyWithCaterpillarCount"]) / floatval($caterpillarOccurrenceArray[$dateCaterpillarRow["LocalDate"]])) * 100, 2);
 							}
-							if($occurrence > $peakCaterpillarOccurrence){
+							if($occurrence > $peakCaterpillarOccurrence && intval($caterpillarOccurrenceArray[$dateCaterpillarRow["LocalDate"]]) >= $SURVEY_SUBSTANTIATION_THRESHOLD){
 								$peakCaterpillarOccurrence = $occurrence;
 								$peakCaterpillarOccurrenceDate = $dateCaterpillarRow["LocalDate"];
 							}
