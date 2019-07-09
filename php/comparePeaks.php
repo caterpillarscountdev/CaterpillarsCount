@@ -6,7 +6,7 @@
 
 $siteID = 78;
 	$site = Site::findByID($siteID);
-	$arthropod = "%";
+	$arthropod = "caterpillar";
 	$year = "2019";
 $monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
   
@@ -69,7 +69,7 @@ $monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days")
 				$occ = round((($dateWeights[$j][1] / $dateWeights[$j][3]) * 100), 2);
         echo "</br/>" . $dateWeights[$j][0] . ": " . $occ;
 				if($occ > $max[1]){
-					$occ = array($dateWeights[$j][0], $occ);
+					$max = array($dateWeights[$j][0], $occ);
 				}
 				//$dateWeights[$j] = array($dateWeights[$j][0], round((($dateWeights[$j][1] / $dateWeights[$j][3]) * 100), 2), round(($dateWeights[$j][2] / $dateWeights[$j][3]), 2));
 			}
