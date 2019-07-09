@@ -13,7 +13,7 @@ $monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days")
   $peakCaterpillarOccurrenceDate = "";
 						$peakCaterpillarOccurrence = 0;
 						$caterpillarOccurrenceArray = array();
-						$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, Count(DISTINCT ArthropodSighting.SurveyFK) AS SurveyCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $site->getID() . "' AND YEAR(Survey.LocalDate)=YEAR('$monday') GROUP BY Survey.LocalDate ORDER BY SurveyCount DESC, Survey.LocalDate ASC");
+						$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `SiteFK`='" . $site->getID() . "' AND YEAR(Survey.LocalDate)=YEAR('$monday') GROUP BY Survey.LocalDate ORDER BY SurveyCount DESC, Survey.LocalDate ASC");
 						while($dateSurveyRow = mysqli_fetch_assoc($query)){
 							$caterpillarOccurrenceArray[$dateSurveyRow["LocalDate"]] = $dateSurveyRow["SurveyCount"];
 						}
