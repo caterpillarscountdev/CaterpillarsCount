@@ -8,6 +8,7 @@ $siteID = 78;
 	$site = Site::findByID($siteID);
 	$arthropod = "%";
 	$year = "2019";
+$monday = date("Y-m-d", strtotime($today . " -" . (6 + $sundayOffset) . " days"));
   
   $peakCaterpillarOccurrenceDate = "";
 						$peakCaterpillarOccurrence = 0;
@@ -56,6 +57,7 @@ $siteID = 78;
 		}
     
 		//finalize
+		$max = array("", -1);
 		$dateWeights = array_values($dateWeights);
 		for($j = (count($dateWeights) - 1); $j >= 0; $j--){
 			if($dateWeights[$j][3] < 5){
@@ -64,8 +66,14 @@ $siteID = 78;
 			}
 			else{
 				//divide
-        echo "</br/>" . $dateWeights[$j][0] . ": " . round((($dateWeights[$j][1] / $dateWeights[$j][3]) * 100), 2);
+				$occ = round((($dateWeights[$j][1] / $dateWeights[$j][3]) * 100), 2);
+        echo "</br/>" . $dateWeights[$j][0] . ": " . $occ;
+				if($occ > $max[1]){
+					$occ = array($dateWeights[$j][0], $occ);
+				}
 				//$dateWeights[$j] = array($dateWeights[$j][0], round((($dateWeights[$j][1] / $dateWeights[$j][3]) * 100), 2), round(($dateWeights[$j][2] / $dateWeights[$j][3]), 2));
 			}
 		}
+
+		echo "<br/><br/>" . $max[0] . ": " . $max[1];
 ?>
