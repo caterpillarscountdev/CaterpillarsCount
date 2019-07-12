@@ -61,11 +61,16 @@
 				height:500px;
 				border:0px none transparent;
 				background-color:#fff;
+				border-radius:4px 4px 0px 0px;
+				overflow:hidden;
 			}
 			
 			#gameIFrameOptions{
 				padding:10px;
-				background:#333;
+				background:#222;
+				box-sizing:border-box;
+				border-radius:0px 0px 4px 4px;
+				overflow:hidden;
 			}
 			
 			#gameIFrameOptions img{
@@ -90,13 +95,13 @@
 			}
 			function enterFullscreenMode(){
 				fullscreen = true;
-				$("#gameIFrame").css({position:"fixed", top:"0px", left:"0px", bottom:"50px", width:"100%", height:"100%", zIndex:"999999"});
-				$("#gameIFrameOptions").css({position:"fixed", bottom:"0px", left:"0px", width:"100%", zIndex:"999999"});
+				$("#gameIFrame").css({borderRadius:"0px", position:"fixed", top:"0px", left:"0px", bottom:"50px", width:"100%", height:"100%", zIndex:"999999"});
+				$("#gameIFrameOptions").css({borderRadius:"0px", position:"fixed", bottom:"0px", left:"0px", width:"100%", zIndex:"999999"});
 			}
 			function exitFullscreenMode(){
 				fullscreen = false;
-				$("#gameIFrame").css({position:"", top:"", left:"", bottom:"", width:"", height:"", zIndex:""});
-				$("#gameIFrameOptions").css({position:"", bottom:"", left:"", width:"", zIndex:""});
+				$("#gameIFrame").css({borderRadius:"", position:"", top:"", left:"", bottom:"", width:"", height:"", zIndex:""});
+				$("#gameIFrameOptions").css({borderRadius:"", position:"", bottom:"", left:"", width:"", zIndex:""});
 			}
 		</script>
 		<!--END OF GAME STYLE AND SCRIPT-->
