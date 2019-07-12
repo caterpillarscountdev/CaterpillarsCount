@@ -42,6 +42,7 @@
 		<script>
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
+				$("#gameIFrame")[0].src = "https://bytecrank.com/filebox/316d4df8eae0e148ef1237ead8118e03c7188b3aba829f9aaa42d1e53998c02856a84036913cccd69da3a6505bbf124efac43684a45fde319ab5866e114c0687/clients/caterpillarscount/virtualSurveyGame/index.html?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt");
 			});
 		</script>
     
@@ -173,9 +174,9 @@
 				<!--GAME HTML-->
 				<h2>Virtual Survey Game</h2>
 				<div class="tagline">Practice your surveying skills!</div>
-				<div>
-          <iframe src="game" style="width:100%;height:500px;"></iframe>
-        </div>
+				<div class="content">
+					<iframe src="" style="width:100%;height:500px;" id="gameIFrame"></iframe>
+				</div>
 				<!--END OF GAME HTML-->
         
         
