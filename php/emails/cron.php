@@ -22,7 +22,8 @@
 
 	$emailsSent = 0;//current number of emails sent during this run
 	
-	if(date('H:i') == "12:00" || date('H:i') == "12:01" || date('H:i') == "12:02"){
+	//clear database during downtime
+	if(date('H:i') == "07:00" || date('H:i') == "07:01" || date('H:i') == "07:02"){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		mysqli_query($dbconn, "DELETE FROM TemporaryEmailLog WHERE `Date`<'" . date("Y-m-d") . "'");
 		mysqli_close($dbconn);
