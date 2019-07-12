@@ -56,10 +56,19 @@
     
 		<!--GAME STYLE AND SCRIPT-->
 		<style>
-			
+			#gameIFrame{
+				width:100%;
+				height:500px;
+				border:0px none transparent;
+			}
 		</style>
 		<script>
-			
+			function enterFullscreenMode(){
+				$("#gameIFrame").css({position:"fixed", top:"0px", left:"0px", width:"100%", height:"100%", zIndex:"999999"});
+			}
+			function exitFullscreenMode(){
+				//$("#gameIFrame").css({position:"fixed", top:"0px", left:"0px", width:"100%", height:"100%"});
+			}
 		</script>
 		<!--END OF GAME STYLE AND SCRIPT-->
     
@@ -175,7 +184,8 @@
 				<h2>Virtual Survey Game</h2>
 				<div class="tagline">Practice your surveying skills!</div>
 				<div class="content">
-					<iframe src="" style="width:100%;height:500px;" id="gameIFrame"></iframe>
+					<iframe src="" id="gameIFrame"></iframe>
+					<button onclick="enterFullscreenMode();">fullscreen</button>
 				</div>
 				<!--END OF GAME HTML-->
         
