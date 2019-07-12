@@ -640,7 +640,48 @@
 			
 			.finalBreakdownSubsection{
 				margin-bottom:10px;
-				font-size:14px;
+				font-size:20px;
+			}
+			
+			@media only screen and (max-height: 850px){
+				#roundBreakdown .finalBreakdownSubsection{
+					font-size:19px;
+				}
+			}
+			@media only screen and (max-height: 800px){
+				#roundBreakdown .finalBreakdownSubsection{
+					font-size:18px;
+				}
+			}
+			@media only screen and (max-height: 750px){
+				#roundBreakdown .finalBreakdownSubsection{
+					font-size:17px;
+				}
+			}
+			@media only screen and (max-height: 700px){
+				#roundBreakdown .finalBreakdownSubsection{
+					font-size:16px;
+				}
+			}
+			@media only screen and (max-height: 650px){
+				#roundBreakdown .finalBreakdownSubsection{
+					font-size:15px;
+				}
+			}
+			@media only screen and (max-height: 600px){
+				#roundBreakdown .finalBreakdownSubsection{
+					font-size:14px;
+				}
+			}
+			@media only screen and (max-height: 550px){
+				#roundBreakdown .finalBreakdownSubsection{
+					font-size:13px;
+				}
+			}
+			@media only screen and (max-height: 500px){
+				#roundBreakdown .finalBreakdownSubsection{
+					font-size:12px;
+				}
 			}
 		</style>
 		<script>
@@ -1515,7 +1556,12 @@
 				findingArthropodsStats[0] += identifiedThisRound;
 				findingArthropodsStats[1] += pickedBugs.length;
 				
+				$("#roundBreakdown .heading").eq(0)[0].style.paddingBottom = "";
+				$("#roundBreakdown .subheading").eq(0)[0].style.paddingBottom = "";
 				if(round == 2){
+					$("#roundBreakdown .heading").eq(0)[0].style.paddingBottom = "28px";
+					$("#roundBreakdown .subheading").eq(0)[0].style.paddingBottom = "28px";
+					
 					var finalScore = Number($("#currentRunningScore")[0].innerHTML);
 					
 					submitScore(finalScore);
@@ -1542,7 +1588,7 @@
 						lengthAccuracy = lengthAccuracy / lengthAccuracies.length;
 					}
 					
-					subheadingHTML += "<div style=\"color:#ccc;margin-top:3px;font-weight:bold;\">";
+					subheadingHTML += "<div style=\"margin-top:3px;\">";
 					subheadingHTML += "Finding arthropods: " + Math.round((findingArthropodsStats[0] / findingArthropodsStats[1]) * 100) + "%";
 					subheadingHTML += "<br/>Identifying arthropods: " + ((findingArthropodsStats[0] == 0) ? 0 : Math.round((correctlyIdentified / findingArthropodsStats[0]) * 100)) + "%";
 					subheadingHTML += "<br/>Estimating length: " + Math.round(lengthAccuracy * 100) + "%";
@@ -1880,7 +1926,7 @@
 			<div id="gameTitle">Virtual Survey</div>
 			<div id="playScreenDarkBox">
 				<div id="gameInstructions"><strong>Rack up as many points as you can</strong> by finding and identifying all arthropods on each of three increasingly challenging branches! Estimate arthropod length from the <strong>tip of the head to the bottom of the abdomen</strong>.</div>
-				<button onclick="startRound();" id="playButton" tabindex="-1">play</button>
+				<button onclick="$('#intro')[0].style.display='none';startRound();" id="playButton" tabindex="-1">play</button>
 			</div>
 		</div>
 		
