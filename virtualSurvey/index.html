@@ -63,6 +63,7 @@
 				background-color:#fff;
 				border-radius:4px 4px 0px 0px;
 				overflow:hidden;
+				box-sizing:border-box;
 			}
 			
 			#gameIFrameOptions{
@@ -95,12 +96,12 @@
 			}
 			function enterFullscreenMode(){
 				fullscreen = true;
-				$("#gameIFrame").css({borderRadius:"0px", position:"fixed", top:"0px", left:"0px", bottom:"50px", width:"100%", height:"100%", zIndex:"999999"});
+				$("#gameIFrame").css({borderRadius:"0px", position:"fixed", top:"0px", left:"0px", width:"100%", height:"100%", paddingBottom:"50px", zIndex:"999999"});
 				$("#gameIFrameOptions").css({borderRadius:"0px", position:"fixed", bottom:"0px", left:"0px", width:"100%", zIndex:"999999"});
 			}
 			function exitFullscreenMode(){
 				fullscreen = false;
-				$("#gameIFrame").css({borderRadius:"", position:"", top:"", left:"", bottom:"", width:"", height:"", zIndex:""});
+				$("#gameIFrame").css({borderRadius:"", position:"", top:"", left:"", bottom:"", width:"", height:"", paddingBottom:"", zIndex:""});
 				$("#gameIFrameOptions").css({borderRadius:"", position:"", bottom:"", left:"", width:"", zIndex:""});
 			}
 		</script>
