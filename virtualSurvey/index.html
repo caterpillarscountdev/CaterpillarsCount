@@ -60,14 +60,43 @@
 				width:100%;
 				height:500px;
 				border:0px none transparent;
+				background-color:#fff;
+			}
+			
+			#gameIFrameOptions{
+				padding:10px;
+				background:#333;
+			}
+			
+			#gameIFrameOptions img{
+				cursor:pointer;
+				float:right;
+				height:30px;
+			}
+			
+			.clearBoth{
+				clear:both;
 			}
 		</style>
 		<script>
+			var fullscreen = false;
+			function toggleFullscreenMode(){
+				if(!fullscreen){
+					enterFullscreenMode();
+				}
+				else{
+					exitFullscreenMode();
+				}
+			}
 			function enterFullscreenMode(){
-				$("#gameIFrame").css({position:"fixed", top:"0px", left:"0px", width:"100%", height:"100%", zIndex:"999999"});
+				fullscreen = true;
+				$("#gameIFrame").css({position:"fixed", top:"0px", left:"0px", bottom:"50px", width:"100%", height:"100%", zIndex:"999999"});
+				$("#gameIFrameOptions").css({position:"fixed", bottom:"0px", left:"0px", width:"100%", zIndex:"999999"});
 			}
 			function exitFullscreenMode(){
-				//$("#gameIFrame").css({position:"fixed", top:"0px", left:"0px", width:"100%", height:"100%"});
+				fullscreen = false;
+				$("#gameIFrame").css({position:"", top:"", left:"", bottom:"", width:"", height:"", zIndex:""});
+				$("#gameIFrameOptions").css({position:"", bottom:"", left:"", width:"", zIndex:""});
 			}
 		</script>
 		<!--END OF GAME STYLE AND SCRIPT-->
@@ -185,7 +214,10 @@
 				<div class="tagline">Practice your surveying skills!</div>
 				<div class="content">
 					<iframe src="" id="gameIFrame"></iframe>
-					<button onclick="enterFullscreenMode();">fullscreen</button>
+					<div id="gameIFrameOptions">
+						<img src="../images/fullscreenIcon.png" onclick="toggleFullscreenMode();"/>
+						<div class="clearBoth"></div>
+					</div>
 				</div>
 				<!--END OF GAME HTML-->
         
