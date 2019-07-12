@@ -14,6 +14,7 @@
 	date_default_timezone_set('US/Eastern');
 	
 	//ADJUSTABLE LIMITS:
+	//WARNING: If you change these limits, make sure to adjust the time that the TemporaryEmailLog clears. You want it to clear while no emails are being sent out so you dont end up with duplicate sends.
 	$SUNDAY_START_HOUR = 21;
 	$MONDAY_END_HOUR = 6;
 	$ANNUAL_START_HOUR = 19;
@@ -22,7 +23,7 @@
 
 	$emailsSent = 0;//current number of emails sent during this run
 	
-	//clear database during downtime
+	//CLEAR TemporaryEmailLog TABLE IN DATABASE (during downtime):
 	if(date('H:i') == "07:00" || date('H:i') == "07:01" || date('H:i') == "07:02"){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		mysqli_query($dbconn, "DELETE FROM TemporaryEmailLog WHERE `Date`<'" . date("Y-m-d") . "'");
