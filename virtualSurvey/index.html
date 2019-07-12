@@ -43,6 +43,11 @@
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
 				$("#gameIFrame")[0].src = "https://bytecrank.com/filebox/316d4df8eae0e148ef1237ead8118e03c7188b3aba829f9aaa42d1e53998c02856a84036913cccd69da3a6505bbf124efac43684a45fde319ab5866e114c0687/clients/caterpillarscount/virtualSurveyGame/index.html?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt");
+				$(document).keyup(function(e){
+					if(e.key === "Escape"){
+						exitFullscreenMode();
+					}
+				});
 			});
 		</script>
     
@@ -183,6 +188,7 @@
 						<ul onclick="event.stopPropagation();">
 							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
 							<li><a href="../identificationSkills">Identification Skills</a></li>
+							<li><a href="../virtualSurvey">Virtual Survey Game</a></li>
 							<li><a href="../forEducators">For Educators</a></li>
 							<li><a href="../faq">FAQ</a></li>
 						</ul>
