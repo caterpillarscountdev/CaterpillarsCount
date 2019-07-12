@@ -637,6 +637,11 @@
 			#possibleScore:before{
 				content:" / ";
 			}
+			
+			.finalBreakdownSubsection{
+				margin-bottom:10px;
+				font-size:14px;
+			}
 		</style>
 		<script>
 			var baseX = -1;//branch image pixel offset from left of page
@@ -1495,36 +1500,79 @@
 				});
 			}
 			
+			var findingArthropodsStats = [0, 0];
+			var correctlyIdentified = 0;
+			var lengthAccuracies = [];
 			function endRound(){
 				deactivateMagnification();
+				
+				var remainingTime = Math.round(($("#remainingTimeBar").width() / $("#timeBar").width()) * TOTAL_TIME);
+				var secondS = "s";
+				if(remainingTime == 1){
+					secondS = "";
+				}
+				
+				findingArthropodsStats[0] += identifiedThisRound;
+				findingArthropodsStats[1] += pickedBugs.length;
+				
 				if(round == 2){
 					var finalScore = Number($("#currentRunningScore")[0].innerHTML);
 					
 					submitScore(finalScore);
 					
+					var subheadingHTML = "<div class=\"finalBreakdownSubsection\">";
 					if(timedOut){
-						$("#roundBreakdown .heading").eq(0)[0].innerHTML = "Time's up! Your final score is " + finalScore + "!";
+						$("#roundBreakdown .heading").eq(0)[0].innerHTML = "Time's up- that's a wrap!";
+						subheadingHTML += "You spotted " + identifiedThisRound + " out of " + pickedBugs.length + " arthropods on that branch.";
 					}
 					else{
-						$("#roundBreakdown .heading").eq(0)[0].innerHTML = "Your final score is " + finalScore +  "!";
+						$("#roundBreakdown .heading").eq(0)[0].innerHTML = "That's a wrap!";
+						subheadingHTML += "You spotted " + identifiedThisRound + " out of " + pickedBugs.length + " arthropods on that branch with " + remainingTime + " second" + secondS + " to spare!";
+					}
+					subheadingHTML += "</div>";
+					
+					subheadingHTML += "<div class=\"finalBreakdownSubsection\">";
+					subheadingHTML += "<strong>Overall</strong>, your accuracy was:";
+					
+					var lengthAccuracy = 0;
+					for(var i = 0; i < lengthAccuracies.length; i++){
+						lengthAccuracy += lengthAccuracies[i];
+					}
+					if(lengthAccuracies.length > 0){
+						lengthAccuracy = lengthAccuracy / lengthAccuracies.length;
 					}
 					
-					if(finalScore >= 1600){
-						$("#roundBreakdown .subheading").eq(0)[0].innerHTML = "Great job! You're ready to get outside and conduct some real surveys!";
+					subheadingHTML += "<div style=\"color:#ccc;margin-top:3px;font-weight:bold;\">";
+					subheadingHTML += "Finding arthropods: " + Math.round((findingArthropodsStats[0] / findingArthropodsStats[1]) * 100) + "%";
+					subheadingHTML += "<br/>Identifying arthropods: " + ((findingArthropodsStats[0] == 0) ? 0 : Math.round((correctlyIdentified / findingArthropodsStats[0]) * 100)) + "%";
+					subheadingHTML += "<br/>Estimating length: " + Math.round(lengthAccuracy * 100) + "%";
+					findingArthropodsStats = [0, 0];
+					correctlyIdentified = 0;
+					lengthAccuracies = [];
+					subheadingHTML += "</div>";
+					subheadingHTML += "</div>";
+					
+					subheadingHTML += "<div class=\"finalBreakdownSubsection\">";
+					subheadingHTML += "<strong>Your final score is " + finalScore +  "!</strong> In total, you left " + (Number($("#possibleScore")[0].innerHTML) - Number($("#currentRunningScore")[0].innerHTML)) + " points on the table.";
+					subheadingHTML += "</div>";
+					
+					subheadingHTML += "<div class=\"finalBreakdownSubsection\">";
+					
+					if(finalScore >= 1500){
+						subheadingHTML += "Great job! You're ready to get outside and conduct some real surveys!";
 					}
-					else if(finalScore >= 1300){
-						$("#roundBreakdown .subheading").eq(0)[0].innerHTML = "You are a budding entomologist! Can you get a perfect score of 1800?";
+					else if(finalScore >= 1200){
+						subheadingHTML += "You are a budding entomologist! Can you get a perfect score?";
 					}
-					else if(finalScore >= 800){
-						$("#roundBreakdown .subheading").eq(0)[0].innerHTML = "Keep practicing! Finding more bugs will bring you eternal happiness!";
-					}
-					else if(finalScore >= 500){
-						$("#roundBreakdown .subheading").eq(0)[0].innerHTML = "Review the <a href=\"https://caterpillarscount.unc.edu/pdfs/ArthropodIDGuide.pdf\" style=\"color:#fed136;\" target=\"_blank\">Arthropod ID Guide</div> on the <a href=\"https://caterpillarscount.unc.edu/resources/\" style=\"color:#fed136;\" target=\"_blank\">Resources</a> page, and don't forget to use the magnifying glass to help you search!";
+					else if(finalScore >= 700){
+						subheadingHTML += "Keep practicing! Finding more bugs will bring you eternal happiness!";
 					}
 					else{
-						$("#roundBreakdown .subheading").eq(0)[0].innerHTML = "Um, you do know what an <a href=\"https://en.wikipedia.org/wiki/Arthropod\" style=\"color:#fed136;\" target=\"_blank\">arthropod</a> is, don't you?";
+						subheadingHTML += "Review the <a href=\"https://caterpillarscount.unc.edu/pdfs/ArthropodIDGuide.pdf\" style=\"color:#fed136;\" target=\"_blank\">Arthropod ID Guide on the <a href=\"https://caterpillarscount.unc.edu/resources/\" style=\"color:#fed136;\" target=\"_blank\">Resources</a> page to help with your searching!";
 					}
-					$("#roundBreakdown .subheading").eq(0)[0].innerHTML += " In your last survey round, you spotted " + identifiedThisRound + " out of " + pickedBugs.length + " arthropods. In total, you left " + (Number($("#possibleScore")[0].innerHTML) - Number($("#currentRunningScore")[0].innerHTML) + " points on the table.");
+					subheadingHTML += "</div>";
+					
+					$("#roundBreakdown .subheading").eq(0)[0].innerHTML = subheadingHTML;
 					
 					$("#nextBranchButton")[0].innerHTML = "PLAY AGAIN";
 				}
@@ -1533,11 +1581,6 @@
 						$("#roundBreakdown .heading").eq(0)[0].innerHTML = "You ran out of time!";
 					}
 					else{
-						var remainingTime = Math.round(($("#remainingTimeBar").width() / $("#timeBar").width()) * TOTAL_TIME);
-						var secondS = "s";
-						if(remainingTime == 1){
-							secondS = "";
-						}
 						$("#roundBreakdown .heading").eq(0)[0].innerHTML = "You finished that survey with " + remainingTime + " second" + secondS + " to spare!";
 					}
 					$("#roundBreakdown .subheading").eq(0)[0].innerHTML = "You spotted " + identifiedThisRound + " out of " + pickedBugs.length + " arthropods on that branch and brought your total points up to " + $("#currentRunningScore")[0].innerHTML + ". So far, you've left " + (Number($("#possibleScore")[0].innerHTML) - Number($("#currentRunningScore")[0].innerHTML) + " points on the table.");
@@ -1783,6 +1826,8 @@
 				$('#phone').stop().animate({scrollTop: 0}, 500);
 				$("#phoneNotice").stop().fadeIn(200);
 				identifiedThisRound++;
+				correctlyIdentified += groupAccuracy;
+				lengthAccuracies[lengthAccuracies.length] = lengthAccuracy;
 			}
 			
 			function enforceRange(ele, min, max, step){
@@ -1815,7 +1860,7 @@
 				$.get("../../php/submitVirtualSurveyScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + score, function(data){
 					if(data.indexOf("true|") == 0){
 						var comparisons = JSON.parse(data.replace("true|", ""));
-						$("#roundBreakdown .subheading").eq(0)[0].innerHTML += " You beat " + Math.round(Number(comparisons[0])) + "% of global scores this time around, and your best score is " + comparisons[1] + ".";
+						$("#roundBreakdown .subheading .finalBreakdownSubsection").eq(2)[0].innerHTML += " You beat " + Math.round(Number(comparisons[0])) + "% of global scores this time around, and your best score is " + comparisons[1] + ".";
 					}
 				});
 			}
