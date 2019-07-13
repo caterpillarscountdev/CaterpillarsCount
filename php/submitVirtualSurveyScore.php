@@ -1,4 +1,6 @@
 <?php
+	header('Access-Control-Allow-Origin: *');
+	
 	require_once('orm/User.php');
   
 	$email = $_GET["email"];
