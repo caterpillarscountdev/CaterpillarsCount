@@ -42,13 +42,15 @@
 	}
 	
 	function getSends($emailTypeIdentifier = "DEFAULT TO CURRENT DATE"){
+		//get sends from today OR YESTERDAY
 		$date = date("Y-m-d");
+		$yesterday = date("Y-m-d", strtotime( '-1 days' ));
 		if($emailTypeIdentifier == "DEFAULT TO CURRENT DATE"){
 			$emailTypeIdentifier = $date;
 		}
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT `UserIdentifier` FROM TemporaryEmailLog WHERE `Date`='$date' AND `EmailTypeIdentifier`='$emailTypeIdentifier'");
+		$query = mysqli_query($dbconn, "SELECT `UserIdentifier` FROM TemporaryEmailLog WHERE (`Date`='$date' OR `Date='$yesterday'`) AND `EmailTypeIdentifier`='$emailTypeIdentifier'");
 		mysqli_close($dbconn);
 		$userIdentifiers = array();
 		while($row = mysqli_fetch_assoc($query)){
