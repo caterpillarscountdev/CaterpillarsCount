@@ -3,9 +3,11 @@
 	require_once("/opt/app-root/src/php/submitToINaturalist.php");
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
+
+	$BATCH_SIZE = 1;
 	
 	//Get batch
-	$query = mysqli_query($dbconn, "SELECT ID FROM ArthropodSighting WHERE NeedToSendToINaturalist='1' LIMIT 1");
+	$query = mysqli_query($dbconn, "SELECT ID FROM ArthropodSighting WHERE NeedToSendToINaturalist='1' LIMIT " . $BATCH_SIZE);
 	$ids = array("0");
 	if(mysqli_num_rows($query) > 0){
 		while($idRow = mysqli_fetch_assoc($query)){
