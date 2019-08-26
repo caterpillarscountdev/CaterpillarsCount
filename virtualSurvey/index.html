@@ -1239,7 +1239,7 @@
 			
 			.finalBreakdownSubsection{
 				margin-bottom:10px;
-				font-size:20px;
+				font-size:12px;
 			}
 			
 			#gameDivOptions{
@@ -1257,7 +1257,7 @@
 			}
 		
 			#roundBreakdown .finalBreakdownSubsection{
-				font-size:20px;
+				font-size:12px;
 			}
 			
 			.clearBoth{
@@ -1850,6 +1850,7 @@
 					subheadingHTML += "</div>";
 					
 					$("#roundBreakdown .subheading").eq(0)[0].innerHTML = subheadingHTML;
+					resizeFonts();
 					
 					$("#nextBranchButton")[0].innerHTML = "PLAY AGAIN";
 				}
