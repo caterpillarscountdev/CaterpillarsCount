@@ -1,759 +1,134 @@
 <html>
 	<head>
-		<link href="https://fonts.googleapis.com/css?family=Kaushan+Script|Open+Sans:400,700|Roboto+Slab&display=swap" rel="stylesheet">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		<style>
-			*{
-				-webkit-touch-callout: none; /* iOS Safari */
-    			-webkit-user-select: none; /* Safari */
-     			-khtml-user-select: none; /* Konqueror HTML */
-       			-moz-user-select: none; /* Firefox */
-        		-ms-user-select: none; /* Internet Explorer/Edge */
-            	user-select: none;
-			}
-			
-			::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-				color: #ccc;
-			}
-			::-moz-placeholder { /* Firefox 19+ */
-				color:#ccc;
-			}
-			:-ms-input-placeholder { /* IE 10+ */
-				color:#ccc;
-			}
-			:-moz-placeholder { /* Firefox 18- */
-				color:#ccc;
-			}
-			
-			body{
-				margin:0px;
-				overflow:hidden;
-			}
-			
-			#clearBlock{
-				position:fixed;
-				top:0px;
-				left:0px;
-				width:100%;
-				height:100%;
-				background:transparent;
-				display:none;
-				z-index:9999;
-			}
-			
-			#toolBar{
-				position:fixed;
-				top:0px;
-				left:0px;
-				width:100%;
-				height:51px;
-				background:#333;
-			}
-			
-			#toolBar button{
-				font-size:14px;
-				padding:7px 15px;
-				width:auto;
-				margin:9px;
-				float:right;
-				font-weight:bold;
-				outline:none;
-			}
-			
-			#timeBar{
-				position:fixed;
-				top:51px;
-				left:0px;
-				width:100%;
-				height:9px;
-				background:#777;
-			}
-			
-			#remainingTimeBar{
-				position:abolute;
-				top:0px;
-				left:0px;
-				height:100%;
-				background:#00c4ff;
-			}
-			
-			#searchArea, #zoomedsearchArea{
-				position:fixed;
-				top:60px;
-				left:0px;
-				bottom:0px;
-				right:0px;
-			}
-						
-			#spy, #zoomedspy{
-				position:absolute;
-				top:0px;
-				left:0px;
-				width:100%;
-				height:100%;
-				background-color:#eee;
-				background-size:contain;
-				background-repeat:no-repeat;
-				background-position:center;
-				z-index:-1;
-			}
-			
-			
-			#bugAreaContainer, #zoomedbugAreaContainer{
-				position:absolute;
-				top:0px;
-				left:0px;
-				width:100%;
-				height:100%;
-				display:table;
-				z-index:0;
-			}
-			
-			.cell{
-				display:table-cell;
-				vertical-align:middle;
-				text-align:center;
-			}
-			
-			#bugArea, #zoomedbugArea{
-				display:inline-block;
-				position:relative;
-			}
-			
-			#loading{
-				position:fixed;
-				top:0px;
-				left:0px;
-				width:100%;
-				height:100%;
-				background:#333;
-				padding:10%;
-				box-sizing:border-box;
-				text-align:center;
-				z-index:10;
-			}
-			
-			#progressBar{
-				height:20px;
-				width:50%;
-				display:inline-block;
-				border:3px solid #fff;
-				border-radius:4px;
-				overflow:hidden;
-				position:relative;
-			}
-			
-			#progressBarFill{
-				position:absolute;
-				top:0px;
-				left:0px;
-				height:100%;
-				background:#fff;
-			}
-			
-			#intro{
-				position:fixed;
-				left:0px;
-				width:100%;
-				height:100%;
-				background:#333;
-				padding:10%;
-				box-sizing:border-box;
-				text-align:center;
-				z-index:9;
-				-webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
-				-moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
-				box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
-			}
-			
-			#signatureLogo{
-				font-family: 'Kaushan Script', cursive;
-				color:#fed136;
-				font-size:50px;
-				text-align:center;
-				padding-bottom:20px;
-			}
-			
-			#gameTitle{
-				font-family: 'Roboto Slab', serif;
-				color:#fff;
-				font-size:30px;
-				text-align:center;
-				padding-bottom:40px;
-			}
-			
-			#playScreenDarkBox{
-				background:rgba(0,0,0,0.2);
-				border-radius:5px;
-				overflow:hidden;
-				margin:auto;
-				padding:20px 20px 12px 20px;
-				box-sizing:border-box;
-			}
-			
-			#gameInstructions{
-				width:550px;
-				max-width:100%;
-				padding:0px 20px 10px 20px;
-				box-sizing:border-box;
-				color:#ddd;
-				font-family: 'Open Sans', sans-serif;
-				font-size:14px;
-			}
-			
-			#playButton{
-				border:0px none transparent;
-				font-size:20px;
-				padding:20px 100px;
-				background:#fed136;
-				border-radius:10px;
-				border-bottom:3px solid rgba(0,0,0,0.3);
-				color:#fff;
-				font-weight:bold;
-				text-transform:uppercase;
-				cursor:pointer;
-				outline:none;
-			}
-			
-			#playScreenDarkBox, #nextBranchButton, #roundBreakdown .heading, #roundBreakdown .subheading{
-				max-width:600px;
-			}
-			
-			#roundBreakdown{
-				position:fixed;
-				left:0px;
-				width:100%;
-				height:100%;
-				background:#333;
-				padding:10%;
-				box-sizing:border-box;
-				text-align:center;
-				z-index:8;
-				-webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
-				-moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
-				box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
-			}
-			
-			#roundBreakdown .heading{
-				font-family: 'Open Sans', sans-serif;
-				font-weight:bold;
-				font-size:35px;
-				color:#fff;
-				padding-bottom:40px;
-				text-align:center;
-				margin:auto;
-			}
-			
-			#roundBreakdown .subheading{
-				font-family: 'Open Sans', sans-serif;
-				font-size:20px;
-				color:#eee;
-				padding-bottom:40px;
-				text-align:center;
-				margin:auto;
-			}
-			
-			#phone{
-				position:fixed;
-				z-index:1;
-				top:0px;
-				right:0px;
-				height:100%;
-				overflow:scroll;
-				width:50%;
-			}
-			#phoneScreen{
-				font-family: 'Open Sans', sans-serif;
-				padding:70px 6% 15px 6%;
-				box-sizing:border-box;
-				background:#fff;
-				position:absolute;
-				top:0px;
-				right:0px;
-				width:96%;
-				min-height:100%;
-			}
-			
-			#phoneBar{
-				width:4%;
-				height:100%;
-				background-color:#111;
-				position:fixed;
-				top:0px;
-				left:50%;
-				background-image:url('images/phoneSide.png');
-				background-size:contain;
-				background-position:center;
-			}
-			
-			.phoneButton{
-				background:#777;
-				border-radius:9999px 0px 0px 9999px;
-				width:8%;
-				left:-7%;
-				position:absolute;
-				border-left:1px solid rgba(0,0,0,0.3);
-			}
-			
-			#phoneBarShine{
-				width:13%;
-				height:100%;
-				background:rgba(255,255,255,0.1);
-				position:absolute;
-				top:0px;
-				left:13%;
-			}
-			
-			#phoneNotice{
-				position:absolute;
-				top:0px;
-				left:0px;
-				height:100%;
-				width:100%;
-				background:rgba(255,255,255,0.7);
-				z-index:1;
-				cursor:pointer;
-			}
-			
-			#phoneConfirmation, #phoneError{
-				position:absolute;
-				top:0px;
-				left:0px;
-				width:100%;
-				padding:20px;
-				box-sizing:border-box;
-				color:#fff;
-				text-align:center;
-				font-size:18px;
-				display:none;
-			}
-			
-			#phoneConfirmation{
-				background:#37e666;
-			}
-			
-			#phoneError{
-				background:#eb3d68;
-			}
-			
-			.phoneNoticeButton{
-				width:70px;
-				margin:20px auto 0px auto;
-				padding:6px;
-				border:2px solid #fff;
-				border-radius:4px;
-				overflow:hidden;
-				font-size:13px;
-				background:rgba(255, 255, 255, 0.1);
-				background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
-				background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%,rgba(255,255,255,0) 100%);
-				background: linear-gradient(to right, rgba(255,255,255,0.2) 0%,rgba(255,255,255,0) 100%);
-				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#33ffffff', endColorstr='#00ffffff',GradientType=1 );
-			}
-			
-			#appHeader{
-				position:absolute;
-				top:0px;
-				left:0px;
-				width:100%;
-				background:#333;
-				padding:10px;
-			}
-			
-			#appHeader #logo{
-				height:40px;
-			}
-			
-			#panelIcon{
-				float:right;
-				height:30px;
-				margin:2px 20px 0px 0px;
-				border:3px solid transparent;
-				background-color:#00a800;
-				border-radius:50%;
-			}
-			
-			.panelTitle{
-				padding:15px 20px 15px 20px;
-				margin:0px -20px;
-				font-size:26px;
-				color:#444;
-			}
-			
-			.group{
-				margin:10px 0px;
-			}
-			
-			.observationFieldTitle{
-				color:#777;
-				font-size:12px;
-			}
-			
-			.select{
-				width:100%;
-				-webkit-appearance: none;
-    			-moz-appearance: none;
-    			appearance: none;
-    			border-radius:4px;
-    			padding:20px;
-    			font-size:20px;
-    			background:#fff;
-				border:1px solid #ddd;
-				border-bottom:2px solid #ddd;
-				color:#aaa;
-				box-sizing:border-box;
-				margin-top:5px;
-				cursor:pointer;
-			}
-			
-			.select{
-				padding:0px;
-			}
-			
-			.select .option{
-				max-height:0px;
-				overflow:hidden;
-			}
-			
-			.select .option.selected{
-				max-height:250px;
-				overflow:hidden;
-			}
-			
-			.select .option .value{
-				display:none;
-			}
-			
-			.select .option .shown{
-				padding:16px;
-				position:relative;
-				font-size:16px;
-			}
-			
-			.select .option .shown .image{
-				width:34px;
-				background-size:contain;
-				background-repeat:no-repeat;
-				background-position:center;
-				display:inline-block;
-				opacity:.4;
-				position:absolute;
-				right:20px;
-				top:10px;
-				bottom:10px;
-			}
-			
-			.select .option .shown .text{
-				display:inline-block;
-			}
-			
-			input[type="number"], input[type="text"], textarea{
-				width:100%;
-				background:#fff;
-				border:1px solid #ddd;
-				border-bottom:2px solid #ddd;
-				font-size:16px;
-				padding:16px;
-				box-sizing:border-box;
-				border-radius:4px;
-				margin:5px 0px;
-				color:#aaa;
-				-webkit-appearance: none;
-    			-moz-appearance: none;
-    			appearance: none;
-			}
-			
-			textarea{
-				height:54px;
-				overflow:hidden;
-			}
-			
-			.textareaHolder{
-				position:relative;
-			}
-			
-			.textareaOtherLinesCover{
-				background:#fff;
-				position:absolute;
-				bottom:7px;
-				left:16px;
-				right:16px;
-				height:16px;
-				pointer-events: none;
-			}
-			
-			button{
-				-webkit-appearance: none;
-    			-moz-appearance: none;
-    			appearance: none;
-				width:100%;
-				border:0px none transparent;
-				padding:20px;
-				font-size:20px;
-				margin:10px 0px;
-				border-radius:4px;
-				color:#fff;
-				background:#fed136;
-				border-bottom:4px solid rgba(0,0,0,.2);
-				cursor:pointer;
-				outline:none;
-			}
-			
-			.half{
-				width:49%;
-			}
-			.half:first-of-type{
-				float:left;
-			}
-			.half:last-of-type{
-				float:right;
-			}
-			
-			#ruler{
-				position:fixed;
-				top:0px;
-				left:0px;
-				z-index:0;
-				width:9999999999%;
-				font-family: 'Open Sans', sans-serif;
-				font-size:12px;
-				padding-top:75px;
-				background-color:#333;
-				overflow:hidden;
-				white-space:nowrap;
-				border-bottom:1px solid #fff;
-				/*
-				background-image:url('images/stainless.jpg');-webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
-				*/
-				-moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
-				box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
-				color:#fff;
-			}
-			
-			#ruler>div{
-				display:inline-block;
-				text-align:center;
-				float:left;
-				/*WIDTH TO BE SET*/
-				width:50px;
-				opacity:.7;
-			}
-			
-			#ruler>div>div:last-of-type{
-				height:25px;
-				position:relative;
-			}
-			
-			#ruler>div>div:last-of-type>div{
-				background:#fff;
-				position:absolute;
-				bottom:0px;
-				overflow:hidden;
-			}
-			
-			#ruler .halfMark{
-				height:50%;
-				width:1px;
-			}
-			#ruler .smallMark{
-				height:25%;
-				width:2px;
-				margin-left:-1px;
-				border-radius:9999px 9999px 0px 0px;
-			}
-			#ruler .mainMark{
-				height:100%;
-				width:2px;
-				margin-left:-1px;
-				border-radius:9999px 9999px 0px 0px;
-			}
-			
-			#ruler>div>div:last-of-type>div:nth-of-type(1){
-				left:0%;
-				border-radius:0px 9999px 0px 0px;
-			}
-			#ruler>div>div:last-of-type>div:nth-of-type(2){
-				left:10%;
-			}
-			#ruler>div>div:last-of-type>div:nth-of-type(3){
-				left:20%;
-			}
-			#ruler>div>div:last-of-type>div:nth-of-type(4){
-				left:30%;
-			}
-			#ruler>div>div:last-of-type>div:nth-of-type(5){
-				left:40%;
-			}
-			#ruler>div>div:last-of-type>div:nth-of-type(6){
-				left:50%;
-			}
-			#ruler>div>div:last-of-type>div:nth-of-type(7){
-				left:60%;
-			}
-			#ruler>div>div:last-of-type>div:nth-of-type(8){
-				left:70%;
-			}
-			#ruler>div>div:last-of-type>div:nth-of-type(9){
-				left:80%;
-			}
-			#ruler>div>div:last-of-type>div:nth-of-type(10){
-				left:90%;
-			}
-			#ruler>div>div:last-of-type>div:nth-of-type(11){
-				right:0%;
-				border-radius:9999px 0px 0px 0px;
-			}
-			
-			#zoom{
-				position:fixed;
-				top:0px;
-				left:0px;
-				width:150px;
-				height:150px;
-				border-radius:99999px;
-				z-index:8;
-				overflow:hidden;
-				pointer-events: none;-webkit-box-shadow: 0px 0px 0px 3px rgba(153,153,153,1);
-				-moz-box-shadow: 0px 0px 0px 3px rgba(153,153,153,1);
-				box-shadow: 0px 0px 0px 3px rgba(153,153,153,1);
-				display:none;
-			}
-			
-			#runningScore{
-				float:left;
-				color:#fff;
-				font-family: 'Open Sans', sans-serif;
-				font-weight:bold;
-				padding:16px;
-				font-size:14px;
-			}
-			#runningScore:before{
-				content:"Score: ";
-			}
-			
-			#possibleScore{
-				display:none;
-			}
-			#possibleScore:before{
-				content:" / ";
-			}
-			
-			.finalBreakdownSubsection{
-				margin-bottom:10px;
-				font-size:20px;
-			}
-			
-			@media only screen and (max-height: 850px){
-				#roundBreakdown .finalBreakdownSubsection{
-					font-size:19px;
-				}
-			}
-			@media only screen and (max-height: 800px){
-				#roundBreakdown .finalBreakdownSubsection{
-					font-size:18px;
-				}
-			}
-			@media only screen and (max-height: 750px){
-				#roundBreakdown .finalBreakdownSubsection{
-					font-size:17px;
-				}
-			}
-			@media only screen and (max-height: 700px){
-				#roundBreakdown .finalBreakdownSubsection{
-					font-size:16px;
-				}
-			}
-			@media only screen and (max-height: 650px){
-				#roundBreakdown .finalBreakdownSubsection{
-					font-size:15px;
-				}
-			}
-			@media only screen and (max-height: 600px){
-				#roundBreakdown .finalBreakdownSubsection{
-					font-size:14px;
-				}
-			}
-			@media only screen and (max-height: 550px){
-				#roundBreakdown .finalBreakdownSubsection{
-					font-size:13px;
-				}
-			}
-			@media only screen and (max-height: 500px){
-				#roundBreakdown .finalBreakdownSubsection{
-					font-size:12px;
-				}
-			}
-		</style>
+		<title>Virtual Survey Game | Caterpillars Count!</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		
+		
+		
+		
+		
+		
+		
 		<script>
-			var baseX = -1;//branch image pixel offset from left of page
-			var baseY = -1;//branch image pixel offset from top of page
-			var gameWidth = -1;
-			var gameHeight = -1;
-			var bugAreaWidth = -1;
-			var bugAreaHeight = -1;
+			//--------------------------------------------------------------------------------------------------------------------------------------------------
+			//GAME CONFIGURATION:
 			
-			$(document).ready(function(){
-				loadBugImageHeightToWidthRatios();
-				setGameDimensions();
-				resizePhoneButtons();
-				
-				if(magnifying){
-					generateLargerFrame();
-				}
-				$("#bugArea").mousemove(function(event){showMagnification(event);});
-				$("#bugArea").mouseleave(function(){
-					$("#zoom").css({display:"none"});
-				});
-			});
+			var MAGNIFICATION_PERCENTAGE = 150;//percent
+			var MAGNIFYING_GLASS_DIAMETER = 150;//pixels
 			
-			$(window).resize(function(){
-				setGameDimensions();
-				resizePhoneButtons();
-				scaleRuler();
-				if(zoomedBug !== null){
-					zoomIn(zoomedBug);
-				}
-				if(magnifying){
-					generateLargerFrame();
-				}
-			});
+			var SECONDS_PER_ROUND = 60;
 			
-			function resizePhoneButtons(){
-				$(".phoneButton").eq(0)[0].style.height = (($("#phone").width() / 720) * 40) + "px";
-				$(".phoneButton").eq(1)[0].style.height = (($("#phone").width() / 720) * 100) + "px";
-				$(".phoneButton").eq(2)[0].style.height = (($("#phone").width() / 720) * 100) + "px";
-				$(".phoneButton").eq(0)[0].style.top = (($("#phone").width() / 720) * 10) + "px";
-				$(".phoneButton").eq(1)[0].style.top = (($("#phone").width() / 720) * 125) + "px";
-				$(".phoneButton").eq(2)[0].style.top = (($("#phone").width() / 720) * 250) + "px";
-			}
+			//Points available in round 1 are (POINTS_STEP * 1).
+			//Points available in round 2 are (POINTS_STEP * 2).
+			//Points available in round 3 are (POINTS_STEP * 3).
+			//Points available across all three rounds are (POINTS_STEP * 6).
+			var POINTS_STEP = 300;
 			
-			//RANDOM
-			function random(r,o,a){if(a=a||!1,void 0!==r&&r.constructor===Array){var n=r;return n[Math.floor(Math.random()*n.length)]}if(void 0!==r&&"object"==typeof r&&null!==r){var t=r,d=Object.keys(t),e=d[d.length*Math.random()<<0];return{key:e,value:t[e]}}if(!isNaN(r)&&void 0===o)return 0<=r?random(0,r):random(r,0);if(!isNaN(r)&&!0===o)return 0<=r?random(0,r,!0):random(r,0,!0);if(void 0===r||void 0===o)return Math.random();if(!0===r&&!1===o||!1===r&&!0===o)return.5<random();if(a){var i=Math.random()*(o-r+1)+r;return o<=i?random(r,o,a):i}return r=Math.floor(r),o=Math.floor(o),Math.floor(Math.random()*(o-r+1)+r)}
+			//BUG_COUNT_RANGES defines how many arthropods should be shown for each round as a set of a minimum value and a maximum value.
+			var BUG_COUNT_RANGES = {
+				easy: [2, 4],
+				medium: [4, 6],
+				hard: [5, 8]
+			};
 			
-			var BRANCH_IMAGE_WIDTH = 1200;
-			var BRANCH_IMAGE_HEIGHT = 900;
-			function setGameDimensions(){
-				gameWidth = $("#spy")[0].clientWidth;
-				gameHeight = $("#spy")[0].clientHeight;
-				baseX = 0;
-				baseY = 0;
-				bugAreaWidth = 0;
-				bugAreaHeight = 0;
-				
-				if(gameHeight > gameWidth * (BRANCH_IMAGE_HEIGHT / BRANCH_IMAGE_WIDTH)){
-					baseY = (gameHeight - (gameWidth * (BRANCH_IMAGE_HEIGHT / BRANCH_IMAGE_WIDTH))) / 2;
-				}
-				else if(gameHeight < gameWidth * (BRANCH_IMAGE_HEIGHT / BRANCH_IMAGE_WIDTH)){
-					baseX = (gameWidth - (gameHeight * (BRANCH_IMAGE_WIDTH / BRANCH_IMAGE_HEIGHT))) / 2;
-				}
-				
-				bugAreaWidth = gameWidth - (baseX * 2);
-				bugAreaHeight = gameHeight - (baseY * 2);
-				$("#bugArea").css({width: (bugAreaWidth + "px"), height: (bugAreaHeight + "px")});
-				$("#bugAreaContainer").css({top:$("#spy").css("top"), left:$("#spy").css("left"), width: gameWidth + "px", height: gameHeight + "px"});
-				resizeBugs();
-			}
+			//Each row is a set of:
+			//	1) the filename of a photo in the https://caterpillarscount.unc.edu/virtualSurvey/images/bugs directory
+			//	2) the minimum length (in mm) of the arthropod
+			//	3) the maximum length (in mm) of the arthropod
+			//	4) the ratio of the photo's width that should represent the length of the arthropod
+			//	NOTE: MAKE SURE TO CROP NEW PHOTOS TO ELIMINATE UNNECESSARY PADDING. THIS WILL HELP BIG ARTHROPODS FIT ON THE LEAVES.
+			//	YOU MAY ALSO WANT TO RESIZE/COMPRESS THE PHOTO HERE [https://resizeimage.net] TO REDUCE LOAD TIME.
+			var bugs = [
+				["ant-563286_1280_cutout.png","ant",2,8,0.8520737325788018],
+				["ant_insect-3624644_640_cutout.png","ant",2,8,0.28964600394954954],
+				["ants_fire-ants-1790262_1280_cutout.png","ant",2,8,0.42296485805849054],
+				["aphid-3230902_1920_cutout.png","aphid",2,5,0.2640636461189189],
+				["aphid_20293314_cutout.png","aphid",2,5,0.8704819275933735],
+				["bees-and-wasps_482526_cutout.png","bee",4,15,0.6932491336521247],
+				["bees-and-wasps_7689477_cutout.png","bee",4,15,0.6290241700881356],
+				["bees-and_wasps_2986318_cutout.png","bee",4,15,0.5747950820413934],
+				["beetle_colorado-potato-beetle-1803237_640_cutout.png","beetle",4,25,0.6521739130434783],
+				["beetle_freeimage-117885267-high_cutout.png","beetle",4,25,1.0398547024570675],
+				["beetle_freeimage-17923302-high-cutout.png","beetle",4,25,0.5827867108336626],
+				["beetle_freeimage-25450546-high_cutout.png","beetle",4,25,0.9288281812037382],
+				["beetle_freeimage-28401935-high_cutout.png","beetle",4,25,1.0765042868654844],
+				["beetle_freeimage-31369110-high_cutout.png","beetle",4,25,2.523215022086288],
+				["beetle_june-bug-1622740_640_cutout.png","beetle",4,25,0.9905956112],
+				["beetle_ladybug-1156915_640_cutout.png","beetle",4,25,1.0128184837752807],
+				["beetle_ladybug-1391741_640_cutout.png","beetle",4,25,0.9030801485128205],
+				["caterpillar_freeimage-15561819-high_cutout.png","caterpillar",4,35,0.9861430375268656],
+				["caterpillar_freeimage-17615546-high_cutout.png","caterpillar",4,35,1.6078713025428126],
+				["caterpillar_freeimage-17693071-high_cutout.png","caterpillar",4,35,0.9898634638050762],
+				["caterpillar_freeimage-17907021-high_cutout.png","caterpillar",4,35,1.4102309155790291],
+				["caterpillar_freeimage-19790984-high_cutout.png","caterpillar",4,35,1.5560142146410803],
+				["caterpillar_freeimage-20179959-high_cutout.png","caterpillar",4,35,4.632792526566371],
+				["caterpillar_freeimage-20422253-high_cutout.png","caterpillar",4,35,2.833038489903417],
+				["caterpillar_freeimage-26545320-high_cutout.png","caterpillar",4,35,0.6110735693945122],
+				["caterpillar_freeimage-29472052-high_cutout.png","caterpillar",4,35,1.1787521079086003],
+				["caterpillar_freeimage-3099893-high_cutout.png","caterpillar",4,35,0.9939308774902217],
+				["caterpillar_freeimage-3392574-high_cutout.png","caterpillar",4,35,1.0140757300353276],
+				["caterpillar_freeimage-5396086-high_cutout.png","caterpillar",4,35,1.0425286263903615],
+				["caterpillar_freeimage-5661526-high_cutout.png","caterpillar",4,35,0.9840816498013565],
+				["caterpillar_freeimage-597787-high_cutout.png","caterpillar",4,35,1.2011953514111788],
+				["caterpillar_freeimage-603799-high_cutout.png","caterpillar",4,35,4.052333376094581],
+				["caterpillar_freeimage-621694-high_cutout.png","caterpillar",4,35,1.1651112260734608],
+				["caterpillar_freeimage-632122-high_cutout.png","caterpillar",4,35,2.04],
+				["caterpillar_freeimage-6503436-high_cutout.png","caterpillar",4,35,2.001538953115625],
+				["caterpillar_freeimage-7804936-high_cutout.png","caterpillar",3,35,1.0935245283018866],
+				["caterpillar_freeimage-7911683-high_cutout.png","caterpillar",4,35,1.3689957081545066],
+				["daddy-long-legs-2675120_640_cutout.png","daddylonglegs",4,15,0.8138009049773756],
+				["daddy-long-legs_4956032_cutout.png","daddylonglegs",4,15,0.1001335113],
+				["dragonfly_4901216_cutout.png","other|dragonfly|damselfly|dragon fly|damsel fly|odonata",15,30,1.023636363662078],
+				["fly_13355050_cutout.png","fly",3,15,0.7712933753630914],
+				["fly_bug-191085_640_cutout.png","fly",3,15,0.8482014388489207],
+				["fly_citroenpendel-hoverfly-2879849_640_cutout.png","fly",3,15,0.8930555555555555],
+				["fly_freeimage-119960831-high_cutout.png","fly",3,15,0.6819526627952662],
+				["grasshopper-1857137_640.png","grasshopper",5,25,0.8892100192678226],
+				["grasshopper-262616_640_cutout.png","grasshopper",5,25,0.7007797270955166],
+				["grasshopper-3343500_640_cutout.png","grasshopper",5,25,0.7909448818897638],
+				["grasshopper-3955387_640_cutout.png","grasshopper",5,25,0.6037037037037037],
+				["grasshopper_tettigonia-viridissima-2773063_640_cutout.png","grasshopper",5,25,0.9646017699115045],
+				["leafhopper-1626571_640_cutout.png","leafhopper",3,18,1.1579617834394904],
+				["leafhopper-562118_1280_cutout.png","leafhopper",3,18,0.9358550705907627],
+				["leafhopper_14721060_cutout.png","leafhopper",3,18,0.9999167083888888],
+				["leafhopper_7569786_cutout.png","leafhopper",3,18,1.2275432900810606],
+				["leafhopper_cicada-2003429_640_cutout.png","leafhopper",3,18,1.3710247349823321],
+				["leafhopper_freeimage-5878255-high_cutout.png","leafhopper",3,18,0.9413538368238805],
+				["leafhopper_insect-2581725_640_cutout.png","leafhopper",3,18,1.05390625],
+				["moth-1749434_640_cutout.png","moths",7,25,0.3424749163965217],
+				["moth-1749439_640_cutout.png","moths",7,25,0.614824552496278],
+				["moth-1749445_640.png","moths",7,25,0.72767342851056],
+				["moth-1799612_640_cutout.png","moths",7,25,0.5643564356435643],
+				["moth_14802262_cutout.png","moths",7,25,0.8241469817267717],
+				["moth_17848810_cutout.png","moths",7,25,0.33611111106111113],
+				["moth_18834522_cutout.png","moths",7,25,0.7499651243670589],
+				["moth_3237341_cutout.png","moths",7,25,1.8744002709690817],
+				["other_dragonfly-1967021_640_cutout.png","other|dragonfly|damselfly|dragon fly|damsel fly|odonata",15,30,1.0243969538364117],
+				["other_dragonfly-54794_640_cutout.png","other|dragonfly|damselfly|dragon fly|damsel fly|odonata",15,30,1.0460921843687374],
+				["other_millipede_5113690_cutout.png","other|millipede|milipede|diplopoda",15,30,1.0294759825382096],
+				["spider-257759_640_cutout.png","spider",3,15,0.5925925925925926],
+				["spider-3965087_640_cutout.png","spider",3,15,0.6847826086956521],
+				["spider-432896_640_cutout.png","spider",3,15,0.6101129216246697],
+				["spider-771460_640_cutout.png","spider",3,15,0.348842279628483],
+				["spider_20145021_cutout.png","spider",3,15,0.4987971130411379],
+				["spider_freeimage-661183-high_cutout.png","spider",3,15,0.3216276477591974],
+				["spider_nature-3063458_640_cutout.png","spider",3,15,0.44347826086956516],
+				["treubug_green-stinkwanze-221243_1280_cutout.png","truebugs",4,25,1.015443198822086],
+				["truebug_19764075_cutout.png","truebugs",4,25,1.1823204419889504],
+				["truebug_20212127_cutout.png","truebugs",4,25,0.8031496063547244],
+				["truebug_beetle-3441772_640.png","truebugs",4,25,1.4754187808780488],
+				["truebug_bug-1436910_640_cutout.png","truebugs",4,25,0.9401273885350319],
+				["truebug_bug-3761379_640_cutout.png","truebugs",4,25,0.6398963730569948],
+				["truebug_nymph_19521994_cutout.png","truebugs",4,25,0.5297841482203509]
+			];
 			
+			//Each row is a set of:
+			//	1) the filename of a photo in the https://caterpillarscount.unc.edu/virtualSurvey/images/branches directory
+			//	2) the width (in mm) that the photo should be considered
+			//	3) a set of x1, x2, y1, y1 coordinates which each define a box on the photo that will be able to hold arthropods.
+			//		3a) {x1: 375, y1: 190, x2: 530, y2: 380}, for example, defines a box 375 pixels from the left of the photo to 530 pixels from the left of the photo AND 190 pixels from the top of the photo to 380 pixels from the top of the photo.
+			//	NOTE: NEW PHOTOS MUST BE EXACTLY 1200px WIDE AND 900px TALL.
 			var branches = [
 				["easyBranch1.jpg", 343, [
 					{x1: 375, y1: 190, x2: 530, y2: 380},
@@ -1081,90 +456,869 @@
 					{"x1":19,"y1":720,"x2":51,"y2":757}
 				]]
 			];
+			//END OF GAME CONFIGURATION
+			//--------------------------------------------------------------------------------------------------------------------------------------------------
+		</script>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<!-- Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+			gtag('config', 'UA-113319025-1');
+		</script>
+		<!-- End of Google Analytics -->
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../images/favicon/apple-touch-icon-114x114.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../images/favicon/apple-touch-icon-72x72.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../images/favicon/apple-touch-icon-144x144.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="60x60" href="../images/favicon/apple-touch-icon-60x60.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="120x120" href="../images/favicon/apple-touch-icon-120x120.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="76x76" href="../images/favicon/apple-touch-icon-76x76.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="152x152" href="../images/favicon/apple-touch-icon-152x152.png" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-196x196.png" sizes="196x196" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-32x32.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-16x16.png" sizes="16x16" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-128.png" sizes="128x128" />
+		<meta name="msapplication-TileColor" content="transparent" />
+		<meta name="msapplication-TileImage" content="../images/favicon/mstile-144x144.png" />
+		<meta name="msapplication-square70x70logo" content="../images/favicon/mstile-70x70.png" />
+		<meta name="msapplication-square150x150logo" content="../images/favicon/mstile-150x150.png" />
+		<meta name="msapplication-wide310x150logo" content="../images/favicon/mstile-310x150.png" />
+		<meta name="msapplication-square310x310logo" content="../images/favicon/mstile-310x310.png" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<link href="../css/template.css" rel="stylesheet">
+		<script src="../js/template.js?v=1"></script>
+		<script>
+			$(document).ready(function(){
+				loadBackgroundImage($("#splashImage"), "../images/splash.png");
+				$(document).keyup(function(e){
+					if(e.key === "Escape"){
+						exitFullscreenMode();
+					}
+				});
+				
+				resizeFonts();
+				
+				$("#zoom")[0].style.width = MAGNIFYING_GLASS_DIAMETER + "px";
+				$("#zoom")[0].style.height = MAGNIFYING_GLASS_DIAMETER + "px";
+				loadBugImageHeightToWidthRatios();
+				setGameDimensions();
+				resizePhoneButtons();
+				
+				if(magnifying){
+					generateLargerFrame();
+				}
+				$("#bugArea").mousemove(function(event){showMagnification(event);});
+				$("#bugArea").mouseleave(function(){
+					$("#zoom").css({display:"none"});
+				});
+			});
+		</script>
+    	<style>
+			*{
+				-webkit-touch-callout: none; /* iOS Safari */
+    			-webkit-user-select: none; /* Safari */
+     			-khtml-user-select: none; /* Konqueror HTML */
+       			-moz-user-select: none; /* Firefox */
+        		-ms-user-select: none; /* Internet Explorer/Edge */
+            	user-select: none;
+			}
 			
-			var bugs = [
-				["ant-563286_1280_cutout.png","ant",2,8,0.8520737325788018],
-				["ant_insect-3624644_640_cutout.png","ant",2,8,0.28964600394954954],
-				["ants_fire-ants-1790262_1280_cutout.png","ant",2,8,0.42296485805849054],
-				["aphid-3230902_1920_cutout.png","aphid",2,5,0.2640636461189189],
-				["aphid_20293314_cutout.png","aphid",2,5,0.8704819275933735],
-				["bees-and-wasps_482526_cutout.png","bee",4,15,0.6932491336521247],
-				["bees-and-wasps_7689477_cutout.png","bee",4,15,0.6290241700881356],
-				["bees-and_wasps_2986318_cutout.png","bee",4,15,0.5747950820413934],
-				["beetle_colorado-potato-beetle-1803237_640_cutout.png","beetle",4,25,0.6521739130434783],
-				["beetle_freeimage-117885267-high_cutout.png","beetle",4,25,1.0398547024570675],
-				["beetle_freeimage-17923302-high-cutout.png","beetle",4,25,0.5827867108336626],
-				["beetle_freeimage-25450546-high_cutout.png","beetle",4,25,0.9288281812037382],
-				["beetle_freeimage-28401935-high_cutout.png","beetle",4,25,1.0765042868654844],
-				["beetle_freeimage-31369110-high_cutout.png","beetle",4,25,2.523215022086288],
-				["beetle_june-bug-1622740_640_cutout.png","beetle",4,25,0.9905956112],
-				["beetle_ladybug-1156915_640_cutout.png","beetle",4,25,1.0128184837752807],
-				["beetle_ladybug-1391741_640_cutout.png","beetle",4,25,0.9030801485128205],
-				["caterpillar_freeimage-15561819-high_cutout.png","caterpillar",4,35,0.9861430375268656],
-				["caterpillar_freeimage-17615546-high_cutout.png","caterpillar",4,35,1.6078713025428126],
-				["caterpillar_freeimage-17693071-high_cutout.png","caterpillar",4,35,0.9898634638050762],
-				["caterpillar_freeimage-17907021-high_cutout.png","caterpillar",4,35,1.4102309155790291],
-				["caterpillar_freeimage-19790984-high_cutout.png","caterpillar",4,35,1.5560142146410803],
-				["caterpillar_freeimage-20179959-high_cutout.png","caterpillar",4,35,4.632792526566371],
-				["caterpillar_freeimage-20422253-high_cutout.png","caterpillar",4,35,2.833038489903417],
-				["caterpillar_freeimage-26545320-high_cutout.png","caterpillar",4,35,0.6110735693945122],
-				["caterpillar_freeimage-29472052-high_cutout.png","caterpillar",4,35,1.1787521079086003],
-				["caterpillar_freeimage-3099893-high_cutout.png","caterpillar",4,35,0.9939308774902217],
-				["caterpillar_freeimage-3392574-high_cutout.png","caterpillar",4,35,1.0140757300353276],
-				["caterpillar_freeimage-5396086-high_cutout.png","caterpillar",4,35,1.0425286263903615],
-				["caterpillar_freeimage-5661526-high_cutout.png","caterpillar",4,35,0.9840816498013565],
-				["caterpillar_freeimage-597787-high_cutout.png","caterpillar",4,35,1.2011953514111788],
-				["caterpillar_freeimage-603799-high_cutout.png","caterpillar",4,35,4.052333376094581],
-				["caterpillar_freeimage-621694-high_cutout.png","caterpillar",4,35,1.1651112260734608],
-				["caterpillar_freeimage-632122-high_cutout.png","caterpillar",4,35,2.04],
-				["caterpillar_freeimage-6503436-high_cutout.png","caterpillar",4,35,2.001538953115625],
-				["caterpillar_freeimage-7804936-high_cutout.png","caterpillar",3,35,1.0935245283018866],
-				["caterpillar_freeimage-7911683-high_cutout.png","caterpillar",4,35,1.3689957081545066],
-				["daddy-long-legs-2675120_640_cutout.png","daddylonglegs",4,15,0.8138009049773756],
-				["daddy-long-legs_4956032_cutout.png","daddylonglegs",4,15,0.1001335113],
-				["dragonfly_4901216_cutout.png","other|dragonfly|damselfly|dragon fly|damsel fly|odonata",15,30,1.023636363662078],
-				["fly_13355050_cutout.png","fly",3,15,0.7712933753630914],
-				["fly_bug-191085_640_cutout.png","fly",3,15,0.8482014388489207],
-				["fly_citroenpendel-hoverfly-2879849_640_cutout.png","fly",3,15,0.8930555555555555],
-				["fly_freeimage-119960831-high_cutout.png","fly",3,15,0.6819526627952662],
-				["grasshopper-1857137_640.png","grasshopper",5,25,0.8892100192678226],
-				["grasshopper-262616_640_cutout.png","grasshopper",5,25,0.7007797270955166],
-				["grasshopper-3343500_640_cutout.png","grasshopper",5,25,0.7909448818897638],
-				["grasshopper-3955387_640_cutout.png","grasshopper",5,25,0.6037037037037037],
-				["grasshopper_tettigonia-viridissima-2773063_640_cutout.png","grasshopper",5,25,0.9646017699115045],
-				["leafhopper-1626571_640_cutout.png","leafhopper",3,18,1.1579617834394904],
-				["leafhopper-562118_1280_cutout.png","leafhopper",3,18,0.9358550705907627],
-				["leafhopper_14721060_cutout.png","leafhopper",3,18,0.9999167083888888],
-				["leafhopper_7569786_cutout.png","leafhopper",3,18,1.2275432900810606],
-				["leafhopper_cicada-2003429_640_cutout.png","leafhopper",3,18,1.3710247349823321],
-				["leafhopper_freeimage-5878255-high_cutout.png","leafhopper",3,18,0.9413538368238805],
-				["leafhopper_insect-2581725_640_cutout.png","leafhopper",3,18,1.05390625],
-				["moth-1749434_640_cutout.png","moths",7,25,0.3424749163965217],
-				["moth-1749439_640_cutout.png","moths",7,25,0.614824552496278],
-				["moth-1749445_640.png","moths",7,25,0.72767342851056],
-				["moth-1799612_640_cutout.png","moths",7,25,0.5643564356435643],
-				["moth_14802262_cutout.png","moths",7,25,0.8241469817267717],
-				["moth_17848810_cutout.png","moths",7,25,0.33611111106111113],
-				["moth_18834522_cutout.png","moths",7,25,0.7499651243670589],
-				["moth_3237341_cutout.png","moths",7,25,1.8744002709690817],
-				["other_dragonfly-1967021_640_cutout.png","other|dragonfly|damselfly|dragon fly|damsel fly|odonata",15,30,1.0243969538364117],
-				["other_dragonfly-54794_640_cutout.png","other|dragonfly|damselfly|dragon fly|damsel fly|odonata",15,30,1.0460921843687374],
-				["other_millipede_5113690_cutout.png","other|millipede|milipede|diplopoda",15,30,1.0294759825382096],
-				["spider-257759_640_cutout.png","spider",3,15,0.5925925925925926],
-				["spider-3965087_640_cutout.png","spider",3,15,0.6847826086956521],
-				["spider-432896_640_cutout.png","spider",3,15,0.6101129216246697],
-				["spider-771460_640_cutout.png","spider",3,15,0.348842279628483],
-				["spider_20145021_cutout.png","spider",3,15,0.4987971130411379],
-				["spider_freeimage-661183-high_cutout.png","spider",3,15,0.3216276477591974],
-				["spider_nature-3063458_640_cutout.png","spider",3,15,0.44347826086956516],
-				["treubug_green-stinkwanze-221243_1280_cutout.png","truebugs",4,25,1.015443198822086],
-				["truebug_19764075_cutout.png","truebugs",4,25,1.1823204419889504],
-				["truebug_20212127_cutout.png","truebugs",4,25,0.8031496063547244],
-				["truebug_beetle-3441772_640.png","truebugs",4,25,1.4754187808780488],
-				["truebug_bug-1436910_640_cutout.png","truebugs",4,25,0.9401273885350319],
-				["truebug_bug-3761379_640_cutout.png","truebugs",4,25,0.6398963730569948],
-				["truebug_nymph_19521994_cutout.png","truebugs",4,25,0.5297841482203509]
-			];
+			::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+				color: #ccc;
+			}
+			::-moz-placeholder { /* Firefox 19+ */
+				color:#ccc;
+			}
+			:-ms-input-placeholder { /* IE 10+ */
+				color:#ccc;
+			}
+			:-moz-placeholder { /* Firefox 18- */
+				color:#ccc;
+			}
+			
+			body{
+				margin:0px;
+				overflow:hidden;
+			}
+			
+			#gameDiv{
+				position:relative;
+				width:100%;
+				height:500px;
+				border:0px none transparent;
+				background-color:#fff;
+				border-radius:4px 4px 0px 0px;
+				overflow:hidden;
+				box-sizing:border-box;
+			}
+			
+			#clearBlock{
+				position:absolute;
+				top:0px;
+				left:0px;
+				width:100%;
+				height:100%;
+				background:transparent;
+				display:none;
+				z-index:9999;
+			}
+			
+			#toolBar{
+				position:absolute;
+				top:0px;
+				left:0px;
+				width:100%;
+				height:51px;
+				background:#333;
+			}
+			
+			#toolBar button{
+				font-size:14px;
+				padding:7px 15px;
+				width:auto;
+				margin:9px;
+				float:right;
+				font-weight:bold;
+				outline:none;
+			}
+			
+			#timeBar{
+				position:absolute;
+				top:51px;
+				left:0px;
+				width:100%;
+				height:9px;
+				background:#777;
+			}
+			
+			#remainingTimeBar{
+				position:abolute;
+				top:0px;
+				left:0px;
+				height:100%;
+				background:#00c4ff;
+			}
+			
+			#searchArea, #zoomedsearchArea{
+				position:absolute;
+				top:60px;
+				left:0px;
+				bottom:0px;
+				right:0px;
+			}
+						
+			#spy, #zoomedspy{
+				position:absolute;
+				top:0px;
+				left:0px;
+				width:100%;
+				height:100%;
+				background-color:#eee;
+				background-size:contain;
+				background-repeat:no-repeat;
+				background-position:center;
+				z-index:-1;
+			}
+			
+			
+			#bugAreaContainer, #zoomedbugAreaContainer{
+				position:absolute;
+				top:0px;
+				left:0px;
+				width:100%;
+				height:100%;
+				display:table;
+				z-index:0;
+			}
+			
+			.cell{
+				display:table-cell;
+				vertical-align:middle;
+				text-align:center;
+			}
+			
+			#bugArea, #zoomedbugArea{
+				display:inline-block;
+				position:relative;
+			}
+			
+			#loading{
+				position:absolute;
+				top:0px;
+				left:0px;
+				width:100%;
+				height:100%;
+				background:#333;
+				padding:10%;
+				box-sizing:border-box;
+				text-align:center;
+				z-index:10;
+			}
+			
+			#progressBar{
+				height:20px;
+				width:50%;
+				display:inline-block;
+				border:3px solid #fff;
+				border-radius:4px;
+				overflow:hidden;
+				position:relative;
+			}
+			
+			#progressBarFill{
+				position:absolute;
+				top:0px;
+				left:0px;
+				height:100%;
+				background:#fff;
+			}
+			
+			#intro{
+				position:absolute;
+				left:0px;
+				width:100%;
+				height:100%;
+				background:#333;
+				padding:10%;
+				box-sizing:border-box;
+				text-align:center;
+				z-index:9;
+				-webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
+				-moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
+				box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
+			}
+			
+			#signatureLogo{
+				font-family: 'Kaushan Script', cursive;
+				color:#fed136;
+				font-size:50px;
+				text-align:center;
+				padding-bottom:20px;
+			}
+			
+			#gameTitle{
+				font-family: 'Roboto Slab', serif;
+				color:#fff;
+				font-size:30px;
+				text-align:center;
+				padding-bottom:40px;
+			}
+			
+			#playScreenDarkBox{
+				background:rgba(0,0,0,0.2);
+				border-radius:5px;
+				overflow:hidden;
+				margin:auto;
+				padding:20px 20px 12px 20px;
+				box-sizing:border-box;
+			}
+			
+			#gameInstructions{
+				width:550px;
+				max-width:100%;
+				padding:0px 20px 10px 20px;
+				box-sizing:border-box;
+				color:#ddd;
+				font-family: 'Open Sans', sans-serif;
+				font-size:14px;
+			}
+			
+			#playButton{
+				border:0px none transparent;
+				font-size:20px;
+				padding:20px 100px;
+				background:#fed136;
+				border-radius:10px;
+				border-bottom:3px solid rgba(0,0,0,0.3);
+				color:#fff;
+				font-weight:bold;
+				text-transform:uppercase;
+				cursor:pointer;
+				outline:none;
+			}
+			
+			#playScreenDarkBox, #nextBranchButton, #roundBreakdown .heading, #roundBreakdown .subheading{
+				max-width:600px;
+			}
+			
+			#roundBreakdown{
+				position:absolute;
+				left:0px;
+				width:100%;
+				height:100%;
+				background:#333;
+				padding:10%;
+				box-sizing:border-box;
+				text-align:center;
+				z-index:8;
+				-webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
+				-moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
+				box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
+			}
+			
+			#roundBreakdown .heading{
+				font-family: 'Open Sans', sans-serif;
+				font-weight:bold;
+				font-size:35px;
+				color:#fff;
+				padding-bottom:40px;
+				text-align:center;
+				margin:auto;
+			}
+			
+			#roundBreakdown .subheading{
+				font-family: 'Open Sans', sans-serif;
+				font-size:20px;
+				color:#eee;
+				padding-bottom:40px;
+				text-align:center;
+				margin:auto;
+			}
+			
+			#phone{
+				position:absolute;
+				z-index:1;
+				top:0px;
+				right:0px;
+				height:100%;
+				overflow:scroll;
+				width:50%;
+			}
+			#phoneScreen{
+				font-family: 'Open Sans', sans-serif;
+				padding:70px 6% 15px 6%;
+				box-sizing:border-box;
+				background:#fff;
+				position:absolute;
+				top:0px;
+				right:0px;
+				width:96%;
+				min-height:100%;
+			}
+			
+			#phoneBar{
+				width:2%;
+				height:100%;
+				background-color:#111;
+				position:absolute;
+				top:0px;
+				left:50%;
+				background-image:url('images/phoneSide.png');
+				background-size:contain;
+				background-position:center;
+				z-index:1;
+			}
+			
+			.phoneButton{
+				background:#777;
+				border-radius:9999px 0px 0px 9999px;
+				width:8%;
+				left:-7%;
+				position:absolute;
+				border-left:1px solid rgba(0,0,0,0.3);
+			}
+			
+			#phoneBarShine{
+				width:13%;
+				height:100%;
+				background:rgba(255,255,255,0.1);
+				position:absolute;
+				top:0px;
+				left:13%;
+				z-index:2;
+			}
+			
+			#phoneNotice{
+				position:absolute;
+				top:0px;
+				left:0px;
+				height:100%;
+				width:100%;
+				background:rgba(255,255,255,0.7);
+				z-index:1;
+				cursor:pointer;
+			}
+			
+			#phoneConfirmation, #phoneError{
+				position:absolute;
+				top:0px;
+				left:0px;
+				width:100%;
+				padding:20px;
+				box-sizing:border-box;
+				color:#fff;
+				text-align:center;
+				font-size:18px;
+				display:none;
+			}
+			
+			#phoneConfirmation{
+				background:#37e666;
+			}
+			
+			#phoneError{
+				background:#eb3d68;
+			}
+			
+			.phoneNoticeButton{
+				width:70px;
+				margin:20px auto 0px auto;
+				padding:6px;
+				border:2px solid #fff;
+				border-radius:4px;
+				overflow:hidden;
+				font-size:13px;
+				background:rgba(255, 255, 255, 0.1);
+				background: -moz-linear-gradient(left, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+				background: -webkit-linear-gradient(left, rgba(255,255,255,0.2) 0%,rgba(255,255,255,0) 100%);
+				background: linear-gradient(to right, rgba(255,255,255,0.2) 0%,rgba(255,255,255,0) 100%);
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#33ffffff', endColorstr='#00ffffff',GradientType=1 );
+			}
+			
+			#appHeader{
+				position:absolute;
+				top:0px;
+				left:0px;
+				width:100%;
+				background:#333;
+				padding:10px;
+			}
+			
+			#appHeader #logo{
+				height:40px;
+			}
+			
+			#panelIcon{
+				float:right;
+				height:30px;
+				margin:2px 20px 0px 0px;
+				border:3px solid transparent;
+				background-color:#00a800;
+				border-radius:50%;
+			}
+			
+			.panelTitle{
+				padding:15px 20px 15px 20px;
+				margin:0px -20px;
+				font-size:26px;
+				color:#444;
+			}
+			
+			.group{
+				margin:10px 0px;
+			}
+			
+			.observationFieldTitle{
+				color:#777;
+				font-size:12px;
+			}
+			
+			.select{
+				width:100%;
+				-webkit-appearance: none;
+    			-moz-appearance: none;
+    			appearance: none;
+    			border-radius:4px;
+    			padding:20px;
+    			font-size:20px;
+    			background:#fff;
+				border:1px solid #ddd;
+				border-bottom:2px solid #ddd;
+				color:#aaa;
+				box-sizing:border-box;
+				margin-top:5px;
+				cursor:pointer;
+			}
+			
+			.select{
+				padding:0px;
+			}
+			
+			.select .option{
+				max-height:0px;
+				overflow:hidden;
+			}
+			
+			.select .option.selected{
+				max-height:250px;
+				overflow:hidden;
+			}
+			
+			.select .option .value{
+				display:none;
+			}
+			
+			.select .option .shown{
+				padding:16px;
+				position:relative;
+				font-size:16px;
+			}
+			
+			.select .option .shown .image{
+				width:34px;
+				background-size:contain;
+				background-repeat:no-repeat;
+				background-position:center;
+				display:inline-block;
+				opacity:.4;
+				position:absolute;
+				right:20px;
+				top:10px;
+				bottom:10px;
+			}
+			
+			.select .option .shown .text{
+				display:inline-block;
+			}
+			
+			input[type="number"], input[type="text"], textarea{
+				width:100%;
+				background:#fff;
+				border:1px solid #ddd;
+				border-bottom:2px solid #ddd;
+				font-size:16px;
+				padding:16px;
+				box-sizing:border-box;
+				border-radius:4px;
+				margin:5px 0px;
+				color:#aaa;
+				-webkit-appearance: none;
+    			-moz-appearance: none;
+    			appearance: none;
+			}
+			
+			textarea{
+				height:54px;
+				overflow:hidden;
+			}
+			
+			.textareaHolder{
+				position:relative;
+			}
+			
+			.textareaOtherLinesCover{
+				background:#fff;
+				position:absolute;
+				bottom:7px;
+				left:16px;
+				right:16px;
+				height:16px;
+				pointer-events: none;
+			}
+			
+			button{
+				-webkit-appearance: none;
+    			-moz-appearance: none;
+    			appearance: none;
+				width:100%;
+				border:0px none transparent;
+				padding:20px;
+				font-size:20px;
+				margin:10px 0px;
+				border-radius:4px;
+				color:#fff;
+				background:#fed136;
+				border-bottom:4px solid rgba(0,0,0,.2);
+				cursor:pointer;
+				outline:none;
+			}
+			
+			.half{
+				width:49%;
+			}
+			.half:first-of-type{
+				float:left;
+			}
+			.half:last-of-type{
+				float:right;
+			}
+			
+			#ruler{
+				position:absolute;
+				top:0px;
+				left:0px;
+				z-index:0;
+				width:9999999999%;
+				font-family: 'Open Sans', sans-serif;
+				font-size:12px;
+				padding-top:75px;
+				background-color:#333;
+				overflow:hidden;
+				white-space:nowrap;
+				border-bottom:1px solid #fff;
+				/*
+				background-image:url('images/stainless.jpg');-webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+				*/
+				-moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+				box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+				color:#fff;
+			}
+			
+			#ruler>div{
+				display:inline-block;
+				text-align:center;
+				float:left;
+				/*WIDTH TO BE SET*/
+				width:50px;
+				opacity:.7;
+			}
+			
+			#ruler>div>div:last-of-type{
+				height:25px;
+				position:relative;
+			}
+			
+			#ruler>div>div:last-of-type>div{
+				background:#fff;
+				position:absolute;
+				bottom:0px;
+				overflow:hidden;
+			}
+			
+			#ruler .halfMark{
+				height:50%;
+				width:1px;
+			}
+			#ruler .smallMark{
+				height:25%;
+				width:2px;
+				margin-left:-1px;
+				border-radius:9999px 9999px 0px 0px;
+			}
+			#ruler .mainMark{
+				height:100%;
+				width:2px;
+				margin-left:-1px;
+				border-radius:9999px 9999px 0px 0px;
+			}
+			
+			#ruler>div>div:last-of-type>div:nth-of-type(1){
+				left:0%;
+				border-radius:0px 9999px 0px 0px;
+			}
+			#ruler>div>div:last-of-type>div:nth-of-type(2){
+				left:10%;
+			}
+			#ruler>div>div:last-of-type>div:nth-of-type(3){
+				left:20%;
+			}
+			#ruler>div>div:last-of-type>div:nth-of-type(4){
+				left:30%;
+			}
+			#ruler>div>div:last-of-type>div:nth-of-type(5){
+				left:40%;
+			}
+			#ruler>div>div:last-of-type>div:nth-of-type(6){
+				left:50%;
+			}
+			#ruler>div>div:last-of-type>div:nth-of-type(7){
+				left:60%;
+			}
+			#ruler>div>div:last-of-type>div:nth-of-type(8){
+				left:70%;
+			}
+			#ruler>div>div:last-of-type>div:nth-of-type(9){
+				left:80%;
+			}
+			#ruler>div>div:last-of-type>div:nth-of-type(10){
+				left:90%;
+			}
+			#ruler>div>div:last-of-type>div:nth-of-type(11){
+				right:0%;
+				border-radius:9999px 0px 0px 0px;
+			}
+			
+			#zoom{
+				position:absolute;
+				top:0px;
+				left:0px;
+				width:150px;
+				height:150px;
+				border-radius:99999px;
+				z-index:8;
+				overflow:hidden;
+				pointer-events: none;-webkit-box-shadow: 0px 0px 0px 3px rgba(153,153,153,1);
+				-moz-box-shadow: 0px 0px 0px 3px rgba(153,153,153,1);
+				box-shadow: 0px 0px 0px 3px rgba(153,153,153,1);
+				display:none;
+			}
+			
+			#runningScore{
+				float:left;
+				color:#fff;
+				font-family: 'Open Sans', sans-serif;
+				font-weight:bold;
+				padding:16px;
+				font-size:14px;
+			}
+			#runningScore:before{
+				content:"Score: ";
+			}
+			
+			#possibleScore{
+				display:none;
+			}
+			#possibleScore:before{
+				content:" / ";
+			}
+			
+			.finalBreakdownSubsection{
+				margin-bottom:10px;
+				font-size:20px;
+			}
+			
+			#gameDivOptions{
+				padding:10px;
+				background:#222;
+				box-sizing:border-box;
+				border-radius:0px 0px 4px 4px;
+				overflow:hidden;
+			}
+			
+			#gameDivOptions img{
+				cursor:pointer;
+				float:right;
+				height:30px;
+			}
+			
+			.clearBoth{
+				clear:both;
+			}
+		</style>
+		<script>
+			function resizeFonts(){
+				if($("#gameDiv")[0].clientHeight <= 500){
+					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "12px"});
+				}
+				else if($("#gameDiv")[0].clientHeight <= 550){
+					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "13px"});
+				}
+				else if($("#gameDiv")[0].clientHeight <= 600){
+					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "14px"});
+				}
+				else if($("#gameDiv")[0].clientHeight <= 650){
+					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "15px"});
+				}
+				else if($("#gameDiv")[0].clientHeight <= 700){
+					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "16px"});
+				}
+				else if($("#gameDiv")[0].clientHeight <= 750){
+					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "17px"});
+				}
+				else if($("#gameDiv")[0].clientHeight <= 800){
+					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "18px"});
+				}
+				else if($("#gameDiv")[0].clientHeight <= 850){
+					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "19px"});
+				}
+				else{
+					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: ""});
+				}
+			}
+			
+			var fullscreen = false;
+			function toggleFullscreenMode(){
+				if(!fullscreen){
+					enterFullscreenMode();
+				}
+				else{
+					exitFullscreenMode();
+				}
+			}
+			function enterFullscreenMode(){
+				fullscreen = true;
+				$("#gameDiv").css({borderRadius:"0px", position:"fixed", top:"0px", left:"0px", width:"100%", height:"100%", paddingBottom:"50px", zIndex:"999999"});
+				$("#gameDivOptions").css({borderRadius:"0px", position:"fixed", bottom:"0px", left:"0px", width:"100%", zIndex:"999999"});
+			}
+			function exitFullscreenMode(){
+				fullscreen = false;
+				$("#gameDiv").css({borderRadius:"", position:"", top:"", left:"", bottom:"", width:"", height:"", paddingBottom:"", zIndex:""});
+				$("#gameDivOptions").css({borderRadius:"", position:"", bottom:"", left:"", width:"", zIndex:""});
+			}
+			
+			//make sur BUG_COUNT_RANGES are in order
+			for(var range in BUG_COUNT_RANGES){
+				if(Object.prototype.hasOwnProperty.call(BUG_COUNT_RANGES, range)){
+					BUG_COUNT_RANGES[range].sort(function(a, b){return a-b});
+				}
+			}
+			
+			var MAGNIFICATION = MAGNIFICATION_PERCENTAGE / 100;
+			var baseX = -1;//branch image pixel offset from left of page
+			var baseY = -1;//branch image pixel offset from top of page
+			var gameWidth = -1;
+			var gameHeight = -1;
+			var bugAreaWidth = -1;
+			var bugAreaHeight = -1;
+			
+			$(window).resize(function(){
+				resizeFonts();
+				setGameDimensions();
+				resizePhoneButtons();
+				scaleRuler();
+				if(zoomedBug !== null){
+					zoomIn(zoomedBug);
+				}
+				if(magnifying){
+					generateLargerFrame();
+				}
+			});
+			
+			function resizePhoneButtons(){
+				$(".phoneButton").eq(0)[0].style.height = (($("#phone").width() / 720) * 40) + "px";
+				$(".phoneButton").eq(1)[0].style.height = (($("#phone").width() / 720) * 100) + "px";
+				$(".phoneButton").eq(2)[0].style.height = (($("#phone").width() / 720) * 100) + "px";
+				$(".phoneButton").eq(0)[0].style.top = (($("#phone").width() / 720) * 10) + "px";
+				$(".phoneButton").eq(1)[0].style.top = (($("#phone").width() / 720) * 125) + "px";
+				$(".phoneButton").eq(2)[0].style.top = (($("#phone").width() / 720) * 250) + "px";
+			}
+			
+			//RANDOM
+			function random(r,o,a){if(a=a||!1,void 0!==r&&r.constructor===Array){var n=r;return n[Math.floor(Math.random()*n.length)]}if(void 0!==r&&"object"==typeof r&&null!==r){var t=r,d=Object.keys(t),e=d[d.length*Math.random()<<0];return{key:e,value:t[e]}}if(!isNaN(r)&&void 0===o)return 0<=r?random(0,r):random(r,0);if(!isNaN(r)&&!0===o)return 0<=r?random(0,r,!0):random(r,0,!0);if(void 0===r||void 0===o)return Math.random();if(!0===r&&!1===o||!1===r&&!0===o)return.5<random();if(a){var i=Math.random()*(o-r+1)+r;return o<=i?random(r,o,a):i}return r=Math.floor(r),o=Math.floor(o),Math.floor(Math.random()*(o-r+1)+r)}
+			
+			var BRANCH_IMAGE_WIDTH = 1200;
+			var BRANCH_IMAGE_HEIGHT = 900;
+			function setGameDimensions(){
+				gameWidth = $("#spy")[0].clientWidth;
+				gameHeight = $("#spy")[0].clientHeight;
+				baseX = 0;
+				baseY = 0;
+				bugAreaWidth = 0;
+				bugAreaHeight = 0;
+				
+				if(gameHeight > gameWidth * (BRANCH_IMAGE_HEIGHT / BRANCH_IMAGE_WIDTH)){
+					baseY = (gameHeight - (gameWidth * (BRANCH_IMAGE_HEIGHT / BRANCH_IMAGE_WIDTH))) / 2;
+				}
+				else if(gameHeight < gameWidth * (BRANCH_IMAGE_HEIGHT / BRANCH_IMAGE_WIDTH)){
+					baseX = (gameWidth - (gameHeight * (BRANCH_IMAGE_WIDTH / BRANCH_IMAGE_HEIGHT))) / 2;
+				}
+				
+				bugAreaWidth = gameWidth - (baseX * 2);
+				bugAreaHeight = gameHeight - (baseY * 2);
+				$("#bugArea").css({width: (bugAreaWidth + "px"), height: (bugAreaHeight + "px")});
+				$("#bugAreaContainer").css({top:$("#spy").css("top"), left:$("#spy").css("left"), width: gameWidth + "px", height: gameHeight + "px"});
+				resizeBugs();
+			}
 			
 			function loadBugImageHeightToWidthRatios(){
 				var loaded = 0;
@@ -1220,13 +1374,13 @@
 				identifiedThisRound = 0;
 				var numberOfBugs = 0;
 				if(pickedBranch[0].indexOf("easy") > -1){
-					numberOfBugs = random(2, 4);
+					numberOfBugs = random(BUG_COUNT_RANGES["easy"][0], BUG_COUNT_RANGES["easy"][1]);
 				}
 				else if(pickedBranch[0].indexOf("medium") > -1){
-					numberOfBugs = random(4, 6);
+					numberOfBugs = random(BUG_COUNT_RANGES["medium"][0], BUG_COUNT_RANGES["medium"][1]);
 				}
 				else{//hard
-					numberOfBugs = random(5, 8);
+					numberOfBugs = random(BUG_COUNT_RANGES["hard"][0], BUG_COUNT_RANGES["hard"][1]);
 				}
 				
 				pickedBugs = [];
@@ -1239,7 +1393,7 @@
 				
 				var possibleScore = 0;
 				for(var i = 0; i <= round; i++){
-					possibleScore += ((i + 1) * 300);
+					possibleScore += ((i + 1) * POINTS_STEP);
 				}
 				$("#possibleScore")[0].innerHTML = possibleScore;
 				if(round == 0){
@@ -1313,6 +1467,7 @@
 			}
 			
 			function showPhone(){
+				$("#phoneBar").stop().fadeIn(300);
 				$("#phone").stop().fadeIn({duration:300, queue:false, complete: function(){
 					autoOpenSelect($("#orderType").eq(0));
 				}});
@@ -1348,6 +1503,7 @@
 				zoomedBug = null;
 				resumeTimer();
 				$("#phone").stop().fadeOut(0);
+				$("#phoneBar").stop().fadeOut(0);
 				$("#ruler").stop().fadeOut(0);
 				
 				setSelectValue($("#orderType")[0], "");
@@ -1513,7 +1669,7 @@
 				$(textareaElement.parentNode).find('.textareaOtherLinesCover').stop().fadeIn();
 			}
 			
-			var TOTAL_TIME = 60;
+			var TOTAL_TIME = SECONDS_PER_ROUND;
 			var timedOut = false;
 			var lastTimeBarWidthPercent = 100;
 			function startTimer(){
@@ -1614,7 +1770,7 @@
 						subheadingHTML += "Keep practicing! Finding more bugs will bring you eternal happiness!";
 					}
 					else{
-						subheadingHTML += "Review the <a href=\"https://caterpillarscount.unc.edu/pdfs/ArthropodIDGuide.pdf\" style=\"color:#fed136;\" target=\"_blank\">Arthropod ID Guide on the <a href=\"https://caterpillarscount.unc.edu/resources/\" style=\"color:#fed136;\" target=\"_blank\">Resources</a> page to help with your searching!";
+						subheadingHTML += "Review the <a href=\"../pdfs/ArthropodIDGuide.pdf\" style=\"color:#fed136;\" target=\"_blank\">Arthropod ID Guide on the <a href=\"../resources/\" style=\"color:#fed136;\" target=\"_blank\">Resources</a> page to help with your searching!";
 					}
 					subheadingHTML += "</div>";
 					
@@ -1655,7 +1811,6 @@
 			}
 			
 			var magnifying = false;
-			var MAGNIFICATION = 1.5;
 			var zoomedsearchAreaBaseX = -1;
 			var zoomedsearchAreaBaseY = -1;
 			function generateLargerFrame(){
@@ -1707,8 +1862,8 @@
 				if(magnifying){
 					var searchAreaTop = Number($("#searchArea").css("top").replace(/\D/g, ""));
 					$("#zoom").css({display:"block", top: (event.pageY - ($("#zoom").height() / 2)) + "px", left: (event.pageX - ($("#zoom").width() / 2)) + "px"});
-					var zoomedCenterY = $("#zoomedspy").height() * ((event.pageY - searchAreaTop) / ($(window).height() - searchAreaTop));
-					var zoomedCenterX = $("#zoomedspy").width() * (event.pageX / $(window).width());
+					var zoomedCenterY = $("#zoomedspy").height() * ((event.pageY - searchAreaTop) / ($("#gameDiv").height() - searchAreaTop));
+					var zoomedCenterX = $("#zoomedspy").width() * (event.pageX / $("#gameDiv").width());
 					var topAdjustment = zoomedCenterY - ($("#zoom").height() / 2);
 					var leftAdjustment = zoomedCenterX - ($("#zoom").width() / 2);
 					$("#zoomedsearchArea").css({top: zoomedsearchAreaBaseY - topAdjustment, left: zoomedsearchAreaBaseX - leftAdjustment});
@@ -1826,7 +1981,7 @@
 					return false;
 				}
 				
-				var possiblePointsToAward = ((round + 1) * 300) / pickedBugs.length;
+				var possiblePointsToAward = ((round + 1) * POINTS_STEP) / pickedBugs.length;
 				var pointsAwarded = Math.floor((possiblePointsToAward * .5 * groupAccuracy) + (possiblePointsToAward * .5 * lengthAccuracy));
 				
 				//show notice
@@ -1904,12 +2059,7 @@
 			
 			function submitScore(score){
 				var url = window.location.toString();
-				var email = url.substring(url.indexOf("?email=") + 7, url.indexOf("&salt="));
-				var salt = url.substring(url.indexOf("&salt=") + 6);
-				if(salt.length > 0 && (salt.substring(salt.length - 1) == "/" || salt.substring(salt.length - 1) == "\\")){
-					salt = salt.substring(0, salt.length - 1);
-				}
-				$.get("https://caterpillarscount.unc.edu/php/submitVirtualSurveyScore.php?email=" + email + "&salt=" + salt + "&score=" + score, function(data){
+				$.get("../php/submitVirtualSurveyScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + score, function(data){
 					if(data.indexOf("true|") == 0){
 						var comparisons = JSON.parse(data.replace("true|", ""));
 						$("#roundBreakdown .subheading .finalBreakdownSubsection").eq(2)[0].innerHTML += " You beat " + Math.round(Number(comparisons[0])) + "% of global scores this time around, and your best score is " + comparisons[1] + ".";
@@ -1919,595 +2069,726 @@
 		</script>
 	</head>
 	<body>
-		<div id="clearBlock"></div>
-		<div id="loading">
-			<img src="images/logo.png" style="height:100px;display:block;margin:0px auto 40px auto;"/>
-			<div id="progressBar">
-				<div id="progressBarFill" style="width:0%;"></div>
+		<div id="managerRequest">
+			<div id="managerRequestMessage"></div>
+			<div id="managerRequestButtons">
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('deny');">Deny</div>
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('approve');">Accept</div>
 			</div>
 		</div>
-		
-		<div id="intro" style="top:0px;">
-			<div id="signatureLogo">Caterpillars Count!</div>
-			<div id="gameTitle">Virtual Survey</div>
-			<div id="playScreenDarkBox">
-				<div id="gameInstructions"><strong>Rack up as many points as you can</strong> by finding and identifying all arthropods on each of three increasingly challenging branches! Estimate arthropod length from the <strong>tip of the head to the bottom of the abdomen</strong>.</div>
-				<button onclick="$('#intro')[0].style.display='none';startRound();" id="playButton" tabindex="-1">play</button>
+		<div id="error" onclick="hideNotice();"></div>
+		<div id="confirmation" onclick="hideNotice();"></div>
+		<div id="alert" onclick="hideNotice();"></div>
+		<div id="promptInteractionBlock"></div>
+		<div id="noticeInteractionBlock" onclick="hideNotice();"></div>
+		<div id="confirm">
+			<div></div>
+			<div>
+				<button>OK</button>
+				<button>Cancel</button>
+				<div class="clearBoth"></div>
 			</div>
 		</div>
-		
-		<div id="roundBreakdown" style="top:-100%;">
-			<div class="heading"></div>
-			<div class="subheading"></div>
-			<button style="font-weight:bold;" onclick="startRound();" id="nextBranchButton">I'm ready for the next branch!</button>
-		</div>
-		
-		<div id="toolBar">
-			<div id="runningScore"><span id="currentRunningScore">0</span><span id="possibleScore">--</span></div>
-			<button onclick="toggleMagnification();" id="magnifyButton" style="float:left;background:#aaa;display:none;" tabindex="-1">Magnifying glass</button>
-			<button onclick="endRound();" style="background:#05e666;" tabindex="-1">Next branch</button>
-		</div>
-		
-		<div id="timeBar">
-			<div id="remainingTimeBar" style="width:100%;"></div>
-		</div>
-		
-		<div id="searchArea">
-			<div id="spy"></div>
-		
-			<div id="bugAreaContainer">
-				<div class="cell">
-					<div id="bugArea"></div>
-				</div>
+
+		<div id="splash">
+			<div id="splashImage"></div>
+			<div id="splashOverlay">
+				<div id="splashIntroText">Welcome to</div>
+				<div id="splashMainText">Caterpillars Count!</div>
+				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">Explore maps & graphs</button>
 			</div>
 		</div>
-		
-		<div id="zoom"></div>
-		
-		<div id="ruler" style="display:none;">
-			<div>
-				<div style="margin-top:-20px;font-size:8px;border:1px solid #fff;border-radius:2px;display:inline-block;padding:0px 2px 1px 2px;opacity:.7;">mm</div>
-				<div>10</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
+		<header>
+			<h1><a href="../">Caterpillars Count!</a></h1>
+			<div id="hamburger" onclick="toggleNav();">
+				<div></div>
+				<div></div>
+				<div></div>
 			</div>
-			<div>
-				<div>20</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>30</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>40</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>50</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>60</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>70</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>80</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>90</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>100</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>110</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>120</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>130</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>140</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>150</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>160</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>170</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>180</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>190</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>200</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>210</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>220</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>230</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>240</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>250</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>260</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>270</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>280</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>290</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div>
-				<div>300</div>
-				<div>
-					<div class="halfMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="mainMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="smallMark"></div>
-					<div class="halfMark"></div>
-				</div>
-			</div>
-			<div style="clear:both;float:none;display:block;"></div>
-		</div>
-		
-		<div id="phone" style="display:none;">
-			<div id="phoneBar">
-				<div class="phoneButton" style="height:40px;top:10px;"></div>
-				<div class="phoneButton" style="height:100px;top:125px;"></div>
-				<div class="phoneButton" style="height:100px;top:250px;"></div>
-			</div>
-			<div id="phoneScreen">
-				<div id="phoneNotice" onclick="lookForNextBug();" style="display:none;">
-					<div id="phoneConfirmation">
-						<div class="message"></div>
-						<div class="phoneNoticeButton">OK</div>
+			<div id="navKnockDown" class="clearBoth"></div>
+			<nav class="loadingNav">
+				<ul>
+					<li onclick="accessSubMenu(this);">
+						<span>Participate</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../getStarted">Get Started</a></li>
+							<li><a href="../conductASurvey">Conduct a Survey</a></li>
+							<li><a href="../submitObservations">Submit Observations</a></li>
+							<li><a href="../hostASurveySite">Host a Survey Site</a></li>
+							<li><a href="../resources">Resources</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Explore</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
+							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="../dataDownload">Data Download</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Learn</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../identificationSkills">Identification Skills</a></li>
+							<li><a href="../virtualSurvey">Virtual Survey Game</a></li>
+							<li><a href="../forEducators">For Educators</a></li>
+							<li><a href="../faq">FAQ</a></li>
+						</ul>
+					</li>
+					<li onclick="window.location = '../news';">
+						<span>News</span>
+					</li>
+					<li onclick="window.location = '../signIn';">
+						<span>Sign In</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../createNewSite">Create New Site</a></li>
+							<li><a href="../manageMySites">Manage My Sites</a></li>
+							<li><a href="../manageMySurveys">Manage My Surveys</a></li>
+							<li><a href="../settings">Settings</a></li>
+							<li><a href="" onclick="logOut();">Sign Out</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="navBack" onclick="resetMenu(false);">&#10094;</div>
+		</header>
+		<main>
+			<div class="panel">
+      
+      
+      
+      
+      
+      
+      
+      
+				<!--GAME HTML-->
+				<h2>Virtual Survey Game</h2>
+				<div class="tagline">Practice your surveying skills!</div>
+				<div class="content">
+					<div id="gameDiv">
+						<div id="clearBlock"></div>
+						<div id="loading">
+							<img src="images/logo.png" style="height:100px;display:block;margin:0px auto 40px auto;"/>
+							<div id="progressBar">
+								<div id="progressBarFill" style="width:0%;"></div>
+							</div>
+						</div>
+						
+						<div id="intro" style="top:0px;">
+							<div id="signatureLogo">Caterpillars Count!</div>
+							<div id="gameTitle">Virtual Survey</div>
+							<div id="playScreenDarkBox">
+								<div id="gameInstructions"><strong>Rack up as many points as you can</strong> by finding and identifying all arthropods on each of three increasingly challenging branches! Estimate arthropod length from the <strong>tip of the head to the bottom of the abdomen</strong>.</div>
+								<button onclick="$('#intro')[0].style.display='none';startRound();" id="playButton" tabindex="-1">play</button>
+							</div>
+						</div>
+						
+						<div id="roundBreakdown" style="top:-100%;">
+							<div class="heading"></div>
+							<div class="subheading"></div>
+							<button style="font-weight:bold;" onclick="startRound();" id="nextBranchButton">I'm ready for the next branch!</button>
+						</div>
+						
+						<div id="toolBar">
+							<div id="runningScore"><span id="currentRunningScore">0</span><span id="possibleScore">--</span></div>
+							<button onclick="toggleMagnification();" id="magnifyButton" style="float:left;background:#aaa;display:none;" tabindex="-1">Magnifying glass</button>
+							<button onclick="endRound();" style="background:#05e666;" tabindex="-1">Next branch</button>
+						</div>
+						
+						<div id="timeBar">
+							<div id="remainingTimeBar" style="width:100%;"></div>
+						</div>
+						
+						<div id="searchArea">
+							<div id="spy"></div>
+						
+							<div id="bugAreaContainer">
+								<div class="cell">
+									<div id="bugArea"></div>
+								</div>
+							</div>
+						</div>
+						
+						<div id="zoom"></div>
+						
+						<div id="ruler" style="display:none;">
+							<div>
+								<div style="margin-top:-20px;font-size:8px;border:1px solid #fff;border-radius:2px;display:inline-block;padding:0px 2px 1px 2px;opacity:.7;">mm</div>
+								<div>10</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>20</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>30</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>40</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>50</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>60</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>70</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>80</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>90</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>100</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>110</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>120</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>130</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>140</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>150</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>160</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>170</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>180</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>190</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>200</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>210</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>220</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>230</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>240</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>250</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>260</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>270</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>280</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>290</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div>
+								<div>300</div>
+								<div>
+									<div class="halfMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="mainMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="smallMark"></div>
+									<div class="halfMark"></div>
+								</div>
+							</div>
+							<div style="clear:both;float:none;display:block;"></div>
+						</div>
+						
+						<div id="phoneBar" style="display:none;">
+							<div class="phoneButton" style="height:40px;top:10px;"></div>
+							<div class="phoneButton" style="height:100px;top:125px;"></div>
+							<div class="phoneButton" style="height:100px;top:250px;"></div>
+						</div>
+						<div id="phone" style="display:none;">
+							<div id="phoneScreen">
+								<div id="phoneNotice" onclick="lookForNextBug();" style="display:none;">
+									<div id="phoneConfirmation">
+										<div class="message"></div>
+										<div class="phoneNoticeButton">OK</div>
+									</div>
+									<div id="phoneError">
+										<div class="message"></div>
+										<div class="phoneNoticeButton">OK</div>
+									</div>
+								</div>
+								<div id="appHeader">
+									<img src="images/logo.png" id="logo"/>
+									<img src="images/2.png" id="panelIcon">
+								</div>
+								<div class="panelTitle">Arthropod information</div>
+								<div class="group">
+									<div class="observationFieldTitle">Arthropod group:</div>
+									<div class="select" id="orderType">
+										<div class="option selected" onclick="selectOption(this);$('#caterpillarOptionsTable').parent().hide(300);$('#notesSection').stop().hide(300);">	<div class="value"></div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">aphid</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/aphid.png');"></div>		<div class="text">Aphids and Psyllids</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').show(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">bee</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/bee.png');"></div>			<div class="text">Bees, Wasps, Sawflies</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').show(300);$('#notesSection').stop().hide(300);">		<div class="value">beetle</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/beetle.png');"></div>		<div class="text">Beetles</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').show(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">caterpillar</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/caterpillar.png');"></div>		<div class="text">Caterpillars</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">daddylonglegs</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/daddylonglegs.png');"></div>	<div class="text">Daddy longlegs</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">fly</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/fly.png');"></div>			<div class="text">Flies</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">grasshopper</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/grasshopper.png');"></div>		<div class="text">Grasshoppers, Crickets</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">leafhopper</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/leafhopper.png');"></div>		<div class="text">Leaf Hoppers and Cicadas</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">moths</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/moths.png');"></div>		<div class="text">Moths, Butterflies</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">spider</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/spider.png');"></div>		<div class="text">Spiders</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">truebugs</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/truebugs.png');"></div>		<div class="text">True Bugs</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().show(300);">		<div class="value">other</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/other.png');"></div>		<div class="text">Other</div></div></div>
+										<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
+									</div>
+								</div>
+								
+								<div class="group">
+									<div class="observationFieldTitle">Length:</div>
+									<input type="text" id="orderLength" placeholder="1mm - 300mm" onclick="this.select();" value="" oninput="this.value = this.value.toString().replace(/\D/g, '');" onblur="enforceRange(this, 1, 300, 1)"/>
+								</div>
+								
+								<div class="group" id="notesSection" style="display:none;">
+									<div class="observationFieldTitle">Enter the common or scientific name of this arthropod here:</div>
+									<div class="textareaHolder">
+										<textarea id="orderNotes" onfocus="expandTextarea(this);" onblur="compressTextarea(this);"></textarea>
+										<div class="textareaOtherLinesCover"></div>
+									</div>
+								</div>
+								
+								<button class="half" style="background:#ff7d7d;" onclick="zoomOut();" tabindex="-1">Cancel</button>
+								<button class="half" style="background:#7dcbff;" onclick="identify();" tabindex="-1">Save</button>
+							</div>
+						</div>
 					</div>
-					<div id="phoneError">
-						<div class="message"></div>
-						<div class="phoneNoticeButton">OK</div>
+					<div id="gameDivOptions">
+						<img src="../images/fullscreenIcon.png" onclick="toggleFullscreenMode();"/>
+						<div class="clearBoth"></div>
 					</div>
 				</div>
-				<div id="appHeader">
-					<img src="images/logo.png" id="logo"/>
-					<img src="images/2.png" id="panelIcon">
-				</div>
-				<div class="panelTitle">Arthropod information</div>
-				<div class="group">
-					<div class="observationFieldTitle">Arthropod group:</div>
-					<div class="select" id="orderType">
-						<div class="option selected" onclick="selectOption(this);$('#caterpillarOptionsTable').parent().hide(300);$('#notesSection').stop().hide(300);">	<div class="value"></div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">aphid</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/aphid.png');"></div>		<div class="text">Aphids and Psyllids</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').show(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">bee</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/bee.png');"></div>			<div class="text">Bees, Wasps, Sawflies</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').show(300);$('#notesSection').stop().hide(300);">		<div class="value">beetle</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/beetle.png');"></div>		<div class="text">Beetles</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').show(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">caterpillar</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/caterpillar.png');"></div>		<div class="text">Caterpillars</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">daddylonglegs</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/daddylonglegs.png');"></div>	<div class="text">Daddy longlegs</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">fly</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/fly.png');"></div>			<div class="text">Flies</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">grasshopper</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/grasshopper.png');"></div>		<div class="text">Grasshoppers, Crickets</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">leafhopper</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/leafhopper.png');"></div>		<div class="text">Leaf Hoppers and Cicadas</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">moths</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/moths.png');"></div>		<div class="text">Moths, Butterflies</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">spider</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/spider.png');"></div>		<div class="text">Spiders</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">truebugs</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/truebugs.png');"></div>		<div class="text">True Bugs</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().show(300);">		<div class="value">other</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/other.png');"></div>		<div class="text">Other</div></div></div>
-						<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
-					</div>
-				</div>
-				
-				<div class="group">
-					<div class="observationFieldTitle">Length:</div>
-					<input type="text" id="orderLength" placeholder="1mm - 300mm" onclick="this.select();" value="" oninput="this.value = this.value.toString().replace(/\D/g, '');" onblur="enforceRange(this, 1, 300, 1)"/>
-				</div>
-				
-				<div class="group" id="notesSection" style="display:none;">
-					<div class="observationFieldTitle">Enter the common or scientific name of this arthropod here:</div>
-					<div class="textareaHolder">
-						<textarea id="orderNotes" onfocus="expandTextarea(this);" onblur="compressTextarea(this);"></textarea>
-						<div class="textareaOtherLinesCover"></div>
-					</div>
-				</div>
-				
-				<button class="half" style="background:#ff7d7d;" onclick="zoomOut();" tabindex="-1">Cancel</button>
-				<button class="half" style="background:#7dcbff;" onclick="identify();" tabindex="-1">Save</button>
+				<!--END OF GAME HTML-->
+        
+        
+        
+        
+        
+        
+        
+        
+        
 			</div>
-		</div>
+		</main>
+		<footer>
+			<div>Part of the <a href="http://pheno-mismatch.org" target="_blank">Pheno Mismatch</a> project funded by the National Science Foundation</div>
+
+			<div><img src="../images/unc.png"/></div><div>
+				<a target="_blank" href="https://www.facebook.com/Caterpillars-Count-1854259101283140/"><img src="../images/facebook.png" alt="facebook"/></a><a target="_blank" href="https://twitter.com/CaterpillarsCt"><img src="../images/twitter.png" alt="twitter"/></a>
+			</div>
+
+			<div>Contact us: <a href="mailto:caterpillarscount@gmail.com">caterpillarscount@gmail.com</a></div>
+
+			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
+		</footer>
 	</body>
 </html>
