@@ -40,9 +40,26 @@
 			
 			//Each "bugs" row is a set of:
 			//	1) the filename of a photo in the https://caterpillarscount.unc.edu/virtualSurvey/images/bugs directory
-			//	2) the minimum length (in mm) of the arthropod
-			//	3) the maximum length (in mm) of the arthropod
-			//	4) the ratio of the photo's width that should represent the length of the arthropod
+			//	2) the correct classification of the photo, as one of the following labels:
+			//		2a) ant
+			//		2b) aphid
+			//		2c) bee
+			//		2d) beetle
+			//		2e) caterpillar
+			//		2f) daddylonglegs
+			//		2g) fly
+			//		2h) grasshopper
+			//		2i) leafhopper
+			//		2j) moths
+			//		2k) spider
+			//		2l) truebugs
+			//		2m) other
+			//		    --> "other" must be followed by pipeline ("|") delineated acceptable labels which the user can type in the "Enter the common or scientific name of this arthropod here" section.
+			//		    --> FOR EXAMPLE: "other|dragonfly|damselfly|dragon fly|damsel fly|odonata"
+			//		2n) unidentified
+			//	3) the minimum length (in mm) of the arthropod
+			//	4) the maximum length (in mm) of the arthropod
+			//	5) the ratio of the photo's width that should represent the length of the arthropod
 			//	NOTE: MAKE SURE TO CROP NEW PHOTOS TO ELIMINATE UNNECESSARY PADDING. THIS WILL HELP BIG ARTHROPODS FIT ON THE LEAVES.
 			//	YOU MAY ALSO WANT TO RESIZE/COMPRESS THE PHOTO HERE [https://resizeimage.net] TO REDUCE LOAD TIME.
 			var bugs = [
