@@ -14,25 +14,31 @@
 			//--------------------------------------------------------------------------------------------------------------------------------------------------
 			//GAME CONFIGURATION:
 			
+			//MAGNIFICATION_PERCENTAGE determines how far in the magnifying glass zooms.
 			var MAGNIFICATION_PERCENTAGE = 150;//percent
+			
+			//MAGNIFYING_GLASS_DIAMETER determines the size of the magnifying glass circle.
 			var MAGNIFYING_GLASS_DIAMETER = 150;//pixels
 			
+			//SECONDS_PER_ROUND determines how long rounds last (in seconds). They all last the same amountof time.
 			var SECONDS_PER_ROUND = 60;
 			
-			//Points available in round 1 are (POINTS_STEP * 1).
-			//Points available in round 2 are (POINTS_STEP * 2).
-			//Points available in round 3 are (POINTS_STEP * 3).
-			//Points available across all three rounds are (POINTS_STEP * 6).
+			//POINTS_STEP is a point interval that is used as follows:
+			//	Points available in round 1 are (POINTS_STEP * 1).
+			//	Points available in round 2 are (POINTS_STEP * 2).
+			//	Points available in round 3 are (POINTS_STEP * 3).
+			//	--> Points available across all three rounds add up to be (POINTS_STEP * 6).
 			var POINTS_STEP = 300;
 			
-			//BUG_COUNT_RANGES defines how many arthropods should be shown for each round as a set of a minimum value and a maximum value.
+			//BUG_COUNT_RANGES is a set of three minimum and maximum values which determine how many arthropods should be shown for each round.
+			//NOTE: You can easily edit the min/max values here, but adding more *levels* than "easy", "medium", and "hard" is more involved than just adding another row here.
 			var BUG_COUNT_RANGES = {
 				easy: [2, 4],
 				medium: [4, 6],
 				hard: [5, 8]
 			};
 			
-			//Each row is a set of:
+			//Each "bugs" row is a set of:
 			//	1) the filename of a photo in the https://caterpillarscount.unc.edu/virtualSurvey/images/bugs directory
 			//	2) the minimum length (in mm) of the arthropod
 			//	3) the maximum length (in mm) of the arthropod
@@ -123,12 +129,14 @@
 				["truebug_nymph_19521994_cutout.png","truebugs",4,25,0.5297841482203509]
 			];
 			
-			//Each row is a set of:
+			//Each "branches" row is a set of:
 			//	1) the filename of a photo in the https://caterpillarscount.unc.edu/virtualSurvey/images/branches directory
+			//		1a) THIS FILENAME MUST CONTAIN THE WORD "easy", "medium", OR "hard", INDICATING THE LEVEL IT SHOULD BE USED FOR.
 			//	2) the width (in mm) that the photo should be considered
 			//	3) a set of x1, x2, y1, y1 coordinates which each define a box on the photo that will be able to hold arthropods.
 			//		3a) {x1: 375, y1: 190, x2: 530, y2: 380}, for example, defines a box 375 pixels from the left of the photo to 530 pixels from the left of the photo AND 190 pixels from the top of the photo to 380 pixels from the top of the photo.
 			//	NOTE: NEW PHOTOS MUST BE EXACTLY 1200px WIDE AND 900px TALL.
+			//	YOU MAY CHOOSE TO COMPRESS THE PHOTO HERE [https://resizeimage.net] TO REDUCE LOAD TIME.
 			var branches = [
 				["easyBranch1.jpg", 343, [
 					{x1: 375, y1: 190, x2: 530, y2: 380},
@@ -1396,17 +1404,17 @@
 				$("#intro").stop().animate({marginTop:"-10px", top:"-100%"}, 200);
 				$("#roundBreakdown").stop().animate({top:"-100%"}, 200);
 				pickedBranch = random(branches);
-				while(pickedBranch[0].indexOf(levels[round]) == -1){
+				while(pickedBranch[0].toLowerCase().indexOf(levels[round]) == -1){
 					pickedBranch = random(branches);
 				}
 				$("#spy")[0].style.backgroundImage = "url('images/branches/" + pickedBranch[0] + "')";
 				
 				identifiedThisRound = 0;
 				var numberOfBugs = 0;
-				if(pickedBranch[0].indexOf("easy") > -1){
+				if(pickedBranch[0].toLowerCase().indexOf("easy") > -1){
 					numberOfBugs = random(BUG_COUNT_RANGES["easy"][0], BUG_COUNT_RANGES["easy"][1]);
 				}
-				else if(pickedBranch[0].indexOf("medium") > -1){
+				else if(pickedBranch[0].toLowerCase().indexOf("medium") > -1){
 					numberOfBugs = random(BUG_COUNT_RANGES["medium"][0], BUG_COUNT_RANGES["medium"][1]);
 				}
 				else{//hard
