@@ -760,7 +760,9 @@
 			#playButton{
 				border:0px none transparent;
 				font-size:20px;
-				padding:20px 100px;
+				padding:20px;
+				max-width:270px;
+				width:100%;
 				background:#fed136;
 				border-radius:10px;
 				border-bottom:3px solid rgba(0,0,0,0.3);
@@ -1216,7 +1218,7 @@
 			}
 		
 			#roundBreakdown .finalBreakdownSubsection{
-				font-size:12px;
+				font-size:20px;
 			}
 			
 			.clearBoth{
@@ -1224,9 +1226,13 @@
 			}
 		</style>
 		<script>
-			function resizeFonts(){/*
+			function resizeFonts(){
 				if($("#gameDiv")[0].clientHeight <= 500){
 					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "12px"});
+					$("#roundBreakdown .heading").css({fontSize: "26px"});
+					$("#roundBreakdown .subheading").css({fontSize: "14px"});
+					$("#signatureLogo").css({fontSize: "27px"});
+					$("#gameTitle").css({fontSize: "22px"});
 				}
 				else if($("#gameDiv")[0].clientHeight <= 550){
 					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "13px"});
@@ -1250,8 +1256,8 @@
 					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "19px"});
 				}
 				else{
-					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: ""});
-				}*/
+					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "20"});
+				}
 			}
 			
 			var fullscreen = false;
