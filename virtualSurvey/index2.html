@@ -555,15 +555,25 @@
 			:-moz-placeholder { /* Firefox 18- */
 				color:#ccc;
 			}
+		
+			#gameDivPlaceholder{
+				position:relative;
+				width:100%;
+				height:500px;
+				margin-bottom:100px;
+			}
 			
 			#gameDivContainer{
 				position:relative;
 				width:100%;
-				height:500px;
+				height:100%;
+				padding-bottom:0px;
+				box-sizing:border-box;
 			}
 			
 			#gameDiv{
 				position:relative;
+				z-index:-2;
 				width:100%;
 				height:100%;
 				border:0px none transparent;
@@ -571,6 +581,10 @@
 				border-radius:4px 4px 0px 0px;
 				overflow:hidden;
 				box-sizing:border-box;
+			}
+			
+			#gameDiv button{
+				margin:auto;
 			}
 			
 			#clearBlock{
@@ -1201,13 +1215,17 @@
 				float:right;
 				height:30px;
 			}
+		
+			#roundBreakdown .finalBreakdownSubsection{
+				font-size:12px;
+			}
 			
 			.clearBoth{
 				clear:both;
 			}
 		</style>
 		<script>
-			function resizeFonts(){
+			function resizeFonts(){/*
 				if($("#gameDiv")[0].clientHeight <= 500){
 					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: "12px"});
 				}
@@ -1234,7 +1252,7 @@
 				}
 				else{
 					$("#roundBreakdown .finalBreakdownSubsection").css({fontSize: ""});
-				}
+				}*/
 			}
 			
 			var fullscreen = false;
@@ -1248,14 +1266,15 @@
 			}
 			function enterFullscreenMode(){
 				fullscreen = true;
-				
-				$("#gameDiv").css({borderRadius:"0px", position:"fixed", top:"0px", left:"0px", width:"100%", height:"100%", paddingBottom:"50px", zIndex:"999999"});
+				$("#gameDivContainer").css({borderRadius:"0px", position:"fixed", top:"0px", left:"0px", width:"100%", height:"100%", paddingBottom:"50px", zIndex:"999999"});
 				$("#gameDivOptions").css({borderRadius:"0px", position:"fixed", bottom:"0px", left:"0px", width:"100%", zIndex:"999999"});
+				windowResize();
 			}
 			function exitFullscreenMode(){
 				fullscreen = false;
-				$("#gameDiv").css({borderRadius:"", position:"", top:"", left:"", bottom:"", width:"", height:"", paddingBottom:"", zIndex:""});
+				$("#gameDivContainer").css({borderRadius:"", position:"", top:"", left:"", bottom:"", width:"", height:"", paddingBottom:"", zIndex:""});
 				$("#gameDivOptions").css({borderRadius:"", position:"", bottom:"", left:"", width:"", zIndex:""});
+				windowResize();
 			}
 			
 			//make sur BUG_COUNT_RANGES are in order
@@ -1273,7 +1292,8 @@
 			var bugAreaWidth = -1;
 			var bugAreaHeight = -1;
 			
-			$(window).resize(function(){
+			$(window).resize(windowResize);
+			function windowResize(){
 				resizeFonts();
 				setGameDimensions();
 				resizePhoneButtons();
@@ -1284,7 +1304,7 @@
 				if(magnifying){
 					generateLargerFrame();
 				}
-			});
+			}
 			
 			function resizePhoneButtons(){
 				$(".phoneButton").eq(0)[0].style.height = (($("#phone").width() / 720) * 40) + "px";
@@ -1579,7 +1599,7 @@
 					if(optionElement.parentNode.className.indexOf("active") > -1){
 						var preScrollTop = Number(optionElement.parentNode.className.replace(/\D/g, ""));
 						optionElement.parentNode.className = optionElement.parentNode.className.replace("active" + preScrollTop, "").trim();
-						$('html, body').animate({ scrollTop: preScrollTop }, 400);
+						$('#phone').animate({ scrollTop: 0 }, 400);
 					}
 					else{
 						optionElement.parentNode.className = optionElement.parentNode.className + " active" + $(document).scrollTop();
@@ -1862,10 +1882,12 @@
 			
 			function showMagnification(event){
 				if(magnifying){
+					var adjustedX = event.pageX - $("#gameDiv").offset().left;
+					var adjustedY = event.pageY - $("#gameDiv").offset().top;
 					var searchAreaTop = Number($("#searchArea").css("top").replace(/\D/g, ""));
-					$("#zoom").css({display:"block", top: (event.pageY - ($("#zoom").height() / 2)) + "px", left: (event.pageX - ($("#zoom").width() / 2)) + "px"});
-					var zoomedCenterY = $("#zoomedspy").height() * ((event.pageY - searchAreaTop) / ($("#gameDiv").height() - searchAreaTop));
-					var zoomedCenterX = $("#zoomedspy").width() * (event.pageX / $("#gameDiv").width());
+					$("#zoom").css({display:"block", top: (adjustedY - ($("#zoom").height() / 2)) + "px", left: (adjustedX - ($("#zoom").width() / 2)) + "px"});
+					var zoomedCenterY = $("#zoomedspy").height() * ((adjustedY - searchAreaTop) / ($("#gameDiv").height() - searchAreaTop));
+					var zoomedCenterX = $("#zoomedspy").width() * (adjustedX / $("#gameDiv").width());
 					var topAdjustment = zoomedCenterY - ($("#zoom").height() / 2);
 					var leftAdjustment = zoomedCenterX - ($("#zoom").width() / 2);
 					$("#zoomedsearchArea").css({top: zoomedsearchAreaBaseY - topAdjustment, left: zoomedsearchAreaBaseX - leftAdjustment});
@@ -2159,7 +2181,7 @@
 			<div id="navBack" onclick="resetMenu(false);">&#10094;</div>
 		</header>
 		<main>
-			<div class="panel">
+			<div class="panel" style="position:relative;z-index:-3;">
       
       
       
@@ -2172,602 +2194,604 @@
 				<h2>Virtual Survey Game</h2>
 				<div class="tagline">Practice your surveying skills!</div>
 				<div class="content">
-					<div id="gameDivContainer">
-						<div id="gameDiv">
-							<div id="clearBlock"></div>
-							<div id="loading">
-								<img src="images/logo.png" style="height:100px;display:block;margin:0px auto 40px auto;"/>
-								<div id="progressBar">
-									<div id="progressBarFill" style="width:0%;"></div>
+					<div id="gameDivPlaceholder">
+						<div id="gameDivContainer">
+							<div id="gameDiv">
+								<div id="clearBlock"></div>
+								<div id="loading">
+									<img src="images/logo.png" style="height:100px;display:block;margin:0px auto 40px auto;"/>
+									<div id="progressBar">
+										<div id="progressBarFill" style="width:0%;"></div>
+									</div>
 								</div>
-							</div>
 
-							<div id="intro" style="top:0px;">
-								<div id="signatureLogo">Caterpillars Count!</div>
-								<div id="gameTitle">Virtual Survey</div>
-								<div id="playScreenDarkBox">
-									<div id="gameInstructions"><strong>Rack up as many points as you can</strong> by finding and identifying all arthropods on each of three increasingly challenging branches! Estimate arthropod length from the <strong>tip of the head to the bottom of the abdomen</strong>.</div>
-									<button onclick="$('#intro')[0].style.display='none';startRound();" id="playButton" tabindex="-1">play</button>
+								<div id="intro" style="top:0px;">
+									<div id="signatureLogo">Caterpillars Count!</div>
+									<div id="gameTitle">Virtual Survey</div>
+									<div id="playScreenDarkBox">
+										<div id="gameInstructions"><strong>Rack up as many points as you can</strong> by finding and identifying all arthropods on each of three increasingly challenging branches! Estimate arthropod length from the <strong>tip of the head to the bottom of the abdomen</strong>.</div>
+										<button onclick="$('#intro')[0].style.display='none';startRound();" id="playButton" tabindex="-1">play</button>
+									</div>
 								</div>
-							</div>
 
-							<div id="roundBreakdown" style="top:-100%;">
-								<div class="heading"></div>
-								<div class="subheading"></div>
-								<button style="font-weight:bold;" onclick="startRound();" id="nextBranchButton">I'm ready for the next branch!</button>
-							</div>
+								<div id="roundBreakdown" style="top:-100%;">
+									<div class="heading"></div>
+									<div class="subheading"></div>
+									<button style="font-weight:bold;" onclick="startRound();" id="nextBranchButton">I'm ready for the next branch!</button>
+								</div>
 
-							<div id="toolBar">
-								<div id="runningScore"><span id="currentRunningScore">0</span><span id="possibleScore">--</span></div>
-								<button onclick="toggleMagnification();" id="magnifyButton" style="float:left;background:#aaa;display:none;" tabindex="-1">Magnifying glass</button>
-								<button onclick="endRound();" style="background:#05e666;" tabindex="-1">Next branch</button>
-							</div>
+								<div id="toolBar">
+									<div id="runningScore"><span id="currentRunningScore">0</span><span id="possibleScore">--</span></div>
+									<button onclick="toggleMagnification();" id="magnifyButton" style="float:left;background:#aaa;display:none;" tabindex="-1">Magnifying glass</button>
+									<button onclick="endRound();" style="background:#05e666;" tabindex="-1">Next branch</button>
+								</div>
 
-							<div id="timeBar">
-								<div id="remainingTimeBar" style="width:100%;"></div>
-							</div>
+								<div id="timeBar">
+									<div id="remainingTimeBar" style="width:100%;"></div>
+								</div>
 
-							<div id="searchArea">
-								<div id="spy"></div>
+								<div id="searchArea">
+									<div id="spy"></div>
 
-								<div id="bugAreaContainer">
-									<div class="cell">
-										<div id="bugArea"></div>
-									</div>
-								</div>
-							</div>
-
-							<div id="zoom"></div>
-
-							<div id="ruler" style="display:none;">
-								<div>
-									<div style="margin-top:-20px;font-size:8px;border:1px solid #fff;border-radius:2px;display:inline-block;padding:0px 2px 1px 2px;opacity:.7;">mm</div>
-									<div>10</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>20</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>30</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>40</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>50</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>60</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>70</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>80</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>90</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>100</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>110</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>120</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>130</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>140</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>150</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>160</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>170</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>180</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>190</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>200</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>210</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>220</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>230</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>240</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>250</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>260</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>270</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>280</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>290</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div>
-									<div>300</div>
-									<div>
-										<div class="halfMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="mainMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="smallMark"></div>
-										<div class="halfMark"></div>
-									</div>
-								</div>
-								<div style="clear:both;float:none;display:block;"></div>
-							</div>
-
-							<div id="phoneBar" style="display:none;">
-								<div class="phoneButton" style="height:40px;top:10px;"></div>
-								<div class="phoneButton" style="height:100px;top:125px;"></div>
-								<div class="phoneButton" style="height:100px;top:250px;"></div>
-							</div>
-							<div id="phone" style="display:none;">
-								<div id="phoneScreen">
-									<div id="phoneNotice" onclick="lookForNextBug();" style="display:none;">
-										<div id="phoneConfirmation">
-											<div class="message"></div>
-											<div class="phoneNoticeButton">OK</div>
-										</div>
-										<div id="phoneError">
-											<div class="message"></div>
-											<div class="phoneNoticeButton">OK</div>
+									<div id="bugAreaContainer">
+										<div class="cell">
+											<div id="bugArea"></div>
 										</div>
 									</div>
-									<div id="appHeader">
-										<img src="images/logo.png" id="logo"/>
-										<img src="images/2.png" id="panelIcon">
-									</div>
-									<div class="panelTitle">Arthropod information</div>
-									<div class="group">
-										<div class="observationFieldTitle">Arthropod group:</div>
-										<div class="select" id="orderType">
-											<div class="option selected" onclick="selectOption(this);$('#caterpillarOptionsTable').parent().hide(300);$('#notesSection').stop().hide(300);">	<div class="value"></div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">aphid</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/aphid.png');"></div>		<div class="text">Aphids and Psyllids</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').show(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">bee</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/bee.png');"></div>			<div class="text">Bees, Wasps, Sawflies</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').show(300);$('#notesSection').stop().hide(300);">		<div class="value">beetle</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/beetle.png');"></div>		<div class="text">Beetles</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').show(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">caterpillar</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/caterpillar.png');"></div>		<div class="text">Caterpillars</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">daddylonglegs</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/daddylonglegs.png');"></div>	<div class="text">Daddy longlegs</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">fly</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/fly.png');"></div>			<div class="text">Flies</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">grasshopper</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/grasshopper.png');"></div>		<div class="text">Grasshoppers, Crickets</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">leafhopper</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/leafhopper.png');"></div>		<div class="text">Leaf Hoppers and Cicadas</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">moths</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/moths.png');"></div>		<div class="text">Moths, Butterflies</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">spider</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/spider.png');"></div>		<div class="text">Spiders</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">truebugs</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/truebugs.png');"></div>		<div class="text">True Bugs</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().show(300);">		<div class="value">other</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/other.png');"></div>		<div class="text">Other</div></div></div>
-											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
+								</div>
+
+								<div id="zoom"></div>
+
+								<div id="ruler" style="display:none;">
+									<div>
+										<div style="margin-top:-20px;font-size:8px;border:1px solid #fff;border-radius:2px;display:inline-block;padding:0px 2px 1px 2px;opacity:.7;">mm</div>
+										<div>10</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
 										</div>
 									</div>
-
-									<div class="group">
-										<div class="observationFieldTitle">Length:</div>
-										<input type="text" id="orderLength" placeholder="1mm - 300mm" onclick="this.select();" value="" oninput="this.value = this.value.toString().replace(/\D/g, '');" onblur="enforceRange(this, 1, 300, 1)"/>
-									</div>
-
-									<div class="group" id="notesSection" style="display:none;">
-										<div class="observationFieldTitle">Enter the common or scientific name of this arthropod here:</div>
-										<div class="textareaHolder">
-											<textarea id="orderNotes" onfocus="expandTextarea(this);" onblur="compressTextarea(this);"></textarea>
-											<div class="textareaOtherLinesCover"></div>
+									<div>
+										<div>20</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
 										</div>
 									</div>
+									<div>
+										<div>30</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>40</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>50</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>60</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>70</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>80</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>90</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>100</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>110</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>120</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>130</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>140</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>150</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>160</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>170</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>180</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>190</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>200</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>210</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>220</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>230</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>240</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>250</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>260</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>270</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>280</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>290</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div>
+										<div>300</div>
+										<div>
+											<div class="halfMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="mainMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="smallMark"></div>
+											<div class="halfMark"></div>
+										</div>
+									</div>
+									<div style="clear:both;float:none;display:block;"></div>
+								</div>
 
-									<button class="half" style="background:#ff7d7d;" onclick="zoomOut();" tabindex="-1">Cancel</button>
-									<button class="half" style="background:#7dcbff;" onclick="identify();" tabindex="-1">Save</button>
+								<div id="phoneBar" style="display:none;">
+									<div class="phoneButton" style="height:40px;top:10px;"></div>
+									<div class="phoneButton" style="height:100px;top:125px;"></div>
+									<div class="phoneButton" style="height:100px;top:250px;"></div>
+								</div>
+								<div id="phone" style="display:none;">
+									<div id="phoneScreen">
+										<div id="phoneNotice" onclick="lookForNextBug();" style="display:none;">
+											<div id="phoneConfirmation">
+												<div class="message"></div>
+												<div class="phoneNoticeButton">OK</div>
+											</div>
+											<div id="phoneError">
+												<div class="message"></div>
+												<div class="phoneNoticeButton">OK</div>
+											</div>
+										</div>
+										<div id="appHeader">
+											<img src="images/logo.png" id="logo"/>
+											<img src="images/2.png" id="panelIcon">
+										</div>
+										<div class="panelTitle">Arthropod information</div>
+										<div class="group">
+											<div class="observationFieldTitle">Arthropod group:</div>
+											<div class="select" id="orderType">
+												<div class="option selected" onclick="selectOption(this);$('#caterpillarOptionsTable').parent().hide(300);$('#notesSection').stop().hide(300);">	<div class="value"></div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">aphid</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/aphid.png');"></div>		<div class="text">Aphids and Psyllids</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').show(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">bee</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/bee.png');"></div>			<div class="text">Bees, Wasps, Sawflies</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').show(300);$('#notesSection').stop().hide(300);">		<div class="value">beetle</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/beetle.png');"></div>		<div class="text">Beetles</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').show(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">caterpillar</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/caterpillar.png');"></div>		<div class="text">Caterpillars</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">daddylonglegs</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/daddylonglegs.png');"></div>	<div class="text">Daddy longlegs</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">fly</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/fly.png');"></div>			<div class="text">Flies</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">grasshopper</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/grasshopper.png');"></div>		<div class="text">Grasshoppers, Crickets</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">leafhopper</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/leafhopper.png');"></div>		<div class="text">Leaf Hoppers and Cicadas</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">moths</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/moths.png');"></div>		<div class="text">Moths, Butterflies</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">spider</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/spider.png');"></div>		<div class="text">Spiders</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">truebugs</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/truebugs.png');"></div>		<div class="text">True Bugs</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().show(300);">		<div class="value">other</div>		<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/other.png');"></div>		<div class="text">Other</div></div></div>
+												<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);$('#notesSection').stop().hide(300);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
+											</div>
+										</div>
+
+										<div class="group">
+											<div class="observationFieldTitle">Length:</div>
+											<input type="text" id="orderLength" placeholder="1mm - 300mm" onclick="this.select();" value="" oninput="this.value = this.value.toString().replace(/\D/g, '');" onblur="enforceRange(this, 1, 300, 1)"/>
+										</div>
+
+										<div class="group" id="notesSection" style="display:none;">
+											<div class="observationFieldTitle">Enter the common or scientific name of this arthropod here:</div>
+											<div class="textareaHolder">
+												<textarea id="orderNotes" onfocus="expandTextarea(this);" onblur="compressTextarea(this);"></textarea>
+												<div class="textareaOtherLinesCover"></div>
+											</div>
+										</div>
+
+										<button class="half" style="background:#ff7d7d;" onclick="zoomOut();" tabindex="-1">Cancel</button>
+										<button class="half" style="background:#7dcbff;" onclick="identify();" tabindex="-1">Save</button>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div id="gameDivOptions">
-							<img src="../images/fullscreenIcon.png" onclick="toggleFullscreenMode();"/>
-							<div class="clearBoth"></div>
+							<div id="gameDivOptions">
+								<img src="../images/fullscreenIcon.png" onclick="toggleFullscreenMode();"/>
+								<div class="clearBoth"></div>
+							</div>
 						</div>
 					</div>
 				</div>
