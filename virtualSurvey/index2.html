@@ -573,7 +573,6 @@
 			
 			#gameDiv{
 				position:relative;
-				z-index:-2;
 				width:100%;
 				height:100%;
 				border:0px none transparent;
@@ -652,7 +651,7 @@
 				background-size:contain;
 				background-repeat:no-repeat;
 				background-position:center;
-				z-index:-1;
+				z-index:0;
 			}
 			
 			
@@ -663,7 +662,7 @@
 				width:100%;
 				height:100%;
 				display:table;
-				z-index:0;
+				z-index:1;
 			}
 			
 			.cell{
@@ -687,7 +686,7 @@
 				padding:10%;
 				box-sizing:border-box;
 				text-align:center;
-				z-index:10;
+				z-index:11;
 			}
 			
 			#progressBar{
@@ -717,7 +716,7 @@
 				padding:10%;
 				box-sizing:border-box;
 				text-align:center;
-				z-index:9;
+				z-index:10;
 				-webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
 				-moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
 				box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
@@ -785,7 +784,7 @@
 				padding:10%;
 				box-sizing:border-box;
 				text-align:center;
-				z-index:8;
+				z-index:9;
 				-webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
 				-moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
 				box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.12);
@@ -812,7 +811,7 @@
 			
 			#phone{
 				position:absolute;
-				z-index:1;
+				z-index:2;
 				top:0px;
 				right:0px;
 				height:100%;
@@ -841,7 +840,7 @@
 				background-image:url('images/phoneSide.png');
 				background-size:contain;
 				background-position:center;
-				z-index:1;
+				z-index:2;
 			}
 			
 			.phoneButton{
@@ -860,7 +859,7 @@
 				position:absolute;
 				top:0px;
 				left:13%;
-				z-index:2;
+				z-index:3;
 			}
 			
 			#phoneNotice{
@@ -870,7 +869,7 @@
 				height:100%;
 				width:100%;
 				background:rgba(255,255,255,0.7);
-				z-index:1;
+				z-index:2;
 				cursor:pointer;
 			}
 			
@@ -1072,7 +1071,7 @@
 				position:absolute;
 				top:0px;
 				left:0px;
-				z-index:0;
+				z-index:1;
 				width:9999999999%;
 				font-family: 'Open Sans', sans-serif;
 				font-size:12px;
@@ -1170,7 +1169,7 @@
 				width:150px;
 				height:150px;
 				border-radius:99999px;
-				z-index:8;
+				z-index:9;
 				overflow:hidden;
 				pointer-events: none;-webkit-box-shadow: 0px 0px 0px 3px rgba(153,153,153,1);
 				-moz-box-shadow: 0px 0px 0px 3px rgba(153,153,153,1);
@@ -1465,7 +1464,7 @@
 				var y = y1 + random((imageHypotenuse - imageHeight) / 2, (boxHeight - imageHypotenuse));
 				
 				var bugID = "bug" + pickedBugs.length;
-				$("#bugArea")[0].innerHTML += "<img id=\"" + bugID + "\" src=\"images/bugs/" + bug[0] + "\" style=\"position:absolute;top:" + ((y/bugAreaHeight) * 100) + "%;left:" + ((x/bugAreaWidth) * 100) + "%;width:" + imageWidth + "px;transform: rotate(" + random(-180, 179) + "deg);z-index:1;\" onclick=\"findBug(this);\"/>";
+				$("#bugArea")[0].innerHTML += "<img id=\"" + bugID + "\" src=\"images/bugs/" + bug[0] + "\" style=\"position:absolute;top:" + ((y/bugAreaHeight) * 100) + "%;left:" + ((x/bugAreaWidth) * 100) + "%;width:" + imageWidth + "px;transform: rotate(" + random(-180, 179) + "deg);z-index:2;\" onclick=\"findBug(this);\"/>";
 				pickedBugs[pickedBugs.length] = [bug, bugSize, bugID];
 			}
 			
@@ -1840,7 +1839,7 @@
 				var zoomedspyWidth = ($("#searchArea").width() + ($("#searchArea").width() * MAGNIFICATION * 2));
 				var zoomedspyHeight = ($("#searchArea").height() + ($("#searchArea").height() * MAGNIFICATION * 2));
 				$("#zoom")[0].innerHTML = $("#searchArea")[0].outerHTML.replace(/id="/g, "id=\"zoomed").replace(/id='/g, "id='zoomed");
-				$("#zoomedsearchArea").css({position:"absolute", zIndex:"0"});
+				$("#zoomedsearchArea").css({position:"absolute", zIndex:"1"});
 				$("#zoomedspy").css({width:(zoomedspyWidth + "px"), height:(zoomedspyHeight + "px"), top: "-" + ($("#searchArea").height() * MAGNIFICATION) + "px", left: "-" + ($("#searchArea").width() * MAGNIFICATION) + "px"});
 				
 				var zoomGameWidth = zoomedspyWidth;
@@ -2181,7 +2180,7 @@
 			<div id="navBack" onclick="resetMenu(false);">&#10094;</div>
 		</header>
 		<main>
-			<div class="panel" style="position:relative;z-index:-3;">
+			<div class="panel">
       
       
       
