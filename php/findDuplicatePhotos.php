@@ -1,7 +1,9 @@
 <?php
+  $offset = intval($_GET["offset"]);
   $limit = intval($_GET["limit"]);
+
   $photos = scandir("../images/arthropods");
-  for($i = 0; $i < count($photos); $i++){
+  for($i = $offset; $i < count($photos); $i++){
     if($i >= $limit){
       break;
     }
