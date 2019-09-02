@@ -22,10 +22,9 @@
         $urls[] = "\"" . $photos[$j] . "\"";
       }
     }
-    echo "SELECT * FROM ArthropodSighting WHERE PhotoURL IN (" . implode(", ", $urls) . ")</a>";
     if($isDuplicate){
       $usedPhotoHashes[] = $photoHashes[$photos[$i]];
-      echo "<br/>";
+      echo "SELECT * FROM ArthropodSighting WHERE PhotoURL IN (" . implode(", ", $urls) . ")</a><br/>";
     }
   }
 ?>
