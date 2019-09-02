@@ -11,15 +11,18 @@
 
   for($i = 0; $i < count($photoHashes); $i++){
     $isDuplicate = false;
+    $urls = array();
     for($j = 0; $j < count($photoHashes); $j++){
       if($i != $j && !in_array($photoHashes[$photos[$i]], $usedPhotoHashes) && $photoHashes[$photos[$i]] == $photoHashes[$photos[$j]]){
         if(!$isDuplicate){
-          echo "<a href=\"https://caterpillarscount.unc.edu/images/arthropods/" . $photos[$i] . "\" target=\"_blank\">" . $photos[$i] . "</a><br/>";
+          echo "<a href=\"https://caterpillarscount.unc.edu/images/arthropods/" . $photos[$i] . "\" target=\"_blank\">";
+          $urls[] = "\"" . $photos[$i] . "\"";
         }
         $isDuplicate = true;
-        echo "<a href=\"https://caterpillarscount.unc.edu/images/arthropods/" . $photos[$j] . "\" target=\"_blank\">" . $photos[$j] . "</a><br/>";
+        $urls[] = "\"" . $photos[$j] . "\"";
       }
     }
+    echo "SELECT * FROM ArthropodSighting WHERE PhotoURL IN (" . implode(", ", $urls) . ")</a>";
     if($isDuplicate){
       $usedPhotoHashes[] = $photoHashes[$photos[$i]];
       echo "<br/>";
