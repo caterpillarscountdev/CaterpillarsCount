@@ -110,12 +110,22 @@ class Plant
 		if($code === false){
 			return null;
 		}
-		$query = mysqli_query($dbconn, "SELECT `ID` FROM `Plant` WHERE `Code`='$code' LIMIT 1");
+		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `Code`='$code' LIMIT 1");
 		mysqli_close($dbconn);
+		
 		if(mysqli_num_rows($query) == 0){
 			return null;
 		}
-		return self::findByID(intval(mysqli_fetch_assoc($query)["ID"]));
+		
+		$plantRow = mysqli_fetch_assoc($query);
+		
+		$id = $plantRow["ID"];
+		$site = Site::findByID($plantRow["SiteFK"]);
+		$circle = $plantRow["Circle"];
+		$orientation = $plantRow["Orientation"];
+		$species = $plantRow["Species"];
+		
+		return new Plant($id, $site, $circle, $orientation, $code, $species);
 	}
 	
 	public static function findBySiteAndPosition($site, $circle, $orientation) {
