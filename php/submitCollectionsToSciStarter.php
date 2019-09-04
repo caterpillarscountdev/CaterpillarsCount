@@ -5,6 +5,20 @@
 	$BATCH_SIZE = 1;
 
 	$dbconn = (new Keychain)->getDatabaseConnection();
+
+	//If we're already submitting to SciStarter, don't execute this call.
+	$query = mysqli_query($dbconn, "SELECT `Processing` FROM `CronJobStatus` WHERE `Name`='SciStarter'");
+	if(mysqli_num_rows($query) > 0){
+		if(intval(mysqli_fetch_assoc($query)["Processing"]) == 1){
+			mysqli_close($dbconn);
+			die();
+		}
+	}
+
+	//Otherwise,
+	//Mark that we're submitting to iNaturalist
+	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1' WHERE `Name`='SciStarter'");
+
 	//Get survey id
 	$ids = array("0");
 	$query = mysqli_query($dbconn, "SELECT ID FROM Survey WHERE NeedToSendToSciStarter='1' LIMIT " . $BATCH_SIZE);
