@@ -29,5 +29,8 @@
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_exec($ch);
 		curl_close ($ch);
+		
+		//Mark that we're finished submitting to SciStarter
+		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='SciStarter'");
 	}
 ?>

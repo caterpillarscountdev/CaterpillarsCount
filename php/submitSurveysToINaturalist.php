@@ -5,6 +5,23 @@
 	$dbconn = (new Keychain)->getDatabaseConnection();
 
 	$BATCH_SIZE = 1;
+
+	//If we're already submitting to iNaturalist, don't execute this call.
+	$query = mysqli_query($dbconn, "SELECT `Processing` FROM `CronJobStatus` WHERE `Name`='iNaturalist'");
+	if(mysqli_num_rows($query) > 0){
+		if(intval(mysqli_fetch_assoc($query)["Processing"]) == 1){
+			mysqli_close($dbconn);
+			die();
+		}
+	}
+	else{
+		mysqli_close($dbconn);
+		die();
+	}
+
+	//Otherwise,
+	//Mark that we're submitting to iNaturalist
+	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalist'");
 	
 	//Get batch
 	$query = mysqli_query($dbconn, "SELECT ID FROM ArthropodSighting WHERE NeedToSendToINaturalist='1' LIMIT " . $BATCH_SIZE);
@@ -13,6 +30,12 @@
 		while($idRow = mysqli_fetch_assoc($query)){
 			$ids[] = $idRow["ID"];
 		}
+	}
+	else{
+		//Mark that we're finished submitting to iNaturalist
+		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalist'");
+		mysqli_close($dbconn);
+		die();
 	}
 	
 	$idMatchSQL = "='" . $ids[1] . "'";
