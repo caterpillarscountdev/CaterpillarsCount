@@ -17,7 +17,7 @@
 
 	//Otherwise,
 	//Mark that we're submitting to iNaturalist
-	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1' WHERE `Name`='iNaturalist'");
+	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1', `UTCLastCall`=NOW() WHERE `Name`='iNaturalist'");
 	
 	//Get batch
 	$query = mysqli_query($dbconn, "SELECT ID FROM ArthropodSighting WHERE NeedToSendToINaturalist='1' LIMIT " . $BATCH_SIZE);
