@@ -134,5 +134,8 @@
 			curl_exec($ch);
 			curl_close ($ch);
 		}
+		
+		//Mark that we're finished submitting to iNaturalist
+		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalist'");
 	}
 ?>
