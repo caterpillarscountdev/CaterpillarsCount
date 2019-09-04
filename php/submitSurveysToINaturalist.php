@@ -31,6 +31,12 @@
 			$ids[] = $idRow["ID"];
 		}
 	}
+	else{
+		//Mark that we're finished submitting to iNaturalist
+		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalist'");
+		mysqli_close($dbconn);
+		die();
+	}
 	
 	$idMatchSQL = "='" . $ids[1] . "'";
 	if($BATCH_SIZE != 1){
