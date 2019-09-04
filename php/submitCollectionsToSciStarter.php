@@ -17,7 +17,7 @@
 
 	//Otherwise,
 	//Mark that we're submitting to SciStarter
-	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1' WHERE `Name`='SciStarter'");
+	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1', `UTCLastCall`=NOW() WHERE `Name`='SciStarter'");
 
 	//Get survey id
 	$ids = array("0");
