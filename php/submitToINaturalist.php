@@ -15,7 +15,7 @@
 		return $param;
 	}
 	
-	function submitINaturalistObservation($userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
+	function submitINaturalistObservation($dbconn, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
 		curl_setopt($ch, CURLOPT_POST, 1);
