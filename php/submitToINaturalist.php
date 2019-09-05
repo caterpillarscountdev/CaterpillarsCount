@@ -15,7 +15,7 @@
 		return $param;
 	}
 	
-	function submitINaturalistObservation($dbconn, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
+	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
 		curl_setopt($ch, CURLOPT_POST, 1);
@@ -136,12 +136,18 @@
 					$caterpillarsOfEasternNALinkResponse = curl_exec($ch);
 					curl_close ($ch);
 
-					//Mark that we're finished submitting to iNaturalist
 					if($caterpillarsOfEasternNALinkResponse !== "Just making sure that the exec is complete."){
+						//Mark this ArthropodSighting as completed
+						mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
+						
+						//Mark that we're finished submitting to iNaturalist
 						$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalist'");
 					}
 				}
 				else{
+					//Mark this ArthropodSighting as completed
+					mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
+					
 					//Mark that we're finished submitting to iNaturalist
 					$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalist'");
 				}
