@@ -119,7 +119,7 @@
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_exec($ch);
+		$response = curl_exec($ch);
 		curl_close ($ch);
 		
 		if($order == "caterpillar"){
@@ -131,11 +131,19 @@
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_exec($ch);
+			$resp = curl_exec($ch);
 			curl_close ($ch);
+			
+			//Mark that we're finished submitting to iNaturalist
+			if($resp !== "Just making sure that the exec is complete."){
+				$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalist'");
+			}
 		}
-		
-		//Mark that we're finished submitting to iNaturalist
-		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalist'");
+		else{
+			//Mark that we're finished submitting to iNaturalist
+			if($response !== "Just making sure that the exec is complete."){
+				$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalist'");
+			}
+		}
 	}
 ?>
