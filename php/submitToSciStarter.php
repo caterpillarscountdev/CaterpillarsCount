@@ -1,5 +1,5 @@
 <?php
-	function submitToSciStarter($dbconn, $email, $type, $where = null, $when = null, $duration = null, $magnitude = null, $extra = null){
+	function submitToSciStarter($dbconn, $surveyID, $email, $type, $where = null, $when = null, $duration = null, $magnitude = null, $extra = null){
 		$KEY = getenv("SciStarterKey");
 		$ch = curl_init("https://scistarter.com/api/profile/id?hashed=" . hash("sha256", $email) . "&key=" . $KEY);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -30,8 +30,11 @@
 		$response = curl_exec($ch);
 		curl_close ($ch);
 		
-		//Mark that we're finished submitting to SciStarter
 		if($response !== "Just making sure that the exec is complete." && $type == "collection"){
+			//Mark as submitted
+			mysqli_query($dbconn, "UPDATE Survey SET NeedToSendToSciStarter='0' WHERE ID='" . $surveyID . "' LIMIT 1");
+			
+			//Mark that we're finished submitting to SciStarter
 			$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='SciStarter'");
 		}
 	}
