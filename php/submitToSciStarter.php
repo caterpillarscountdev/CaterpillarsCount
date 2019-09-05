@@ -27,11 +27,11 @@
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_exec($ch);
+		$response = curl_exec($ch);
 		curl_close ($ch);
 		
 		//Mark that we're finished submitting to SciStarter
-		if($type == "collection"){
+		if($response !== "Just making sure that the exec is complete." && $type == "collection"){
 			$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='SciStarter'");
 		}
 	}
