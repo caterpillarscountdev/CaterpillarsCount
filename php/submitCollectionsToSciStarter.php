@@ -2,7 +2,7 @@
 	require_once("/opt/app-root/src/php/orm/resources/Keychain.php");
 	require_once("/opt/app-root/src/php/submitToSciStarter.php");
 
-	$BATCH_SIZE = 1;
+	$BATCH_SIZE = 1;//You should move/alter `NeedToSendToSciStarter` and `Processing` database updates if you change $BATCH_SIZE. That extends into the submitToSciStarter.php file as well. I just left the code to assume $BATCH_SIZE is 1.
 
 	$dbconn = (new Keychain)->getDatabaseConnection();
 
