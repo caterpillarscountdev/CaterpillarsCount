@@ -4,7 +4,7 @@
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
-	$BATCH_SIZE = 1;//You should move/alter `NeedToSendToINaturalist` and `Processing` database updates if you change $BATCH_SIZE. I just left the code to assume $BATCH_SIZE is 1.
+	$BATCH_SIZE = 1;//You should move/alter `NeedToSendToINaturalist` and `Processing` database updates if you change $BATCH_SIZE. That extends into the submitToINaturalist.php file as well. I just left the code to assume $BATCH_SIZE is 1.
 
 	//If we're already submitting to iNaturalist, don't execute this call.
 	$query = mysqli_query($dbconn, "SELECT `Processing` FROM `CronJobStatus` WHERE `Name`='iNaturalist'");
