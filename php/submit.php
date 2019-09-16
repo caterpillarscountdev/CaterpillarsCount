@@ -53,7 +53,7 @@
 				
 			if(in_array($fileType, array("png", "jpg", "jpeg", "gif"))){
 				if(move_uploaded_file($file["tmp_name"], $path . $name)){
-					return $arthropodSighting->setPhotoURL($name);
+					return $arthropodSighting->setPhotoURL($name, true);
 				}
 				return "Unable to transfer file to server";
 			}
