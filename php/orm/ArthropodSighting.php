@@ -201,13 +201,13 @@ class ArthropodSighting
 	}
 	
 //SETTERS
-	public function setPhotoURL($photoURL){
+	public function setPhotoURL($photoURL, $needToSendToINaturalist){
 		if(!$this->deleted)
 		{
+			$needToSendToINaturalist = (int)$needToSendToINaturalist;
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$photoURL = self::validPhotoURL($dbconn, $photoURL);
 			if($photoURL !== false){
-				$needToSendToINaturalist = 1;
 				if($photoURL == "" || $this->survey->getPlant()->getSite()->getName() == "Example Site"){
 					$needToSendToINaturalist = 0;
 				}
