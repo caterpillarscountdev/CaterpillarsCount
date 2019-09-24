@@ -3,8 +3,8 @@
 	require_once("/opt/app-root/src/php/submitToINaturalist.php");
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
-
-	$BATCH_SIZE = 1;
+	
+	$BATCH_SIZE = 1;//You should move/alter `NeedToSendToINaturalist` and `Processing` database updates if you change $BATCH_SIZE. That extends into the submitToINaturalist.php file as well. I just left the code to assume $BATCH_SIZE is 1.
 
 	//If we're already submitting to iNaturalist, don't execute this call.
 	$query = mysqli_query($dbconn, "SELECT `Processing` FROM `CronJobStatus` WHERE `Name`='iNaturalist'");
@@ -42,9 +42,6 @@
 	if($BATCH_SIZE != 1){
 		$idMatchSQL = " IN (" . implode(", ", $ids) . ")";
 	}
-
-	//Mark batch as completed
-	mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0' WHERE ID" . $idMatchSQL . " LIMIT " . $BATCH_SIZE);
 	
 	//Submit batch to iNaturalist
 	$query = mysqli_query($dbconn, "SELECT ArthropodSighting.ID AS ArthropodSightingID, User.INaturalistObserverID, User.Hidden, Plant.Code, Survey.LocalDate, Survey.ObservationMethod, Survey.Notes AS SurveyNotes, Survey.WetLeaves, ArthropodSighting.Group, ArthropodSighting.Hairy, ArthropodSighting.Rolled, ArthropodSighting.Tented, ArthropodSighting.Quantity, ArthropodSighting.Length, ArthropodSighting.PhotoURL, ArthropodSighting.Notes AS ArthropodSightingNotes, Survey.NumberOfLeaves, Survey.AverageLeafLength, Survey.HerbivoryScore FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE ArthropodSighting.ID" . $idMatchSQL . " LIMIT " . $BATCH_SIZE);
@@ -54,7 +51,7 @@
 			if(filter_var($row["Hidden"], FILTER_VALIDATE_BOOLEAN)){
 				$observerID = "anonymous";
 			}
-			submitINaturalistObservation($observerID, $row["Code"], $row["LocalDate"], $row["ObservationMethod"], $row["SurveyNotes"], filter_var($row["WetLeaves"], FILTER_VALIDATE_BOOLEAN), $row["Group"], filter_var($row["Hairy"], FILTER_VALIDATE_BOOLEAN), filter_var($row["Rolled"], FILTER_VALIDATE_BOOLEAN), filter_var($row["Tented"], FILTER_VALIDATE_BOOLEAN), intval($row["Quantity"]), intval($row["Length"]), "/" . $row["PhotoURL"], $row["ArthropodSightingNotes"], intval($row["NumberOfLeaves"]), intval($row["AverageLeafLength"]), intval($row["HerbivoryScore"]));
+			submitINaturalistObservation($dbconn, $ids[1], $observerID, $row["Code"], $row["LocalDate"], $row["ObservationMethod"], $row["SurveyNotes"], filter_var($row["WetLeaves"], FILTER_VALIDATE_BOOLEAN), $row["Group"], filter_var($row["Hairy"], FILTER_VALIDATE_BOOLEAN), filter_var($row["Rolled"], FILTER_VALIDATE_BOOLEAN), filter_var($row["Tented"], FILTER_VALIDATE_BOOLEAN), intval($row["Quantity"]), intval($row["Length"]), "/" . $row["PhotoURL"], $row["ArthropodSightingNotes"], intval($row["NumberOfLeaves"]), intval($row["AverageLeafLength"]), intval($row["HerbivoryScore"]));
 		}
 	}
 	mysqli_close($dbconn);

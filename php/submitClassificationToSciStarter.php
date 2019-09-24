@@ -6,6 +6,6 @@
 
 	$user = User::findByEmail($email);
 	if(is_object($user) || get_class($user) == "User"){
-		submitToSciStarter($user->getEmail(), "classification", null, date("Y-m-d") . "T" . date("H:i:s"), null, 1, null);
+		submitToSciStarter(null, 0, $user->getEmail(), "classification", null, date("Y-m-d") . "T" . date("H:i:s"), null, 1, null);
 	}
 ?>
