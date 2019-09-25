@@ -3,7 +3,7 @@
 	require_once('resultMemory.php');
 
 	$HIGH_TRAFFIC_MODE = true;
-	$SAVE_TIME_LIMIT = 60;
+	$SAVE_TIME_LIMIT = 10 * 60;
 	
 	$MIN_SURVEY_REQUIREMENT = 10;
 	
