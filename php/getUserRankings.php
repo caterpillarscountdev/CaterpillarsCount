@@ -12,7 +12,7 @@
 	
 	$baseFileName = basename(__FILE__, '.php') . $siteID;
 	if($HIGH_TRAFFIC_MODE){
-		$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
+		$save = getSaveFromDatabase($baseFileName, $SAVE_TIME_LIMIT);
 		if($save !== null){
 			die($save);
 		}
@@ -99,7 +99,7 @@
 	
 	$result = "true|" . json_encode(array_values($rankingsArray));
 	if($HIGH_TRAFFIC_MODE){
-		save($baseFileName, $result);
+		saveToDatabase($baseFileName, $result);
 	}
 	die($result);
 ?>
