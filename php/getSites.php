@@ -20,7 +20,7 @@
 	
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $includeWetLeaves . ($occurrenceInsteadOfDensity ? 1 : 0) . str_replace("%", "all", $observationMethod) . $monthStart . $monthEnd . $yearStart . $yearEnd . str_replace("%", "all", $arthropod) . $minSize . str_replace("%", "all", $plantSpecies));
 	if($HIGH_TRAFFIC_MODE){
-		$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
+		$save = getSaveFromDatabase($baseFileName, $SAVE_TIME_LIMIT);
 		if($save !== null){
 			die($save);
 		}
@@ -146,7 +146,7 @@
 	}
 	$result = json_encode(array_values($sitesArray));
 	if($HIGH_TRAFFIC_MODE){
-		save($baseFileName, $result);
+		saveToDatabase($baseFileName, $result);
 	}
 	die($result);
 ?>
