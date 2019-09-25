@@ -22,7 +22,7 @@
 		return null;
 	}
 
-	function saveInDatabase($baseFileName, $result){
+	function saveToDatabase($baseFileName, $result){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM CachedResult WHERE `Name`='$baseFileName' LIMIT 1");
 		
