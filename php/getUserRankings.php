@@ -4,6 +4,10 @@
 	require_once('resultMemory.php');
 	
 	$siteID = intval($_GET["siteID"]);
+	$forceSave = false;
+	if(isset($_GET["forceSave"]) && !empty($_GET["forceSave"])){
+		$forceSave = filter_var($_GET["forceSave"], FILTER_VALIDATE_BOOLEAN);
+	}
 
 	$HIGH_TRAFFIC_MODE = true;
 	$SAVE_TIME_LIMIT = 10 * 60;
@@ -11,7 +15,7 @@
 	$MIN_SURVEY_REQUIREMENT = 10;//only for the global leaderboard- doesn't apply to the site-specific leaderboard
 	
 	$baseFileName = basename(__FILE__, '.php') . $siteID;
-	if($HIGH_TRAFFIC_MODE){
+	if($HIGH_TRAFFIC_MODE && !$forceSave){
 		$save = getSaveFromDatabase($baseFileName, $SAVE_TIME_LIMIT);
 		if($save !== null){
 			die($save);
