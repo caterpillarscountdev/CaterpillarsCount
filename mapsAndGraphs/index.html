@@ -1887,6 +1887,7 @@
 
 				$.get("../php/getSites.php?observationMethod=" + encodeURIComponent("%") + "&includeWetLeaves=true&occurrenceInsteadOfDensity=true&monthStart=1&monthEnd=12&yearStart=0&yearEnd=99999&arthropod=caterpillar&minSize=0&plantSpecies=" + encodeURIComponent("%"), function(data){
 					//success
+					console.log("Sites loaded.");
 					saveMapFilters();
 
 					var sites = JSON.parse(data);
@@ -1986,6 +1987,7 @@
 			function showLeaderboard(){
 				$.get("../php/getSiteRankings.php", function(data){
 					//success
+					console.log("Site ranking data loaded.");
 					siteRankings = JSON.parse(data);
 
 					lastSiteSortingMetric = "Caterpillars";
@@ -2006,6 +2008,7 @@
 				$.get("../php/getUserRankings.php", function(data){
 					//success
 					if(data.indexOf("true|") == 0){
+						console.log("User ranking data loaded.");
 						data = data.replace("true|", "");
 						userRankings = JSON.parse(data);
 
