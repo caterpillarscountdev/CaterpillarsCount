@@ -1464,7 +1464,7 @@
 				$("#siteUserLeaderboard")[0].innerHTML = "<div class=\"loading\"><img src=\"../images/rolling.svg\"/></div>";
 
 				console.log("Loading site user leaderbard.");
-				$.get("../php/getUserRankings.php?siteID=" + siteID, function(data){
+				$.get("../php/getUserRankings.php?cron=false&siteID=" + siteID, function(data){
 					//success
 					if(siteID == currentSiteUserLeaderboardSiteID){
 						if(data.indexOf("true|") == 0){
@@ -1737,7 +1737,7 @@
 					years = yearStart + " through " + yearEnd;
 				}
 				if(plantSpecies.replace(/ /g, "") == ""){plantSpecies = "%";}
-				$.get("../php/getSites.php?observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&occurrenceInsteadOfDensity=" + occurrenceInsteadOfDensity + "&monthStart=" + monthStart + "&monthEnd=" + monthEnd + "&yearStart=" + yearStart + "&yearEnd=" + yearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies), function(data){
+				$.get("../php/getSites.php?cron=false&observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&occurrenceInsteadOfDensity=" + occurrenceInsteadOfDensity + "&monthStart=" + monthStart + "&monthEnd=" + monthEnd + "&yearStart=" + yearStart + "&yearEnd=" + yearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies), function(data){
 					//success
 					saveMapFilters();
 
@@ -1887,7 +1887,7 @@
 					zoom: 5
 				});
 
-				$.get("../php/getSites.php?observationMethod=" + encodeURIComponent("%") + "&includeWetLeaves=true&occurrenceInsteadOfDensity=true&monthStart=1&monthEnd=12&yearStart=0&yearEnd=99999&arthropod=caterpillar&minSize=0&plantSpecies=" + encodeURIComponent("%"), function(data){
+				$.get("../php/getSites.php?cron=false&observationMethod=" + encodeURIComponent("%") + "&includeWetLeaves=true&occurrenceInsteadOfDensity=true&monthStart=1&monthEnd=12&yearStart=0&yearEnd=99999&arthropod=caterpillar&minSize=0&plantSpecies=" + encodeURIComponent("%"), function(data){
 					//success
 					console.log("Sites loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					saveMapFilters();
@@ -1987,7 +1987,7 @@
 			var shownRankings = "Site";
 			var loadedRankingsDataCount = 0;
 			function showLeaderboard(){
-				$.get("../php/getSiteRankings.php", function(data){
+				$.get("../php/getSiteRankings.php?cron=false", function(data){
 					//success
 					console.log("Site ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					siteRankings = JSON.parse(data);
@@ -2007,7 +2007,7 @@
 					//complete
 				});
 
-				$.get("../php/getUserRankings.php", function(data){
+				$.get("../php/getUserRankings.php?cron=false", function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						console.log("User ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
