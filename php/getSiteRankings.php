@@ -2,9 +2,9 @@
 	require_once('orm/resources/Keychain.php');
 	require_once('resultMemory.php');
 
-	$forceSave = false;
-	if(isset($_GET["forceSave"]) && !empty($_GET["forceSave"])){
-		$forceSave = filter_var($_GET["forceSave"], FILTER_VALIDATE_BOOLEAN);
+	$cron = true;
+	if(isset($_GET["cron"]) && !empty($_GET["cron"])){
+		$cron = filter_var($_GET["cron"], FILTER_VALIDATE_BOOLEAN);
 	}
 
 	$HIGH_TRAFFIC_MODE = true;
@@ -13,7 +13,7 @@
 	$MIN_SURVEY_REQUIREMENT = 10;
 	
 	$baseFileName = basename(__FILE__, '.php');
-	if($HIGH_TRAFFIC_MODE && !$forceSave){
+	if($HIGH_TRAFFIC_MODE && !$cron){
 		$save = getSaveFromDatabase(basename(__FILE__, '.php'), $SAVE_TIME_LIMIT);
 		if($save !== null){
 			die($save);
