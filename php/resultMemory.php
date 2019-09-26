@@ -41,6 +41,11 @@
   
 	function getSaveFromDatabase($baseFileName, $timeLimit){
 		$dbconn = (new Keychain)->getDatabaseConnection();
+		
+		//clean up old saves
+		mysqli_query($dbconn, "DELETE FROM `CachedResult` WHERE `Timestamp`<'" . (time() - (24 * 60 * 60)) . "'");
+		
+		//fetch requested save
 		$query = mysqli_query($dbconn, "SELECT * FROM CachedResult WHERE `Name`='$baseFileName' LIMIT 1");
 		mysqli_close($dbconn);
 		
