@@ -110,12 +110,13 @@
 
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-
-				for(var i = 0; i < $(".noautocomplete").length; i++){
-					$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
-					$(".noautocomplete").eq(i)[0].style.display = "inline-block";
-					$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
-				}
+				setTimeout(function(){
+					for(var i = 0; i < $(".noautocomplete").length; i++){
+						$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
+						$(".noautocomplete").eq(i)[0].style.display = "inline-block";
+						$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
+					}
+				}, 1);
 			});
 
 			$(window).resize(function(){
