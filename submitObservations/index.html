@@ -119,10 +119,10 @@
 					for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
 						$("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
 					}
-				}, 50);
+				}, 1);
 				setTimeout(function(){
 					clearInterval(stopAutocompleteInterval);
-				}, 5000);
+				}, 2000);
 			});
 
 			$(window).resize(function(){
