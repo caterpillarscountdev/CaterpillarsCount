@@ -116,7 +116,7 @@
 					$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
 				}
 				var stopAutocompleteInterval = setInterval(function(){
-					for(var i = 0; i < $("input:-internal-autofill-selected").length; i++){
+					for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
 						$("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
 					}
 				}, 50);
