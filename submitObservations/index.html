@@ -110,13 +110,19 @@
 
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-				setTimeout(function(){
-					for(var i = 0; i < $(".noautocomplete").length; i++){
-						$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
-						$(".noautocomplete").eq(i)[0].style.display = "inline-block";
-						$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
+				for(var i = 0; i < $(".noautocomplete").length; i++){
+					$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
+					$(".noautocomplete").eq(i)[0].style.display = "inline-block";
+					$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
+				}
+				var stopAutocompleteInterval = setInterval(function(){
+					for(var i = 0; i < $("input:-internal-autofill-selected").length; i++){
+						$("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
 					}
-				}, 100);
+				}, 50);
+				setTimeout(function(){
+					clearInterval(stopAutocompleteInterval);
+				}, 5000);
 			});
 
 			$(window).resize(function(){
