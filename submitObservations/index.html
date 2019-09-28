@@ -116,7 +116,7 @@
 						$(".noautocomplete").eq(i)[0].style.display = "inline-block";
 						$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
 					}
-				}, 1);
+				}, 100);
 			});
 
 			$(window).resize(function(){
@@ -143,12 +143,12 @@
 					<div class="inputTitle">Branch survey code:</div>
 					<div>
 						<div style="text-align:left;"></div>
-						<input type="text" id="retrySurveyLocationCode" oninput="getPlant(this, $('#retrySitePasswordGroup'));" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly class="noautocomplete"/>
+						<input type="text" id="retrySurveyLocationCode" oninput="getPlant(this, $('#retrySitePasswordGroup'));" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" readonly class="noautocomplete"/>
 					</div>
 				</div>
 				<div class="group" id="retrySitePasswordGroup">
 					<div class="inputTitle">Site password:</div>
-					<input type="password" id="retrySitePassword" onclick="this.select();" autocomplete="off" readonly class="noautocomplete"/>
+					<input type="password" id="retrySitePassword" onclick="this.select();" autocomplete="new-password" readonly class="noautocomplete"/>
 				</div>
 				<button id="retryPlantCredentialsButton" onclick="if(tap()){retryPlantCredentials();}">Fix it!</button>
 				<div class="discard" onclick="discardPlantCredentials();">Just discard this survey.</div>
@@ -258,7 +258,7 @@
 									</table>
 									<div>
 										<div></div>
-										<input type="text" id="plantCode" class="noautocomplete" oninput="getPlant(this, $('#sitePasswordGroup'));if($('#time')[0].value == '' && $('#date')[0].value == ''){autosetDateAndTimeInputs();}" readonly autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="noautocomplete1"/>
+										<input type="text" id="plantCode" class="noautocomplete" oninput="getPlant(this, $('#sitePasswordGroup'));if($('#time')[0].value == '' && $('#date')[0].value == ''){autosetDateAndTimeInputs();}" readonly autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" name="noautocomplete1"/>
 									</div>
 								</div>
 
