@@ -1,6 +1,11 @@
 <?php
 	require_once('orm/resources/Keychain.php');
 	require_once('resultMemory.php');
+
+	$cron = true;
+	if(isset($_GET["cron"]) && !empty($_GET["cron"])){
+		$cron = filter_var($_GET["cron"], FILTER_VALIDATE_BOOLEAN);
+	}
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 
@@ -14,13 +19,25 @@
 	$arthropod = mysqli_real_escape_string($dbconn, rawurldecode($_GET["arthropod"]));//% if all
 	$minSize = intval($_GET["minSize"]);
 	$plantSpecies = mysqli_real_escape_string($dbconn, rawurldecode($_GET["plantSpecies"]));//% if all
+	if($cron){
+		$includeWetLeaves = 1;
+		$occurrenceInsteadOfDensity = true;
+		$observationMethod = "%";
+		$monthStart = sprintf('%02d', 1);
+		$monthEnd = sprintf('%02d', 12);
+		$yearStart = 0;
+		$yearEnd = 99999;
+		$arthropod = mysqli_real_escape_string($dbconn, "caterpillar");//% if all
+		$minSize = 0;
+		$plantSpecies = "%";//% if all
+	}
 
 	$HIGH_TRAFFIC_MODE = true;
-	$SAVE_TIME_LIMIT = 60;
+	$SAVE_TIME_LIMIT = 15 * 60;
 	
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $includeWetLeaves . ($occurrenceInsteadOfDensity ? 1 : 0) . str_replace("%", "all", $observationMethod) . $monthStart . $monthEnd . $yearStart . $yearEnd . str_replace("%", "all", $arthropod) . $minSize . str_replace("%", "all", $plantSpecies));
-	if($HIGH_TRAFFIC_MODE){
-		$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
+	if($HIGH_TRAFFIC_MODE && !$cron){
+		$save = getSaveFromDatabase($baseFileName, $SAVE_TIME_LIMIT);
 		if($save !== null){
 			die($save);
 		}
@@ -146,7 +163,7 @@
 	}
 	$result = json_encode(array_values($sitesArray));
 	if($HIGH_TRAFFIC_MODE){
-		save($baseFileName, $result);
+		saveToDatabase($baseFileName, $result);
 	}
 	die($result);
 ?>

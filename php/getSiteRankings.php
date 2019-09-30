@@ -2,14 +2,19 @@
 	require_once('orm/resources/Keychain.php');
 	require_once('resultMemory.php');
 
+	$cron = true;
+	if(isset($_GET["cron"]) && !empty($_GET["cron"])){
+		$cron = filter_var($_GET["cron"], FILTER_VALIDATE_BOOLEAN);
+	}
+
 	$HIGH_TRAFFIC_MODE = true;
-	$SAVE_TIME_LIMIT = 60;
+	$SAVE_TIME_LIMIT = 15 * 60;
 	
 	$MIN_SURVEY_REQUIREMENT = 10;
 	
 	$baseFileName = basename(__FILE__, '.php');
-	if($HIGH_TRAFFIC_MODE){
-		$save = getSave(basename(__FILE__, '.php'), $SAVE_TIME_LIMIT);
+	if($HIGH_TRAFFIC_MODE && !$cron){
+		$save = getSaveFromDatabase(basename(__FILE__, '.php'), $SAVE_TIME_LIMIT);
 		if($save !== null){
 			die($save);
 		}
@@ -90,7 +95,7 @@
 	
 	$result = json_encode(array_values($rankingsArray));
 	if($HIGH_TRAFFIC_MODE){
-		save($baseFileName, $result);
+		saveToDatabase($baseFileName, $result);
 	}
 	die($result);
 	

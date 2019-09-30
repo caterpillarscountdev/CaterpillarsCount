@@ -4,15 +4,19 @@
 	require_once('resultMemory.php');
 	
 	$siteID = intval($_GET["siteID"]);
+	$cron = true;
+	if(isset($_GET["cron"]) && !empty($_GET["cron"])){
+		$cron = filter_var($_GET["cron"], FILTER_VALIDATE_BOOLEAN);
+	}
 
 	$HIGH_TRAFFIC_MODE = true;
-	$SAVE_TIME_LIMIT = 60;
+	$SAVE_TIME_LIMIT = 15 * 60;
 	
 	$MIN_SURVEY_REQUIREMENT = 10;//only for the global leaderboard- doesn't apply to the site-specific leaderboard
 	
 	$baseFileName = basename(__FILE__, '.php') . $siteID;
-	if($HIGH_TRAFFIC_MODE){
-		$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
+	if($HIGH_TRAFFIC_MODE && !$cron){
+		$save = getSaveFromDatabase($baseFileName, $SAVE_TIME_LIMIT);
 		if($save !== null){
 			die($save);
 		}
@@ -24,7 +28,7 @@
 	}
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
-	$query = mysqli_query($dbconn, "SELECT User.ID, CONCAT(User.FirstName, ' ', User.LastName) AS FullName, User.Hidden, SUM(CASE WHEN Survey.LocalDate >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) THEN 1 ELSE 0 END) AS Week, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(DATE_FORMAT(CURDATE(),'%Y-%m'), '-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS Month, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS Year, Count(*) AS Total, COUNT(DISTINCT Survey.LocalDate) AS TotalUniqueDates FROM `Survey` JOIN User ON Survey.UserFKOfObserver=User.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK" . $siteRestriction . " GROUP BY User.ID ORDER BY Year DESC");
+	$query = mysqli_query($dbconn, "SELECT User.ID, CONCAT(User.FirstName, ' ', User.LastName) AS FullName, User.Hidden, SUM(CASE WHEN Survey.LocalDate >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) THEN 1 ELSE 0 END) AS Week, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(DATE_FORMAT(CURDATE(),'%Y-%m'), '-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS Month, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS Year, Count(*) AS Total, COUNT(DISTINCT Survey.LocalDate) AS TotalUniqueDates FROM `Survey` JOIN User ON Survey.UserFKOfObserver=User.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK" . $siteRestriction . " GROUP BY User.ID");
 	
 	$rankingsArray = array();
   	$i = 1;
@@ -99,7 +103,7 @@
 	
 	$result = "true|" . json_encode(array_values($rankingsArray));
 	if($HIGH_TRAFFIC_MODE){
-		save($baseFileName, $result);
+		saveToDatabase($baseFileName, $result);
 	}
 	die($result);
 ?>
