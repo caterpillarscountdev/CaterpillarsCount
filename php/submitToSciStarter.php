@@ -2,6 +2,7 @@
 	function submitToSciStarter($dbconn, $surveyID, $email, $type, $where = null, $when = null, $duration = null, $magnitude = null, $extra = null){
 		$KEY = getenv("SciStarterKey");
 		$ch = curl_init("https://scistarter.com/api/profile/id?hashed=" . hash("sha256", $email) . "&key=" . $KEY);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$profileID = json_decode(curl_exec($ch), true)["scistarter_profile_id"];
 		curl_close($ch);
