@@ -108,13 +108,13 @@
 		}
 	}
 	else{//mean biomass
-		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, ArthropodSighting.Group, ArthropodSighting.Length, SUM(ArthropodSighting.Quantity) FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE MONTH(Survey.LocalDate)>=$monthStart AND MONTH(Survey.LocalDate)<=$monthEnd AND YEAR(Survey.LocalDate)>=$yearStart AND YEAR(Survey.LocalDate)<=$yearEnd AND ArthropodSighting.Group LIKE '$arthropod' AND (Plant.Species LIKE '$plantSpecies' OR (Plant.Species='N/A' AND Survey.PlantSpecies LIKE '$plantSpecies')) AND Survey.WetLeaves IN (0, $includeWetLeaves) AND ArthropodSighting.Length>=$minSize AND Survey.ObservationMethod LIKE '$observationMethod' GROUP BY Plant.SiteFK, ArthropodSighting.Group, ArthropodSighting.Length");
+		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, ArthropodSighting.Group, ArthropodSighting.Length, SUM(ArthropodSighting.Quantity) AS TotalQuantity FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE MONTH(Survey.LocalDate)>=$monthStart AND MONTH(Survey.LocalDate)<=$monthEnd AND YEAR(Survey.LocalDate)>=$yearStart AND YEAR(Survey.LocalDate)<=$yearEnd AND ArthropodSighting.Group LIKE '$arthropod' AND (Plant.Species LIKE '$plantSpecies' OR (Plant.Species='N/A' AND Survey.PlantSpecies LIKE '$plantSpecies')) AND Survey.WetLeaves IN (0, $includeWetLeaves) AND ArthropodSighting.Length>=$minSize AND Survey.ObservationMethod LIKE '$observationMethod' GROUP BY Plant.SiteFK, ArthropodSighting.Group, ArthropodSighting.Length");
 		$siteBiomasses = array();
 		while($row = mysqli_fetch_assoc($query)){
 			if(!array_key_exists(strval($row["SiteFK"]), $siteBiomasses)){
 				$siteBiomasses[strval($row["SiteFK"])] = 0;
 			}
-			$siteBiomasses[strval($row["SiteFK"])] += (getBiomass($row["Group"], $row["Length"]) * floatval($row["Quantity"]));
+			$siteBiomasses[strval($row["SiteFK"])] += (getBiomass($row["Group"], $row["Length"]) * floatval($row["TotalQuantity"]));
 		}
 		
 		foreach($siteBiomasses as $siteID => $totalBiomass){
