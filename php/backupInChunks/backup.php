@@ -1,7 +1,7 @@
 <?php
   header('Access-Control-Allow-Origin: *');
   
-	require_once('../resultMemory.php');
+	require_once('../tools/resultMemory.php');
   require_once('../orm/resources/Keychain.php');
 
 	ini_set('memory_limit', '-1');
