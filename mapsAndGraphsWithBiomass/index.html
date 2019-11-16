@@ -1609,6 +1609,7 @@
 					years = yearStart + " through " + yearEnd;
 				}
 				if(plantSpecies.replace(/ /g, "") == ""){plantSpecies = "%";}
+				console.log("LOGGED URL: https://caterpillarscount.unc.edu/php/getSitesWithBiomass.php?cron=false&observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&comparisonMetric=" + comparisonMetric + "&monthStart=" + monthStart + "&monthEnd=" + monthEnd + "&yearStart=" + yearStart + "&yearEnd=" + yearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies));
 				$.get("../php/getSitesWithBiomass.php?cron=false&observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&comparisonMetric=" + comparisonMetric + "&monthStart=" + monthStart + "&monthEnd=" + monthEnd + "&yearStart=" + yearStart + "&yearEnd=" + yearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies), function(data){
 					//success
 					saveMapFilters();
@@ -1755,6 +1756,7 @@
 					center: {lat: 37.068427, lng: -80.089019},
 					zoom: 5
 				});
+				console.log("LOGGED URL: https://caterpillarscount.unc.edu/php/getSitesWithBiomass.php?cron=false&observationMethod=" + encodeURIComponent("%") + "&includeWetLeaves=true&comparisonMetric=occurrence&monthStart=1&monthEnd=12&yearStart=0&yearEnd=99999&arthropod=caterpillar&minSize=0&plantSpecies=" + encodeURIComponent("%"));
 				$.get("../php/getSitesWithBiomass.php?cron=false&observationMethod=" + encodeURIComponent("%") + "&includeWetLeaves=true&comparisonMetric=occurrence&monthStart=1&monthEnd=12&yearStart=0&yearEnd=99999&arthropod=caterpillar&minSize=0&plantSpecies=" + encodeURIComponent("%"), function(data){
 					//success
 					console.log("Sites loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
@@ -2490,6 +2492,7 @@
 			}
 			function loadSetFromFilters(filters, callback){
 				console.log("Loading phenology: " + JSON.stringify(filters));
+				console.log("LOGGED URL: https://caterpillarscount.unc.edu/php/getPhenologyWithBiomass.php?lines=" + encodeURIComponent(JSON.stringify([filters])));
 				$.get("https://caterpillarscount.unc.edu/php/getPhenologyWithBiomass.php?lines=" + encodeURIComponent(JSON.stringify([filters])), function(data){
 					//success
 					console.log("Loaded phenology: " + JSON.stringify(filters));
@@ -2643,6 +2646,7 @@
 				loadingComposition = compositionQueue[nextIndex];
 				compositionQueue.splice(nextIndex, 1);
 				console.log("Loading composition: " + loadingComposition[0] + " " + loadingComposition[1] + " " + loadingComposition[2]);
+				console.log("LOGGED URL: https://caterpillarscount.unc.edu/php/getCompositionWithBiomass.php?siteIDs=" + JSON.stringify([loadingComposition[2]]) + "&breakdown=" + loadingComposition[0] + "&comparisonMetric=" + loadingComposition[1]);
 				$.get("https://caterpillarscount.unc.edu/php/getCompositionWithBiomass.php?siteIDs=" + JSON.stringify([loadingComposition[2]]) + "&breakdown=" + loadingComposition[0] + "&comparisonMetric=" + loadingComposition[1], function(data){
 					if(data.indexOf("true|") == 0){
 						console.log("Loaded composition: " + loadingComposition[0] + " " + loadingComposition[1] + " " + loadingComposition[2]);
