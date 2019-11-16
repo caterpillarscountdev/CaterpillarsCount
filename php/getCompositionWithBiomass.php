@@ -105,7 +105,7 @@
 				$query = mysqli_query($dbconn, "SELECT COUNT(*) AS TotalSurveyCount FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID'");
 				$totalSurveyCount = floatval(mysqli_fetch_assoc($query)["TotalSurveyCount"]);
 				$arthropodMeanBiomass = array();
-				$keys = array_keys($arthropodSurveys);
+				$keys = array_keys($arthropodBiomasses);
 				for($i = 0; $i < count($keys); $i++){
 					$arthropodMeanBiomass[$readableArthropods[$keys[$i]]] = round(($arthropodBiomasses[$keys[$i]] / $totalSurveyCount), 2);
 				}
