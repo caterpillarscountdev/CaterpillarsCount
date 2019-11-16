@@ -2292,7 +2292,7 @@
 						break;
 					}
 				}
-				labels[labels.length] = [label, color];alert("points:" + );
+				labels[labels.length] = [label, color];alert("points:" + JSON.stringify(points));
 				var lines = getLines(label, color, points);alert('LINES: ' + JSON.stringify(lines));alert('DATASETS: 'JSON.stringify(lineConfig.data.datasets));
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					lineConfig.data.datasets = [];
