@@ -1,6 +1,6 @@
 <?php
-  function getBiomass($group, $length){
-  		$a = 0.027;//unidentified default
+	function getBiomass($group, $length){
+		$a = 0.027;//unidentified default
   		$b = 2.494;//unidentified default
   		
   		if($group == "ant"){			$a = 0.009;	$b = 2.919;	}
