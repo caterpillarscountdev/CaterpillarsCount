@@ -2249,10 +2249,10 @@
 					lastDatesTime = thisDatesTime;
 					pointSets[pointSets.length - 1][pointSets[pointSets.length - 1].length] = points[i];
 				}
-				var lines = [];
+				var lines = [];alert("POINTSETS: " + JSON.stringify(pointSets));
 				for(var i = 0; i < pointSets.length; i++){
 					lines[lines.length] = getLine(label, color, pointSets[i]);
-				}
+				}alert("LINES IN GETLINES(): " + JSON.stringify(lines));
 				chartedSets[label] = lines;
 				
 				var comparisonMetric = $("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(2)[0].innerHTML, "meanBiomass");
@@ -2292,8 +2292,8 @@
 						break;
 					}
 				}
-				labels[labels.length] = [label, color];
-				var lines = getLines(label, color, points);alert(JSON.stringify('LINES: ' + lines));alert(JSON.stringify('DATASETS: ' + lineConfig.data.datasets));
+				labels[labels.length] = [label, color];alert("points:" + );
+				var lines = getLines(label, color, points);alert('LINES: ' + JSON.stringify(lines));alert('DATASETS: 'JSON.stringify(lineConfig.data.datasets));
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					lineConfig.data.datasets = [];
 				}
