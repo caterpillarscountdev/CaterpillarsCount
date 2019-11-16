@@ -74,7 +74,7 @@
 		//get total biomass each day
 		$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, ArthropodSighting.Group, ArthropodSighting.Length, SUM(ArthropodSighting.Quantity) AS TotalQuantity FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.Group LIKE '$arthropod' AND YEAR(Survey.LocalDate)='$year' GROUP BY Survey.LocalDate, ArthropodSighting.Group, ArthropodSighting.Length");
 		while($row = mysqli_fetch_assoc($query)){
-			$dateWeights[$row["LocalDate"]][3] += (getBiomass($row["Group"], $row["Length"]) * floatval($row["Quantity"]));
+			$dateWeights[$row["LocalDate"]][3] += (getBiomass($row["Group"], $row["Length"]) * floatval($row["TotalQuantity"]));
 		}
     
 		//finalize
