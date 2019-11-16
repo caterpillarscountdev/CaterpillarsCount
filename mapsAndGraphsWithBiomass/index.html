@@ -2693,7 +2693,7 @@
 				clearInterval(compositionDataIsReadyCheck);
 				$("#reloadComposition")[0].style.display = "none";
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
-				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity".replace("Mean Biomass Per Survey", "meanBiomass");
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity").replace("Mean Biomass Per Survey", "meanBiomass");
 				var siteIDs = compositionSiteIDs;
 				if(xAxis != "site"){siteIDs = [activeSiteID];}
 				$("#compositionLoadingCover").stop().fadeIn(300);
