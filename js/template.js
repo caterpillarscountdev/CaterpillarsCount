@@ -248,7 +248,7 @@
 					}
 					else{
 						if(!HIGH_TRAFFIC_MODE){
-							setTimeout(queueManagerRequests, 1000);
+							setTimeout(queueManagerRequests, 30000);
 						}
 					}
 				});
