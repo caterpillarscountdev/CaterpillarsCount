@@ -1,0 +1,3413 @@
+<html>
+	<head>
+		<!-- Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+			gtag('config', 'UA-113319025-1');
+		</script>
+		<!-- End of Google Analytics -->
+
+		<title>Maps & Graphs | Caterpillars Count!</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../images/favicon/apple-touch-icon-114x114.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../images/favicon/apple-touch-icon-72x72.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../images/favicon/apple-touch-icon-144x144.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="60x60" href="../images/favicon/apple-touch-icon-60x60.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="120x120" href="../images/favicon/apple-touch-icon-120x120.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="76x76" href="../images/favicon/apple-touch-icon-76x76.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="152x152" href="../images/favicon/apple-touch-icon-152x152.png" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-196x196.png" sizes="196x196" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-32x32.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-16x16.png" sizes="16x16" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-128.png" sizes="128x128" />
+		<meta name="msapplication-TileColor" content="transparent" />
+		<meta name="msapplication-TileImage" content="../images/favicon/mstile-144x144.png" />
+		<meta name="msapplication-square70x70logo" content="../images/favicon/mstile-70x70.png" />
+		<meta name="msapplication-square150x150logo" content="../images/favicon/mstile-150x150.png" />
+		<meta name="msapplication-wide310x150logo" content="../images/favicon/mstile-310x150.png" />
+		<meta name="msapplication-square310x310logo" content="../images/favicon/mstile-310x310.png" />
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		<script src="https://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3VugOTqs_94H5B51-xVyxBGHqx4uqxTA"></script>
+		<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<link href="../css/template.css" rel="stylesheet">
+		<script src="../js/template.js?v=1"></script>
+		<link href="../css/checkbox.css?v=1" rel="stylesheet">
+		<script src="../js/checkbox.js?v=1"></script>
+		<style>
+			.loading{
+				background:rgba(0,0,0,0.1);
+				padding:20px;
+				text-align:center;
+				border-radius:5px;
+			}
+			.loading>img{
+				height:30px;
+			}
+			#rankingsSwitch, #graphSwitch{
+				color:#666;
+				background:#eee;
+				display:inline-block;
+				border-radius:5px;
+				overflow:hidden;
+				border-bottom:1px solid rgba(0,0,0,0.2);
+				white-space:nowrap;
+				margin-bottom:20px;
+				display:none;
+			}
+			#graphSwitch{
+				display:inline-block;
+			}
+			#rankingsSwitch button, #graphSwitch button{
+				color:inherit;
+				cursor:pointer;
+				outline:none;
+				margin:0px;
+				border:0px none transparent;
+				border-radius:0px;
+				padding:7px 15px;
+				font-size:14px;
+				background:transparent;
+				display:inline-block;
+				text-align:center;
+				width:70px;
+			}
+			#graphSwitch button{
+				width:137px;
+			}
+			#rankingsSwitch button:last-of-type, #graphSwitch button:last-of-type{
+				margin-left:-4px;
+			}
+			#rankingsSwitch .active, #graphSwitch .active{
+				background:rgba(0,0,0,.1);
+				-webkit-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+				-moz-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+				box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+			}
+			#superHeader, #siteUserSuperHeader{
+				background:#555;
+				color:#fff;
+				text-align:right;
+				font-family: 'Roboto Slab', serif;
+				border-radius:4px 4px 0px 0px;
+				overflow:hidden;
+				display:none;
+			}
+			#superHeader>div, #siteUserSuperHeader>div{
+				padding:5px 7px;
+				background:#444;
+				width:60%;
+				display:inline-block;
+				box-sizing:border-box;
+				margin-right:13%;
+				text-align:center;
+				text-transform:uppercase;
+			}
+			#rankings table, #siteStats table, #siteUserLeaderboard table{
+				width:100%;
+				border-collapse:collapse;
+				font-family: 'Roboto Slab', serif;
+				color:#666;
+			}
+			#siteStats table:first-of-type{
+				border-radius:4px;
+				overflow:hidden;
+			}
+			#rankings table thead, #siteStats table thead, #siteUserLeaderboard table thead{
+				background:#666;
+				color:#fff;
+			}
+			#siteStats td{
+				text-align:center;
+				background:rgba(0,0,0,0.025);
+			}
+			#rankings table tr td>div, #siteUserLeaderboard table tr td>div{
+				max-height:500px;
+				position:relative;
+				min-width:100%;
+			}
+			#rankings table tr:nth-of-type(even), #siteUserLeaderboard table tr:nth-of-type(even){
+				background:rgba(0,0,0,0.025);
+			}
+			#rankings table td, #rankings table th, #siteUserLeaderboard table td, #siteUserLeaderboard table th{
+				width:15%;
+				box-sizing:border-box;
+				text-align:left;
+			}
+			#rankings table th, #siteUserLeaderboard table th{
+				padding:5px 7px;
+				cursor:pointer;
+			}
+			#rankings table th:first-of-type, #siteUserLeaderboard table th:first-of-type{
+				cursor:default;
+			}
+			#siteStats table:first-of-type th{
+				cursor:pointer;
+			}
+			#rankings table th:hover, #siteUserLeaderboard table th:hover{
+				text-decoration:underline;
+			}
+			#rankings table td, #siteStats table td, #siteStats table th, #siteUserLeaderboard table td{
+				padding:5px 7px;
+			}
+			#rankings table td:nth-of-type(1), #rankings table th:nth-of-type(1), #siteUserLeaderboard table td:nth-of-type(1), #siteUserLeaderboard table th:nth-of-type(1){
+				width:5%;
+			}
+			#rankings table td:nth-of-type(2), #rankings table th:nth-of-type(2), #siteUserLeaderboard table td:nth-of-type(2), #siteUserLeaderboard table th:nth-of-type(2){
+				width:22%;
+			}
+			#rankings table th:nth-of-type(3), #rankings table th:nth-of-type(4), #rankings table th:nth-of-type(5), #rankings table th:nth-of-type(6), #siteUserLeaderboard table th:nth-of-type(3), #siteUserLeaderboard table th:nth-of-type(4), #siteUserLeaderboard table th:nth-of-type(5), #siteUserLeaderboard table th:nth-of-type(6){
+				text-align:right;
+				background:rgba(0,0,0,0.1);
+			}
+			#rankings table td:nth-of-type(3), #rankings table td:nth-of-type(4), #rankings table td:nth-of-type(5), #rankings table td:nth-of-type(6), #siteUserLeaderboard table td:nth-of-type(3), #siteUserLeaderboard table td:nth-of-type(4), #siteUserLeaderboard table td:nth-of-type(5), #siteUserLeaderboard table td:nth-of-type(6){
+				text-align:right;
+				background:rgba(0,0,0,0.0315);
+			}
+			#rankings table td:last-of-type, #rankings table th:last-of-type, #siteUserLeaderboard table td:last-of-type, #siteUserLeaderboard table th:last-of-type{
+				text-align:right;
+				width:13%;
+			}
+			#rankings table td>div, #siteUserLeaderboard table td>div{
+				display:inline-block;
+			}
+			#rankings table tr:nth-of-type(10) ~ tr td, #siteUserLeaderboard table tr:nth-of-type(10) ~ tr td{
+				padding:0px 7px;
+			}
+			#rankings table tr:nth-of-type(10) ~ tr td>div, #siteUserLeaderboard table tr:nth-of-type(10) ~ tr td>div{
+				max-height:0px;
+				overflow:hidden;
+			}
+			#showMoreRankings, #showMoreSiteUserRankings{
+				display:none;
+				font-family: 'Roboto Slab', serif;
+				text-align:center;
+				margin-top:20px;
+				color:#777;
+				text-transform:uppercase;
+				font-size:12px;
+			}
+			#showMoreRankings>div, #showMoreSiteUserRankings>div{
+				display:inline-block;
+				cursor:pointer;
+				padding:5px;
+				text-decoration:underline;
+			}
+			table td:first-of-type .bottomTooltip{
+				left:0px;
+				margin-left:0px;
+			}
+			table td:first-of-type .bottomTooltip .arrow{
+				margin:-12px 0px 0px 0px;
+			}
+			.bottomTooltip{
+				display:none;
+				position:absolute;
+				top:100%;
+				margin-top:10px;
+				right:0px;
+				width:180px;
+				font-size:13px;
+				padding:5px;
+				border-radius:4px;
+				background:#444;
+				color:#fff;
+				box-sizing:border-box;
+				z-index:1;
+				text-align:left;
+			}
+			.bottomTooltip .arrow{
+				position:relative;
+				right:0px;
+				margin:-12px 0px 0px 153px;
+				border:5px solid transparent;
+				border-top:0px none transparent;
+				border-bottom:7px solid #444;
+				width:0px;
+			}
+			#selectedSitePanel .bottomTooltip{
+				text-align:center;
+			}
+			#selectedSitePanel .bottomTooltip .arrow{
+				position:absolute;
+				right:30px;
+				margin:0px;
+				top:-7px;
+			}
+			#selectedSitePanel h3{
+				margin-top:40px;
+			}
+			#selectedSitePanel h3:first-of-type{
+				margin-top:20px;
+			}
+			#rankings .underText, #siteUserLeaderboard .underText{
+				color:rgba(0,0,0,0.4);
+				font-size:12px;
+			}
+			#rankings .underText::after, #siteUserLeaderboard .underText::after{
+				content:" survey date(s)";
+			}
+			#map{
+				width:100%;
+				height:92%;
+				position:absolute;
+				left:0px;
+				right:0px;
+			}
+			#globalLeaderboardNotice{
+				font-size:10px;
+				margin-top:-10px;
+				margin-bottom:10px;
+			}
+			#selectedSitePanel{
+				display:none;
+			}
+			.forceWrapIfNeeded{
+				word-wrap: break-word;
+			}
+			#lastSurveyed{
+				font-size:14px;
+				color:#999;
+				font-family: 'Roboto Slab', serif;
+				text-align:center;
+				margin-top:-30px;
+				margin-bottom:40px;
+			}
+			
+			#siteINaturalistLink{
+				font-size:18px;
+				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+			}
+			#selectedSitePanel h3:first-of-type{
+				margin-top:0px;
+			}
+			#noDataSection{
+				text-align:center;
+			}
+			#noDataSection p{
+				padding:10px;
+				background:rgba(0,0,0,0.05);
+				border-radius:4px;
+				display:inline-block;
+			}
+			#mobileSiteStats{
+				display:none;
+				background:rgba(0,0,0,0.02);
+				padding:10px;
+				border-radius:4px;
+			}
+			#mobileSiteStats>ul{
+				background:transparent;
+				padding-left:21px;
+			}
+			#mapBar{
+				background:#eee;
+				margin:0px -100px;
+				text-align:right;
+				border-bottom:2px solid rgba(0,0,0,0.05);
+				text-transform:uppercase;
+				font-family:'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				color:#666;
+				position:relative;
+				z-index:1;
+			}
+			#mapFilters{
+				margin:0px -100px;
+				max-height:0px;
+				overflow:hidden;
+				background:#eee;
+			}
+			#mapFilters>div{
+				display:table;
+				width:100%;
+				background:rgba(0,0,0,0.01);
+			}
+			#mapFilters>div>div{
+				padding:20px;
+				width:25%;
+				box-sizing:border-box;
+				border-right:2px solid rgba(0,0,0,0.05);
+				display:table-cell;
+			}
+			#mapFilters>div:last-of-type{
+				border-right:0px none transparent;
+			}
+			#mapFilters>div>div .inputTitle{
+				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				color:#666;
+				text-transform:uppercase;
+				font-size:14px;
+			}
+			#mapFilters>button{
+				margin: 0px;
+				width: 100%;
+				border-radius: 0px;
+				background: rgba(0,0,0,0.15);
+			}
+			#mapBar>div{
+				display:table;
+				width:100%;
+			}
+			#mapBar>div>div .title{
+				font-size:10px;
+				margin-bottom:5px;
+				text-align:left;
+				font-weight:bold;
+				color:#888;
+			}
+			#mapTitle{
+				font-size:14px;
+				display:table-cell;
+				vertical-align:middle;
+				padding:0px 20px;
+				border-right:2px solid rgba(0,0,0,0.05);
+				white-space: pre;
+			}
+			#mapScale{
+				display:table-cell;
+				vertical-align:middle;
+				padding:0px 20px;
+				border-right:2px solid rgba(0,0,0,0.05);
+			}
+			#mapScale>div{
+				white-space: nowrap;
+			}
+			#mapScale .scaleCircle, #mapScale .smallScaleCircle{
+				width:15px;
+				height:15px;
+				border-radius:9999px;
+				border:1px solid #000;
+				margin-right:10px;
+				opacity:.9;
+				display:inline-block;
+			}
+			#mapScale .scaleCircle:last-of-type{
+				margin-right:0px;
+			}
+			#mapScale .scaleCircle .scaleLabel{
+				position:absolute;
+				top:100%;
+				margin-top:5px;
+				left:-14px;
+				width:45px;
+				text-align:center;
+				color:#666;
+				font-size:10px;
+			}
+			#mapScale .smallScaleCircle{
+				width:7px;
+				height:7px;
+				background:#bbb;
+				margin-bottom:4px;
+			}
+			.select{
+				width:100%;
+				-webkit-appearance: none;
+    				-moz-appearance: none;
+    				appearance: none;
+    				border-radius:4px;
+    				overflow:hidden;
+    				background:#fff;
+				border:1px solid #ddd;
+				border-bottom:2px solid #ddd;
+				color:#aaa;
+				box-sizing:border-box;
+				margin-top:5px;
+				cursor:pointer;
+				padding:0px;
+				color:#aaa;
+				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+			}
+			.select .option{
+				max-height:0px;
+				overflow:hidden;
+			}
+			.select .option.selected{
+				max-height:250px;
+				overflow:hidden;
+			}
+			.select .option .value{
+				display:none;
+			}
+			.select .option .shown{
+				padding:16px;
+				position:relative;
+				font-size:16px;
+			}
+			.select .option:nth-of-type(even){
+				background:#f7f7f7;
+			}
+			.select .option .shown .image{
+				height:34px;
+				width:34px;
+				background-size:contain;
+				background-repeat:no-repeat;
+				background-position:center;
+				display:inline-block;
+				opacity:.4;
+				position:absolute;
+				right:20px;
+				top:10px;
+			}
+			.select .option .shown .text{
+				display:inline-block;
+				padding-right:40px;
+			}
+			ul.ui-autocomplete{
+				width:753px;
+				box-sizing:border-box;
+				padding:0px;
+			}
+			ul.ui-autocomplete>li{
+				background:#888;/*#a1c3ff;*/
+				color:#fff;
+				font-size:18px;
+				padding:5px 25px;
+				box-sizing:border-box;
+				list-style-type:none;
+			}
+			ul.ui-autocomplete>li:last-of-type{
+				border-radius:0px 0px 4px 4px;
+				overflow:hidden;
+				border-bottom:2px solid rgba(0,0,0,.2);
+			}
+			.ui-helper-hidden-accessible{
+				display:none;
+			}
+			.ui-menu-item{
+				font-size:14px;
+				font-family: 'Roboto Slab', serif;
+				cursor:pointer;
+			}
+			#densityOccurrenceArrow, #observationMethodArrow{
+				pointer-events:none;
+				cursor: pointer;
+				height: 34px;
+				width: 34px;
+				background-image:url('../images/selectIcons/notselected.png');
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: center;
+				display: inline-block;
+				opacity: .4;
+				position: absolute;
+				right: 20px;
+				top: 10px;
+			}
+			#months, #years{
+				text-align:center;
+				font-size:12px;
+				margin-top:5px;
+				color:#bbb;
+				text-transform:uppercase;
+				font-family:'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+			}
+			#monthsSlider.rangeSlider, #yearsSlider.rangeSlider{
+				margin:20px;
+				height:2px;
+				border:0px none transparent;
+				background:rgba(0,0,0,0.1);
+				cursor:pointer;
+			}
+			#yearsSlider.rangeSlider{
+				display:none;
+			}
+			.rangeSlider .ui-slider-range{
+				background:#777;
+				border-radius:0px;
+			}
+			.rangeSlider .ui-slider-handle{
+				cursor: -webkit-grab; cursor: grab;
+				background:#eee;
+				outline:none;
+				border:0px none transparent;
+				height:16px;
+				width:16px;
+				border-radius:9999px;
+				top:-8px;
+				margin-left:-8px;
+				border:1px solid #ddd;
+				-webkit-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.22);
+				-moz-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.22);
+				box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.22);
+			}
+			.rangeSlider .ui-slider-handle:active{
+				cursor: -webkit-grabbing; cursor: grabbing;
+			}
+			#barGraph{
+				display:none;
+				font-size:18px;
+			}
+			#phenologyLegend{
+				text-align:center;
+				margin:20px 0px;
+			}
+			#loadingLine{
+				display:none;
+			}
+			.label, #loadingLine{
+				display:inline-block;
+				font-size:18px;
+				color:#666;
+				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+				margin-bottom:10px;
+			}
+			.label .box, #loadingLine .colorBlock{
+				display:inline-block;
+				width:10px;
+				height:10px;
+				margin:0px 3px -4px 0px;
+			}
+			#compositionLegend{
+				margin-top:30px;
+			}
+			#compositionLegend .label .box{
+				width:10px;
+				height:10px;
+				border:1px solid rgba(0,0,0,0.2);
+				margin-bottom:-1px;
+			}
+			#addNewSet{
+				border-top:1px solid #ddd;
+				border-bottom:1px solid #ddd;
+				margin:20px 0px;
+			}
+			#addNewSet>div{
+				margin:0px 20px;
+				padding:20px;
+				background:rgba(0,0,0,0.05);
+				-webkit-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+				-moz-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+				box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+			}
+			.smallSelect{
+				position:relative;
+				display:inline-block;
+				text-decoration:inherit;
+			}
+			.smallSelect .selected{
+				border-radius:4px;
+				text-decoration:inherit;
+				cursor:pointer;
+				background:rgba(0,0,0,0.1);
+				padding:0px 2px;
+			}
+			.smallSelect .options{
+				position:absolute;
+				top:0px;
+				left:-5px;
+				background:#fff;
+				min-width:100%;
+				border-radius:5px;
+				overflow:hidden;
+				border:1px solid #ddd;
+				border-bottom:2px solid #ddd;
+				font-size:12px;
+				display:none;
+				z-index:1;
+			}
+			.smallSelect .options>div{
+				padding:5px;
+				cursor:pointer;
+			}
+			.smallSelect .options>div:hover{
+				background:#ebfeff;
+			}
+			.xAxisLabel{
+				text-align:center;
+				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+				font-size:20px;
+				color:#666;
+				margin:10px 0px;
+			}
+			.yAxisLabel{
+				position:absolute;
+				top:50%;
+				left:0px;
+				font-size:20px;
+				color:#666;
+				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+				transform:rotate(270deg);
+				display:none;
+			}
+			#mapFiltersToggleButton, #mapDownloadButton{
+				background:#fed136;
+				display:table;
+				padding:10px;
+				color:#fff;
+				font-family:'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				font-weight:bold;
+				text-transform:uppercase;
+				border-radius:4px;
+				overflow:hidden;
+				border-bottom:2px solid rgba(0,0,0,0.1);
+				cursor:pointer;
+				width:180px;
+				box-sizing:border-box;
+			}
+			#mapDownloadButton{
+				margin-right:20px;
+			}
+			#mapFiltersToggleButton>div, #mapDownloadButton>div{
+				display:table-cell;
+				vertical-align:middle;
+			}
+			#mapFiltersToggleButton #mapFiltersImage, #mapDownloadButton #mapDownloadImage{
+				height:23px;
+				width:23px;
+				background-position:center;
+				background-size:contain;
+				background-repeat:no-repeat;
+			}
+			#mapFiltersToggleButton #mapFiltersText, #mapDownloadButton #mapDownloadText{
+				padding-left:10px;
+				padding-right:3px;
+				font-size:17px;
+				padding-top:2px;
+			}
+			#lineGraph .yAxisLabel, #lineGraph .label, #barGraph .yAxisLabel, #barGraph .label{
+				font-size:18px;
+			}
+			#compositionLoadingCover{
+				position:absolute;
+				top:0px;
+				width:100%;
+				bottom:0px;
+				background:rgba(255,255,255,0.5);
+				display:none;
+			}
+			#compositionLoadingCover>img{
+				width:30px;
+				height:30px;
+				opacity:.25;
+				position:absolute;
+				left:50%;
+				top:50%;
+				margin-left:-15px;
+				margin-top:-15px;
+			}
+			#reloadComposition{
+				position:absolute;
+				left:50%;
+				top:50%;
+				font-size:14px;
+				padding:10px;
+				background:#666;
+				color:#fff;
+				text-decoration:underline;
+				cursor:pointer;
+				margin-top:-18px;
+				margin-left:-32px;
+				border-radius:4px;
+				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+			}
+			.chartExplanation{
+				font-size:12px;
+				font-family:'Roboto Slab', serif;
+				color:#999;
+				margin:10px 0px;
+			}
+			.siteSelectionText{
+				display:table-cell;
+				vertical-align:middle;
+				font-size:18px;
+				color:#bbb;
+				padding:0px 2px;
+			}
+			.siteSelectionText>.smallSelect{
+				text-align:left;
+				color:#666;
+			}
+			#addCompositionSiteButton, #removeCompositionSiteButton{
+				display:inline-block;
+				cursor:pointer;
+				text-decoration:underline;
+			}
+			#addSiteSelection, #removeSiteSelection{
+				position:absolute;
+				top:0px;
+				left:0px;
+				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+			}
+			#downloadLinks{
+				display:none;
+			}
+			.downloadChartButton{
+				position:absolute;
+				z-index:1;
+				top:-18px;
+				right:18px;
+				background:#ccc;
+				display:table;
+				padding:5px;
+				color:#fff;
+				font-family:'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				font-weight:bold;
+				text-transform:uppercase;
+				border-radius:4px;
+				overflow:hidden;
+				border-bottom:2px solid rgba(0,0,0,0.1);
+				cursor:pointer;
+				width:100px;
+			}
+			.downloadChartButton>div{
+				display:table-cell;
+				vertical-align:middle;
+			}
+			.downloadChartButton>.downloadImage{
+				height:13px;
+				width:13px;
+				background-position:center;
+				background-size:contain;
+				background-repeat:no-repeat;
+			}
+			.downloadChartButton>.downloadText{
+				padding-left:4px;
+				font-size:10px;
+				padding-top:1px;
+			}
+			@media screen and (max-width: 600px){
+				#desktopSiteStats{
+					display:none;
+				}
+				#mobileSiteStats{
+					display:block;
+				}
+			}
+			@media screen and (max-width: 957px){
+				#rankings table tr td:nth-of-type(5), #rankings table thead th:nth-of-type(5), #siteUserLeaderboard table tr td:nth-of-type(5), #siteUserLeaderboard table thead th:nth-of-type(5){
+					display:none;
+				}
+			}
+			@media screen and (max-width: 868px){
+				#rankings table tr td:nth-of-type(3), #rankings table thead th:nth-of-type(3), #siteUserLeaderboard table tr td:nth-of-type(3), #siteUserLeaderboard table thead th:nth-of-type(3){
+					display:none;
+				}
+			}
+			@media screen and (max-width: 783px){
+				#rankings table tr td:nth-of-type(4), #rankings table thead th:nth-of-type(4), #siteUserLeaderboard table tr td:nth-of-type(4), #siteUserLeaderboard table thead th:nth-of-type(4){
+					display:none;
+				}
+			}
+			@media screen and (max-width: 539px){
+				#rankings table tr td:nth-of-type(6), #rankings table thead th:nth-of-type(6), #siteUserLeaderboard table tr td:nth-of-type(6), #siteUserLeaderboard table thead th:nth-of-type(6){
+					display:none;
+				}
+				#rankings table td:nth-of-type(2), #rankings table th:nth-of-type(2), #siteUserLeaderboard table td:nth-of-type(2), #siteUserLeaderboard table th:nth-of-type(2){
+					width:auto;
+					min-width:0px;
+				}
+			}
+			@media screen and (max-width: 373px){
+				main h2{
+					font-size:33px;
+				}
+			}
+			@media screen and (max-width: 770px){
+				#mapBar{
+					margin:0px -20px;
+				}
+			}
+			@media screen and (max-width: 900px){
+				#mapFiltersToggleButton, #mapFilters, #mapDownloadButton{
+					display:none;
+				}
+				#mapBar>div{
+					min-height:70px;
+				}
+				#mapTitle{
+					height:70px;
+				}
+			}
+			@media screen and (max-width: 530px){
+				#mapScale{
+					border-right:0px none transparent;
+				}
+			}
+			@media screen and (max-width: 400px){
+				#mapTitle{
+					font-size:10px;
+				}
+				#mapScale .scaleCircle, #mapScale .smallScaleCircle {
+					margin-right:2px;
+				}
+			}
+		</style>
+		<script>
+			var plantSpeciesList = ["Pacific silver fir", "Abies amabilis", "Balsam fir", "Abies balsamea", "Bristlecone fir", "Abies bracteata", "White fir", "Abies concolor", "Fraser fir", "Abies fraseri", "Grand fir", "Abies grandis", "Subalpine fir", "Abies lasiocarpa", "California red fir", "Abies magnifica", "Noble fir", "Abies procera", "Fir spp.", "Abies spp.", "Sweet acacia", "Acacia farnesiana", "Catclaw acacia", "Acacia greggii", "Acacia spp.", "Acacia spp.", "Florida maple", "Acer barbatum", "Trident maple", "Acer buergerianum", "Hedge maple", "Acer campestre", "Horned maple", "Acer diabolicum", "Southern sugar maple", "Acer floridanum", "Amur maple", "Acer ginnala", "Rocky Mountain maple", "Acer glabrum", "Bigtooth maple", "Acer grandidentatum", "Chalk maple", "Acer leucoderme", "Bigleaf maple", "Acer macrophyllum", "Boxelder", "Acer negundo", "Black maple", "Acer nigrum", "Japanese maple", "Acer palmatum", "Striped maple", "Acer pensylvanicum", "Norway maple", "Acer platanoides", "Red maple", "Acer rubrum", "Silver maple", "Acer saccharinum", "Sugar maple", "Acer saccharum", "Mountain maple", "Acer spicatum", "Maple spp.", "Acer spp.", "Freeman maple", "Acer X freemanii", "Everglades palm", "Acoelorraphe wrightii", "California buckeye", "Aesculus californica", "Yellow buckeye", "Aesculus flava", "Ohio buckeye", "Aesculus glabra", "Horse chestnut", "Aesculus hippocastanum", "Bottlebrush buckeye", "Aesculus parviflora", "Red buckeye", "Aesculus pavia", "Buckeye spp.", "Aesculus spp.", "Painted buckeye", "Aesculus sylvatica", "Ailanthus", "Ailanthus altissima", "Mimosa", "Albizia julibrissin", "European alder", "Alnus glutinosa", "Speckled alder", "Alnus incana", "Arizona alder", "Alnus oblongifolia", "White alder", "Alnus rhombifolia", "Red alder", "Alnus rubra", "Hazel alder", "Alnus serrulata", "Alder spp.", "Alnus spp.", "Common serviceberry", "Amelanchier arborea", "Roundleaf serviceberry", "Amelanchier sanguinea", "Serviceberry spp.", "Amelanchier spp.", "Sea torchwood", "Amyris elemifera", "Pond-apple", "Annona glabra", "Arizona madrone", "Arbutus arizonica", "Pacific madrone", "Arbutus menziesii", "Madrone spp.", "Arbutus spp.", "Texas madrone", "Arbutus xalapensis", "Dwarf pawpaw", "Asimina pygmea", "Pawpaw", "Asimina triloba", "Black-mangrove", "Avicennia germinans", "Eastern baccharis", "Baccharis halimifolia", "Yellow birch", "Betula alleghaniensis", "Sweet birch", "Betula lenta", "River birch", "Betula nigra", "Water birch", "Betula occidentalis", "Paper birch", "Betula papyrifera", "Gray birch", "Betula populifolia", "Birch spp.", "Betula spp.", "Virginia roundleaf birch", "Betula uber", "Northwestern paper birch", "Betula x utahensis", "Gumbo limbo", "Bursera simaruba", "American beautyberry", "Callicarpa americana", "Alaska cedar", "Callitropsis nootkatensis", "Incense-cedar", "Calocedrus decurrens", "Camellia spp.", "Camellia spp.", "American hornbeam", "Carpinus caroliniana", "Mockernut hickory", "Carya alba", "Water hickory", "Carya aquatica", "Southern shagbark hickory", "Carya carolinae-septentrionalis", "Bitternut hickory", "Carya cordiformis", "Scrub hickory", "Carya floridana", "Pignut hickory", "Carya glabra", "Pecan", "Carya illinoinensis", "Shellbark hickory", "Carya laciniosa", "Nutmeg hickory", "Carya myristiciformis", "Red hickory", "Carya ovalis", "Shagbark hickory", "Carya ovata", "Sand hickory", "Carya pallida", "Hickory spp.", "Carya spp.", "Black hickory", "Carya texana", "Mockernut hickory", "Carya tomentosa", "American chestnut", "Castanea dentata", "Chinese chestnut", "Castanea mollissima", "Allegheny chinquapin", "Castanea pumila", "Chestnut spp.", "Castanea spp.", "Gray sheoak", "Casuarina glauca", "Belah", "Casuarina lepidophloia", "Sheoak spp.", "Casuarina spp.", "Southern catalpa", "Catalpa bignonioides", "Northern catalpa", "Catalpa speciosa", "Catalpa spp.", "Catalpa spp.", "Sugarberry", "Celtis laevigata", "Hackberry", "Celtis occidentalis", "Hackberry spp.", "Celtis spp.", "Eastern redbud", "Cercis canadensis", "Curlleaf mountain-mahogany", "Cercocarpus ledifolius", "Port-Orford-cedar", "Chamaecyparis lawsoniana", "White-cedar spp.", "Chamaecyparis spp.", "Atlantic white-cedar", "Chamaecyparis thyoides", "Fragrant wintersweet", "Chimonanthus praecox", "Fringetree", "Chionanthus virginicus", "Giant chinkapin", "Chrysolepis chrysophylla", "Camphortree", "Cinnamomum camphora", "Spiny fiddlewood", "Citharexylum spinosum", "Citrus spp.", "Citrus spp.", "Kentucky yellowwood", "Cladrastis kentukea", "Tietongue", "Coccoloba diversifolia", "Florida silver palm", "Coccothrinax argentata", "Coconut palm", "Cocos nucifera", "Soldierwood", "Colubrina elliptica", "Bluewood", "Condalia hookeri", "Buttonwood-mangrove", "Conocarpus erectus", "Anacahuita", "Cordia boissieri", "Largeleaf geigertree", "Cordia sebestena", "Alternate-leaf dogwood", "Cornus alternifolia", "Flowering dogwood", "Cornus florida", "Stiff dogwood", "Cornus foemina", "Kousa dogwood", "Cornus kousa", "Big-leaf dogwood", "Cornus macrophylla", "Cornelian-cherry dogwood", "Cornus mas", "Pacific dogwood", "Cornus nuttallii", "Redosier dogwood", "Cornus sericea", "Dogwood spp.", "Cornus spp.", "American hazelnut", "Corylus americana", "Beaked hazel", "Corylus cornuta", "Hazelnut", "Corylus spp.", "Smoketree", "Cotinus obovatus", "Brainerd's hawthorn", "Crataegus brainerdii", "Pear hawthorn", "Crataegus calpodendron", "Fireberry hawthorn", "Crataegus chrysocarpa", "Cockspur hawthorn", "Crataegus crus-galli", "Broadleaf hawthorn", "Crataegus dilatata", "Fanleaf hawthorn", "Crataegus flabellata", "Downy hawthorn", "Crataegus mollis", "Oneseed hawthorn", "Crataegus monogyna", "Scarlet hawthorn", "Crataegus pedicellata", "Washington hawthorn", "Crataegus phaenopyrum", "Hawthorn spp.", "Crataegus spp.", "Fleshy hawthorn", "Crataegus succulenta", "Dwarf hawthorn", "Crataegus uniflora", "Carrotwood", "Cupaniopsis anacardioides", "Arizona cypress", "Cupressus arizonica", "Modoc cypress", "Cupressus bakeri", "Tecate cypress", "Cupressus guadalupensis", "MacNab's cypress", "Cupressus macnabiana", "Monterey cypress", "Cupressus macrocarpa", "Sargent's cypress", "Cupressus sargentii", "Cypress spp.", "Cupressus spp.", "Persimmon spp.", "Diospyros spp.", "Texas persimmon", "Diospyros texana", "Common persimmon", "Diospyros virginiana", "Blackbead ebony", "Ebenopsis ebano", "Anacua knockaway", "Ehretia anacua", "Russian olive", "Elaeagnus angustifolia", "Autumn olive", "Elaeagnus umbellata", "River redgum", "Eucalyptus camaldulensis", "Tasmanian bluegum", "Eucalyptus globulus", "Grand eucalyptus", "Eucalyptus grandis", "Swampmahogany", "Eucalyptus robusta", "Eucalyptus spp.", "Eucalyptus spp.", "Red stopper", "Eugenia rhombea", "European spindletree", "Euonymus europaeus", "Hamilton's spindletree", "Euonymus hamiltonianus", "Butterbough", "Exothea paniculata", "American beech", "Fagus grandifolia", "Beech spp.", "Fagus spp.", "European beech", "Fagus sylvatica", "Florida strangler fig", "Ficus aurea", "Wild banyantree", "Ficus citrifolia", "Forsythia spp.", "Forsythia spp.", "White ash", "Fraxinus americana", "Berlandier ash", "Fraxinus berlandieriana", "Carolina ash", "Fraxinus caroliniana", "Oregon ash", "Fraxinus latifolia", "Black ash", "Fraxinus nigra", "Green ash", "Fraxinus pennsylvanica", "Pumpkin ash", "Fraxinus profunda", "Blue ash", "Fraxinus quadrangulata", "Ash spp.", "Fraxinus spp.", "Texas ash", "Fraxinus texensis", "Velvet ash", "Fraxinus velutina", "Black huckleberry", "Gaylussacia baccata", "Huckleberry spp.", "Gaylussacia spp.", "Ginkgo", "Ginkgo biloba", "Waterlocust", "Gleditsia aquatica", "Honeylocust spp.", "Gleditsia spp.", "Honeylocust", "Gleditsia triacanthos", "Loblolly-bay", "Gordonia lasianthus", "Beeftree", "Guapira discolor", "Kentucky coffeetree", "Gymnocladus dioicus", "Carolina silverbell", "Halesia carolina", "Two-wing silverbell", "Halesia diptera", "Little silverbell", "Halesia parviflora", "Silverbell spp.", "Halesia spp.", "American witch-hazel", "Hamamelis virginiana", "Rose of sharon", "Hibiscus syriacus", "Manchineel", "Hippomane mancinella", "Oakleaf hydrangea", "Hydrangea quercifolia", "Hydrangea spp.", "Hydrangea spp.", "Possumhaw", "Ilex decidua", "Mountain holly", "Ilex montana", "American holly", "Ilex opaca", "Winterberry", "Ilex verticillata", "Yaupon", "Ilex vomitoria", "Southern California black walnut", "Juglans californica", "Butternut", "Juglans cinerea", "Northern California black walnut", "Juglans hindsii", "Arizona walnut", "Juglans major", "Texas walnut", "Juglans microcarpa", "Black walnut", "Juglans nigra", "Walnut spp.", "Juglans spp.", "Ashe juniper", "Juniperus ashei", "California juniper", "Juniperus californica", "Redberry juniper", "Juniperus coahuilensis", "Alligator juniper", "Juniperus deppeana", "Drooping juniper", "Juniperus flaccida", "Oneseed juniper", "Juniperus monosperma", "Western juniper", "Juniperus occidentalis", "Utah juniper", "Juniperus osteosperma", "Pinchot juniper", "Juniperus pinchotii", "Rocky Mountain juniper", "Juniperus scopulorum", "Redcedar/juniper spp.", "Juniperus spp.", "Eastern redcedar", "Juniperus virginiana", "Mountain laurel", "Kalmia latifolia", "Castor aralia", "Kalopanax septemlobus", "Golden rain tree", "Koelreuteria elegans", "Crepe myrtle spp.", "Lagerstroemia spp.", "White-mangrove", "Laguncularia racemosa", "Tamarack", "Larix laricina", "Subalpine larch", "Larix lyallii", "Western larch", "Larix occidentalis", "Larch spp.", "Larix spp.", "Great leucaene", "Leucaena pulverulenta", "Japanese privet", "Ligustrum japonicum", "Privet spp.", "Ligustrum spp.", "Northern spicebush", "Lindera benzoin", "Sweetgum", "Liquidambar styraciflua", "Tuliptree", "Liriodendron tulipifera", "Tanoak", "Lithocarpus densiflorus", "Japanese honeysuckle", "Lonicera japonica", "Honeysuckle spp.", "Lonicera spp.", "Tatarian honeysuckle", "Lonicera tatarica", "False tamarind", "Lysiloma latisiliquum", "Osage orange", "Maclura pomifera", "Cucumbertree", "Magnolia acuminata", "Fraser magnolia", "Magnolia fraseri", "Southern magnolia", "Magnolia grandiflora", "Loebner magnolia", "Magnolia kobus x stellata", "Bigleaf magnolia", "Magnolia macrophylla", "Pyramid magnolia", "Magnolia pyramidata", "Magnolia spp.", "Magnolia spp.", "Umbrella magnolia", "Magnolia tripetala", "Sweetbay", "Magnolia virginiana", "Cucumber magnolia", "Magulia acuminata", "Southern crab apple", "Malus angustifolia", "Siberian crabapple", "Malus baccata", "Sweet crab apple", "Malus coronaria", "Oregon crab apple", "Malus fusca", "Prairie crab apple", "Malus ioensis", "Sargent's apple", "Malus sargentii", "Apple spp.", "Malus spp.", "Mango", "Mangifera indica", "Melaleuca", "Melaleuca quinquenervia", "Chinaberry", "Melia azedarach", "Florida poisontree", "Metopium toxiferum", "Southern bayberry", "Morella caroliniensis", "Wax myrtle", "Morella cerifera", "White mulberry", "Morus alba", "Texas mulberry", "Morus microphylla", "Black mulberry", "Morus nigra", "Red mulberry", "Morus rubra", "Mulberry spp.", "Morus spp.", "Water tupelo", "Nyssa aquatica", "Swamp tupelo", "Nyssa biflora", "Ogeechee tupelo", "Nyssa ogeche", "Tupelo spp.", "Nyssa spp.", "Blackgum", "Nyssa sylvatica", "Desert ironwood", "Olneya tesota", "Eastern hophornbeam", "Ostrya virginiana", "Sourwood", "Oxydendrum arboreum", "Persian ironwood", "Parrotia persica", "Paulownia empress-tree", "Paulownia tomentosa", "Avocado", "Persea americana", "Redbay", "Persea borbonia", "Bay spp.", "Persea spp.", "Norway spruce", "Picea abies", "Brewer spruce", "Picea breweriana", "Engelmann spruce", "Picea engelmannii", "White spruce", "Picea glauca", "Black spruce", "Picea mariana", "Blue spruce", "Picea pungens", "Red spruce", "Picea rubens", "Sitka spruce", "Picea sitchensis", "Spruce spp.", "Picea spp.", "Whitebark pine", "Pinus albicaulis", "Bristlecone pine", "Pinus aristata", "Arizona pine", "Pinus arizonica", "Knobcone pine", "Pinus attenuata", "Foxtail pine", "Pinus balfouriana", "Jack pine", "Pinus banksiana", "Mexican pinyon pine", "Pinus cembroides", "Sand pine", "Pinus clausa", "Lodgepole pine", "Pinus contorta", "Coulter pine", "Pinus coulteri", "Border pinyon", "Pinus discolor", "Shortleaf pine", "Pinus echinata", "Common pinyon", "Pinus edulis", "Slash pine", "Pinus elliottii", "Apache pine", "Pinus engelmannii", "Limber pine", "Pinus flexilis", "Spruce pine", "Pinus glabra", "Jeffrey pine", "Pinus jeffreyi", "Sugar pine", "Pinus lambertiana", "Chihuahua pine", "Pinus leiophylla", "Great Basin bristlecone pine", "Pinus longaeva", "Singleleaf pinyon", "Pinus monophylla", "Western white pine", "Pinus monticola", "Bishop pine", "Pinus muricata", "Austrian pine", "Pinus nigra", "Longleaf pine", "Pinus palustris", "Ponderosa pine", "Pinus ponderosa", "Table Mountain pine", "Pinus pungens", "Parry pinyon pine", "Pinus quadrifolia", "Monterey pine", "Pinus radiata", "Papershell pinyon pine", "Pinus remota", "Red pine", "Pinus resinosa", "Pitch pine", "Pinus rigida", "California foothill pine", "Pinus sabiniana", "Pond pine", "Pinus serotina", "Pine spp.", "Pinus spp.", "Southwestern white pine", "Pinus strobiformis", "Eastern white pine", "Pinus strobus", "Scotch pine", "Pinus sylvestris", "Loblolly pine", "Pinus taeda", "Torrey pine", "Pinus torreyana", "Virginia pine", "Pinus virginiana", "Washoe pine", "Pinus washoensis", "Fishpoison tree", "Piscidia piscipula", "Water-elm planertree", "Planera aquatica", "American sycamore", "Platanus occidentalis", "California sycamore", "Platanus racemosa", "Sycamore spp.", "Platanus spp.", "Arizona sycamore", "Platanus wrightii", "Silver poplar", "Populus alba", "Narrowleaf cottonwood", "Populus angustifolia", "Balsam poplar", "Populus balsamifera", "Eastern cottonwood", "Populus deltoides", "Fremont cottonwood", "Populus fremontii", "Bigtooth aspen", "Populus grandidentata", "Swamp cottonwood", "Populus heterophylla", "Lombardy poplar", "Populus nigra", "Cottonwood and poplar spp.", "Populus spp.", "Quaking aspen", "Populus tremuloides", "Honey mesquite", "Prosopis glandulosa", "Screwbean mesquite", "Prosopis pubescens", "Mesquite spp.", "Prosopis spp.", "Velvet mesquite", "Prosopis velutina", "Allegheny plum", "Prunus alleghaniensis", "American plum", "Prunus americana", "Chickasaw plum", "Prunus angustifolia", "Sweet cherry", "Prunus avium", "Sour cherry", "Prunus cerasus", "European plum", "Prunus domestica", "Bitter cherry", "Prunus emarginata", "Mahaleb cherry", "Prunus mahaleb", "Beach plum", "Prunus maritima", "Japanese apricot", "Prunus mume", "Canada plum", "Prunus nigra", "Pin cherry", "Prunus pensylvanica", "Peach", "Prunus persica", "Black cherry", "Prunus serotina", "Cherry and plum spp.", "Prunus spp.", "Weeping cherry", "Prunus subhirtella", "Chokecherry", "Prunus virginiana", "Chinese quince", "Pseudocydonia sinensis", "Bigcone Douglas-fir", "Pseudotsuga macrocarpa", "Douglas-fir", "Pseudotsuga menziesii", "Douglas-fir spp.", "Pseudotsuga spp.", "Buffalo nut", "Pyrularia pubera", "Pear spp.", "Pyrus spp.", "California live oak", "Quercus agrifolia", "White oak", "Quercus alba", "Arizona white oak", "Quercus arizonica", "Scrub oak", "Quercus berberidifolia", "Swamp white oak", "Quercus bicolor", "Buckley oak", "Quercus buckleyi", "Canyon live oak", "Quercus chrysolepis", "Scarlet oak", "Quercus coccinea", "Blue oak", "Quercus douglasii", "Northern pin oak", "Quercus ellipsoidalis", "Emory oak", "Quercus emoryi", "Engelmann oak", "Quercus engelmannii", "Southern red oak", "Quercus falcata", "Gambel oak", "Quercus gambelii", "Oregon white oak", "Quercus garryana", "Chisos oak", "Quercus graciliformis", "Graves oak", "Quercus gravesii", "Gray oak", "Quercus grisea", "Silverleaf oak", "Quercus hypoleucoides", "Scrub oak", "Quercus ilicifolia", "Shingle oak", "Quercus imbricaria", "Bluejack oak", "Quercus incana", "California black oak", "Quercus kelloggii", "Lacey oak", "Quercus laceyi", "Turkey oak", "Quercus laevis", "Laurel oak", "Quercus laurifolia", "California white oak", "Quercus lobata", "Overcup oak", "Quercus lyrata", "Bur oak", "Quercus macrocarpa", "Sand post oak", "Quercus margarettiae", "Blackjack oak", "Quercus marilandica", "Swamp chestnut oak", "Quercus michauxii", "Dwarf live oak", "Quercus minima", "Chestnut oak", "Quercus montana", "Chinkapin oak", "Quercus muehlenbergii", "Chinese evergreen oak", "Quercus myrsinifolia", "Water oak", "Quercus nigra", "Mexican blue oak", "Quercus oblongifolia", "Oglethorpe oak", "Quercus oglethorpensis", "Cherrybark oak", "Quercus pagoda", "Pin oak", "Quercus palustris", "Willow oak", "Quercus phellos", "Mexican white oak", "Quercus polymorpha", "Dwarf chinkapin oak", "Quercus prinoides", "Northern red oak", "Quercus rubra", "Netleaf oak", "Quercus rugosa", "Shumard oak", "Quercus shumardii", "Delta post oak", "Quercus similis", "Bastard oak", "Quercus sinuata", "Oak spp.", "Quercus spp.", "Post oak", "Quercus stellata", "Texas red oak", "Quercus texana", "Black oak", "Quercus velutina", "Live oak", "Quercus virginiana", "Interior live oak", "Quercus wislizeni", "Common buckthorn", "Rhamnus cathartica", "Buckthorn", "Rhamnus spp.", "American mangrove", "Rhizophora mangle", "Coastal azalea", "Rhododendron atlanticum", "Florida azalea", "Rhododendron austrinum", "Piedmont azalea", "Rhododendron canescens", "Catawba rhododendron", "Rhododendron catawbiense", "Great rhododendron", "Rhododendron maximum", "Plumleaf azalea", "Rhododendron prunifolium", "Rhododendron spp.", "Rhododendron spp.", "Smooth sumac", "Rhus glabra", "Sumac spp.", "Rhus spp.", "New Mexico locust", "Robinia neomexicana", "Black locust", "Robinia pseudoacacia", "Royal palm spp.", "Roystonea spp.", "Mexican palmetto", "Sabal mexicana", "Cabbage palmetto", "Sabal palmetto", "White willow", "Salix alba", "Peachleaf willow", "Salix amygdaloides", "Bebb willow", "Salix bebbiana", "Bonpland willow", "Salix bonplandiana", "Coastal plain willow", "Salix caroliniana", "Black willow", "Salix nigra", "Balsam willow", "Salix pyrifolia", "Scouler's willow", "Salix scouleriana", "Weeping willow", "Salix sepulcralis", "Willow spp.", "Salix spp.", "Red elderberry", "Sambucus racemosa", "Elderberry", "Sambucus spp.", "Western soapberry", "Sapindus saponaria", "Sassafras", "Sassafras albidum", "Octopus tree", "Schefflera actinophylla", "Redwood", "Sequoia sempervirens", "Giant sequoia", "Sequoiadendron giganteum", "False mastic", "Sideroxylon foetidissimum", "Chittamwood", "Sideroxylon lanuginosum", "White bully", "Sideroxylon salicifolium", "Paradisetree", "Simarouba glauca", "Texas sophora", "Sophora affinis", "American mountain-ash", "Sorbus americana", "European mountain-ash", "Sorbus aucuparia", "Northern mountain-ash", "Sorbus decora", "Mountain-ash spp.", "Sorbus spp.", "American bladdernut", "Staphylea trifolia", "Upright stewartia", "Stewartia rostrata", "Japanese snowbell", "Styrax japonicus", "West Indian mahogany", "Swietenia mahagoni", "Common sweetleaf", "Symplocos tinctoria", "Lilac spp.", "Syringa spp.", "Java plum", "Syzygium cumini", "Tamarind", "Tamarindus indica", "Saltcedar", "Tamarix spp.", "Pond cypress", "Taxodium ascendens", "Bald cypress", "Taxodium distichum", "Montezuma baldcypress", "Taxodium mucronatum", "Bald cypress spp.", "Taxodium spp.", "Pacific yew", "Taxus brevifolia", "Florida yew", "Taxus floridana", "Yew spp.", "Taxus spp.", "Key thatch palm", "Thrinax morrisii", "Florida thatch palm", "Thrinax radiata", "Northern white-cedar", "Thuja occidentalis", "Western redcedar", "Thuja plicata", "Thuja spp.", "Thuja spp.", "American basswood", "Tilia americana", "Littleleaf linden", "Tilia cordata", "Basswood spp.", "Tilia spp.", "Common linden", "Tilia X europaea", "California nutmeg", "Torreya californica", "Torreya spp.", "Torreya spp.", "Florida nutmeg", "Torreya taxifolia", "Chinese tallowtree", "Triadica sebifera", "Eastern hemlock", "Tsuga canadensis", "Carolina hemlock", "Tsuga caroliniana", "Western hemlock", "Tsuga heterophylla", "Mountain hemlock", "Tsuga mertensiana", "Hemlock spp.", "Tsuga spp.", "Winged elm", "Ulmus alata", "American elm", "Ulmus americana", "Cedar elm", "Ulmus crassifolia", "Russian elm", "Ulmus laevis", "Siberian elm", "Ulmus pumila", "Slippery elm", "Ulmus rubra", "September elm", "Ulmus serotina", "Elm spp.", "Ulmus spp.", "Rock elm", "Ulmus thomasii", "California-laurel", "Umbellularia californica", "New Jersey blueberry", "Vaccinium caesariense", "Highbush blueberry", "Vaccinium corymbosum", "Blueberry spp.", "Vaccinium spp.", "Deerberry", "Vaccinium stamineum", "Tungoil tree", "Vernicia fordii", "Mapleleaf viburnum", "Viburnum acerifolium", "Arrowwood", "Viburnum dentatum", "Linden arrowwood", "Viburnum dilatatum", "Nannyberry", "Viburnum lentago", "Possumhaw viburnum", "Viburnum nudum", "Japanese snowball", "Viburnum plicatum", "Blackhaw", "Viburnum prunifolium", "Rusty viburnum", "Viburnum rufidulum", "American cranberrybush", "Viburnum trilobum", "Joshua tree", "Yucca brevifolia"];
+			
+			var startTime = 0;
+			$(document).ready(function(){
+				startTime = (new Date()).getTime();
+				//pauseManagerRequests();
+				loadBackgroundImage($("#splashImage"), "../images/splash.png");
+				showLeaderboard();
+				initializeMap();
+				lockInMapHeight();
+				$(window).resize(function(){
+					lockInMapHeight();
+					resizeSuperHeader();
+					updateCompositionLegend();
+				});
+				setSliders();
+				attachAutoCompleteToInput($("#plantSpecies"), plantSpeciesList);
+				var backgroundColor = 'white';
+				Chart.plugins.register({
+					beforeDraw: function(c) {
+						var ctx = c.chart.ctx;
+						ctx.fillStyle = backgroundColor;
+						ctx.fillRect(0, 0, c.chart.width, c.chart.height);
+					}
+				});
+				window.phenology = new Chart(document.getElementById('phenologyChart'), lineConfig);
+				window.composition = new Chart($('#compositionChart')[0].getContext('2d'), barConfig);
+			});
+			$(document).click(function(){
+				$(".smallSelect .options").fadeOut(0);
+			});
+			function roundTo(number, decimalPlace){
+				var tenFactor = Math.pow(10, decimalPlace);
+				return Math.round(number * tenFactor) / tenFactor;
+			}
+			function getWordAtIndex(str, index){
+				var left = str.slice(0, index + 1).search(/\S+$/);
+				var right = str.slice(index).search(/\s/);
+				if (right < 0) {return str.slice(left);}
+				return str.slice(left, right + index);
+			}
+			function attachAutoCompleteToInput(inputElement, sourceList){
+				$(inputElement).autocomplete({
+					minLength: 2,
+					source: function(request, response) {
+						var results = $.ui.autocomplete.filter(sourceList, request.term);
+						results.sort(function(a, b){
+							a = a.toLowerCase();
+							b = b.toLowerCase();
+							var term = request.term.toLowerCase();
+							//how close to the beginning of a word
+							var aWord = getWordAtIndex(a, a.indexOf(term));
+							var bWord = getWordAtIndex(b, b.indexOf(term));
+							var diff = aWord.indexOf(term) - bWord.indexOf(term);
+							if(diff !== 0) return diff;
+							//tiebreaker prioritize first word results
+							var aFirstWord = a.split(" ").indexOf(aWord) == 0;
+							var bFirstWord = b.split(" ").indexOf(bWord) == 0;
+							if(aFirstWord && !bFirstWord) return -1;
+							else if(bFirstWord && !aFirstWord) return 1;
+							//tiebreaker is how close to the beginning of the string
+							//var diff = a.indexOf(term) - b.indexOf(term);
+							//if(diff !== 0){return diff;}
+							//tiebreaker alphabetical
+							if(a < b) return -1;
+    						if(a > b) return 1;
+    						return 0;
+						});
+						response(results);
+						//response(results.slice(0, 10));
+					},
+					open: function(event, ui) {
+						var idNumber = 1;//1; instead of: ($("input").index(this) + 1); because theres only 1 autocomplete on the page, so we're always referring to the 1st one.
+						$('#ui-id-' + idNumber).off('menufocus hover mouseover mouseenter');
+            					var left = $('#ui-id-' + idNumber).position().left;
+						var leftOffset = 0;
+        					$('#ui-id-' + idNumber).css({left: (left - leftOffset) + "px", width: this.clientWidth + "px"});
+					}
+				});
+			}
+			function getOrdinal(e){n=e.toString();for(var t="",h=0,d=n.length-1;d>=0;d--)if(1==++h)"0"==n[d]||("1"==n[d]?t="first":"2"==n[d]?t="second":"3"==n[d]?t="third":"4"==n[d]?t="fourth":"5"==n[d]?t="fifth":"6"==n[d]?t="sixth":"7"==n[d]?t="seventh":"8"==n[d]?t="eighth":"9"==n[d]&&(t="ninth"));else if(2==h)"0"==n[d]||("1"==n[d]?"0"==n[d+1]?t="tenth":"1"==n[d+1]?t="eleventh":"2"==n[d+1]?t="twelfth":"3"==n[d+1]?t="thirteenth":"4"==n[d+1]?t="fourteenth":"5"==n[d+1]?t="fifteenth":"6"==n[d+1]?t="sixteenth":"7"==n[d+1]?t="seventeenth":"8"==n[d+1]?t="eighteenth":"9"==n[d+1]&&(t="nineteenth"):"2"==n[d]?t=""==t?"twentieth":"twenty-"+t:"3"==n[d]?t=""==t?"thirtieth":"thirty-"+t:"4"==n[d]?t=""==t?"fortieth":"forty-"+t:"5"==n[d]?t=""==t?"fiftieth":"fifty-"+t:"6"==n[d]?t=""==t?"sixtieth":"sixty-"+t:"7"==n[d]?t=""==t?"seventieth":"seventy-"+t:"8"==n[d]?t=""==t?"eightieth":"eighty-"+t:"9"==n[d]&&(t=""==t?"ninetieth":"ninety-"+t));else if(3==h)"0"==n[d]||("1"==n[d]?t=""==t?"one hundredth":"one hundred and "+t:"2"==n[d]?t=""==t?"two hundredth":"two hundred and "+t:"3"==n[d]?t=""==t?"three hundredth":"three hundred and "+t:"4"==n[d]?t=""==t?"four hundredth":"four hundred and "+t:"5"==n[d]?t=""==t?"five hundredth":"five hundred and "+t:"6"==n[d]?t=""==t?"six hundredth":"six hundred and "+t:"7"==n[d]?t=""==t?"seven hundredth":"seven hundred and "+t:"8"==n[d]?t=""==t?"eight hundredth":"eight hundred and "+t:"9"==n[d]&&(t=""==t?"nine hundredth":"nine hundred and "+t));else if(4==h)return n;return t}
+			function getReadableDate(databaseFormattedDate){
+				//PRE: databaseFormattedDate format is YYYY-MM-DD
+				var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+				//var months = ["Jan.", "Feb.", "March", "April", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
+				var year = databaseFormattedDate.substring(0, 4);
+				var month = months[Number(databaseFormattedDate.substring(5, 7)) - 1];
+				var fullOrdinal = getOrdinal(Number(databaseFormattedDate.substring(8)));
+				var day = Number(databaseFormattedDate.substring(8)) + fullOrdinal.substring(fullOrdinal.length - 2);
+				return month + " " + day + ", " + year;
+			}
+			function getTwelveHourTime(militaryTime){
+				//PRE: militaryTime format is HH:MM:SS
+				var hours = Number(militaryTime.substring(0, 2));
+				var minutes = militaryTime.substring(3, 5);
+				var formattedHours = hours;
+				if(hours == 0){formattedHours = 12;}
+				else if(hours > 12){formattedHours = hours - 12;}
+				var ampm = "am";
+				if(hours >= 12){ampm = "pm";}
+				return formattedHours + ":" + minutes + ampm;
+			}
+			function toggleMapFilters(openFunction, closeFunction){
+				if(!openHeight($("#mapFilters"), function(){$("#mapFilters")[0].style.borderBottom="2px solid #aaa";$("#mapTitle").stop().animate({opacity:"0"});$("#mapScale").stop().animate({opacity:"0"});hideMapDownloadButton();})){
+					closeHeight($("#mapFilters"), function(){$("#mapFilters")[0].style.borderBottom="0px none transparent";$("#mapTitle").stop().animate({opacity:"1"});$("#mapScale").stop().animate({opacity:"1"});showMapDownloadButton();});
+				}
+			}
+			function closeHeight(ele, closeFunction){
+				ele = $(ele)[0];
+				closeFunction = closeFunction || function(){};
+				if(ele.style.maxHeight != "0px" && ele.style.maxHeight != ""){
+					ele.style.maxHeight = ele.clientHeight + "px";
+					$(ele).stop().animate({maxHeight:"0px"}, 300, closeFunction);
+					//$("#mapBar").animate({backgroundColor:"#eee"});
+					return true;
+				}
+				return false;
+			}
+			function openHeight(ele, openFunction){
+				ele = $(ele)[0];
+				if(ele.style.maxHeight == "0px" || ele.style.maxHeight == ""){
+					openFunction();
+					$(ele).stop().animate({maxHeight:"99999999px"}, 259999);
+					//$("#mapBar").animate({backgroundColor:"#ddd"});
+					return true;
+				}
+				return false;
+			}
+			function toggleMaxHeight(elements){
+				//switch the max height of all elements specified as "elements" between 0px and 250px
+				elements = $(elements);
+				for(var i = 0; i < elements.length; i++){
+					if(elements.eq(i)[0].style.maxHeight != "250px"){
+						elements.eq(i).stop().animate({maxHeight:"250px"});
+					}
+					else{
+						elements.eq(i).stop().animate({maxHeight:"0px"});
+					}
+				}
+			}
+			function getYPosition(element) {
+				element = $(element)[0];
+    				var yPosition = 0;
+    				while(element) {
+        				yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
+        				element = element.offsetParent;
+    				}
+				return yPosition;
+			}
+			var selectToggling = false;
+			function autoOpenSelect(selectElement){
+				if(!selectToggling){
+					selectToggling = true;
+					if(getSelectValue(selectElement) == ""){
+						if($(selectElement)[0].className.indexOf("active") > -1){
+							var activeClassName = $(selectElement)[0].className.substring($(selectElement)[0].className.indexOf("active"));
+							if(activeClassName.indexOf(" ") > -1){
+								activeClassName = activeClassName.substring(0, activeClassName.indexOf(" "));
+							}
+							$(selectElement)[0].className = $(selectElement)[0].className.replace(activeClassName, "").trim();
+						}
+						$(selectElement)[0].className = $(selectElement)[0].className + " active" + (getYPosition(selectElement) - 100);
+						elements = $(selectElement).find(".option").animate({maxHeight:"250px"}, "swing", function(){selectToggling = false;});
+					}
+				}
+			}
+			function selectOption(optionElement){
+				if(!selectToggling){
+					selectToggling = true;
+					//select an option in a custiom .select or open the custom .select
+					if(optionElement.parentNode.className.indexOf("active") > -1){
+						var preScrollTop = Number(optionElement.parentNode.className.replace(/\D/g, ""));
+						optionElement.parentNode.className = optionElement.parentNode.className.replace("active" + preScrollTop, "").trim();
+						$('html, body').animate({ scrollTop: preScrollTop }, 400);
+					}
+					else{
+						optionElement.parentNode.className = optionElement.parentNode.className + " active" + $(document).scrollTop();
+					}
+					toggleMaxHeight($(optionElement.parentNode).find(".option"));
+					var selectedElement = $(optionElement.parentNode).find(".selected").eq(0)[0];
+					selectedElement.className = selectedElement.className.replace("selected", "").trim();
+					optionElement.className = optionElement.className + " selected";
+					$(optionElement).stop().animate({maxHeight:"250px"}, "swing", function(){selectToggling = false});
+				}
+			}
+			function setSelectValue(selectElement, val){
+				//set the value of a custom .select and show the selected option
+				selectElement = $(selectElement)[0];
+				var options = selectElement.getElementsByClassName("option");
+				for(var i = 0; i < options.length; i++){
+					options[i].className = "option";
+					options[i].style.maxHeight = "0px";
+					options[i].style.overflow = "hidden";
+					if(options[i].getElementsByClassName("value")[0].innerHTML == val){
+						options[i].className = "option selected";
+						options[i].style.maxHeight = "250px";
+						options[i].style.overflow = "hidden";
+					}
+				}
+			}
+			function getSelectValue(selectElement){
+				//return the value of a custom .select
+				if($(selectElement).find(".selected .value").length < 1){
+					return "";
+				}
+				return $(selectElement).find(".selected .value")[0].innerHTML;
+			}
+			function getSelectText(selectElement){
+				//return the show text of a custom .select
+				return $(selectElement).find(".selected .text")[0].innerHTML;
+			}
+			function getSelectTextByValue(selectElement, val){
+				//given the value of a custom .select, return that values corresponding text
+				selectElement = $(selectElement)[0];
+				var options = selectElement.getElementsByClassName("option");
+				for(var i = 0; i < options.length; i++){
+					if($(options[i]).find(".value").eq(0)[0].innerHTML == val){
+						return $(options[i]).find(".text").eq(0)[0].innerHTML;
+					}
+				}
+			}
+			function getSelectValueByText(selectElement, txt){
+				//given the value of a custom .select, return that values corresponding text
+				selectElement = $(selectElement)[0];
+				var options = selectElement.getElementsByClassName("option");
+				for(var i = 0; i < options.length; i++){
+					if($(options[i]).find(".text").eq(0)[0].innerHTML == txt){
+						return $(options[i]).find(".value").eq(0)[0].innerHTML;
+					}
+				}
+			}
+			function getSelectImageByText(selectElement, txt){
+				//given the value of a custom .select, return that values corresponding text
+				selectElement = $(selectElement)[0];
+				var options = selectElement.getElementsByClassName("option");
+				for(var i = 0; i < options.length; i++){
+					if($(options[i]).find(".text").eq(0)[0].innerHTML == txt){
+						bgimg = $(options[i]).find(".image").eq(0)[0].style.backgroundImage;
+						return bgimg.substring(bgimg.indexOf("(") + 1, bgimg.lastIndexOf(")")).replace(/"/g, "").replace(/'/g, "");
+						//TODO: remove this line. "
+					}
+				}
+			}
+			function showSmallSelectOptions(selectedOption){
+				setTimeout(function(){
+					$(selectedOption).parent().find('.options').eq(0).css({display:"block"});
+				}, 1);
+			}
+			function smallSelectOption(option){
+				$(option).parent().parent().find('.selected').eq(0)[0].innerHTML = option.innerHTML.replace("<br/>", " ").replace("<br>", " ");
+			}
+			function enforceRange(ele, min, max, step){
+				ele = $(ele)[0];
+				if(ele.value == ""){
+					return false;
+				}
+				else if(ele.value < min){
+					ele.value = min;
+				}
+				ele.value = (Math.round(Number(ele.value) / step) * step);
+				if(min != null && Number(ele.value) < min){
+					ele.value='';
+				}
+				else if(max != null && Number(ele.value) > max){
+					ele.value=max;
+					//queueNotice("alert", "Value must be between " + min + " and " + max + ".");
+				}
+			}
+			var monthStart = 1;
+			var monthEnd = 12;
+			var yearStart = 1980;
+			var yearEnd = (new Date()).getFullYear();
+			var absoluteYearStart = yearStart;
+			var absoluteYearEnd = yearEnd;
+			function setSliders(){
+				$("#years")[0].innerHTML = "Loading...";
+				var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+				$("#monthsSlider").slider({
+					range: true,
+					min: 1,
+					max: 12,
+					values: [1, 12],
+					slide: function(event, ui){
+						monthStart = ui.values[0];
+						monthEnd = ui.values[1];
+						$("#months")[0].innerHTML = months[ui.values[0] - 1] + " - " + months[ui.values[1] - 1];
+					}
+				});
+				$.get("../php/getEarliestYear.php", function(data){
+					//success
+					var date = new Date();
+					var currentYear = date.getFullYear();
+					var earliestYear = Math.min(Number(data), (currentYear - 1));
+					yearStart = earliestYear;
+					absoluteYearStart = earliestYear;
+					$("#yearsSlider").slider({
+						range: true,
+						min: earliestYear,
+						max: currentYear,
+						values: [earliestYear, currentYear],
+						slide: function(event, ui){
+							yearStart = ui.values[0];
+							yearEnd = ui.values[1];
+							$("#years")[0].innerHTML = ui.values[0] + " - " + ui.values[1];
+						}
+					});
+					$("#years")[0].innerHTML = earliestYear + " - " + currentYear;
+					$("#yearsSlider").fadeIn();
+				})
+				.fail(function(){
+					//error
+					$("#years")[0].innerHTML = "Could not load year filter.";
+				})
+				.always(function() {
+					//complete
+				});
+			}
+			function resizeSuperHeader(){
+				if($("#rankings th").length > 0){
+					var superHeaderWidth = $("#rankings th").eq(2)[0].clientWidth + $("#rankings th").eq(3)[0].clientWidth + $("#rankings th").eq(4)[0].clientWidth + $("#rankings th").eq(5)[0].clientWidth;
+					if(superHeaderWidth == 0){
+						$("#superHeader")[0].style.display = "none";
+					}
+					else{
+						$("#superHeader")[0].style.display = "block";
+						$("#superHeader>div").eq(0)[0].style.width = superHeaderWidth;
+						$("#superHeader>div").eq(0)[0].style.marginRight = $("#rankings th").eq(6)[0].clientWidth;
+					}
+				}
+				if($("#siteUserLeaderboard th").length > 0){
+					var superHeaderWidth = $("#siteUserLeaderboard th").eq(2)[0].clientWidth + $("#siteUserLeaderboard th").eq(3)[0].clientWidth + $("#siteUserLeaderboard th").eq(4)[0].clientWidth + $("#siteUserLeaderboard th").eq(5)[0].clientWidth;
+					if(superHeaderWidth == 0){
+						$("#siteUserSuperHeader")[0].style.display = "none";
+					}
+					else{
+						$("#siteUserSuperHeader")[0].style.display = "block";
+						$("#siteUserSuperHeader>div").eq(0)[0].style.width = superHeaderWidth;
+						$("#siteUserSuperHeader>div").eq(0)[0].style.marginRight = $("#siteUserLeaderboard th").eq(6)[0].clientWidth;
+					}
+				}
+			}
+			
+			function r(search, replace, subject){
+				return subject.replace(/search/g, replace);
+			}
+			function myUrlEncode(str) {
+	    			return r(" ", "%20", r(">", "%3E", r("!", "%21", r("*", "%2A", r("(", "%28", r(")", "%29", r(";", "%3B", r(":", "%3A", r("@", "%40", r("&", "%26", r("=", "%3D", r("+", "%2B", r("$", "%24", r(",", "%2C", r("/", "%2F", r("?", "%3F", r("%", "%25", str)))))))))))))))));
+			}
+			function cleanParam(param){
+				param = myUrlEncode(param.toString().trim().replace(/[^a-zA-Z0-9.!*();:@&=+$,\/?%>-]/gi, " ").trim().replace(/ +(?= )/g,' '));
+				if(param == ""){
+					return "None";
+				}
+				return param;
+			}
+			var map;
+			var markers = {};
+			var lastMarker = null;
+			function activate(marker){
+				for (var siteID in markers) {
+					if (markers.hasOwnProperty(siteID)) {
+						markers[siteID].setZIndex(markers[siteID]["defaultZIndex"]);
+					}
+				}
+				marker.setIcon({
+					path: google.maps.SymbolPath.CIRCLE,
+					scale: marker.icon.scale,
+					strokeWeight: marker.icon.strokeWeight,
+					defaultFillColor: marker.icon.defaultFillColor,
+					fillColor: "#fed136",
+					fillOpacity: marker.icon.fillOpacity
+				});
+				marker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
+				marker.setAnimation(google.maps.Animation.BOUNCE);
+				setTimeout(function(){marker.setAnimation(null);}, 750);
+			}
+			function deactivate(marker){
+				marker.setIcon({
+					path: google.maps.SymbolPath.CIRCLE,
+					scale: marker.icon.scale,
+					strokeWeight: marker.icon.strokeWeight,
+					defaultFillColor: marker.icon.defaultFillColor,
+					fillColor: marker.icon.defaultFillColor,
+					fillOpacity: marker.icon.fillOpacity,
+					zIndex: marker.icon.defaultZIndex
+				});
+			}
+			function toggleMarker(marker){
+				if(marker.icon.defaultFillColor == marker.icon.fillColor){
+					if(lastMarker !== null){
+						deactivate(lastMarker);
+					}
+					activate(marker);
+					lastMarker = marker;
+					return "new";
+				}
+				marker.setAnimation(google.maps.Animation.BOUNCE);
+				setTimeout(function(){marker.setAnimation(null);}, 750);
+				lastMarker = marker;
+				return "same";
+			}
+			var activeSite = "Example Site";
+			var activeSiteID = -1;
+			function physicalMarkerClick(){
+				markerClick(this);
+			}
+			function markerClick(marker){
+				var graphType = "Phenology";
+				if(window.location.toString().substring(window.location.toString().indexOf("#") + 1).indexOf("Composition") > -1){
+					graphType = "Composition";
+					switchGraphTo('bar');
+				}
+				window.location = "#selected" + graphType + marker.siteInformation["ID"];
+				activeSite = marker.siteInformation["Name"];
+				activeSiteID = marker.siteInformation["ID"];
+				if(toggleMarker(marker) == "same"){
+					scrollToPanel(3);
+					return false;
+				}
+				$("#selectedSitePanel>h2")[0].innerHTML = marker.siteInformation["Name"];
+				$("#graphsH3")[0].innerHTML = marker.siteInformation["Name"] + " Graphs";
+				$("#selectedSitePanel>.tagline")[0].innerHTML = marker.siteInformation["Description"];
+				if(marker.siteInformation["MostRecentDateTime"] == "Never"){
+					$("#noDataSection")[0].style.display = "block";
+					$("#dataSection")[0].style.display = "none";
+				}
+				else{
+					$("#dataSection")[0].style.display = "block";
+					$("#noDataSection")[0].style.display = "none";
+					var dateParts = marker.siteInformation["MostRecentDateTime"].split(" ")[0].split('-');
+					var lastSurveyedDate = new Date();
+					lastSurveyedDate.setFullYear(Number(dateParts[0]));
+					lastSurveyedDate.setMonth(Number(dateParts[1]) - 1);
+					lastSurveyedDate.setDate(Number(dateParts[2]));
+					var today = new Date();
+					var timeDiff = Math.abs(lastSurveyedDate.getTime() - today.getTime());
+					var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+					if(diffDays < 1){
+						$("#lastSurveyed")[0].innerHTML = "Last surveyed <div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;display:inline-block;text-decoration:underline;\">today<div class=\"bottomTooltip\">" + getReadableDate(marker.siteInformation["MostRecentDateTime"].split(" ")[0]) + ", at " + getTwelveHourTime(marker.siteInformation["MostRecentDateTime"].split(" ")[1]) + "<div class=\"arrow\"></div></div></div>.";
+					}
+					else if(diffDays == 1){
+						$("#lastSurveyed")[0].innerHTML = "Last surveyed <div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;display:inline-block;text-decoration:underline;\">yesterday<div class=\"bottomTooltip\">" + getReadableDate(marker.siteInformation["MostRecentDateTime"].split(" ")[0]) + ", at " + getTwelveHourTime(marker.siteInformation["MostRecentDateTime"].split(" ")[1]) + "<div class=\"arrow\"></div></div></div>.";
+					}
+					else{
+						$("#lastSurveyed")[0].innerHTML = "Last surveyed <div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;display:inline-block;text-decoration:underline;\">" + diffDays + " days ago<div class=\"bottomTooltip\">" + getReadableDate(marker.siteInformation["MostRecentDateTime"].split(" ")[0]) + ", at " + getTwelveHourTime(marker.siteInformation["MostRecentDateTime"].split(" ")[1]) + "<div class=\"arrow\"></div></div></div>.";
+					}
+					
+					$("#siteINaturalistLink")[0].href = "https://www.inaturalist.org/observations?field:Site%20Name=" + cleanParam(marker.siteInformation["Name"]);
+					
+					$("#siteStats")[0].innerHTML = "<table id=\"desktopSiteStats\">" +
+							"<thead>" +
+								"<tr>" +
+									"<th>Users</th>" +
+									"<th>Surveys</th>" +
+									"<th>Arthropod Groups</th>" +
+									"<th>Arthropods</th>" +
+									"<th>Caterpillars</th>" +
+								"</tr>" +
+							"</thead>" +
+							"<tr>" +
+								"<td>" + marker.siteInformation["UserCount"] + "</td>" +
+								"<td>" + marker.siteInformation["SurveyCount"] + "</td>" +
+								"<td>" + marker.siteInformation["ArthropodGroupCount"] + "</td>" +
+								"<td>" + marker.siteInformation["ArthropodCount"] + "</td>" +
+								"<td>" + marker.siteInformation["CaterpillarCount"] + "</td>" +
+							"</tr>" +
+						"</table>" +
+						"<div id=\"mobileSiteStats\">" +
+							"<ul class=\"scrollAnimationElement fadeInOnScroll\" style=\"opacity: 1;\">" +
+								"<li><span class=\"bold\">Users: </span>" + marker.siteInformation["UserCount"] + "</li>" +
+								"<li><span class=\"bold\">Surveys: </span>" + marker.siteInformation["SurveyCount"] + "</li>" +
+								"<li><span class=\"bold\">Arthropod Groups: </span>" + marker.siteInformation["ArthropodGroupCount"] + "</li>" +
+								"<li><span class=\"bold\">Arthropods: </span>" + marker.siteInformation["ArthropodCount"] + "</li>" +
+								"<li><span class=\"bold\">Caterpillars: </span>" + marker.siteInformation["CaterpillarCount"] + "</li>" +
+							"</ul>" +
+						"</div>";
+				}
+				if(marker.siteInformation["MostRecentDateTime"] != "Never"){
+					clearSets();
+					clearCompositionSites();
+					$(".siteSelectionText").css({display: "none"});
+					showSiteUserLeaderboard(marker.siteInformation["ID"], function(){
+						addSetFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"], year: Number(dateParts[0])});
+						addCompositionSite(marker.siteInformation["ID"]);
+						updateSiteSelections();
+						loadNewActiveSiteCompositionDefaults();
+						showComposition();
+					});
+				}
+				$("#selectedSitePanel")[0].style.display = "block";
+				scrollToPanel(3);
+				 submitClassificationToSciStarter();
+			}
+			var currentSiteUserLeaderboardSiteID = -1;
+			var siteUserRankings = [];
+			function showSiteUserLeaderboard(siteID, callback){
+				if(siteID == currentSiteUserLeaderboardSiteID){return false;}
+				currentSiteUserLeaderboardSiteID = siteID;
+				callback = callback || function(){};
+				$("#showMoreSiteUserRankings")[0].style.display = "none";
+				$("#siteUserSuperHeader")[0].style.display = "none";
+				$("#siteUserLeaderboard")[0].innerHTML = "<div class=\"loading\"><img src=\"../images/rolling.svg\"/></div>";
+				console.log("Loading site user leaderbard.");
+				$.get("../php/getUserRankings.php?cron=false&siteID=" + siteID, function(data){
+					//success
+					if(siteID == currentSiteUserLeaderboardSiteID){
+						if(data.indexOf("true|") == 0){
+							data = data.replace("true|", "");
+							console.log("Loaded site user leaderbard.");
+							siteUserRankings = JSON.parse(data);
+							populateSiteUserLeaderboard("Caterpillars", false);
+						}
+						else{
+							$("#siteUserLeaderboard")[0].innerHTML = "";
+							queueNotice("error", data);
+						}
+					}
+				})
+				.fail(function(){
+					//error
+					$("#siteUserLeaderboard")[0].innerHTML = "";
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+				})
+				.always(function() {
+					//complete
+					if(siteID == currentSiteUserLeaderboardSiteID){
+						callback();
+					}
+				});
+			}
+			var numberOfShownSiteUserRankings = 10;
+			function showMoreSiteUserRankings(){
+				var NUMBER_OF_COLUMNS = 7;
+				numberOfShownSiteUserRankings += 10;
+				var numberOfShownRankings = numberOfShownSiteUserRankings;
+				$('#siteUserLeaderboard tr td>div').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).stop().animate({maxHeight:'500px'}, 500, function(){
+					$('#siteUserLeaderboard tr td>div').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).css({overflow:'visible'});
+				});
+				$('#siteUserLeaderboard tr td').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).stop().animate({padding:'5px 7px'}, 300);
+				if(numberOfShownRankings >= ($('#siteUserLeaderboard tr').length - 1)){
+					$("#showMoreSiteUserRankings").fadeOut(200);
+				}
+			}
+			function populateSiteUserLeaderboard(sortingMetric, keepCurrentNumberShown){
+				var rankings = siteUserRankings.sort(function(a, b){
+					var aVal = a[sortingMetric];
+					var bVal = b[sortingMetric];
+					var order = -1;
+					if(sortingMetric == "Name"){
+						order = 1;
+						aVal = aVal.toLowerCase();
+						bVal = bVal.toLowerCase();
+						if(aVal == "(anonymous user)") return 1;
+						if(bVal == "(anonymous user)") return -1;
+					}
+					else{
+						if(sortingMetric == "Caterpillars"){
+							aVal = aVal.replace("%", '');
+							bVal = bVal.replace("%", '');
+						}
+						aVal = Number(aVal);
+						bVal = Number(bVal);
+					}
+					if(aVal < bVal) return -1 * order;
+					if(aVal > bVal) return 1 * order;
+					if(sortingMetric != "Caterpillars"){
+						aVal = Number(a["Caterpillars"].replace("%", ''));
+						bVal = Number(b["Caterpillars"].replace("%", ''));
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Week"){
+						aVal = Number(a["Week"]);
+						bVal = Number(b["Week"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Month"){
+						aVal = Number(a["Month"]);
+						bVal = Number(b["Month"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Year"){
+						aVal = Number(a["Year"]);
+						bVal = Number(b["Year"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Total"){
+						aVal = Number(a["Total"]);
+						bVal = Number(b["Total"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					return 0;
+				});
+				var htmlToAdd = 	"<table>";
+				htmlToAdd += 			"<thead>";
+				htmlToAdd += 				"<tr>";
+				htmlToAdd +=					"<th></th>";
+				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Name', true);\"";
+				if(sortingMetric == "Name"){
+					htmlToAdd += 				" style=\"text-decoration:underline;\"";
+				}
+				htmlToAdd += 					">User name</th>";
+				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Week', true);\"";
+				if(sortingMetric == "Week"){
+					htmlToAdd += 				" style=\"text-decoration:underline;\"";
+				}
+				htmlToAdd += 					">Week</th>";
+				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Month', true);\"";
+				if(sortingMetric == "Month"){
+					htmlToAdd += 				" style=\"text-decoration:underline;\"";
+				}
+				htmlToAdd += 					">Month</th>";
+				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Year', true);\"";
+				if(sortingMetric == "Year"){
+					htmlToAdd += 				" style=\"text-decoration:underline;\"";
+				}
+				htmlToAdd += 					">Year</th>";
+				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Total', true);\"";
+				if(sortingMetric == "Total"){
+					htmlToAdd += 				" style=\"text-decoration:underline;\"";
+				}
+				htmlToAdd += 					">Millennium</th>";
+				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Caterpillars', true);\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
+				if(sortingMetric == "Caterpillars"){
+					htmlToAdd += 				"text-decoration:underline;";
+				}
+				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></th>";
+				htmlToAdd += 				"</tr>";
+				htmlToAdd += 			"</thead>";
+				var endRankings = "";
+				var rank = 1;
+				for(var i = 0; i < rankings.length; i++){
+					var unsubstantiatedCaterpillarStat = (sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10);
+					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This user has submitted fewer than 10 surveys and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
+					tempHtmlToAdd +=			"<td><div>" + (unsubstantiatedCaterpillarStat ? "&ndash;" : rank++) + "</div></td>";
+					tempHtmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\">" + rankings[i]["Name"] + "</div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Week"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisWeek"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></div></td>";
+					tempHtmlToAdd += 		"</tr>";
+					if(unsubstantiatedCaterpillarStat){
+						endRankings += tempHtmlToAdd;
+					}
+					else{
+						htmlToAdd += tempHtmlToAdd;
+					}
+				}
+				htmlToAdd += endRankings;
+				htmlToAdd += 		"</table>";
+				if(rankings.length > 10){
+					$("#showMoreSiteUserRankings")[0].style.display = "block";
+				}
+				else{
+					$("#showMoreSiteUserRankings")[0].style.display = "none";
+				}
+				$("#siteUserLeaderboard")[0].innerHTML = htmlToAdd;
+				resizeSuperHeader();
+				if(keepCurrentNumberShown){
+					var NUMBER_OF_COLUMNS = 7;
+					$('#siteUserLeaderboard tr td>div').slice(0,numberOfShownSiteUserRankings * NUMBER_OF_COLUMNS).stop().css({maxHeight:'500px', overflow:'visible'});
+					$('#siteUserLeaderboard tr td').slice(0,numberOfShownSiteUserRankings * NUMBER_OF_COLUMNS).stop().css({padding:'5px 7px'});
+					if(numberOfShownSiteUserRankings >= $('#siteUserLeaderboard tr').length){
+						$("#showMoreSiteUserRankings").fadeOut(0);
+					}
+				}
+				else{
+					numberOfShownSiteUserRankings = 10;
+				}
+			}
+			function hexToRgb(hex) {
+				// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+				var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+				hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+					return r + r + g + g + b + b;
+				});
+				var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+				return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [0, 0, 0];
+			}
+			function mapPercentToColor(percent){
+				percent = Number(percent.toString().replace("%", ""));
+				//alert(percent);
+				//var colors = [[247,255,0], [255,140,0], [255,0,0]];//yellow, orange, red
+				//var colors = [hexToRgb("#000dff"), hexToRgb("#ff00ee")];//royalblue, hotpink
+				//var colors = [hexToRgb("#000dff"), hexToRgb("#22ff00")];//royalblue, limegreen
+				//var colors = [hexToRgb("#0022ff"), hexToRgb("#0dfa30"), hexToRgb("#f7ff00"), hexToRgb("#ff0000")];//blue, green, yellow, red
+				var colors = [hexToRgb("#2d5227"), hexToRgb("#22ff00")];//darkgreen, limegreen
+				//var colors = [hexToRgb("#2d5227"), [27,145,141], hexToRgb("#22ff00")];//darkgreen, bluegreen, limegreen
+				//var colors = [[66,0,83], [27,145,141], [253,232,32]];//dark purple, bluegreen, yellow
+				//var colors = [hexToRgb("#000000"), hexToRgb("#22ff00")];//black, limegreen
+				//var colors = [hexToRgb("#000787"), hexToRgb("#ff00ff")];//midnightblue, hotpink
+				for(var i = 0; i < colors.length; i++){
+					if(percent == (i/(colors.length - 1))) return "rgb(" + colors[i].join(", ") + ")";
+				}
+				var color1, color2;
+				for(var i = 1; i < colors.length; i++){
+					if(percent < (i/(colors.length - 1))){
+						color1 = colors[i];
+						color2 = colors[i - 1];
+						percent = (percent - ((i - 1) * (1/(colors.length - 1)))) / ((i/(colors.length - 1)) - ((i - 1) * (1/(colors.length - 1))));
+					}
+				}
+				var w1 = ((percent * 2 - 1)/1+1) / 2;
+				var w2 = 1 - w1;
+				return "rgb(" + Math.round(color1[0] * w1 + color2[0] * w2) + ", " + Math.round(color1[1] * w1 + color2[1] * w2) + ", " + Math.round(color1[2] * w1 + color2[2] * w2) + ")";
+			}
+			function getNormalizedWeights(sitesArray){//data is in the form of: [{"ID": 2, "Name": "Example Site", "Data": 9999, ...etc}]
+				var max = 0;
+				var min = false;
+				for(var i = 0; i < sitesArray.length; i++){
+					var data = Number(sitesArray[i]["Weight"].toString().replace(/[^0-9.-]/g, ""));
+					var isExampleSite = (Number(sitesArray[i]["ID"]) == 2);
+					if(min === false && !isExampleSite){min = data;}
+					if(data > max && !isExampleSite){
+						max = data;
+					}
+					if(data < min && !isExampleSite){
+						min = data;
+					}
+				}
+				var arrToReturn = [];
+				for(var i = 0; i < sitesArray.length; i++){
+					var data = Number(sitesArray[i]["Weight"].toString().replace(/[^0-9.-]/g, ""));
+					var minMaxedData = min;
+					if(max > min){
+						minMaxedData = (data - min) / (max - min);
+					}
+					var cappedMinMaxedData = Math.max(0, Math.min(1, minMaxedData));
+					arrToReturn[arrToReturn.length] = cappedMinMaxedData;
+				}
+				return arrToReturn;
+			}
+			var filtering = false;
+			function filterMap(){
+				if(filtering){return false;}
+				filtering = true;
+				$("#mapFilters button").eq(0)[0].innerHTML = "<img src=\"../images/rolling.svg\" alt=\"loading...\"/>";
+				var includeWetLeaves = checkboxIsChecked($("#includeWetLeavesCheckbox"));
+				var readableIncludeWetLeaves = "not including surveys with wet leaves";
+				if(includeWetLeaves){
+					readableIncludeWetLeaves = "including surveys with wet leaves";
+				}
+				var readableOccurrenceDensity = getSelectText($("#densityOccurrence"));
+				var occurrenceInsteadOfDensity = (getSelectValue($("#densityOccurrence")) == "occurrence");
+				var observationMethod = getSelectValue($("#observationMethod"));
+				var readableObservationMethod = getSelectText($("#observationMethod")).replace("All", "");
+				var readableArthropod = getSelectText($("#arthropod"));
+				var arthropod = getSelectValue($("#arthropod"));
+				var minSize = Number($("#minLength")[0].value);
+				var plantSpecies = $("#plantSpecies")[0].value;
+				var monthAbbrs = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+				var months = "during " + monthAbbrs[monthStart - 1];
+				if(monthStart != monthEnd){
+					months = "from " + monthAbbrs[monthStart - 1] + " to " + monthAbbrs[monthEnd - 1];
+				}
+				var years = yearStart;
+				if(yearStart != yearEnd){
+					years = yearStart + " through " + yearEnd;
+				}
+				if(plantSpecies.replace(/ /g, "") == ""){plantSpecies = "%";}
+				$.get("../php/getSites.php?cron=false&observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&occurrenceInsteadOfDensity=" + occurrenceInsteadOfDensity + "&monthStart=" + monthStart + "&monthEnd=" + monthEnd + "&yearStart=" + yearStart + "&yearEnd=" + yearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies), function(data){
+					//success
+					saveMapFilters();
+					//clear old markers
+					for (var siteID in markers) {
+						if (markers.hasOwnProperty(siteID)) {
+							markers[siteID].setMap(null);
+						}
+					}
+					markers = {};
+					//set new markers
+					var sites = JSON.parse(data);
+					var normalizedWeights = getNormalizedWeights(sites);
+					var minRawValue = -1;
+					var maxRawValue = -1;
+					var minWeight = -100;
+					var maxWeight = -100;
+					var alreadyActiveMarker = null;
+					for(var i = 0; i < sites.length; i++){
+						var latlng = {lat:Number(sites[i]["Coordinates"].split(",")[0]), lng:Number(sites[i]["Coordinates"].split(",")[1])};
+						var color = mapPercentToColor(normalizedWeights[i]);
+						var scale = 7;
+						var zIndex = Math.round(normalizedWeights[i] * 100);
+						if(sites[i]["FilteredSurveyCount"] == 0){
+							scale = 5;
+							color = "#bbb";
+							zIndex = -1;
+						}
+						var currentColor = color;
+						if($("#selectedSitePanel h2").eq(0)[0].innerHTML == sites[i]["Name"]){
+							currentColor = "#fed136";
+						}
+						var marker = new google.maps.Marker({
+							map: map,
+							position: latlng,
+							title: (sites[i]["Name"] + ": " + sites[i]["RawValue"]),
+							defaultZIndex: zIndex,
+							zIndex: zIndex,
+							icon: {
+								path: google.maps.SymbolPath.CIRCLE,
+								scale: scale,
+								strokeWeight: 1,
+								defaultFillColor: color,
+								fillColor: currentColor,
+								fillOpacity: .9
+							},
+							animation: google.maps.Animation.DROP,
+							siteInformation: {
+								ID: sites[i]["ID"],
+								Name: sites[i]["Name"],
+								Description: sites[i]["Description"],
+								UserCount: sites[i]["UserCount"],
+								ArthropodGroupCount: sites[i]["ArthropodGroupCount"],
+								ArthropodCount: sites[i]["ArthropodCount"],
+								CaterpillarCount: sites[i]["CaterpillarCount"],
+								SurveyCount: sites[i]["SurveyCount"],
+								MostRecentDateTime: sites[i]["MostRecentDateTime"]
+							}
+						});
+						if(currentColor == "#fed136"){
+							lastMarker = marker;
+							alreadyActiveMarker = marker;
+						}
+						marker.addListener('click', physicalMarkerClick);
+						markers[sites[i]["ID"] + ""] = marker;
+						var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
+						if(rawValueNumber < minRawValue || minRawValue == -1){
+							minRawValue = rawValueNumber;
+						}
+						if(rawValueNumber > maxRawValue){
+							maxRawValue = rawValueNumber;
+						}
+						if(sites[i]["Weight"] < minWeight || minWeight == -100){
+							minWeight = sites[i]["Weight"];
+						}
+						if(sites[i]["Weight"] > maxWeight){
+							maxWeight = sites[i]["Weight"];
+						}
+					}
+					if(alreadyActiveMarker !== null){
+						alreadyActiveMarker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
+					}
+					for(var i = 0; i < $(".scaleCircle").length; i++){
+						if(occurrenceInsteadOfDensity){
+							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1)))), 0) + "%</div>";
+						}
+						else{
+							var scaleNumber = Math.pow(10, minWeight + ((maxWeight - minWeight) * (i * (1/($(".scaleCircle").length - 1)))));
+							if(i == 0){
+								scaleNumber = minRawValue;
+							}
+							else if(i == $(".scaleCircle").length - 1){
+								scaleNumber = maxRawValue;
+							}
+							else if(minRawValue == maxRawValue){
+								scaleNumber = maxRawValue;
+							}
+							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(scaleNumber, 2) + "</div>";
+						}
+						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
+					}
+					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">" + readableArthropod + " on " + plantSpecies.replace("%", "All Trees") + "<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">" + (readableObservationMethod + " " + readableOccurrenceDensity).toLowerCase().trim().charAt(0).toUpperCase() + (readableObservationMethod + " " + readableOccurrenceDensity).toLowerCase().trim().slice(1) + " of " + readableArthropod.toLowerCase() + " that are at least " + minSize + " mm long on " + plantSpecies.replace("%", "All Trees").toLowerCase() + " (" + readableIncludeWetLeaves + ") " + months + " over the period of " + years + "<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
+					closeHeight($("#mapFilters"), function(){$("#mapFilters")[0].style.borderBottom="0px none transparent";$("#mapTitle").stop().animate({opacity:"1"});$("#mapScale").stop().animate({opacity:"1"});showMapDownloadButton();});
+				})
+				.fail(function(){
+					//error
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+				})
+				.always(function() {
+					//complete
+					$("#mapFilters button").eq(0)[0].innerHTML = "Apply Filters";
+					filtering = false;
+				});
+			}
+			var mapFilters = {};
+			function saveMapFilters(){
+				var minimumLength = $("#minLength")[0].value;
+				if(minimumLength == ""){
+					minimumLength = 0;
+				}
+				var plantSpecies = $("#plantSpecies")[0].value;
+				if(plantSpecies == ""){
+					plantSpecies = "All";
+				}
+				mapFilters = {
+					comparisonMetric: getSelectText($("#densityOccurrence")),
+					observationMethod: getSelectText($("#observationMethod")),
+					arthropodGroup: getSelectText($("#arthropod")),
+					minimumLength: minimumLength,
+					plantSpecies: plantSpecies,
+					wetLeaves: checkboxIsChecked($("#includeWetLeavesCheckbox")),
+					monthStart: monthStart,
+					monthEnd: monthEnd,
+					yearStart: yearStart,
+					yearEnd: yearEnd
+				};
+			}
+			var siteNamesAndIDs = [];
+			function initializeMap() {
+				map = new google.maps.Map($('#map')[0], {
+					center: {lat: 37.068427, lng: -80.089019},
+					zoom: 5
+				});
+				$.get("../php/getSites.php?cron=false&observationMethod=" + encodeURIComponent("%") + "&includeWetLeaves=true&occurrenceInsteadOfDensity=true&monthStart=1&monthEnd=12&yearStart=0&yearEnd=99999&arthropod=caterpillar&minSize=0&plantSpecies=" + encodeURIComponent("%"), function(data){
+					//success
+					console.log("Sites loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
+					saveMapFilters();
+					var sites = JSON.parse(data);
+					var normalizedWeights = getNormalizedWeights(sites);
+					var minRawValue = -1;
+					var maxRawValue = -1;
+					for(var i = 0; i < sites.length; i++){
+						siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
+						var latlng = {lat:Number(sites[i]["Coordinates"].split(",")[0]), lng:Number(sites[i]["Coordinates"].split(",")[1])};
+						var color = mapPercentToColor(normalizedWeights[i]);
+						var scale = 7;
+						var zIndex = Math.round(normalizedWeights[i] * 100);
+						if(sites[i]["FilteredSurveyCount"] == 0){
+							scale = 5;
+							color = "#bbb";
+							zIndex = -1;
+						}
+						var marker = new google.maps.Marker({
+							map: map,
+							position: latlng,
+							title: (sites[i]["Name"] + ": " + sites[i]["RawValue"]),
+							zIndex: zIndex,
+							defaultZIndex: zIndex,
+							icon: {
+								path: google.maps.SymbolPath.CIRCLE,
+								scale: scale,
+								strokeWeight: 1,
+								defaultFillColor: color,
+								fillColor: color,
+								fillOpacity: .9
+							},
+							animation: google.maps.Animation.DROP,
+							siteInformation: {
+								ID: sites[i]["ID"],
+								Name: sites[i]["Name"],
+								Description: sites[i]["Description"],
+								UserCount: sites[i]["UserCount"],
+								ArthropodGroupCount: sites[i]["ArthropodGroupCount"],
+								ArthropodCount: sites[i]["ArthropodCount"],
+								CaterpillarCount: sites[i]["CaterpillarCount"],
+								SurveyCount: sites[i]["SurveyCount"],
+								MostRecentDateTime: sites[i]["MostRecentDateTime"]
+							}
+						});
+						marker.addListener('click', physicalMarkerClick);
+						markers[sites[i]["ID"] + ""] = marker;
+						var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
+						if(rawValueNumber < minRawValue || minRawValue == -1){
+							minRawValue = rawValueNumber;
+						}
+						if(rawValueNumber > maxRawValue){
+							maxRawValue = rawValueNumber;
+						}
+					}
+					for(var i = 0; i < $(".scaleCircle").length; i++){
+						$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + Math.round(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1))))) + "%</div>";
+						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
+					}
+					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">Caterpillars on all trees<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">Occurrence of caterpillars that are at least 0 mm long on all trees (including surveys with wet leaves) from January to December over the period of all time<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
+					siteNamesAndIDs.sort(function(a, b){
+						if(a[0] < b[0]) return -1;
+						if(a[0] > b[0]) return 1;
+						return 0;
+					});
+					showMapDownloadButton();
+					if(window.location.toString().indexOf("#") > -1){
+						var selectedSiteIDFromURL = window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace(/\D/g, "");
+						if(selectedSiteIDFromURL.length > 0){
+							markerClick(markers[selectedSiteIDFromURL]);
+						}
+					}
+				})
+				.fail(function(){
+					//error
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+				})
+				.always(function() {
+					//complete
+				});
+			}
+			function lockInMapHeight(){
+				var mapHeight = (window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight) - $("header").eq(0)[0].clientHeight;
+				$("#map")[0].style.height = mapHeight + "px";
+				$("#mapSpace")[0].style.height = mapHeight + "px";
+			}
+			var lastSiteSortingMetric = "Year";
+			var lastUserSortingMetric = "Year";
+			var numberOfShownSiteRankings = 10;
+			var numberOfShownUserRankings = 10;
+			var siteRankings = [];
+			var userRankings = [];
+			var shownRankings = "Site";
+			var loadedRankingsDataCount = 0;
+			function showLeaderboard(){
+				$.get("../php/getSiteRankings.php?cron=false", function(data){
+					//success
+					console.log("Site ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
+					siteRankings = JSON.parse(data);
+					lastSiteSortingMetric = "Caterpillars";
+					if(++loadedRankingsDataCount == 2){
+						populateLeaderboard(lastSiteSortingMetric);
+					}
+				})
+				.fail(function(){
+					//error
+					$("#rankings")[0].innerHTML = "";
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+				})
+				.always(function() {
+					//complete
+				});
+				$.get("../php/getUserRankings.php?cron=false", function(data){
+					//success
+					if(data.indexOf("true|") == 0){
+						console.log("User ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
+						data = data.replace("true|", "");
+						userRankings = JSON.parse(data);
+						lastUserSortingMetric = "Caterpillars";
+						if(++loadedRankingsDataCount == 2){
+							populateLeaderboard(lastSiteSortingMetric);
+						}
+					}
+					else{
+						$("#rankings")[0].innerHTML = "";
+						queueNotice("error", data);
+					}
+				})
+				.fail(function(){
+					//error
+					$("#rankings")[0].innerHTML = "";
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+				})
+				.always(function() {
+					//complete
+				});
+			}
+			function populateLeaderboard(sortingMetric){
+				if(loadedRankingsDataCount < 2){return false;}
+				var rankings = [];
+				if(shownRankings == "Site"){
+					rankings = siteRankings;
+					lastSiteSortingMetric = sortingMetric;
+				}
+				else{
+					rankings = userRankings;
+					lastUserSortingMetric = sortingMetric;
+				}
+				rankings = rankings.sort(function(a, b){
+					var aVal = a[sortingMetric];
+					var bVal = b[sortingMetric];
+					var order = -1;
+					if(sortingMetric == "Name"){
+						order = 1;
+						aVal = aVal.toLowerCase();
+						bVal = bVal.toLowerCase();
+						if(aVal == "(anonymous user)") return 1;
+						if(bVal == "(anonymous user)") return -1;
+					}
+					else{
+						if(sortingMetric == "Caterpillars"){
+							aVal = aVal.replace("%", '');
+							bVal = bVal.replace("%", '');
+						}
+						aVal = Number(aVal);
+						bVal = Number(bVal);
+					}
+					if(aVal < bVal) return -1 * order;
+					if(aVal > bVal) return 1 * order;
+					if(sortingMetric != "Caterpillars"){
+						aVal = Number(a["Caterpillars"].replace("%", ''));
+						bVal = Number(b["Caterpillars"].replace("%", ''));
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Week"){
+						aVal = Number(a["Week"]);
+						bVal = Number(b["Week"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Month"){
+						aVal = Number(a["Month"]);
+						bVal = Number(b["Month"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Year"){
+						aVal = Number(a["Year"]);
+						bVal = Number(b["Year"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Total"){
+						aVal = Number(a["Total"]);
+						bVal = Number(b["Total"]);
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					return 0;
+				});
+				var htmlToAdd = 	"<table>";
+				htmlToAdd += 			"<thead>";
+				htmlToAdd += 				"<tr>";
+				htmlToAdd +=					"<th></th>";
+				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Name');\"";
+				if(sortingMetric == "Name"){
+					htmlToAdd += 				" style=\"text-decoration:underline;\"";
+				}
+				htmlToAdd += 					">" + shownRankings + " name</th>";
+				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Week');\"";
+				if(sortingMetric == "Week"){
+					htmlToAdd += 				" style=\"text-decoration:underline;\"";
+				}
+				htmlToAdd += 					">Week</th>";
+				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Month');\"";
+				if(sortingMetric == "Month"){
+					htmlToAdd += 				" style=\"text-decoration:underline;\"";
+				}
+				htmlToAdd += 					">Month</th>";
+				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Year');\"";
+				if(sortingMetric == "Year"){
+					htmlToAdd += 				" style=\"text-decoration:underline;\"";
+				}
+				htmlToAdd += 					">Year</th>";
+				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Total');\"";
+				if(sortingMetric == "Total"){
+					htmlToAdd += 				" style=\"text-decoration:underline;\"";
+				}
+				htmlToAdd += 					">Millennium</th>";
+				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Caterpillars');\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
+				if(sortingMetric == "Caterpillars"){
+					htmlToAdd += 				"text-decoration:underline;";
+				}
+				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></th>";
+				htmlToAdd += 				"</tr>";
+				htmlToAdd += 			"</thead>";
+				for(var i = 0; i < rankings.length; i++){
+					htmlToAdd += 		"<tr>";
+					htmlToAdd +=			"<td><div>" + (i + 1) + "</div></td>";
+					htmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\"";
+					if(shownRankings == "Site"){
+					   htmlToAdd += 		" onclick=\"markerClick(markers['" + rankings[i]["ID"] + "'])\" class=\"pointer underline\"";
+					}
+					htmlToAdd += 			">" + rankings[i]["Name"] + "</div></td>";
+					htmlToAdd += 			"<td><div>" + rankings[i]["Week"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisWeek"] + "</div></div></td>";
+					htmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
+					htmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
+					htmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
+					htmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></div></td>";
+					htmlToAdd += 		"</tr>";
+				}
+				htmlToAdd += 		"</table>";
+				$("#rankings")[0].innerHTML = htmlToAdd;
+				if(shownRankings == "User"){
+					$("#globalLeaderboardNotice")[0].innerHTML = "Users with fewer than 10 surveys are not included on this leaderboard. If you would like to hide your name from leaderboards like this one, please visit your <a href=\"../settings\" class=\"highlighted\">Settings</a> page and click on the \"Privacy\" section.";
+				}
+				else{
+					$("#globalLeaderboardNotice")[0].innerHTML = "Sites with fewer than 10 surveys are not included on this leaderboard.";
+				}
+				$("#showMoreRankings").stop().fadeIn(0);
+				resizeSuperHeader();
+				$("#rankingsSwitch").stop().css({display:"inline-block"});
+				showCurrentNumberOfRankings();
+			}
+			function showMoreRankings(){
+				if(shownRankings == "Site"){
+					numberOfShownSiteRankings += 10;
+				}
+				else{
+					numberOfShownUserRankings += 10;
+				}
+				showCurrentNumberOfRankings(true);
+			}
+			function showCurrentNumberOfRankings(showAnimation){
+				showAnimation = showAnimation || false;
+				var numberOfShownRankings = numberOfShownSiteRankings;
+				if(shownRankings == "User"){
+					numberOfShownRankings = numberOfShownUserRankings;
+				}
+				var NUMBER_OF_COLUMNS = 7;
+				if(showAnimation){
+					$('#rankings tr td>div').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).stop().animate({maxHeight:'500px'}, 500, function(){
+						$('#rankings tr td>div').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).css({overflow:'visible'});
+					});
+					$('#rankings tr td').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).stop().animate({padding:'5px 7px'}, 300);
+					if(numberOfShownRankings >= ($('#rankings tr').length - 1)){
+						$("#showMoreRankings").fadeOut(200);
+					}
+				}
+				else{
+					$('#rankings tr td>div').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).stop().css({maxHeight:'500px', overflow:'visible'});
+					$('#rankings tr td').slice(0,numberOfShownRankings * NUMBER_OF_COLUMNS).stop().css({padding:'5px 7px'});
+					if(numberOfShownRankings >= ($('#rankings tr').length - 1)){
+						$("#showMoreRankings").fadeOut(0);
+					}
+				}
+			}
+			function switchRankingsTo(leaderboardType){
+				if(leaderboardType.toLowerCase() == "site"){
+					shownRankings='Site';
+					$("#siteSwitchButton")[0].className = "active";
+					$("#userSwitchButton")[0].className = "";
+					$("#siteSwitchButton")[0].innerHTML = ". . .";
+					setTimeout(function(){
+						populateLeaderboard(lastSiteSortingMetric);
+						$("#siteSwitchButton")[0].innerHTML = "Site";
+					}, 1);
+				}
+				else{
+					shownRankings='User';
+					$("#userSwitchButton")[0].className = "active";
+					$("#siteSwitchButton")[0].className = "";
+					$("#userSwitchButton")[0].innerHTML = ". . .";
+					setTimeout(function(){
+						populateLeaderboard(lastUserSortingMetric);
+						$("#userSwitchButton")[0].innerHTML = "User";
+					}, 1);
+				}
+			}
+			function switchGraphTo(graphType){
+				if(graphType == "bar"){
+					window.location = "#" + window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace("Phenology", "Composition");
+				}
+				else{
+					window.location = "#" + window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace("Composition", "Phenology");
+				}
+				$("#barGraphSwitchButton")[0].className = "";
+				$("#lineGraphSwitchButton")[0].className = "";
+				$("#" + graphType + "GraphSwitchButton")[0].className = "active";
+				$("#lineGraph")[0].style.display = "none";
+				$("#barGraph")[0].style.display = "none";
+				$("#" + graphType + "Graph")[0].style.display = "block";
+				centerYAxisLabels();
+			}
+			//PHENOLOGY CHART STUFF
+			var LINE_TENSION = 0.1;
+			//PHENOLOGY COLORS:
+			var colors = ["rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(75, 192, 192)", "rgb(54, 162, 235)", "rgb(153, 102, 255)", "#333", "#00067d", "#4efc85", "#4efcfc", "#fc4ef0", "#9e6400", "#ff0000", "#006b10", "rgb(255, 205, 86)"];
+			//BAR CONTRAST v1: var barColors = ["#ff3333", "#b800b2", "#f200ff", "#fa7d7d", "#fcc37e", "#ff8c00", "#f7ff00", "#00ff11", "#00eeff", "#000dff", "#7f85ff", "#bbb", "#555", "#000"];
+			//BAR CONTRAST v2:
+			var barColors = ["#222222", "#000dff", "#00eeff", "#039e0d", "#00ff11", "#f7ff00", "#ff8c00", "#ff0000", "#96039e", "#f200ff", "#fa7d7d", "#fcc37e", "#bbbbbb", "#7f85ff"];
+			//BAR RAINBOW: var barColors = ["rgb(235, 85, 85)","rgb(235, 85, 200)","rgb(197, 85, 235)","rgb(150, 85, 235)","rgb(85, 97, 235)","rgb(85, 165, 235)","rgb(85, 217, 235)","rgb(85, 235, 180)","rgb(85, 235, 90)","rgb(200, 235, 85)","rgb(235, 215, 85)","rgb(235, 167, 85)","rgb(235, 145, 85)","rgb(194, 126, 24)"];
+			var endpoints = [getClearPoint(formatDate("2000-01-01"), 0), getClearPoint(formatDate("2000-12-31"), 100)];
+			var lineConfig = {
+				type: 'line',
+				data: {
+					datasets: [
+						endpoints[0],
+						endpoints[1]
+					]
+				},
+				options: {
+					responsive: true,
+					legend: {display:false},
+					tooltips: {callbacks: {label: function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel + '%';}}},
+					scales: {
+						xAxes: [{
+							type: 'time',
+							time: {unit: 'month',unitStepSize: 1,tooltipFormat: "MMM D",},
+							scaleLabel: {
+								display: true,
+								labelString: 'Date',
+								fontSize: 20
+							},
+							ticks: {
+								callback: function(value, index, values) {return value.replace(/[0-9 ]/g, '');},
+								autoSkip: false,
+								maxRotation: 0,
+								fontSize: 18
+							},
+							bounds: "ticks",
+							gridLines: {color: "rgba(0,0,0,0.05)"}
+						}],
+						yAxes: [{
+							scaleLabel: {display: true,labelString: '', fontSize: 18},
+							gridLines: {color: "rgba(0,0,0,0.05)"},
+							ticks:{
+								beginAtZero: true,
+								fontSize: 18
+							}
+						}]
+					}
+				}
+			};
+			var barConfig = {
+				type: 'bar',
+				data: {},
+				options: {
+					legend: {position: "bottom",labels: {boxWidth: 13, fontSize: 18}, display: false},
+					title: {display: false,},
+					tooltips: {mode: 'index', intersect: false, itemSort: function(a, b){return b.datasetIndex - a.datasetIndex;}, callbacks: {label: function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel + '%';}}},
+					responsive: true,
+					scales: {
+						xAxes: [{
+							stacked: true,
+							gridLines: {color: "rgba(0,0,0,0.05)"},
+							barPercentage: 0.2,
+							ticks: {
+								autoSkip: false,
+								fontSize: 11
+							}
+						}],
+						yAxes: [{
+							stacked: true,
+							scaleLabel: {display: true,labelString: '', fontSize: 18},
+							gridLines: {color: "rgba(0,0,0,0.05)"},
+							ticks: {fontSize: 18}
+						}]
+					}
+				}
+			};
+			function getClearPoint(x, y){
+				var background = "rgba(230,230,230,0)";
+				var border = "rgba(200,200,200,0)";
+				return {label: '', backgroundColor: background, borderColor: border, data: [{x: x, y: y}]};
+			}
+			function formatColor(colorString){
+				colorString = colorString.toLowerCase().trim()
+				if(colorString.indexOf("rgb") == 0){
+					var rgb = colorString.replace(/\D/g, " ").replace(/\s\s+/g, ' ').trim().split(" ");
+					return "rgba(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + ", 1)";
+				}
+				colorString = colorString.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, function(m, r, g, b){return r + r + g + g + b + b;});
+				var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(colorString);
+				return "rgba(" + parseInt(result[1], 16) + ", " + parseInt(result[2], 16) + ", " + parseInt(result[3], 16) + ", 1)";
+			}
+			function transluscent(color){
+				return formatColor(color).replace("1)", "0.5)");
+			}
+			function opaque(color){
+				return formatColor(color);
+			}
+			function formatDate(dateString){//YYYY-MM-DD
+				return "2000" + dateString.substring(4) + "T12:00:00-00:00";
+			}
+			var chartedSets = {};
+			function getLine(label, color, points){
+				var occurrenceLine = {
+					label: label,
+					backgroundColor: transluscent(color),
+					borderColor: opaque(color),
+					lineTension: LINE_TENSION,
+					fill: false,
+					data: []
+				};
+				for(var i = 0; i < points.length; i++){
+					occurrenceLine.data[occurrenceLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][1])};
+				}
+				var densityLine = {
+					label: label,
+					backgroundColor: transluscent(color),
+					borderColor: opaque(color),
+					lineTension: LINE_TENSION,
+					fill: false,
+					data: []
+				};
+				for(var i = 0; i < points.length; i++){
+					densityLine.data[densityLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][2])};
+				}
+				return [occurrenceLine, densityLine];
+			}
+			function getLines(label, color, points){
+				points = points.sort(function(a, b) {
+					return (new Date(a[0]).getTime()) - (new Date(b[0]).getTime());
+				});
+				var pointSets = [];
+				var DAY = 86400000;
+				var lastDatesTime = -1;
+				for(var i = 0; i < points.length; i++){
+					var thisDatesTime = new Date(points[i][0]).getTime();
+					if(i == 0 || Math.abs(thisDatesTime - lastDatesTime) > (DAY * 30)){
+						pointSets[pointSets.length] = [];
+					}
+					lastDatesTime = thisDatesTime;
+					pointSets[pointSets.length - 1][pointSets[pointSets.length - 1].length] = points[i];
+				}
+				var lines = [];
+				for(var i = 0; i < pointSets.length; i++){
+					lines[lines.length] = getLine(label, color, pointSets[i]);
+				}
+				chartedSets[label] = lines;
+				if($("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML == $("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML){
+					var occurrenceLines = [];
+					for(var i = 0; i < lines.length; i++){
+						occurrenceLines[occurrenceLines.length] = lines[i][0];
+					}
+					return occurrenceLines;
+				}
+				var densityLines = [];
+				for(var i = 0; i < lines.length; i++){
+					densityLines[densityLines.length] = lines[i][1];
+				}
+				return densityLines;
+			}
+			var labels = [];
+			function addSet(label, points, update){
+				if(update !== false){
+					update = true;
+				}
+				if(labels.length >= colors.length){
+					queueNotice("error", "You have too many lines on your phenology chart. Please delete at least one of them before adding more.");
+					return false;
+				}
+				var color = "";
+				for(var i = 0; i < colors.length; i++){
+					var colorIsInUse = false;
+					for(var j = 0; j < labels.length; j++){
+						if(opaque(labels[j][1]) == opaque(colors[i])){
+							colorIsInUse = true;
+						}
+					}
+					if(!colorIsInUse){
+						color = colors[i];
+						break;
+					}
+				}
+				labels[labels.length] = [label, color];
+				var lines = getLines(label, color, points);
+				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
+					lineConfig.data.datasets = [];
+				}
+				for(var i = 0; i < lines.length; i++){
+					lineConfig.data.datasets[lineConfig.data.datasets.length] = lines[i];
+				}
+				if(update){
+					window.phenology.update();
+					centerYAxisLabels();
+					updatePhenologyLegend();
+				}
+			}
+			function updatePhenologyLegend(){
+				var htmlToAdd = "<div style=\"display:inline-block;text-align:left;\">";
+				for(var i = 0; i < labels.length; i++){
+					htmlToAdd += "<div class=\"label\">" +
+							"<div class=\"box\" style=\"background:" + transluscent(labels[i][1]) + ";border:3px solid " + opaque(labels[i][1]) + ";\"></div>" +
+							"<span class=\"description\">" + labels[i][0] + "</span>" +
+							"<span style=\"color:#bbb;\" class=\"editDeleteSpan\">" +
+								" ( " +
+								"<span class=\"underline pointer\" onclick=\"editSet(this.parentNode.parentNode);\">edit</span>" +
+								" | " +
+								"<span class=\"underline pointer\" onclick=\"removeSet(this.parentNode.parentNode)\">delete</span>" +
+								" )" +
+							"</span>" +
+						"</div><br/>";
+				}
+				htmlToAdd += 	"<div id=\"loadingLine\" style=\"display:none;\">" +
+							"<div class=\"colorBlock\"></div> Loading..." +
+						"</div>" +
+						"<div class=\"label\" id=\"addNewSetLabel\">" +
+							"<div class=\"box\" style=\"background:" + transluscent("#ccc") + ";border:3px solid #ccc;\"></div>" +
+							"<span class=\"underline pointer\" onclick=\"showAddNewLineOptions();\">Add new line</span>" +
+						"</div>";
+				htmlToAdd += "</div>";
+				$("#phenologyLegend")[0].innerHTML = htmlToAdd;
+			}
+			function showAddNewLineOptions(){
+				if(labels.length >= colors.length){
+					queueNotice("error", "You have too many lines on your phenology chart. Please delete at least one of them before adding more.");
+					return false;
+				}
+				$(".editDeleteSpan").fadeOut(0);
+				var siteSelectOptions = "";
+				for(var i = 0; i < siteNamesAndIDs.length; i++){
+					siteSelectOptions += "<div onclick=\"smallSelectOption(this);\">" + siteNamesAndIDs[i][0] + "</div>";
+				}
+				var yearOptions = "";
+				for(var i = absoluteYearEnd; i >= absoluteYearStart; i--){
+					yearOptions += "<div onclick=\"smallSelectOption(this);\">" + i + "</div>";
+				}
+				$("#addNewSetLabel")[0].outerHTML = "<div class=\"label\">" +
+							"<div class=\"box\" style=\"background:" + transluscent("#ccc") + ";border:3px solid #ccc;\"></div>" +
+							"<div class=\"smallSelect\">" + //ARTHROPODS
+								"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">All arthropods</div>" +
+								"<div class=\"options\" style=\"min-width:153px;\">" +
+									"<div onclick=\"smallSelectOption(this);\">All arthropods</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Ants</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Aphids and psyllids</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Bees and wasps</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Beetles</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Caterpillars</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Daddy longlegs</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Flies</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Grasshoppers and crickets</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Leaf hoppers and cicadas</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Moths and butterflies</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Spiders</div>" +
+									"<div onclick=\"smallSelectOption(this);\">True bugs</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Other arthropods</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Unidentified arthropods</div>" +
+								"</div>" +
+							"</div>" +
+							" at " +
+							"<div class=\"smallSelect\">" + //SITE
+								"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + activeSite + "</div>" +
+								"<div class=\"options\" style=\"min-width:250px;\">" +
+									siteSelectOptions +
+								"</div>" +
+							"</div>" +
+							" in " +
+							"<div class=\"smallSelect\">" + //YEAR
+								"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + yearEnd + "</div>" +
+								"<div class=\"options\">" +
+									yearOptions +
+								"</div>" +
+							"</div>" +
+							"<span style=\"color:#bbb;\">" +
+								" ( " +
+								"<span onclick=\"addNewSet(this.parentNode.parentNode);\" class=\"underline pointer\">confirm</span>" +
+								" | " +
+								"<span class=\"cancel underline pointer\" onclick=\"updatePhenologyLegend();\">cancel</span>" +
+								" )" +
+							"</span>" +
+						"</div>";
+			}
+			function editSet(labelDiv){
+				//get options
+				var optionsString = $(labelDiv).find(".description").eq(0)[0].innerHTML;
+				var arthropod = optionsString;
+				var arthropods = ["All arthropods", "Ants", "Aphids and psyllids", "Bees and wasps", "Beetles", "Caterpillars", "Daddy longlegs", "Flies", "Grasshoppers and crickets", "Leaf hoppers and cicadas", "Moths and butterflies", "Spiders", "True bugs", "Other arthropods", "Unidentified arthropods"];
+				for(var i = 0; i < arthropods.length; i++){
+					if(arthropod.indexOf(arthropods[i]) == 0){
+						arthropod = arthropods[i];
+						break;
+					}
+				}
+				var siteName = optionsString.substring(0, optionsString.lastIndexOf(" in")).replace(arthropod + " at ", "");
+				var year = Number(optionsString.substring(optionsString.lastIndexOf(" in")).replace(/\D/g, ""));
+				//Remove line
+				removeSet(labelDiv);
+				//Add new line with same presets
+				showAddNewLineOptions();
+				var labelDivs = $("#phenologyLegend .label");
+				var addNewLineLabel = labelDivs.eq(labelDivs.length - 1);
+				var selectedOptions = addNewLineLabel.find(".selected");
+				selectedOptions.eq(0)[0].innerHTML = arthropod;
+				selectedOptions.eq(1)[0].innerHTML = siteName;
+				selectedOptions.eq(2)[0].innerHTML = year;
+				//Change x icon to cancel(presets)
+				var cancelFunction = function(){
+					addNewLineLabel[0].style.display = "none";
+					selectedOptions.eq(0)[0].innerHTML = arthropod;
+					selectedOptions.eq(1)[0].innerHTML = siteName;
+					selectedOptions.eq(2)[0].innerHTML = year;
+					addNewSet(addNewLineLabel);
+				};
+				addNewLineLabel.find(".cancel").eq(0)[0].onclick = cancelFunction;
+			}
+			function addNewSet(labelDiv){
+				var options = $(labelDiv).find(".smallSelect .selected");
+				var arthropod = options.eq(0)[0].innerHTML;
+				var readableAndUnreadableArthropods = [["All arthropods", "%"], ["Ants", "ant"], ["Aphids and psyllids", "aphid"], ["Bees and wasps", "bee"], ["Beetles", "beetle"], ["Caterpillars", "caterpillar"], ["Daddy longlegs", "daddylonglegs"], ["Flies", "fly"], ["Grasshoppers and crickets", "grasshopper"], ["Leaf hoppers and cicadas", "leafhopper"], ["Moths and butterflies", "moths"], ["Spiders", "spider"], ["True bugs", "truebugs"], ["Other arthropods", "other"], ["Unidentified arthropods", "unidentified"]];
+				for(var i = 0; i < readableAndUnreadableArthropods.length; i++){
+					if(readableAndUnreadableArthropods[i][0] == arthropod){
+						arthropod = readableAndUnreadableArthropods[i][1];
+						break;
+					}
+				}
+				var siteName = options.eq(1)[0].innerHTML;
+				var siteID = -1;
+				for(var i = 0; i < siteNamesAndIDs.length; i++){
+					if(siteNamesAndIDs[i][0] == siteName){
+						siteID = Number(siteNamesAndIDs[i][1]);
+						break;
+					}
+				}
+				addSetFromFilters({arthropod: arthropod, siteID: siteID, year: Number(options.eq(2)[0].innerHTML)});
+				labelDiv.outerHTML = "";
+			}
+			function removeSet(labelDiv){
+				var lineColor = opaque($(labelDiv).find(".box").eq(0)[0].style.background);
+				for(var i = (lineConfig.data.datasets.length - 1); i >= 0; i--){
+					if(lineColor == opaque(lineConfig.data.datasets[i].backgroundColor)){
+						lineConfig.data.datasets.splice(i, 1);
+					}
+				}
+				for(var i = (labels.length - 1); i >=0; i--){
+					if(lineColor == opaque(labels[i][1])){
+						labels.splice(i, 1);
+					}
+				}
+				delete chartedSets[$(labelDiv).find(".description").eq(0)[0].innerHTML];
+				window.phenology.update();
+				centerYAxisLabels();
+				updatePhenologyLegend();
+			}
+			function clearSets(){
+				labels = [];
+				chartedSets = {};
+				lineConfig.data.datasets = [endpoints[0], endpoints[1]];
+				window.phenology.update();
+				centerYAxisLabels();
+				updatePhenologyLegend();
+			}
+			function addSetFromFilters(filters, callback){
+				callback = callback || function(){};
+				var color = "";
+				for(var i = 0; i < colors.length; i++){
+					var colorIsInUse = false;
+					for(var j = 0; j < labels.length; j++){
+						if(opaque(labels[j][1]) == opaque(colors[i])){
+							colorIsInUse = true;
+						}
+					}
+					if(!colorIsInUse){
+						color = colors[i];
+						break;
+					}
+				}
+				$("#loadingLine .colorBlock")[0].style.background = transluscent(color);
+				$("#loadingLine .colorBlock")[0].style.border= "3px solid " + opaque(color);
+				$("#loadingLine")[0].style.display = "block";
+				console.log("Force phenology chart to front of composition queue: " + JSON.stringify(filters));
+				pauseCompositionLoads(function(){loadSetFromFilters(filters, function(){callback();resumeCompositionLoads();})});
+			}
+			function loadSetFromFilters(filters, callback){
+				console.log("Loading phenology: " + JSON.stringify(filters));
+				$.get("https://caterpillarscount.unc.edu/php/getPhenology.php?lines=" + encodeURIComponent(JSON.stringify([filters])), function(data){
+					//success
+					console.log("Loaded phenology: " + JSON.stringify(filters));
+					if(data.indexOf("true|") == 0){
+						var sets = JSON.parse(data.replace("true|", ""));
+						for(var label in sets){
+							if(sets.hasOwnProperty(label)){
+								addSet(label, sets[label]);
+							}
+						}
+					}
+					else{
+						queueNotice("error", data);
+					}
+				})
+				.fail(function(){
+					//error
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+					updatePhenologyLegend();
+				})
+				.always(function() {
+					//complete
+					$("#loadingLine")[0].style.display = "none";
+					callback();
+				});
+			}
+			function matchLinesWithYAxisLabel(){
+				//if we just have the invisible endpoints loaded on an empty chart, don't bother doing anything
+				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
+					return true;
+				}
+				//otherwise, set lines to match metric
+				var occurrenceInsteadOfDensity = ($("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML == $("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML);
+				var newData = [];
+				for (var setLabel in chartedSets) {
+					if (chartedSets.hasOwnProperty(setLabel)) {
+						var setLines = chartedSets[setLabel];
+						for(var i = 0; i < setLines.length; i++){
+							if(occurrenceInsteadOfDensity){
+								newData[newData.length] = setLines[i][0];
+							}
+							else{
+								newData[newData.length] = setLines[i][1];
+							}
+						}
+					}
+				}
+				lineConfig.data.datasets = newData;
+				//set tooltip to match units
+				if(occurrenceInsteadOfDensity){
+					lineConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel + '%';};
+				}
+				else{
+					lineConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel;};
+				}
+				//update
+				window.phenology.update();
+			}
+			function centerYAxisLabels(){
+				var yAxisLabels = $(".yAxisLabel");
+				var X_AXIS_LABEL_OFFSET = -21;
+				for(var i = 0; i < yAxisLabels.length; i++){
+					yAxisLabels.eq(i)[0].style.display = "inline-block";
+					yAxisLabels.eq(i)[0].style.marginLeft = (-.5 * yAxisLabels.eq(i)[0].clientWidth) + (.5 * yAxisLabels.eq(i)[0].clientHeight);
+					yAxisLabels.eq(i)[0].style.marginTop = -.5 * yAxisLabels.eq(i)[0].clientHeight + X_AXIS_LABEL_OFFSET;
+				}
+			}
+			//END OF PHENOLOGY CHART STUFF
+			//COMPOSITION CHART STUFF
+			var compositions = {}
+			function getComposition(xAxis, yAxis, siteID){
+				if(siteID.toString() in compositions && xAxis in compositions[siteID.toString()] && yAxis in compositions[siteID.toString()][xAxis]){
+					return compositions[siteID.toString()][xAxis][yAxis];
+				}
+				return null;
+			}
+			function setComposition(xAxis, yAxis, siteID, data){
+				if(!(siteID.toString() in compositions)){
+					compositions[siteID.toString()] = {};
+				}
+				if(!(xAxis in compositions[siteID.toString()])){
+					compositions[siteID.toString()][xAxis] = {};
+				}
+				compositions[siteID.toString()][xAxis][yAxis] = data;
+			}
+			var loadingComposition = null;
+			var compositionQueue = [];
+			function compositionIsOnRecord(xAxis, yAxis, siteID){
+				for(var i = (compositionQueue.length - 1); i >= 0; i--){
+					if(compositionQueue[i][0] == xAxis && compositionQueue[i][1] == yAxis && compositionQueue[i][2].toString() == siteID.toString()){
+						return true;
+					}
+				}
+				if(loadingComposition !== null && loadingComposition[0] == xAxis && loadingComposition[1] == yAxis && loadingComposition[2].toString() == siteID.toString()){
+					return true;
+				}
+				if(getComposition(xAxis, yAxis, siteID) !== null){
+					return true;
+				}
+				return false;
+			}
+			function queueCompositionLoad(xAxis, yAxis, siteID){
+				if(!compositionIsOnRecord(xAxis, yAxis, siteID)){console.log("queue: " + xAxis + " " + yAxis + " " + siteID);
+					//if not in progress or complete, queue it.
+					compositionQueue[compositionQueue.length] = [xAxis, yAxis, siteID];
+					if(loadingComposition === null){
+						loadNextComposition();
+					}
+				}
+				else{
+					var inQueue = false;
+					for(var i = (compositionQueue.length - 1); i >= 0; i--){
+						if(compositionQueue[i][0] == xAxis && compositionQueue[i][1] == yAxis && compositionQueue[i][2].toString() == siteID.toString()){
+							console.log("Bump to front: " + xAxis + " " + yAxis + " " + siteID);
+							//if already queued, bump it to the front of the line
+							compositionQueue.splice(i, 1);
+							compositionQueue[compositionQueue.length] = [xAxis, yAxis, siteID];
+							break;
+						}
+					}
+				}
+			}
+			var loadCompositionsIsPaused = false;
+			var loadCompositionsPauseCallback = function(){};
+			function pauseCompositionLoads(callback){
+				callback = callback || function(){};
+				loadCompositionsIsPaused = true;
+				loadCompositionsPauseCallback = callback;
+				if(compositionQueue.length == 0 && loadingComposition === null){
+					loadNextComposition();
+				}
+			}
+			function resumeCompositionLoads(){
+				loadCompositionsIsPaused = false;
+				loadNextComposition();
+			}
+			function loadNextComposition(){
+				if(loadCompositionsIsPaused){
+					var tempCallback = loadCompositionsPauseCallback;
+					loadCompositionsPauseCallback = function(){};
+					tempCallback();
+				}
+				if(compositionQueue.length == 0 || loadCompositionsIsPaused){
+					loadingComposition = null;
+					return false;
+				}
+				var nextIndex = (compositionQueue.length - 1);
+				loadingComposition = compositionQueue[nextIndex];
+				compositionQueue.splice(nextIndex, 1);
+				console.log("Loading composition: " + loadingComposition[0] + " " + loadingComposition[1] + " " + loadingComposition[2]);
+				$.get("https://caterpillarscount.unc.edu/php/getComposition.php?siteIDs=" + JSON.stringify([loadingComposition[2]]) + "&breakdown=" + loadingComposition[0] + "&comparisonMetric=" + loadingComposition[1], function(data){
+					if(data.indexOf("true|") == 0){
+						console.log("Loaded composition: " + loadingComposition[0] + " " + loadingComposition[1] + " " + loadingComposition[2]);
+						data = JSON.parse(data.replace("true|", ""));
+						setComposition(loadingComposition[0], loadingComposition[1], loadingComposition[2], data);
+					}
+				})
+				.always(function(){
+					//complete
+					loadNextComposition();
+				});
+			}
+			var lastActiveSiteID = -1;
+			function loadNewActiveSiteCompositionDefaults(){
+				if(lastActiveSiteID == activeSiteID){return false;}
+				lastActiveSiteID = activeSiteID;
+				compositionQueue = [];
+				barConfig.data = {labels: [], datasets: {}};
+				window.composition.update();
+				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity");
+				queueCompositionLoad(xAxis, yAxis, activeSiteID);
+				var xAxes = ["site", "year", "plant species"];
+				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity"];
+				for(var i = (xAxes.length - 1); i >= 0; i--){
+					for(var j = (yAxes.length - 1); j >= 0; j--){
+						if(xAxes[i] != xAxis || yAxes[j] != yAxis){
+							queueCompositionLoad(xAxes[i], yAxes[j], activeSiteID);
+						}
+					}
+				}
+			}
+			var compositionSiteIDs = [];
+			function clearCompositionSites(){
+				compositionSiteIDs = [];
+			}
+			function addCompositionSite(siteID){
+				compositionSiteIDs[compositionSiteIDs.length] = siteID;
+			}
+			function removeCompositionSite(siteID){
+				var index = compositionSiteIDs.indexOf(siteID);
+				if(index > -1){
+					compositionSiteIDs.splice(index, 1);
+				}
+			}
+			var compositionDataIsReadyCheck = null;
+			function showComposition(){
+				clearInterval(compositionDataIsReadyCheck);
+				$("#reloadComposition")[0].style.display = "none";
+				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity");
+				var siteIDs = compositionSiteIDs;
+				if(xAxis != "site"){siteIDs = [activeSiteID];}
+				$("#compositionLoadingCover").stop().fadeIn(300);
+				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity"];
+				if(xAxis == "site"){
+					for(var i = 0; i < siteIDs.length; i++){
+						queueCompositionLoad("site", yAxis, siteIDs[i]);
+					}
+					for(var i = 0; i < siteIDs.length; i++){
+						for(var j = 0; j < yAxes.length; j++){
+							if(yAxis != yAxes[j]){
+								queueCompositionLoad("site", yAxes[j], siteIDs[i]);
+							}
+						}
+					}
+				}
+				else{
+					queueCompositionLoad(xAxis, yAxis, siteIDs[0]);
+				}
+				compositionDataIsReadyCheck = setInterval(function(){
+					var data = [];
+					for(var i = 0; i < siteIDs.length; i++){
+						if(!compositionIsOnRecord(xAxis, yAxis, siteIDs[i])){
+							clearInterval(compositionDataIsReadyCheck);
+							queueNotice("error", "Our server is tired from loading so much chart data. Please give it a minute to breathe and then try again.");
+							$("#reloadComposition")[0].style.display = "block";
+						}
+						else if(getComposition(xAxis, yAxis, siteIDs[i]) !== null){
+							data[data.length] = getComposition(xAxis, yAxis, siteIDs[i]);
+						}
+					}
+					if(data.length == siteIDs.length){
+						//chart data
+						clearInterval(compositionDataIsReadyCheck);
+						var formattedData = {};
+						for(var i = 0; i < data.length; i++){
+							for(var barTitle in data[i]){
+								if(data[i].hasOwnProperty(barTitle)){
+									formattedData[barTitle] = data[i][barTitle];
+								}
+							}
+						}
+						populateCompositionChart(xAxis, yAxis, formattedData);
+					}
+				}, 100);
+			}
+			function populateCompositionChart(xAxis, yAxis, data){
+				var readableArthropods = ["Ants", "Aphids and Psyllids", "Bees and Wasps", "Beetles", "Caterpillars", "Daddy Longlegs", "Flies", "Grasshoppers and Crickets", "Leaf Hoppers and Cicadas", "Butterflies and Moths", "Spiders", "True Bugs", "Other", "Unidentified"];
+				var barTitles = [];
+				var datasets = {};
+				for(var barTitle in data){
+					if(data.hasOwnProperty(barTitle)){
+						barTitles[barTitles.length] = barTitle;
+						var arthropodData = data[barTitle];
+						for(var i = 0; i < readableArthropods.length; i++){
+							var percent = Number(arthropodData[readableArthropods[i]]);
+							if(isNaN(percent)){
+								percent = 0;
+							}
+							if(Array.isArray(datasets[readableArthropods[i]])){
+								datasets[readableArthropods[i]][datasets[readableArthropods[i]].length] = percent;
+							}
+							else{
+								datasets[readableArthropods[i]] = [percent];
+							}
+						}
+					}
+				}
+				if(readableArthropods.length > barColors.length){
+					queueNotice("error", "When trying to set up your composition chart, we encountered more arthropods than we have colors on record to label them with! We need to add more colors before we will be able to make this chart for you.");
+					return false;
+				}
+				var formattedDatasets = [];
+				var legendHTML = "";
+				var LABELS_IN_EACH_COLUMN = Math.ceil(readableArthropods.length / 3);
+				if($(window).width() < 500){
+					LABELS_IN_EACH_COLUMN = Math.ceil(readableArthropods.length / 1);
+				}
+				else if($(window).width() < 800){
+					LABELS_IN_EACH_COLUMN = Math.ceil(readableArthropods.length / 2);
+				}
+				var arthropodNames = [];
+				for(var arthropodName in datasets){
+					if(datasets.hasOwnProperty(arthropodName)){
+						var thisColor = barColors[(barColors.length - 1) - arthropodNames.length];
+						if(arthropodNames.length % LABELS_IN_EACH_COLUMN == 0){
+							if(arthropodNames.length > 0){
+								legendHTML += "</div>";
+							}
+							legendHTML += "<div style=\"text-align:left;display:inline-block;margin:0px 10px;\">";
+						}
+						legendHTML += "<div class=\"label shownLabel\">";
+						legendHTML += 	"<div class=\"box\" style=\"background:" + opaque(thisColor) + ";\"></div>";
+						legendHTML += 	"<span class=\"description\">" + arthropodName + "</span>";
+						legendHTML += "</div><br/>";
+						arthropodNames[arthropodNames.length] = arthropodName;
+					}
+				}
+				arthropodNames.reverse();
+				for(var i = 0; i < arthropodNames.length; i++){
+					formattedDatasets[formattedDatasets.length] = {
+						label: arthropodNames[i],
+						backgroundColor: barColors[i],
+						data: datasets[arthropodNames[i]]
+					};
+				}
+				for(var i = (arthropodNames.length % LABELS_IN_EACH_COLUMN); i < LABELS_IN_EACH_COLUMN; i++){
+					legendHTML += "<div class=\"label\">";
+					legendHTML += 	"<div class=\"box\" style=\"background:transparent;border-color:transparent;\"></div>";
+					legendHTML += 	"<span class=\"description\"> </span>";
+					legendHTML += "</div><br/>";
+				}
+				legendHTML += "</div>";
+				$("#compositionLegend")[0].innerHTML = legendHTML;
+				if(yAxis == "absoluteDensity"){
+					barConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel;};
+				}
+				else{
+					barConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel + '%';};
+				}
+				barConfig.options.scales.xAxes[0].barPercentage = Math.min((.2 + (barTitles.length * .1)), .6);
+				barConfig.data = {
+					labels: barTitles,
+					datasets: formattedDatasets
+				};
+				try{
+					window.composition.update();
+				}
+				catch(err){
+					setTimeout(showComposition, 100);
+					return false;
+				}
+				$("#compositionLoadingCover").stop().fadeOut(200);
+				centerYAxisLabels();
+			}
+			function updateCompositionLegend(){
+				var compositionLabels = $("#compositionLegend .shownLabel");
+				var LABELS_IN_EACH_COLUMN = Math.ceil(compositionLabels.length / 3);
+				if($(window).width() < 500){
+					LABELS_IN_EACH_COLUMN = Math.ceil(compositionLabels.length / 1);
+				}
+				else if($(window).width() < 800){
+					LABELS_IN_EACH_COLUMN = Math.ceil(compositionLabels.length / 2);
+				}
+				if(compositionLabels.length == 0 || $("#compositionLegend>div").eq(0).find(".label").length == LABELS_IN_EACH_COLUMN){
+					return false;
+				}
+				var legendHTML = "";
+				for(var i = 0; i < compositionLabels.length; i++){
+					if(i % LABELS_IN_EACH_COLUMN == 0){
+						if(i > 0){
+							legendHTML += "</div>";
+						}
+						legendHTML += "<div style=\"text-align:left;display:inline-block;margin:0px 10px;\">";
+					}
+					legendHTML += compositionLabels.eq(i)[0].outerHTML + "<br/>";
+				}
+				if(compositionLabels.length % LABELS_IN_EACH_COLUMN > 0){
+					for(var i = (compositionLabels.length % LABELS_IN_EACH_COLUMN); i < LABELS_IN_EACH_COLUMN; i++){
+						legendHTML += "<div class=\"label\">";
+						legendHTML += 	"<div class=\"box\" style=\"background:transparent;border-color:transparent;\"></div>";
+						legendHTML += 	"<span class=\"description\"> </span>";
+						legendHTML += "</div><br/>";
+					}
+				}
+				legendHTML += "</div>";
+				$("#compositionLegend")[0].innerHTML = legendHTML;
+			}
+			function updateSiteSelections(){
+				if($("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase() != "site"){
+					$(".siteSelectionText").css({display:"none"});
+					return true;
+				}
+				var options = "";
+				for(var i = 0; i < siteNamesAndIDs.length; i++){
+					if(compositionSiteIDs.indexOf(siteNamesAndIDs[i][1]) == -1 && Number(siteNamesAndIDs[i][1]) != Number(activeSiteID)){
+						options += "<div onclick=\"this.parentNode.style.display = 'none';addCompositionSite(" + siteNamesAndIDs[i][1] + ");updateSiteSelections();showComposition();\">" + siteNamesAndIDs[i][0] + "</div>";
+					}
+				}
+				$("#addSiteSelection")[0].innerHTML = "<div class=\"options\" style=\"width:200px;\">" + options + "</div>";
+				$("#addCompositionSiteButton")[0].style.display = "inline-block";
+				options = "";
+				for(var i = 0; i < siteNamesAndIDs.length; i++){
+					if(compositionSiteIDs.indexOf(siteNamesAndIDs[i][1]) > -1 && Number(siteNamesAndIDs[i][1]) != Number(activeSiteID)){
+						options += "<div onclick=\"this.parentNode.style.display = 'none';removeCompositionSite(" + siteNamesAndIDs[i][1] + ");updateSiteSelections();showComposition();\">" + siteNamesAndIDs[i][0] + "</div>";
+					}
+				}
+				$("#removeSiteSelection")[0].innerHTML = "<div class=\"options\" style=\"width:200px;\">" + options + "</div>";
+				$(".siteSelectionText").css({display:"table-cell"});
+				if(compositionSiteIDs.length <= 1){
+					$("#removeCompositionSiteButton").parent()[0].style.display = "none";
+					$("#siteSelectionPipeline")[0].style.display = "none";
+				}
+				else{
+					$("#removeCompositionSiteButton").parent()[0].style.display = "";
+				}
+			}
+			//END OF COMPOSITION CHART STUFF
+			function downloadMapData(){
+				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)")];
+				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+				for (var siteID in markers) {
+					if (markers.hasOwnProperty(siteID)) {
+						var marker = markers[siteID];
+						var row = [marker.title.substring(0, marker.title.lastIndexOf(": ")), marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), mapFilters.observationMethod, mapFilters.arthropodGroup, mapFilters.minimumLength, mapFilters.plantSpecies, mapFilters.wetLeaves.toString(), mapFilters.monthStart, mapFilters.monthEnd, mapFilters.yearStart, mapFilters.yearEnd, marker.title.substring(marker.title.lastIndexOf(": ") + 2).replace(/[^0-9.]/g, "")];
+						for(var i = 0; i < row.length; i++){
+							row[i] = "\"" + row[i].toString().replace(/"/g, "'") + "\"";
+						}
+						csvString += row.join(",") + "\r\n";
+					}
+				}
+				var date = new Date();
+				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCountMapData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
+				var links = $("#downloadLinks a");
+				links.eq(links.length - 1)[0].click();
+				//track download
+				var downloadedFile = "Dynamically Generated Map CSV";
+				var downloadFilters = "Comparison Metric: " + mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)") + ", Observation Method: " + mapFilters.observationMethod.replace("%", "All") + ", Arthropod Group: " + mapFilters.arthropodGroup.replace("%", "All") + ", Minimum Length (mm): " + mapFilters.minimumLength + ", Plant Species: " + mapFilters.plantSpecies + ", Wet Leaves: " + mapFilters.wetLeaves.toString() + ", Month Start: " + mapFilters.monthStart + ", Month End: " + mapFilters.monthEnd + ", Year Start: " + mapFilters.yearStart + ", YearEnd: " + mapFilters.yearEnd;
+				var page = window.location.toString().replace("http://", "").replace("https://", "");
+				page = page.substring(page.indexOf("/") + 1);
+				if(page.indexOf("#") > -1){
+					page = page.substring(0, page.indexOf("#"));
+				}
+				if(page.slice(-1) == "/"){
+					page = page.substring(0, page.length - 1);
+				}
+				$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
+			}
+			function hideMapDownloadButton(){
+				$("#mapDownloadButton")[0].style.cursor = "default";
+				$("#mapDownloadButton")[0].onclick = function(){};
+				$("#mapDownloadButton").stop().animate({opacity:"0"});
+			}
+			function showMapDownloadButton(){
+				$("#mapDownloadButton")[0].style.cursor = "pointer";
+				$("#mapDownloadButton")[0].onclick = function(){downloadMapData();submitClassificationToSciStarter();};
+				$("#mapDownloadButton").stop().animate({opacity:"1"});
+			}
+			function getJulianDay(year, month, day){
+				year = Number(year);
+				month = Number(month);
+				day = Number(day);
+				var isLeapYear = (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
+				var monthCounts = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+				if(isLeapYear){
+					monthCounts[1] += 1;
+				}
+				var dayCount = 0;
+				for(var i = 0; i < (month - 1); i++){
+					dayCount += monthCounts[i];
+				}
+				dayCount += day;
+				return dayCount;
+			}
+			var indexedMarkers = {};
+			function findMarkerBySiteName(siteName){
+				if(siteName in indexedMarkers){
+					return indexedMarkers[siteName];
+				}
+				for (var siteID in markers) {
+					if (markers.hasOwnProperty(siteID)){
+						var thisSiteName = markers[siteID].siteInformation.Name;
+						indexedMarkers[thisSiteName] = markers[siteID];
+						if(thisSiteName == siteName){
+							return markers[siteID];
+						}
+					}
+				}
+				return null;
+			}
+			function downloadPhenologyData(){
+				var metric = $("#lineGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
+				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Date", "Julian Day", metric];
+				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+				var filtersString = "Y-Axis: " + metric + ", Lines:";
+				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
+					//nodata
+				}
+				else{
+					var datasets = lineConfig.data.datasets;
+					var siteNames = [];
+					for(var i = 0; i < datasets.length; i++){
+						var optionsString = datasets[i].label;
+						var arthropod = optionsString;
+						var arthropods = ["All arthropods", "Ants", "Aphids and psyllids", "Bees and wasps", "Beetles", "Caterpillars", "Daddy longlegs", "Flies", "Grasshoppers and crickets", "Leaf hoppers and cicadas", "Moths and butterflies", "Spiders", "True bugs", "Other arthropods", "Unidentified arthropods"];
+						for(var j = 0; j < arthropods.length; j++){
+							if(arthropod.indexOf(arthropods[j]) == 0){
+								arthropod = arthropods[j];
+								break;
+							}
+						}
+						var siteName = optionsString.substring(0, optionsString.lastIndexOf(" in")).replace(arthropod + " at ", "");
+						if(siteNames.indexOf(siteName.replace(/[\W_]+/g," ")) == -1){
+							siteNames[siteNames.length] = siteName.replace(/[\W_]+/g," ");
+						}
+						var year = Number(optionsString.substring(optionsString.lastIndexOf(" in")).replace(/\D/g, ""));
+						var marker = findMarkerBySiteName(siteName);
+						var points = datasets[i].data;
+						for(var j = 0; j < points.length; j++){
+							var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), arthropod, year + "-" + points[j].x.substring(5, 7) + "-" + points[j].x.substring(8, 10), getJulianDay(year, points[j].x.substring(5, 7), points[j].x.substring(8, 10)), points[j].y];
+							for(var t = 0; t < row.length; t++){
+								row[t] = "\"" + row[t].toString().replace(/"/g, "'") + "\"";
+							}
+							csvString += row.join(",") + "\r\n";
+						}
+						filtersString += " " + arthropod + " at " + siteName + " in " + year + ";";
+					}
+				}
+				var date = new Date();
+				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCountPhenologyData-" + siteNames.join("-") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
+				var links = $("#downloadLinks a");
+				links.eq(links.length - 1)[0].click();
+				//track download
+				var downloadedFile = "Dynamically Generated Phenology CSV";
+				var downloadFilters = filtersString;
+				var page = window.location.toString().replace("http://", "").replace("https://", "");
+				page = page.substring(page.indexOf("/") + 1);
+				if(page.indexOf("#") > -1){
+					page = page.substring(0, page.indexOf("#"));
+				}
+				if(page.slice(-1) == "/"){
+					page = page.substring(0, page.length - 1);
+				}
+				$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
+			}
+			function downloadCompositionData(){
+				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
+				var filtersString = "X-Axis: " + xAxis + ", Y-Axis: " + yAxis;
+				var headers = [];
+				var siteName = "";
+				if(xAxis == "site"){
+					headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", yAxis];
+					filtersString += ", Sites Included:";
+				}
+				else if(xAxis == "year"){
+					headers = ["Site", "Description", "Latitude", "Longitude", "Year", "Arthropod Group", yAxis];
+					siteName = $("#selectedSitePanel h2").eq(0)[0].innerHTML;
+				}
+				else{//plant species
+					headers = ["Site", "Description", "Latitude", "Longitude", "Plant Species", "Arthropod Group", yAxis];
+					siteName = $("#selectedSitePanel h2").eq(0)[0].innerHTML;
+				}
+				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+				for(var i = 0; i < barConfig.data.labels.length; i++){
+					if(xAxis == "site"){
+						siteName = barConfig.data.labels[i];
+						if(i > 0){
+							filtersString += ",";
+						}
+						filtersString += " " + siteName;
+					}
+					var marker = findMarkerBySiteName(siteName);
+					for(var j = 0; j < barConfig.data.datasets.length; j++){
+						var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), barConfig.data.datasets[j].label, barConfig.data.datasets[j].data[i]];
+						if(xAxis != "site"){
+							row.splice(4, 0, barConfig.data.labels[i]);
+						}
+						for(var t = 0; t < row.length; t++){
+							row[t] = "\"" + row[t].toString().replace(/"/g, "'") + "\"";
+						}
+						csvString += row.join(",") + "\r\n";
+					}
+				}
+				var date = new Date();
+				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCount" + $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.replace(/ /g, "") + "CompositionData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
+				var links = $("#downloadLinks a");
+				links.eq(links.length - 1)[0].click();
+				//track download
+				var downloadedFile = "Dynamically Generated Composition CSV";
+				var downloadFilters = filtersString;
+				var page = window.location.toString().replace("http://", "").replace("https://", "");
+				page = page.substring(page.indexOf("/") + 1);
+				if(page.indexOf("#") > -1){
+					page = page.substring(0, page.indexOf("#"));
+				}
+				if(page.slice(-1) == "/"){
+					page = page.substring(0, page.length - 1);
+				}
+				$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
+			}
+			var submittedClassificationToSciStarter = false;
+			function submitClassificationToSciStarter(){
+				if(!submittedClassificationToSciStarter && window.localStorage.getItem("email") !== null){
+					if(window.localStorage.getItem("email").length > 0){
+						submittedClassificationToSciStarter = true;
+						var formData = new FormData();
+						formData.append("email", window.localStorage.getItem("email"));
+						$.ajax({
+							url : "../php/submitClassificationToSciStarter.php",
+							type : 'POST',
+							data : formData,
+							processData: false,  // tell jQuery not to process the data
+							contentType: false,  // tell jQuery not to set contentType
+							success: function(data){},
+							error: function(){},
+							complete: function(){}
+						});
+					}
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div id="managerRequest">
+			<div id="managerRequestMessage"></div>
+			<div id="managerRequestButtons">
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('deny');">Deny</div>
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('approve');">Accept</div>
+			</div>
+		</div>
+		<div id="error" onclick="hideNotice();"></div>
+		<div id="confirmation" onclick="hideNotice();"></div>
+		<div id="alert" onclick="hideNotice();"></div>
+		<div id="promptInteractionBlock"></div>
+		<div id="noticeInteractionBlock" onclick="hideNotice();"></div>
+		<div id="confirm">
+			<div></div>
+			<div>
+				<button>OK</button>
+				<button>Cancel</button>
+				<div class="clearBoth"></div>
+			</div>
+		</div>
+
+		<div id="splash">
+			<div id="splashImage"></div>
+			<div id="splashOverlay">
+				<div id="splashIntroText">Welcome to</div>
+				<div id="splashMainText">Caterpillars Count!</div>
+				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">Explore maps & graphs</button>
+			</div>
+		</div>
+		<header>
+			<h1><a href="../">Caterpillars Count!</a></h1>
+			<div id="hamburger" onclick="toggleNav();">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div id="navKnockDown" class="clearBoth"></div>
+			<nav class="loadingNav">
+				<ul>
+					<li onclick="accessSubMenu(this);">
+						<span>Participate</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../getStarted">Get Started</a></li>
+							<li><a href="../conductASurvey">Conduct a Survey</a></li>
+							<li><a href="../submitObservations">Submit Observations</a></li>
+							<li><a href="../hostASurveySite">Host a Survey Site</a></li>
+							<li><a href="../resources">Resources</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Explore</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
+							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="../dataDownload">Data Download</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Learn</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../identificationSkills">Identification Skills</a></li>
+							<li><a href="../virtualSurvey">Virtual Survey Game</a></li>
+							<li><a href="../forEducators">For Educators</a></li>
+						</ul>
+					</li>
+					<li onclick="window.location = '../news';">
+						<span>News</span>
+					</li>
+					<li onclick="window.location = '../faq';">
+						<span>FAQ</span>
+					</li>
+					<li onclick="window.location = '../signIn';">
+						<span>Sign In</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../createNewSite">Create New Site</a></li>
+							<li><a href="../manageMySites">Manage My Sites</a></li>
+							<li><a href="../manageMySurveys">Manage My Surveys</a></li>
+							<li><a href="../settings">Settings</a></li>
+							<li><a href="" onclick="logOut();">Sign Out</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="navBack" onclick="resetMenu(false);">&#10094;</div>
+		</header>
+		<main>
+			<div class="panel">
+				<h2>Leaderboard</h2>
+				<div class="tagline">Click on a column header to sort sites or users by that column</div>
+				<div class="content">
+					<div class="centeredText">
+						<div id="rankingsSwitch">
+							<button id="siteSwitchButton" class="active" onclick="switchRankingsTo('site');">Site</button>
+							<button id="userSwitchButton" onclick="switchRankingsTo('user');">User</button>
+						</div>
+					</div>
+					<p id="globalLeaderboardNotice"></p>
+					<div id="rankingsRoundedTop"></div>
+					<div id="superHeader">
+						<div>Surveys this...</div>
+					</div>
+					<div id="rankings">
+						<div class="loading"><img src="../images/rolling.svg"/></div>
+					</div>
+					<div id="showMoreRankings"><div onclick="showMoreRankings();">Show more</div></div>
+				</div>
+			</div>
+			<div class="panel" style="padding-bottom:0px;">
+				<h2>Explore Sites</h2>
+				<div class="tagline">Click the sites on the map below to explore their statistics.</div>
+				<div id="mapBar">
+					<div>
+						<div id="mapTitle"><div class="title">Currently:</div><div>Loading data...</div></div>
+						<div id="mapScale">
+							<div class="title">Scale:</div>
+							<div>
+								<div class="smallScaleCircle" onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);" style="position:relative;">
+									<div class="bottomToolTip" style="width:109px;text-align:center;right:-18px;"><div class="arrow" style="position:absolute;margin:0px;top:-7px;right:17px;"></div>No surveys</div>
+								</div>
+								<div class="scaleCircle" style="position:relative;"></div>
+								<div class="scaleCircle" style="position:relative;"></div>
+								<div class="scaleCircle" style="position:relative;"></div>
+							</div>
+						</div>
+						<div style="display:table-cell;width:100%;"></div>
+						<div style="display:table;padding:20px;">
+							<div style="display:table-cell;vertical-align:middle;">
+								<div id="mapDownloadButton" style="background:#ccc;opacity:0;cursor:default;">
+									<div id="mapDownloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+									<div id="mapDownloadText">Download</div>
+								</div>
+							</div>
+							<div style="display:table-cell;vertical-align:middle;">
+								<div id="mapFiltersToggleButton" onclick="toggleMapFilters();">
+									<div id="mapFiltersImage" style="background-image:url('../images/filterIconWhite.png');"></div>
+									<div id="mapFiltersText">Map Filters</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="mapFilters">
+					<div>
+						<div>
+							<div class="inputTitle">Comparison metric: <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Density shows the <span class=&quot;italic&quot;>average arthropod quantity</span> per survey, while occurrence shows the <span class=&quot;italic&quot;>proportion of surveys</span> that contain the arthropod. The key difference between these two comparison metrics is that when a large quantity of arthropods is found in a single survey, density takes into account the large quantity, but occurrence does not.');"/></div>
+							<div class="select" id="densityOccurrence" style="position:relative;">
+								<div class="option selected" onclick="selectOption(this);">		<div class="value">occurrence</div>		<div class="shown">			<div class="text">Occurrence</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">density</div>		<div class="shown">			<div class="text">Density</div></div></div>
+								<div id="densityOccurrenceArrow"></div>
+							</div>
+							<div class="inputTitle" style="margin-top:20px;">Observation method: <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Beat sheet surveys are collected by shaking a branch over a &quot;beat sheet&quot; and counting the arthropods that fall off the branch. Visual surveys are simply visual observations of arthropods on 50 leaves.');"/></div>
+							<div class="select" id="observationMethod" style="position:relative;">
+								<div class="option selected" onclick="selectOption(this);">		<div class="value">%</div>		<div class="shown">			<div class="text">All</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">Visual</div>		<div class="shown">			<div class="text">Visual</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">Beat Sheet</div>		<div class="shown">			<div class="text">Beat Sheet</div></div></div>
+								<div id="observationMethodArrow"></div>
+							</div>
+						</div>
+						<div>
+							<div class="inputTitle">Arthropod Group:</div>
+							<div class="select" id="arthropod">
+								<div class="option" onclick="selectOption(this);">		<div class="value">%</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">All Arthropods</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">aphid</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/aphid.png');"></div>		<div class="text">Aphids and Psyllids</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">bee</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/bee.png');"></div>			<div class="text">Bees and Wasps</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">beetle</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/beetle.png');"></div>		<div class="text">Beetles</div></div></div>
+								<div class="option selected" onclick="selectOption(this);">		<div class="value">caterpillar</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/caterpillar.png');"></div>		<div class="text">Caterpillars</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">daddylonglegs</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/daddylonglegs.png');"></div>	<div class="text">Daddy longlegs</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">fly</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/fly.png');"></div>			<div class="text">Flies</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">grasshopper</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/grasshopper.png');"></div>		<div class="text">Grasshoppers, Crickets</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">leafhopper</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/leafhopper.png');"></div>		<div class="text">Leaf Hoppers and Cicadas</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">moths</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/moths.png');"></div>		<div class="text">Moths, Butterflies</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">spider</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/spider.png');"></div>		<div class="text">Spiders</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">truebugs</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/truebugs.png');"></div>		<div class="text">True Bugs</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">other</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/other.png');"></div>		<div class="text">Other</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
+							</div>
+
+							<div class="inputTitle" style="margin-top:20px;">Minimum length (mm): <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Specify the minimum length for arthropods to be included in the density or occurrence estimate.');"/></div>
+							<input type="number" id="minLength" placeholder="0" onclick="this.select();" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');" onblur="enforceRange(this, 0, 300, 1)"/>
+						</div>
+						<div>
+							<div class="inputTitle">Plant species:</div>
+							<input type="text" id="plantSpecies" placeholder="All Trees" autocomplete="off"/>
+
+							<div class="inputTitle" style="margin-top:20px;">Wet leaves:</div>
+							<table class="checkboxTable">
+								<tr onclick="toggleCheckbox($(this).find('.checkbox'));">
+									<td><div class="checkbox checked" id="includeWetLeavesCheckbox"></div></td>
+									<td style="color:#aaa;">Include surveys with wet leaves</td>
+									<td onclick="event.stopPropagation();queueNotice('alert', 'If checked, surveys where the user marked that the leaves on the tree were wet will be included with the data shown on the map. Otherwise, those surveys will be excluded.');"><img src="../images/question.png" style="height:18px;"/></td>
+								<tr>
+							</table>
+						</div>
+						<div>
+							<div class="inputTitle">Months:</div>
+							<div id="monthsSlider" class="rangeSlider"></div>
+							<div id="months">Jan - Dec</div>
+
+							<div class="inputTitle" style="margin-top:20px;">Years:</div>
+							<div id="yearsSlider" class="rangeSlider"></div>
+							<div id="years">Jan - Dec</div>
+						</div>
+					</div>
+					<button onclick="filterMap();submitClassificationToSciStarter();">Apply Filters</button>
+				</div>
+				<div id="map"></div>
+				<div id="mapSpace"></div>
+			</div>
+			<div class="panel" id="selectedSitePanel">
+				<h2 class="forceWrapIfNeeded"></h2>
+				<div class="tagline forceWrapIfNeeded"></div>
+				<div class="content">
+					<div id="noDataSection">
+						<div class="circleImage" style="width:200px;height:200px;background-image:url('../images/noSurveys.png');margin:40px 0px;"></div>
+						<div><p>No surveys have been submitted at this site yet.</p></div>
+					</div>
+					<div id="dataSection">
+						<div id="lastSurveyed"></div>
+						
+						<h3>iNaturalist Submissions</h3>
+						<div style="margin-top:-5px;">
+							<a href="#" id="siteINaturalistLink" target="_blank" class="highlighted">Click here to see all of the photo observations submitted at this site's iNaturalist page.</a>
+						</div>
+						
+						<h3>Site Summary</h3>
+
+						<div id="siteStats"></div>
+
+						<h3>User Leaderboard</h3>
+						<p style="font-size:10px;text-align:left;margin:-15px 0px 20px 0px;">% Caterpillars only displayed for users who have submitted at least 10 surveys. If you would like to hide your name from leaderboards like these, please visit your <a href="../settings" style="color:#999;">Settings</a> page and click on the "Privacy" section.</p>
+						<div id="siteUserSuperHeader">
+							<div>Surveys this...</div>
+						</div>
+						<div id="siteUserLeaderboard"></div>
+						<div id="showMoreSiteUserRankings"><div onclick="showMoreSiteUserRankings();">Show more</div></div>
+						<h3 id="graphsH3">Graphs</h3>
+						<div class="centeredText">
+							<div id="graphSwitch">
+								<button id="lineGraphSwitchButton" class="active" onclick="switchGraphTo('line');">Phenology</button>
+								<button id="barGraphSwitchButton" onclick="switchGraphTo('bar');">Composition</button>
+							</div>
+							<div id="lineGraph">
+								<div class="chartExplanation">Click on the y-axis label to change the phenology metric being plotted. Data points are excluded if fewer than five surveys were conducted at the given site on that day.</div>
+								<div style="height:500px;margin-top:40px;position:relative;">
+									<div class="downloadChartButton" onclick="downloadPhenologyData();">
+										<div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+										<div class="downloadText">Download</div>
+									</div>
+									<div class="yAxisLabel">
+										<div class="smallSelect">
+											<div class="selected" onclick="showSmallSelectOptions(this);">Percent of Surveys</div>
+											<div class="options">
+												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Percent of Surveys</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Arthropods Per Survey</div>
+											</div>
+										</div>
+										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Surveys: The percent of survey branches examined on a given day with at least one arthropod of the type specified.<br/><br/>Arthropods per Survey: The total number of arthropods encountered divided by the total number of surveys on a given day.');"/>
+									</div>
+									<canvas id="phenologyChart" width="0" height="0"></canvas>
+								</div>
+								<div id="phenologyLegend"></div>
+							</div>
+							<div id="barGraph">
+								<div class="chartExplanation">Click on the y-axis label to change the composition metric being plotted. You can get a breakdown of arthropod composition for this site by year or plant species by clicking the "Site" label on the x-axis, or you can add additional sites for comparison by clicking "add".</div>
+								<div style="height:500px;margin-top:40px;position:relative;">
+									<div class="downloadChartButton" onclick="downloadCompositionData();">
+										<div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+										<div class="downloadText">Download</div>
+									</div>
+									<div id="compositionLoadingCover">
+										<img src="../images/rollingBlack.svg" alt="Loading..."/>
+										<div id="reloadComposition" onclick="showComposition();">Reload</div>
+									</div>
+									<div class="yAxisLabel">
+										<div class="smallSelect">
+											<div class="selected" onclick="showSmallSelectOptions(this);">Percent of Arthropods</div>
+											<div class="options">
+												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Percent of Arthropods</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Percent of Surveys</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Arthropods Per Survey</div>
+											</div>
+										</div>
+										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Arthropods: The percentage of all arthropods encountered by number of individuals. Must sum to 100 across arthropod groups.<br/><br/>Percent of Surveys: The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.<br/><br/>Arthropods per Survey: The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.');"/>
+									</div>
+									<canvas id="compositionChart" width="0" height="0"></canvas>
+								</div>
+								<div class="xAxisLabel">
+									<div style="display:table;margin:auto;">
+										<div class="smallSelect" style="display:table-cell;vertical-align:middle;">
+											<div class="selected" onclick="showSmallSelectOptions(this);">Site</div>
+											<div class="options">
+												<div onclick="smallSelectOption(this);updateSiteSelections();showComposition();">Site</div>
+												<div onclick="smallSelectOption(this);updateSiteSelections();showComposition();">Year</div>
+												<div onclick="smallSelectOption(this);updateSiteSelections();showComposition();">Plant Species</div>
+											</div>
+										</div>
+										<div class="siteSelectionText" style="padding-left:6px;"> ( </div>
+										<div style="position:relative;" class="siteSelectionText">
+											<div id="addCompositionSiteButton" onclick="setTimeout(function(){$('#addSiteSelection .options').stop().fadeIn(0);}, 1);">add</div>
+											<div id="addSiteSelection" class="smallSelect"></div>
+										</div>
+										<div class="siteSelectionText" id="siteSelectionPipeline"> | </div>
+										<div style="position:relative;" class="siteSelectionText">
+											<div id="removeCompositionSiteButton" onclick="setTimeout(function(){$('#removeSiteSelection .options').stop().fadeIn(0);}, 1);">remove</div>
+											<div id="removeSiteSelection" class="smallSelect"></div>
+										</div>
+										<div class="siteSelectionText">)</div>
+									</div>
+								</div>
+
+								<div id="compositionLegend"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="downloadLinks"></div>
+		</main>
+		<footer>
+			<div>Part of the <a href="http://pheno-mismatch.org" target="_blank">Pheno Mismatch</a> project funded by the National Science Foundation</div>
+
+			<div><img src="../images/unc.png"/></div><div>
+				<a target="_blank" href="https://www.facebook.com/Caterpillars-Count-1854259101283140/"><img src="../images/facebook.png" alt="facebook"/></a><a target="_blank" href="https://twitter.com/CaterpillarsCt"><img src="../images/twitter.png" alt="twitter"/></a>
+			</div>
+
+			<div>Contact us: <a href="mailto:caterpillarscount@gmail.com">caterpillarscount@gmail.com</a></div>
+
+			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
+		</footer>
+	</body>
+</html>
