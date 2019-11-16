@@ -1,6 +1,6 @@
 <?php
 	require_once('orm/resources/Keychain.php');
-	require_once('resultMemory.php');
+	require_once('tools/resultMemory.php');
 
 	$cron = true;
 	if(isset($_GET["cron"]) && !empty($_GET["cron"])){
