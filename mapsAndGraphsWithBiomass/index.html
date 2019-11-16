@@ -489,7 +489,7 @@
 				font-family: 'Roboto Slab', serif;
 				cursor:pointer;
 			}
-			#densityOccurrenceArrow, #observationMethodArrow{
+			#comparisonMetricArrow, #observationMethodArrow{
 				pointer-events:none;
 				cursor: pointer;
 				height: 34px;
@@ -1591,8 +1591,8 @@
 				if(includeWetLeaves){
 					readableIncludeWetLeaves = "including surveys with wet leaves";
 				}
-				var readableOccurrenceDensity = getSelectText($("#densityOccurrence"));
-				var occurrenceInsteadOfDensity = (getSelectValue($("#densityOccurrence")) == "occurrence");
+				var readableComparisonMetric = getSelectText($("#comparisonMetric"));
+				var comparisonMetric = getSelectValue($("#comparisonMetric"));
 				var observationMethod = getSelectValue($("#observationMethod"));
 				var readableObservationMethod = getSelectText($("#observationMethod")).replace("All", "");
 				var readableArthropod = getSelectText($("#arthropod"));
@@ -1609,7 +1609,7 @@
 					years = yearStart + " through " + yearEnd;
 				}
 				if(plantSpecies.replace(/ /g, "") == ""){plantSpecies = "%";}
-				$.get("../php/getSitesWithBiomass.php?cron=false&observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&occurrenceInsteadOfDensity=" + occurrenceInsteadOfDensity + "&monthStart=" + monthStart + "&monthEnd=" + monthEnd + "&yearStart=" + yearStart + "&yearEnd=" + yearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies), function(data){
+				$.get("../php/getSitesWithBiomass.php?cron=false&observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&comparisonMetric=" + comparisonMetric + "&monthStart=" + monthStart + "&monthEnd=" + monthEnd + "&yearStart=" + yearStart + "&yearEnd=" + yearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies), function(data){
 					//success
 					saveMapFilters();
 					//clear old markers
@@ -1692,10 +1692,13 @@
 						alreadyActiveMarker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
 					}
 					for(var i = 0; i < $(".scaleCircle").length; i++){
-						if(occurrenceInsteadOfDensity){
+						if(comparisonMetric == "occurrence"){
 							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1)))), 0) + "%</div>";
 						}
-						else{
+						else if(comparisonMetric == "meanBiomass"){
+							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1)))), 0) + "</div>";
+						}
+						else{//density
 							var scaleNumber = Math.pow(10, minWeight + ((maxWeight - minWeight) * (i * (1/($(".scaleCircle").length - 1)))));
 							if(i == 0){
 								scaleNumber = minRawValue;
@@ -1710,7 +1713,7 @@
 						}
 						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
 					}
-					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">" + readableArthropod + " on " + plantSpecies.replace("%", "All Trees") + "<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">" + (readableObservationMethod + " " + readableOccurrenceDensity).toLowerCase().trim().charAt(0).toUpperCase() + (readableObservationMethod + " " + readableOccurrenceDensity).toLowerCase().trim().slice(1) + " of " + readableArthropod.toLowerCase() + " that are at least " + minSize + " mm long on " + plantSpecies.replace("%", "All Trees").toLowerCase() + " (" + readableIncludeWetLeaves + ") " + months + " over the period of " + years + "<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
+					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">" + readableArthropod + " on " + plantSpecies.replace("%", "All Trees") + "<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">" + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().charAt(0).toUpperCase() + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().slice(1) + " of " + readableArthropod.toLowerCase() + " that are at least " + minSize + " mm long on " + plantSpecies.replace("%", "All Trees").toLowerCase() + " (" + readableIncludeWetLeaves + ") " + months + " over the period of " + years + "<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
 					closeHeight($("#mapFilters"), function(){$("#mapFilters")[0].style.borderBottom="0px none transparent";$("#mapTitle").stop().animate({opacity:"1"});$("#mapScale").stop().animate({opacity:"1"});showMapDownloadButton();});
 				})
 				.fail(function(){
@@ -1734,7 +1737,7 @@
 					plantSpecies = "All";
 				}
 				mapFilters = {
-					comparisonMetric: getSelectText($("#densityOccurrence")),
+					comparisonMetric: getSelectText($("#comparisonMetric")),
 					observationMethod: getSelectText($("#observationMethod")),
 					arthropodGroup: getSelectText($("#arthropod")),
 					minimumLength: minimumLength,
@@ -1752,7 +1755,7 @@
 					center: {lat: 37.068427, lng: -80.089019},
 					zoom: 5
 				});
-				$.get("../php/getSitesWithBiomass.php?cron=false&observationMethod=" + encodeURIComponent("%") + "&includeWetLeaves=true&occurrenceInsteadOfDensity=true&monthStart=1&monthEnd=12&yearStart=0&yearEnd=99999&arthropod=caterpillar&minSize=0&plantSpecies=" + encodeURIComponent("%"), function(data){
+				$.get("../php/getSitesWithBiomass.php?cron=false&observationMethod=" + encodeURIComponent("%") + "&includeWetLeaves=true&comparisonMetric=occurrence&monthStart=1&monthEnd=12&yearStart=0&yearEnd=99999&arthropod=caterpillar&minSize=0&plantSpecies=" + encodeURIComponent("%"), function(data){
 					//success
 					console.log("Sites loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					saveMapFilters();
@@ -2202,6 +2205,7 @@
 				for(var i = 0; i < points.length; i++){
 					occurrenceLine.data[occurrenceLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][1])};
 				}
+				
 				var densityLine = {
 					label: label,
 					backgroundColor: transluscent(color),
@@ -2213,7 +2217,20 @@
 				for(var i = 0; i < points.length; i++){
 					densityLine.data[densityLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][2])};
 				}
-				return [occurrenceLine, densityLine];
+				
+				var meanBiomassLine = {
+					label: label,
+					backgroundColor: transluscent(color),
+					borderColor: opaque(color),
+					lineTension: LINE_TENSION,
+					fill: false,
+					data: []
+				};
+				for(var i = 0; i < points.length; i++){
+					meanBiomassLine.data[meanBiomassLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][3])};
+				}
+				
+				return [occurrenceLine, densityLine, meanBiomassLine];
 			}
 			function getLines(label, color, points){
 				points = points.sort(function(a, b) {
@@ -2235,18 +2252,21 @@
 					lines[lines.length] = getLine(label, color, pointSets[i]);
 				}
 				chartedSets[label] = lines;
-				if($("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML == $("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML){
-					var occurrenceLines = [];
-					for(var i = 0; i < lines.length; i++){
-						occurrenceLines[occurrenceLines.length] = lines[i][0];
-					}
-					return occurrenceLines;
+				
+				var comparisonMetric = $("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(2)[0].innerHTML, "meanBiomass");
+				var comparisonMetricIndex = 0;
+				if(comparisonMetric == "density"){
+					comparisonMetricIndex = 1;
 				}
-				var densityLines = [];
+				else if(comparisonMetric == "meanBiomass"){
+					comparisonMetricIndex = 2;
+				}
+				
+				var lines = [];
 				for(var i = 0; i < lines.length; i++){
-					densityLines[densityLines.length] = lines[i][1];
+					lines[lines.length] = lines[i][comparisonMetricIndex];
 				}
-				return densityLines;
+				return lines;
 			}
 			var labels = [];
 			function addSet(label, points, update){
@@ -2502,27 +2522,30 @@
 					return true;
 				}
 				//otherwise, set lines to match metric
-				var occurrenceInsteadOfDensity = ($("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML == $("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML);
+				var comparisonMetric = $("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "meanBiomass");
 				var newData = [];
 				for (var setLabel in chartedSets) {
 					if (chartedSets.hasOwnProperty(setLabel)) {
 						var setLines = chartedSets[setLabel];
 						for(var i = 0; i < setLines.length; i++){
-							if(occurrenceInsteadOfDensity){
+							if(comparisonMetric == "occurrence"){
 								newData[newData.length] = setLines[i][0];
 							}
-							else{
+							else if(comparisonMetric == "density"){
 								newData[newData.length] = setLines[i][1];
+							}
+							else{//mean biomass
+								newData[newData.length] = setLines[i][2];
 							}
 						}
 					}
 				}
 				lineConfig.data.datasets = newData;
 				//set tooltip to match units
-				if(occurrenceInsteadOfDensity){
+				if(comparisonMetric == "occurrence"){
 					lineConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel + '%';};
 				}
-				else{
+				else{//density or meanBiomass
 					lineConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel;};
 				}
 				//update
@@ -2640,10 +2663,10 @@
 				barConfig.data = {labels: [], datasets: {}};
 				window.composition.update();
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
-				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity");
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity").replace("Mean Biomass Per Survey", "meanBiomass");
 				queueCompositionLoad(xAxis, yAxis, activeSiteID);
 				var xAxes = ["site", "year", "plant species"];
-				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity"];
+				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity", "meanBiomass"];
 				for(var i = (xAxes.length - 1); i >= 0; i--){
 					for(var j = (yAxes.length - 1); j >= 0; j--){
 						if(xAxes[i] != xAxis || yAxes[j] != yAxis){
@@ -2670,11 +2693,11 @@
 				clearInterval(compositionDataIsReadyCheck);
 				$("#reloadComposition")[0].style.display = "none";
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
-				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity");
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity".replace("Mean Biomass Per Survey", "meanBiomass");
 				var siteIDs = compositionSiteIDs;
 				if(xAxis != "site"){siteIDs = [activeSiteID];}
 				$("#compositionLoadingCover").stop().fadeIn(300);
-				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity"];
+				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity", "meanBiomass"];
 				if(xAxis == "site"){
 					for(var i = 0; i < siteIDs.length; i++){
 						queueCompositionLoad("site", yAxis, siteIDs[i]);
@@ -3224,10 +3247,11 @@
 					<div>
 						<div>
 							<div class="inputTitle">Comparison metric: <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Density shows the <span class=&quot;italic&quot;>average arthropod quantity</span> per survey, while occurrence shows the <span class=&quot;italic&quot;>proportion of surveys</span> that contain the arthropod. The key difference between these two comparison metrics is that when a large quantity of arthropods is found in a single survey, density takes into account the large quantity, but occurrence does not.');"/></div>
-							<div class="select" id="densityOccurrence" style="position:relative;">
+							<div class="select" id="comparisonMetric" style="position:relative;">
 								<div class="option selected" onclick="selectOption(this);">		<div class="value">occurrence</div>		<div class="shown">			<div class="text">Occurrence</div></div></div>
 								<div class="option" onclick="selectOption(this);">		<div class="value">density</div>		<div class="shown">			<div class="text">Density</div></div></div>
-								<div id="densityOccurrenceArrow"></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">meanBiomass</div>		<div class="shown">			<div class="text">Mean Biomass</div></div></div>
+								<div id="comparisonMetricArrow"></div>
 							</div>
 							<div class="inputTitle" style="margin-top:20px;">Observation method: <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Beat sheet surveys are collected by shaking a branch over a &quot;beat sheet&quot; and counting the arthropods that fall off the branch. Visual surveys are simply visual observations of arthropods on 50 leaves.');"/></div>
 							<div class="select" id="observationMethod" style="position:relative;">
@@ -3257,7 +3281,7 @@
 								<div class="option" onclick="selectOption(this);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
 							</div>
 
-							<div class="inputTitle" style="margin-top:20px;">Minimum length (mm): <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Specify the minimum length for arthropods to be included in the density or occurrence estimate.');"/></div>
+							<div class="inputTitle" style="margin-top:20px;">Minimum length (mm): <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Specify the minimum length for arthropods to be included in the mapping calculations.');"/></div>
 							<input type="number" id="minLength" placeholder="0" onclick="this.select();" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');" onblur="enforceRange(this, 0, 300, 1)"/>
 						</div>
 						<div>
@@ -3334,6 +3358,7 @@
 											<div class="options">
 												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Percent of Surveys</div>
 												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Arthropods Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Mean Biomass Per Survey</div>
 											</div>
 										</div>
 										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Surveys: The percent of survey branches examined on a given day with at least one arthropod of the type specified.<br/><br/>Arthropods per Survey: The total number of arthropods encountered divided by the total number of surveys on a given day.');"/>
@@ -3360,6 +3385,7 @@
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Percent of Arthropods</div>
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Percent of Surveys</div>
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Arthropods Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Mean Biomass Per Survey</div>
 											</div>
 										</div>
 										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Arthropods: The percentage of all arthropods encountered by number of individuals. Must sum to 100 across arthropod groups.<br/><br/>Percent of Surveys: The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.<br/><br/>Arthropods per Survey: The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.');"/>
