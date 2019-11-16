@@ -2812,7 +2812,7 @@
 				}
 				legendHTML += "</div>";
 				$("#compositionLegend")[0].innerHTML = legendHTML;
-				if(yAxis == "absoluteDensity"){
+				if(yAxis == "absoluteDensity" || yAxis == "meanBiomass"){
 					barConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel;};
 				}
 				else{
