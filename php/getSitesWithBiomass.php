@@ -6,9 +6,30 @@
 		$cron = filter_var($_GET["cron"], FILTER_VALIDATE_BOOLEAN);
 	}
 	
+	function getBiomass($group, $length){
+		$a = 0.027;//unidentified default
+		$b = 2.494;//unidentified default
+		
+		if($group == "ant"){			$a = 0.009;	$b = 2.919;	}
+		else if($group == "aphid"){		$a = 0.0175;	$b = 2.629;	}
+		else if($group == "bee"){		$a = 0.014;	$b = 2.696;	}
+		else if($group == "beetle"){		$a = 0.039;	$b = 2.492;	}
+		else if($group == "caterpillar"){	$a = 0.003;	$b = 2.959;	}
+		else if($group == "daddylonglegs"){	$a = 0.162;	$b = 2.17;	}
+		else if($group == "fly"){		$a = 0.041;	$b = 2.213;	}
+		else if($group == "grasshopper"){	$a = 0.023;	$b = 2.27;	}
+		else if($group == "leafhopper"){	$a = 0.012;	$b = 3.13;	}
+		else if($group == "moths"){		$a = 0.006;	$b = 3.122;	}
+		else if($group == "other"){		$a = 0.027;	$b = 2.494;	}
+		else if($group == "spider"){		$a = 0.05;	$b = 2.74;	}
+		else if($group == "truebugs"){		$a = 0.008;	$b = 3.075;	}
+		
+		return ($a * pow(floatval($length), $b));
+	}
+	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	$includeWetLeaves = filter_var($_GET["includeWetLeaves"], FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
-	$occurrenceInsteadOfDensity = filter_var($_GET["occurrenceInsteadOfDensity"], FILTER_VALIDATE_BOOLEAN);
+	$comparisonMetric = mysqli_real_escape_string($dbconn, rawurldecode($_GET["comparisonMetric"]));
 	$observationMethod = mysqli_real_escape_string($dbconn, $_GET["observationMethod"]);
 	$monthStart = sprintf('%02d', intval($_GET["monthStart"]));
 	$monthEnd = sprintf('%02d', intval($_GET["monthEnd"]));
@@ -19,7 +40,7 @@
 	$plantSpecies = mysqli_real_escape_string($dbconn, rawurldecode($_GET["plantSpecies"]));//% if all
 	if($cron){
 		$includeWetLeaves = 1;
-		$occurrenceInsteadOfDensity = true;
+		$comparisonMetric = "occurrence";
 		$observationMethod = "%";
 		$monthStart = sprintf('%02d', 1);
 		$monthEnd = sprintf('%02d', 12);
@@ -32,7 +53,7 @@
 	$HIGH_TRAFFIC_MODE = true;
 	$SAVE_TIME_LIMIT = 15 * 60;
 	
-	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $includeWetLeaves . ($occurrenceInsteadOfDensity ? 1 : 0) . str_replace("%", "all", $observationMethod) . $monthStart . $monthEnd . $yearStart . $yearEnd . str_replace("%", "all", $arthropod) . $minSize . str_replace("%", "all", $plantSpecies));
+	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $includeWetLeaves . $comparisonMetric . str_replace("%", "all", $observationMethod) . $monthStart . $monthEnd . $yearStart . $yearEnd . str_replace("%", "all", $arthropod) . $minSize . str_replace("%", "all", $plantSpecies));
 	if($HIGH_TRAFFIC_MODE && !$cron){
 		$save = getSaveFromDatabase($baseFileName, $SAVE_TIME_LIMIT);
 		if($save !== null){
@@ -86,24 +107,43 @@
 	}
 	
 	$minLoggedDensity = 9999;
-	if($occurrenceInsteadOfDensity){
+	if($comparisonMetric == "occurrence"){
 		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Arthropods FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE MONTH(Survey.LocalDate)>=$monthStart AND MONTH(Survey.LocalDate)<=$monthEnd AND YEAR(Survey.LocalDate)>=$yearStart AND YEAR(Survey.LocalDate)<=$yearEnd AND ArthropodSighting.Group LIKE '$arthropod' AND (Plant.Species LIKE '$plantSpecies' OR (Plant.Species='N/A' AND Survey.PlantSpecies LIKE '$plantSpecies')) AND Survey.WetLeaves IN (0, $includeWetLeaves) AND ArthropodSighting.Length>=$minSize AND Survey.ObservationMethod LIKE '$observationMethod' GROUP BY Plant.SiteFK");
 		while($row = mysqli_fetch_assoc($query)){
-			$sitesArray[strval($row["SiteFK"])]["RawValue"] = round(((floatval($row["Arthropods"]) / floatval($sitesArray[strval($row["SiteFK"])]["SurveyCount"])) * 100), 2) . "%";
-			$sitesArray[strval($row["SiteFK"])]["Weight"] = round(((floatval($row["Arthropods"]) / floatval($sitesArray[strval($row["SiteFK"])]["SurveyCount"])) * 100), 2);
+			$occurrencePercentage = round(((floatval($row["Arthropods"]) / floatval($sitesArray[strval($row["SiteFK"])]["SurveyCount"])) * 100), 2);
+			$sitesArray[strval($row["SiteFK"])]["RawValue"] = $occurrencePercentage . "%";
+			$sitesArray[strval($row["SiteFK"])]["Weight"] = $occurrencePercentage;
 		}
 	}
-	else{
+	else if($comparisonMetric == "density"){
 		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, SUM(ArthropodSighting.Quantity) AS Arthropods FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID JOIN ArthropodSighting ON Survey.ID=ArthropodSighting.SurveyFK WHERE MONTH(Survey.LocalDate)>=$monthStart AND MONTH(Survey.LocalDate)<=$monthEnd AND YEAR(Survey.LocalDate)>=$yearStart AND YEAR(Survey.LocalDate)<=$yearEnd AND ArthropodSighting.Group LIKE '$arthropod' AND (Plant.Species LIKE '$plantSpecies' OR (Plant.Species='N/A' AND Survey.PlantSpecies LIKE '$plantSpecies')) AND Survey.WetLeaves IN (0, $includeWetLeaves) AND ArthropodSighting.Length>=$minSize AND Survey.ObservationMethod LIKE '$observationMethod' GROUP BY Plant.SiteFK");
 		while($row = mysqli_fetch_assoc($query)){
-			$sitesArray[strval($row["SiteFK"])]["RawValue"] = round(((floatval($row["Arthropods"]) / floatval($sitesArray[strval($row["SiteFK"])]["SurveyCount"])) * 1), 2);
-			$loggedDensity = round(log10(((floatval($row["Arthropods"]) / floatval($sitesArray[strval($row["SiteFK"])]["SurveyCount"])) + 0.000000000000000000000000000000000000000000000000001)), 2);
+			$arthropodsPerSurvey = floatval($row["Arthropods"]) / floatval($sitesArray[strval($row["SiteFK"])]["SurveyCount"]);
+			$sitesArray[strval($row["SiteFK"])]["RawValue"] = round($arthropodsPerSurvey, 2);
+			$loggedDensity = round(log10($arthropodsPerSurvey + 0.000000000000000000000000000000000000000000000000001), 2);
 			$sitesArray[strval($row["SiteFK"])]["Weight"] = $loggedDensity;
 			if($loggedDensity < $minLoggedDensity || $minLoggedDensity == 9999){
 				$minLoggedDensity = $loggedDensity;
 			}
 		}
 	}
+	else{//mean biomass
+		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, ArthropodSighting.Group, ArthropodSighting.Length, SUM(ArthropodSighting.Quantity) FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE MONTH(Survey.LocalDate)>=$monthStart AND MONTH(Survey.LocalDate)<=$monthEnd AND YEAR(Survey.LocalDate)>=$yearStart AND YEAR(Survey.LocalDate)<=$yearEnd AND ArthropodSighting.Group LIKE '$arthropod' AND (Plant.Species LIKE '$plantSpecies' OR (Plant.Species='N/A' AND Survey.PlantSpecies LIKE '$plantSpecies')) AND Survey.WetLeaves IN (0, $includeWetLeaves) AND ArthropodSighting.Length>=$minSize AND Survey.ObservationMethod LIKE '$observationMethod' GROUP BY Plant.SiteFK, ArthropodSighting.Group, ArthropodSighting.Length");
+		$siteBiomasses = array();
+		while($row = mysqli_fetch_assoc($query)){
+			if(!array_key_exists(strval($row["SiteFK"]), $siteBiomasses)){
+				$siteBiomasses[strval($row["SiteFK"])] = 0;
+			}
+			$siteBiomasses[strval($row["SiteFK"])] += (getBiomass($row["Group"], $row["Length"]) * floatval($row["Quantity"]));
+		}
+		
+		foreach($siteBiomasses as $siteID => $totalBiomass){
+			$meanBiomassPerSurvey = round(($totalBiomass / floatval($sitesArray[strval($siteID)]["SurveyCount"])), 2);
+			$sitesArray[strval($siteID)]["RawValue"] = $meanBiomassPerSurvey;
+			$sitesArray[strval($siteID)]["Weight"] = $meanBiomassPerSurvey;
+		}
+	}
+	
 	mysqli_close($dbconn);
 	for($i = 0; $i < count($siteIDs); $i++){
 		if(!array_key_exists("SurveyCount", $sitesArray[$siteIDs[$i]])){
@@ -134,19 +174,19 @@
 			if($sitesArray[$siteIDs[$i]]["MostRecentDateTime"] == "Never"){
 				$sitesArray[$siteIDs[$i]]["RawValue"] = "No Surveys";
 			}
-			else if($occurrenceInsteadOfDensity){
+			else if($comparisonMetric == "occurrence"){
 				$sitesArray[$siteIDs[$i]]["RawValue"] = "0%";
 			}
-			else{
+			else{//density or mean biomass
 				$sitesArray[$siteIDs[$i]]["RawValue"] = 0;
 			}
 		}
 		if(!array_key_exists("Weight", $sitesArray[$siteIDs[$i]])){
-			if($occurrenceInsteadOfDensity){
-				$sitesArray[$siteIDs[$i]]["Weight"] = 0;
-			}
-			else{
+			if($comparisonMetric == "density"){
 				$sitesArray[$siteIDs[$i]]["Weight"] = $minLoggedDensity * .99;
+			}
+			else{//occurrence or mean biomass
+				$sitesArray[$siteIDs[$i]]["Weight"] = 0;
 			}
 		}
 	}
