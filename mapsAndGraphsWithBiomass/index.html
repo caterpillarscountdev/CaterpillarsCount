@@ -2293,14 +2293,14 @@
 					}
 				}
 				labels[labels.length] = [label, color];
-				var lines = getLines(label, color, points);
+				var lines = getLines(label, color, points);alert(JSON.stringify('LINES: ' + lines));alert(JSON.stringify('DATASETS: ' + lineConfig.data.datasets));
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					lineConfig.data.datasets = [];
 				}
 				for(var i = 0; i < lines.length; i++){
 					lineConfig.data.datasets[lineConfig.data.datasets.length] = lines[i];
 				}
-				if(update){
+				if(update){alert("updating");
 					window.phenology.update();
 					centerYAxisLabels();
 					updatePhenologyLegend();
