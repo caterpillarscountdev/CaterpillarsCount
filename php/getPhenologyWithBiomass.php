@@ -4,7 +4,7 @@
 	require_once('tools/biomassCalculator.php');
 		
 	$HIGH_TRAFFIC_MODE = true;
-	$SAVE_TIME_LIMIT = 60;
+	$SAVE_TIME_LIMIT = 15 * 60;
 
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
