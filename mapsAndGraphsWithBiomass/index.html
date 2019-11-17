@@ -2264,11 +2264,11 @@
 					comparisonMetricIndex = 2;
 				}
 				
-				var lines = [];
+				var comparisonMetricLines = [];
 				for(var i = 0; i < lines.length; i++){
-					lines[lines.length] = lines[i][comparisonMetricIndex];
+					comparisonMetricLines[comparisonMetricLines.length] = lines[i][comparisonMetricIndex];
 				}
-				return lines;
+				return comparisonMetricLines;
 			}
 			var labels = [];
 			function addSet(label, points, update){
