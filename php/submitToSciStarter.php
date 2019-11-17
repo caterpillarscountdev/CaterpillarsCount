@@ -22,7 +22,7 @@
 		if($extra !== null){
 			$extraParams .= "&extra=" . $extra;
 		}
-		$ch = curl_init("https://scistarter.com/api/record_event?key=" . $KEY);
+		$ch = curl_init("https://scistarter.org/api/record_event?key=" . $KEY);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, "profile_id=" . $profileID . "&project_id=" . getenv("SciStarterProjectID") . "&type=" . $type . $extraParams);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
