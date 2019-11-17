@@ -7,7 +7,7 @@
  	$breakdown = $_GET["breakdown"]; //site, year, plant species, none
  	$comparisonMetric = $_GET["comparisonMetric"]; //occurrence, absoluteDensity, relativeProportion, meanBiomass
 	$HIGH_TRAFFIC_MODE = true;
-	$SAVE_TIME_LIMIT = 60;
+	$SAVE_TIME_LIMIT = 15 * 60;
    
  	$dbconn = (new Keychain)->getDatabaseConnection();
  	$readableArthropods = array(
