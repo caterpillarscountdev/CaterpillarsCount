@@ -1,6 +1,6 @@
 <?php
 	require_once('orm/resources/Keychain.php');
-	require_once('tools/resultMemory.php');
+	require_once('resultMemory.php');
 	require_once('tools/biomassCalculator.php');
 		
 	$HIGH_TRAFFIC_MODE = true;
