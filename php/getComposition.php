@@ -1,6 +1,6 @@
 <?php
  	require_once('orm/resources/Keychain.php');
-	require_once('tools/resultMemory.php');
+	require_once('resultMemory.php');
    
  	$siteIDs = json_decode($_GET["siteIDs"]);
  	$breakdown = $_GET["breakdown"]; //site, year, plant species, none
