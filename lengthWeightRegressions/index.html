@@ -46,29 +46,31 @@
 		</script>
 		<style>
 			table{
-    	  border-collapse:collapse;
-        border-radius:4px;
-        overflow:hidden;
-        font-family: 'Roboto Slab', serif;
-      }
-    
-      tr:first-of-type td{
-    	  background:#444;
-        color:#fff;
-      }
-    
-      tr:nth-of-type(odd) td{
-    	  background:rgba(0,0,0,0.025);
-      }
-    
-      td{
-      	padding:5px 7px;
-        text-align:right;
-      }
-      
-      td:first-of-type{
-        text-align:left;
-      }
+				border-collapse:collapse;
+				border-radius:4px;
+				overflow:hidden;
+				font-family: 'Roboto Slab', serif;
+			}
+			
+			table tr:first-of-type td{
+				background:#444;
+				color:#fff;
+				padding:7px;
+			}
+
+			tr:nth-of-type(odd) td{
+				background:rgba(0,0,0,0.025);
+			}
+
+			td{
+				padding:5px 7px;
+				text-align:right;
+				color:#666;
+			}
+
+			td:first-of-type{
+				text-align:left;
+			}
 		</style>
 	</head>
 	<body>
@@ -164,94 +166,95 @@
 		<main>
 			<div class="panel">
 				<h2>Length-Weight Regressions</h2>
-				<div class="tagline">tagline</div>
-				
-        <table>
-					<tr>
-						<td>Arthropod group</td>
-						<td><em>a</em></td>
-						<td><em>b</em></td>
-						<td>Source</td>
-					</tr>
-					<tr>
-						<td>Araneae (spiders)</td>
-						<td>0.05</td>
-						<td>2.74</td>
-						<td>Sabo et al. 2002. Length-mass relationships for adult aquatic and terrestrial invertebrates in a California watershed. J. N. Am. Benthol. Soc 21: 336-343.</td>
-					</tr>
-					<tr>
-						<td>Auchenorrhyncha (leafhoppers)</td>
-						<td>0.012</td>
-						<td>3.13</td>
-						<td>Hurlbert and Lynch, unpublished data</td>
-					</tr>
-					<tr>
-						<td>Coleoptera (beetles)</td>
-						<td>0.039</td>
-						<td>2.492</td>
-						<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
-					</tr>
-					<tr>
-						<td>Diptera (flies)</td>
-						<td>0.041</td>
-						<td>2.213</td>
-						<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
-					</tr>
-					<tr>
-						<td>Formicidae (ants)</td>
-						<td>0.009</td>
-						<td>2.919</td>
-						<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
-					</tr>
-					<tr>
-						<td>Heteroptera (true bugs)</td>
-						<td>0.008</td>
-						<td>3.075</td>
-						<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
-					</tr>
-					<tr>
-						<td>Hymenoptera (bees, wasps)</td>
-						<td>0.014</td>
-						<td>2.696</td>
-						<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
-					</tr>
-					<tr>
-						<td>Lepidoptera adult (moths, butterflies)</td>
-						<td>0.006</td>
-						<td>3.122</td>
-						<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
-					</tr>
-					<tr>
-						<td>Lepidoptera larvae (caterpillars)</td>
-						<td>0.003</td>
-						<td>2.959</td>
-						<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
-					</tr>
-					<tr>
-						<td>Opiliones (daddy longlegs)</td>
-						<td>0.162</td>
-						<td>2.17</td>
-						<td>Hurlbert and Lynch, unpublished data</td>
-					</tr>
-					<tr>
-						<td>Orthoptera (grasshoppers, crickets)</td>
-						<td>0.023</td>
-						<td>2.27</td>
-						<td>Hurlbert and Lynch, unpublished data</td>
-					</tr>
-					<tr>
-						<td>Sternorrhyncha (aphids)</td>
-						<td>0.0175</td>
-						<td>2.629</td>
-						<td>Gruner 2003. Regressions of length and width to predict arthropod biomass in the Hawaiian Islands. Pacific Science 57: 325-336.</td>
-					</tr>
-					<tr>
-						<td>Insecta (unidentified, other)</td>
-						<td>0.027</td>
-						<td>2.494</td>
-						<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.
-					</tr>
-				</table>
+				<div class="tagline">"Biomass per Survey" represents the total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (<em>M</em>) is estimated from reported lengths (<em>L</em>) using length-weight regressions of the form <em>M = a L<sup>b</sup></em> where <em>a</em> and <em>b</em> vary by arthropod group as shown in the table below.</div>
+				<div class="content">
+        				<table>
+						<tr>
+							<td>Arthropod group</td>
+							<td><em>a</em></td>
+							<td><em>b</em></td>
+							<td>Source</td>
+						</tr>
+						<tr>
+							<td>Araneae (spiders)</td>
+							<td>0.05</td>
+							<td>2.74</td>
+							<td>Sabo et al. 2002. Length-mass relationships for adult aquatic and terrestrial invertebrates in a California watershed. J. N. Am. Benthol. Soc 21: 336-343.</td>
+						</tr>
+						<tr>
+							<td>Auchenorrhyncha (leafhoppers)</td>
+							<td>0.012</td>
+							<td>3.13</td>
+							<td>Hurlbert and Lynch, unpublished data</td>
+						</tr>
+						<tr>
+							<td>Coleoptera (beetles)</td>
+							<td>0.039</td>
+							<td>2.492</td>
+							<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
+						</tr>
+						<tr>
+							<td>Diptera (flies)</td>
+							<td>0.041</td>
+							<td>2.213</td>
+							<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
+						</tr>
+						<tr>
+							<td>Formicidae (ants)</td>
+							<td>0.009</td>
+							<td>2.919</td>
+							<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
+						</tr>
+						<tr>
+							<td>Heteroptera (true bugs)</td>
+							<td>0.008</td>
+							<td>3.075</td>
+							<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
+						</tr>
+						<tr>
+							<td>Hymenoptera (bees, wasps)</td>
+							<td>0.014</td>
+							<td>2.696</td>
+							<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
+						</tr>
+						<tr>
+							<td>Lepidoptera adult (moths, butterflies)</td>
+							<td>0.006</td>
+							<td>3.122</td>
+							<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
+						</tr>
+						<tr>
+							<td>Lepidoptera larvae (caterpillars)</td>
+							<td>0.003</td>
+							<td>2.959</td>
+							<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.</td>
+						</tr>
+						<tr>
+							<td>Opiliones (daddy longlegs)</td>
+							<td>0.162</td>
+							<td>2.17</td>
+							<td>Hurlbert and Lynch, unpublished data</td>
+						</tr>
+						<tr>
+							<td>Orthoptera (grasshoppers, crickets)</td>
+							<td>0.023</td>
+							<td>2.27</td>
+							<td>Hurlbert and Lynch, unpublished data</td>
+						</tr>
+						<tr>
+							<td>Sternorrhyncha (aphids)</td>
+							<td>0.0175</td>
+							<td>2.629</td>
+							<td>Gruner 2003. Regressions of length and width to predict arthropod biomass in the Hawaiian Islands. Pacific Science 57: 325-336.</td>
+						</tr>
+						<tr>
+							<td>Insecta (unidentified, other)</td>
+							<td>0.027</td>
+							<td>2.494</td>
+							<td>Sample et al. 1993. Estimation of insect biomass by length and width. American Midland Naturalist 129: 234-240.
+						</tr>
+					</table>
+				</div>
 			</div>
 		</main>
 		<footer>
