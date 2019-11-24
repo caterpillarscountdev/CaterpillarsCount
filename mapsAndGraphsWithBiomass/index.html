@@ -1298,7 +1298,7 @@
 								"<tr>" +
 									"<th>Users</th>" +
 									"<th>Surveys</th>" +
-									"<th>Arthropod Groups</th>" +
+									"<th>Arthropod groups</th>" +
 									"<th>Arthropods</th>" +
 									"<th>Caterpillars</th>" +
 								"</tr>" +
@@ -1315,7 +1315,7 @@
 							"<ul class=\"scrollAnimationElement fadeInOnScroll\" style=\"opacity: 1;\">" +
 								"<li><span class=\"bold\">Users: </span>" + marker.siteInformation["UserCount"] + "</li>" +
 								"<li><span class=\"bold\">Surveys: </span>" + marker.siteInformation["SurveyCount"] + "</li>" +
-								"<li><span class=\"bold\">Arthropod Groups: </span>" + marker.siteInformation["ArthropodGroupCount"] + "</li>" +
+								"<li><span class=\"bold\">Arthropod groups: </span>" + marker.siteInformation["ArthropodGroupCount"] + "</li>" +
 								"<li><span class=\"bold\">Arthropods: </span>" + marker.siteInformation["ArthropodCount"] + "</li>" +
 								"<li><span class=\"bold\">Caterpillars: </span>" + marker.siteInformation["CaterpillarCount"] + "</li>" +
 							"</ul>" +
@@ -2667,7 +2667,7 @@
 				barConfig.data = {labels: [], datasets: {}};
 				window.composition.update();
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
-				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity").replace("Mean Biomass Per Survey", "meanBiomass");
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Number Per Survey", "absoluteDensity").replace("Mean Biomass Per Survey", "meanBiomass");
 				queueCompositionLoad(xAxis, yAxis, activeSiteID);
 				var xAxes = ["site", "year", "plant species"];
 				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity", "meanBiomass"];
@@ -2697,7 +2697,7 @@
 				clearInterval(compositionDataIsReadyCheck);
 				$("#reloadComposition")[0].style.display = "none";
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
-				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity").replace("Mean Biomass Per Survey", "meanBiomass");
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Number Per Survey", "absoluteDensity").replace("Mean Biomass Per Survey", "meanBiomass");
 				var siteIDs = compositionSiteIDs;
 				if(xAxis != "site"){siteIDs = [activeSiteID];}
 				$("#compositionLoadingCover").stop().fadeIn(300);
@@ -3361,11 +3361,11 @@
 											<div class="selected" onclick="showSmallSelectOptions(this);">Percent of Surveys</div>
 											<div class="options">
 												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Percent of Surveys</div>
-												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Arthropods Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Number Per Survey</div>
 												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Mean Biomass Per Survey</div>
 											</div>
 										</div>
-										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Surveys: The percent of survey branches examined on a given day with at least one arthropod of the type specified.<br/><br/>Arthropods per Survey: The total number of arthropods encountered divided by the total number of surveys on a given day.');"/>
+										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', \"Percent of Surveys: The percent of survey branches examined with at least one arthropod of the type specified.<br/><br/>Number per Survey: The total number of arthropods encountered divided by the total number of surveys.<br/><br/>Biomass per Survey: The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (<em>M</em>) is estimated from reported lengths (<em>L</em>) using length-weight regressions of the form <em>M = a L<sup>b</sup></em> where <em>a</em> and <em>b</em> vary by arthropod group as shown in the table below. If needed, you can click the table to open a larger version of it.<img src='../images/lengthWeightRegressions.png' onclick=&quot;event.stopPropagation();window.open('../lengthWeightRegressions', '_blank');&quot; style=&quot;cursor:pointer;&quot;/>\");"/>
 									</div>
 									<canvas id="phenologyChart" width="0" height="0"></canvas>
 								</div>
@@ -3388,11 +3388,11 @@
 											<div class="options">
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Percent of Arthropods</div>
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Percent of Surveys</div>
-												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Arthropods Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Number Per Survey</div>
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Mean Biomass Per Survey</div>
 											</div>
 										</div>
-										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Arthropods: The percentage of all arthropods encountered by number of individuals. Must sum to 100 across arthropod groups.<br/><br/>Percent of Surveys: The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.<br/><br/>Arthropods per Survey: The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.');"/>
+										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', \"Percent of Arthropods: The percentage of all arthropods encountered by number of individuals. Must sum to 100 across arthropod groups.<br/><br/>Percent of Surveys: The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.<br/><br/>Number per Survey: The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.<br/><br/>Biomass per Survey: The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (<em>M</em>) is estimated from reported lengths (<em>L</em>) using length-weight regressions of the form <em>M = a L<sup>b</sup></em> where <em>a</em> and <em>b</em> vary by arthropod group as shown in the table below. If needed, you can click the table to open a larger version of it.<img src='../images/lengthWeightRegressions.png' onclick=&quot;event.stopPropagation();window.open('../lengthWeightRegressions', '_blank');&quot; style=&quot;cursor:pointer;&quot;/>\");"/>
 									</div>
 									<canvas id="compositionChart" width="0" height="0"></canvas>
 								</div>
