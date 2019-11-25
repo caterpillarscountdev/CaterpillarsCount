@@ -11,6 +11,8 @@
 				font-size:16px;
 				display:none;
 				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				max-height:90%;
+				overflow:scroll;
 			}
 			
 			#promptInteractionBlock{
@@ -87,18 +89,22 @@
 			
 			#error{
 				background:#eb3d68;
+				border-bottom:3px solid #eb3d68;
 			}
 			
 			#confirmation{
 				background:#37e666;
+				border-bottom:3px solid #37e666;
 			}
 			
 			#alert{
 				background:#333;
+				border-bottom:3px solid #333;
 			}
 			
 			#managerRequest{
 				background:#00aeff;
+				border-bottom:3px solid #00aeff;
 			}
 
 			#managerRequestMessage{
