@@ -1604,7 +1604,7 @@
 				var readableComparisonMetricAfterText = "";
 				if(comparisonMetric == "occurrence"){
 					readableComparisonMetric = "Percent of surveys with";
-					if(observationMethod.length != ""){
+					if(observationMethod != ""){
 						readableComparisonMetric = "percentage of surveys with";
 					}
 				}
@@ -1839,7 +1839,7 @@
 						$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + Math.round(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1))))) + "%</div>";
 						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
 					}
-					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">Caterpillars on all trees<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">Occurrence of caterpillars that are at least 0 mm long on all trees (including surveys with wet leaves) from January to December over the period of all time<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
+					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">Caterpillars on all trees<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">Percent of surveys with caterpillars that are at least 0 mm long on all trees (including surveys with wet leaves) from January to December over the period of all time<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
 					siteNamesAndIDs.sort(function(a, b){
 						if(a[0] < b[0]) return -1;
 						if(a[0] > b[0]) return 1;
