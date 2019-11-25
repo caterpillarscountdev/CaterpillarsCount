@@ -41,7 +41,7 @@
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
-		<script src="../js/template.js?v=1"></script>
+		<script src="../js/template.js?v=2"></script>
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
 		<script src="../js/checkbox.js?v=1"></script>
 		<style>
@@ -51,11 +51,15 @@
 				text-align:center;
 				border-radius:5px;
 			}
-
 			.loading>img{
 				height:30px;
 			}
-
+			
+			#alert img{
+				max-height:450px;
+				margin:0px;
+			}
+			
 			#rankingsSwitch, #graphSwitch{
 				color:#666;
 				background:#eee;
@@ -84,11 +88,9 @@
 				text-align:center;
 				width:70px;
 			}
-
 			#graphSwitch button{
 				width:137px;
 			}
-
 			#rankingsSwitch button:last-of-type, #graphSwitch button:last-of-type{
 				margin-left:-4px;
 			}
@@ -98,7 +100,6 @@
 				-moz-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
 				box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
 			}
-
 			#superHeader, #siteUserSuperHeader{
 				background:#555;
 				color:#fff;
@@ -118,45 +119,37 @@
 				text-align:center;
 				text-transform:uppercase;
 			}
-
 			#rankings table, #siteStats table, #siteUserLeaderboard table{
 				width:100%;
 				border-collapse:collapse;
 				font-family: 'Roboto Slab', serif;
 				color:#666;
 			}
-
 			#siteStats table:first-of-type{
 				border-radius:4px;
 				overflow:hidden;
 			}
-
 			#rankings table thead, #siteStats table thead, #siteUserLeaderboard table thead{
 				background:#666;
 				color:#fff;
 			}
-
 			#siteStats td{
 				text-align:center;
 				background:rgba(0,0,0,0.025);
 			}
-
 			#rankings table tr td>div, #siteUserLeaderboard table tr td>div{
 				max-height:500px;
 				position:relative;
 				min-width:100%;
 			}
-
 			#rankings table tr:nth-of-type(even), #siteUserLeaderboard table tr:nth-of-type(even){
 				background:rgba(0,0,0,0.025);
 			}
-
 			#rankings table td, #rankings table th, #siteUserLeaderboard table td, #siteUserLeaderboard table th{
 				width:15%;
 				box-sizing:border-box;
 				text-align:left;
 			}
-
 			#rankings table th, #siteUserLeaderboard table th{
 				padding:5px 7px;
 				cursor:pointer;
@@ -167,23 +160,18 @@
 			#siteStats table:first-of-type th{
 				cursor:pointer;
 			}
-
 			#rankings table th:hover, #siteUserLeaderboard table th:hover{
 				text-decoration:underline;
 			}
-
 			#rankings table td, #siteStats table td, #siteStats table th, #siteUserLeaderboard table td{
 				padding:5px 7px;
 			}
-
 			#rankings table td:nth-of-type(1), #rankings table th:nth-of-type(1), #siteUserLeaderboard table td:nth-of-type(1), #siteUserLeaderboard table th:nth-of-type(1){
 				width:5%;
 			}
-
 			#rankings table td:nth-of-type(2), #rankings table th:nth-of-type(2), #siteUserLeaderboard table td:nth-of-type(2), #siteUserLeaderboard table th:nth-of-type(2){
 				width:22%;
 			}
-
 			#rankings table th:nth-of-type(3), #rankings table th:nth-of-type(4), #rankings table th:nth-of-type(5), #rankings table th:nth-of-type(6), #siteUserLeaderboard table th:nth-of-type(3), #siteUserLeaderboard table th:nth-of-type(4), #siteUserLeaderboard table th:nth-of-type(5), #siteUserLeaderboard table th:nth-of-type(6){
 				text-align:right;
 				background:rgba(0,0,0,0.1);
@@ -192,25 +180,20 @@
 				text-align:right;
 				background:rgba(0,0,0,0.0315);
 			}
-
 			#rankings table td:last-of-type, #rankings table th:last-of-type, #siteUserLeaderboard table td:last-of-type, #siteUserLeaderboard table th:last-of-type{
 				text-align:right;
 				width:13%;
 			}
-
 			#rankings table td>div, #siteUserLeaderboard table td>div{
 				display:inline-block;
 			}
-
 			#rankings table tr:nth-of-type(10) ~ tr td, #siteUserLeaderboard table tr:nth-of-type(10) ~ tr td{
 				padding:0px 7px;
 			}
-
 			#rankings table tr:nth-of-type(10) ~ tr td>div, #siteUserLeaderboard table tr:nth-of-type(10) ~ tr td>div{
 				max-height:0px;
 				overflow:hidden;
 			}
-
 			#showMoreRankings, #showMoreSiteUserRankings{
 				display:none;
 				font-family: 'Roboto Slab', serif;
@@ -220,23 +203,19 @@
 				text-transform:uppercase;
 				font-size:12px;
 			}
-
 			#showMoreRankings>div, #showMoreSiteUserRankings>div{
 				display:inline-block;
 				cursor:pointer;
 				padding:5px;
 				text-decoration:underline;
 			}
-
 			table td:first-of-type .bottomTooltip{
 				left:0px;
 				margin-left:0px;
 			}
-
 			table td:first-of-type .bottomTooltip .arrow{
 				margin:-12px 0px 0px 0px;
 			}
-
 			.bottomTooltip{
 				display:none;
 				position:absolute;
@@ -253,7 +232,6 @@
 				z-index:1;
 				text-align:left;
 			}
-
 			.bottomTooltip .arrow{
 				position:relative;
 				right:0px;
@@ -263,7 +241,6 @@
 				border-bottom:7px solid #444;
 				width:0px;
 			}
-
 			#selectedSitePanel .bottomTooltip{
 				text-align:center;
 			}
@@ -273,23 +250,19 @@
 				margin:0px;
 				top:-7px;
 			}
-
 			#selectedSitePanel h3{
 				margin-top:40px;
 			}
 			#selectedSitePanel h3:first-of-type{
 				margin-top:20px;
 			}
-
 			#rankings .underText, #siteUserLeaderboard .underText{
 				color:rgba(0,0,0,0.4);
 				font-size:12px;
 			}
-
 			#rankings .underText::after, #siteUserLeaderboard .underText::after{
 				content:" survey date(s)";
 			}
-
 			#map{
 				width:100%;
 				height:92%;
@@ -297,21 +270,17 @@
 				left:0px;
 				right:0px;
 			}
-
 			#globalLeaderboardNotice{
 				font-size:10px;
 				margin-top:-10px;
 				margin-bottom:10px;
 			}
-
 			#selectedSitePanel{
 				display:none;
 			}
-
 			.forceWrapIfNeeded{
 				word-wrap: break-word;
 			}
-
 			#lastSurveyed{
 				font-size:14px;
 				color:#999;
@@ -325,22 +294,18 @@
 				font-size:18px;
 				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
 			}
-
 			#selectedSitePanel h3:first-of-type{
 				margin-top:0px;
 			}
-
 			#noDataSection{
 				text-align:center;
 			}
-
 			#noDataSection p{
 				padding:10px;
 				background:rgba(0,0,0,0.05);
 				border-radius:4px;
 				display:inline-block;
 			}
-
 			#mobileSiteStats{
 				display:none;
 				background:rgba(0,0,0,0.02);
@@ -351,7 +316,6 @@
 				background:transparent;
 				padding-left:21px;
 			}
-
 			#mapBar{
 				background:#eee;
 				margin:0px -100px;
@@ -363,20 +327,17 @@
 				position:relative;
 				z-index:1;
 			}
-
 			#mapFilters{
 				margin:0px -100px;
 				max-height:0px;
 				overflow:hidden;
 				background:#eee;
 			}
-
 			#mapFilters>div{
 				display:table;
 				width:100%;
 				background:rgba(0,0,0,0.01);
 			}
-
 			#mapFilters>div>div{
 				padding:20px;
 				width:25%;
@@ -384,30 +345,25 @@
 				border-right:2px solid rgba(0,0,0,0.05);
 				display:table-cell;
 			}
-
 			#mapFilters>div:last-of-type{
 				border-right:0px none transparent;
 			}
-
 			#mapFilters>div>div .inputTitle{
 				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 				color:#666;
 				text-transform:uppercase;
 				font-size:14px;
 			}
-
 			#mapFilters>button{
 				margin: 0px;
 				width: 100%;
 				border-radius: 0px;
 				background: rgba(0,0,0,0.15);
 			}
-
 			#mapBar>div{
 				display:table;
 				width:100%;
 			}
-
 			#mapBar>div>div .title{
 				font-size:10px;
 				margin-bottom:5px;
@@ -415,7 +371,6 @@
 				font-weight:bold;
 				color:#888;
 			}
-
 			#mapTitle{
 				font-size:14px;
 				display:table-cell;
@@ -424,7 +379,6 @@
 				border-right:2px solid rgba(0,0,0,0.05);
 				white-space: pre;
 			}
-
 			#mapScale{
 				display:table-cell;
 				vertical-align:middle;
@@ -434,7 +388,6 @@
 			#mapScale>div{
 				white-space: nowrap;
 			}
-
 			#mapScale .scaleCircle, #mapScale .smallScaleCircle{
 				width:15px;
 				height:15px;
@@ -444,11 +397,9 @@
 				opacity:.9;
 				display:inline-block;
 			}
-
 			#mapScale .scaleCircle:last-of-type{
 				margin-right:0px;
 			}
-
 			#mapScale .scaleCircle .scaleLabel{
 				position:absolute;
 				top:100%;
@@ -459,14 +410,12 @@
 				color:#666;
 				font-size:10px;
 			}
-
 			#mapScale .smallScaleCircle{
 				width:7px;
 				height:7px;
 				background:#bbb;
 				margin-bottom:4px;
 			}
-
 			.select{
 				width:100%;
 				-webkit-appearance: none;
@@ -520,7 +469,6 @@
 				display:inline-block;
 				padding-right:40px;
 			}
-
 			ul.ui-autocomplete{
 				width:753px;
 				box-sizing:border-box;
@@ -547,8 +495,7 @@
 				font-family: 'Roboto Slab', serif;
 				cursor:pointer;
 			}
-
-			#densityOccurrenceArrow, #observationMethodArrow{
+			#comparisonMetricArrow, #observationMethodArrow{
 				pointer-events:none;
 				cursor: pointer;
 				height: 34px;
@@ -563,7 +510,6 @@
 				right: 20px;
 				top: 10px;
 			}
-
 			#months, #years{
 				text-align:center;
 				font-size:12px;
@@ -572,7 +518,6 @@
 				text-transform:uppercase;
 				font-family:'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 			}
-
 			#monthsSlider.rangeSlider, #yearsSlider.rangeSlider{
 				margin:20px;
 				height:2px;
@@ -605,12 +550,10 @@
 			.rangeSlider .ui-slider-handle:active{
 				cursor: -webkit-grabbing; cursor: grabbing;
 			}
-
 			#barGraph{
 				display:none;
 				font-size:18px;
 			}
-
 			#phenologyLegend{
 				text-align:center;
 				margin:20px 0px;
@@ -631,24 +574,20 @@
 				height:10px;
 				margin:0px 3px -4px 0px;
 			}
-
 			#compositionLegend{
 				margin-top:30px;
 			}
-
 			#compositionLegend .label .box{
 				width:10px;
 				height:10px;
 				border:1px solid rgba(0,0,0,0.2);
 				margin-bottom:-1px;
 			}
-
 			#addNewSet{
 				border-top:1px solid #ddd;
 				border-bottom:1px solid #ddd;
 				margin:20px 0px;
 			}
-
 			#addNewSet>div{
 				margin:0px 20px;
 				padding:20px;
@@ -657,7 +596,6 @@
 				-moz-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
 				box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
 			}
-
 			.smallSelect{
 				position:relative;
 				display:inline-block;
@@ -691,7 +629,6 @@
 			.smallSelect .options>div:hover{
 				background:#ebfeff;
 			}
-
 			.xAxisLabel{
 				text-align:center;
 				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
@@ -699,7 +636,6 @@
 				color:#666;
 				margin:10px 0px;
 			}
-
 			.yAxisLabel{
 				position:absolute;
 				top:50%;
@@ -710,7 +646,6 @@
 				transform:rotate(270deg);
 				display:none;
 			}
-
 			#mapFiltersToggleButton, #mapDownloadButton{
 				background:#fed136;
 				display:table;
@@ -746,11 +681,9 @@
 				font-size:17px;
 				padding-top:2px;
 			}
-
 			#lineGraph .yAxisLabel, #lineGraph .label, #barGraph .yAxisLabel, #barGraph .label{
 				font-size:18px;
 			}
-
 			#compositionLoadingCover{
 				position:absolute;
 				top:0px;
@@ -784,14 +717,12 @@
 				border-radius:4px;
 				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
 			}
-
 			.chartExplanation{
 				font-size:12px;
 				font-family:'Roboto Slab', serif;
 				color:#999;
 				margin:10px 0px;
 			}
-
 			.siteSelectionText{
 				display:table-cell;
 				vertical-align:middle;
@@ -803,24 +734,20 @@
 				text-align:left;
 				color:#666;
 			}
-
 			#addCompositionSiteButton, #removeCompositionSiteButton{
 				display:inline-block;
 				cursor:pointer;
 				text-decoration:underline;
 			}
-
 			#addSiteSelection, #removeSiteSelection{
 				position:absolute;
 				top:0px;
 				left:0px;
 				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
 			}
-
 			#downloadLinks{
 				display:none;
 			}
-
 			.downloadChartButton{
 				position:absolute;
 				z-index:1;
@@ -855,7 +782,6 @@
 				font-size:10px;
 				padding-top:1px;
 			}
-
 			@media screen and (max-width: 600px){
 				#desktopSiteStats{
 					display:none;
@@ -864,53 +790,44 @@
 					display:block;
 				}
 			}
-
 			@media screen and (max-width: 957px){
 				#rankings table tr td:nth-of-type(5), #rankings table thead th:nth-of-type(5), #siteUserLeaderboard table tr td:nth-of-type(5), #siteUserLeaderboard table thead th:nth-of-type(5){
 					display:none;
 				}
 			}
-
 			@media screen and (max-width: 868px){
 				#rankings table tr td:nth-of-type(3), #rankings table thead th:nth-of-type(3), #siteUserLeaderboard table tr td:nth-of-type(3), #siteUserLeaderboard table thead th:nth-of-type(3){
 					display:none;
 				}
 			}
-
 			@media screen and (max-width: 783px){
 				#rankings table tr td:nth-of-type(4), #rankings table thead th:nth-of-type(4), #siteUserLeaderboard table tr td:nth-of-type(4), #siteUserLeaderboard table thead th:nth-of-type(4){
 					display:none;
 				}
 			}
-
 			@media screen and (max-width: 539px){
 				#rankings table tr td:nth-of-type(6), #rankings table thead th:nth-of-type(6), #siteUserLeaderboard table tr td:nth-of-type(6), #siteUserLeaderboard table thead th:nth-of-type(6){
 					display:none;
 				}
-
 				#rankings table td:nth-of-type(2), #rankings table th:nth-of-type(2), #siteUserLeaderboard table td:nth-of-type(2), #siteUserLeaderboard table th:nth-of-type(2){
 					width:auto;
 					min-width:0px;
 				}
 			}
-
 			@media screen and (max-width: 373px){
 				main h2{
 					font-size:33px;
 				}
 			}
-
 			@media screen and (max-width: 770px){
 				#mapBar{
 					margin:0px -20px;
 				}
 			}
-
 			@media screen and (max-width: 900px){
 				#mapFiltersToggleButton, #mapFilters, #mapDownloadButton{
 					display:none;
 				}
-
 				#mapBar>div{
 					min-height:70px;
 				}
@@ -918,13 +835,11 @@
 					height:70px;
 				}
 			}
-
 			@media screen and (max-width: 530px){
 				#mapScale{
 					border-right:0px none transparent;
 				}
 			}
-
 			@media screen and (max-width: 400px){
 				#mapTitle{
 					font-size:10px;
@@ -963,16 +878,13 @@
 				window.phenology = new Chart(document.getElementById('phenologyChart'), lineConfig);
 				window.composition = new Chart($('#compositionChart')[0].getContext('2d'), barConfig);
 			});
-
 			$(document).click(function(){
 				$(".smallSelect .options").fadeOut(0);
 			});
-
 			function roundTo(number, decimalPlace){
 				var tenFactor = Math.pow(10, decimalPlace);
 				return Math.round(number * tenFactor) / tenFactor;
 			}
-
 			function getWordAtIndex(str, index){
 				var left = str.slice(0, index + 1).search(/\S+$/);
 				var right = str.slice(index).search(/\s/);
@@ -988,23 +900,19 @@
 							a = a.toLowerCase();
 							b = b.toLowerCase();
 							var term = request.term.toLowerCase();
-
 							//how close to the beginning of a word
 							var aWord = getWordAtIndex(a, a.indexOf(term));
 							var bWord = getWordAtIndex(b, b.indexOf(term));
 							var diff = aWord.indexOf(term) - bWord.indexOf(term);
 							if(diff !== 0) return diff;
-
 							//tiebreaker prioritize first word results
 							var aFirstWord = a.split(" ").indexOf(aWord) == 0;
 							var bFirstWord = b.split(" ").indexOf(bWord) == 0;
 							if(aFirstWord && !bFirstWord) return -1;
 							else if(bFirstWord && !aFirstWord) return 1;
-
 							//tiebreaker is how close to the beginning of the string
 							//var diff = a.indexOf(term) - b.indexOf(term);
 							//if(diff !== 0){return diff;}
-
 							//tiebreaker alphabetical
 							if(a < b) return -1;
     						if(a > b) return 1;
@@ -1016,14 +924,12 @@
 					open: function(event, ui) {
 						var idNumber = 1;//1; instead of: ($("input").index(this) + 1); because theres only 1 autocomplete on the page, so we're always referring to the 1st one.
 						$('#ui-id-' + idNumber).off('menufocus hover mouseover mouseenter');
-
             					var left = $('#ui-id-' + idNumber).position().left;
 						var leftOffset = 0;
         					$('#ui-id-' + idNumber).css({left: (left - leftOffset) + "px", width: this.clientWidth + "px"});
 					}
 				});
 			}
-
 			function getOrdinal(e){n=e.toString();for(var t="",h=0,d=n.length-1;d>=0;d--)if(1==++h)"0"==n[d]||("1"==n[d]?t="first":"2"==n[d]?t="second":"3"==n[d]?t="third":"4"==n[d]?t="fourth":"5"==n[d]?t="fifth":"6"==n[d]?t="sixth":"7"==n[d]?t="seventh":"8"==n[d]?t="eighth":"9"==n[d]&&(t="ninth"));else if(2==h)"0"==n[d]||("1"==n[d]?"0"==n[d+1]?t="tenth":"1"==n[d+1]?t="eleventh":"2"==n[d+1]?t="twelfth":"3"==n[d+1]?t="thirteenth":"4"==n[d+1]?t="fourteenth":"5"==n[d+1]?t="fifteenth":"6"==n[d+1]?t="sixteenth":"7"==n[d+1]?t="seventeenth":"8"==n[d+1]?t="eighteenth":"9"==n[d+1]&&(t="nineteenth"):"2"==n[d]?t=""==t?"twentieth":"twenty-"+t:"3"==n[d]?t=""==t?"thirtieth":"thirty-"+t:"4"==n[d]?t=""==t?"fortieth":"forty-"+t:"5"==n[d]?t=""==t?"fiftieth":"fifty-"+t:"6"==n[d]?t=""==t?"sixtieth":"sixty-"+t:"7"==n[d]?t=""==t?"seventieth":"seventy-"+t:"8"==n[d]?t=""==t?"eightieth":"eighty-"+t:"9"==n[d]&&(t=""==t?"ninetieth":"ninety-"+t));else if(3==h)"0"==n[d]||("1"==n[d]?t=""==t?"one hundredth":"one hundred and "+t:"2"==n[d]?t=""==t?"two hundredth":"two hundred and "+t:"3"==n[d]?t=""==t?"three hundredth":"three hundred and "+t:"4"==n[d]?t=""==t?"four hundredth":"four hundred and "+t:"5"==n[d]?t=""==t?"five hundredth":"five hundred and "+t:"6"==n[d]?t=""==t?"six hundredth":"six hundred and "+t:"7"==n[d]?t=""==t?"seven hundredth":"seven hundred and "+t:"8"==n[d]?t=""==t?"eight hundredth":"eight hundred and "+t:"9"==n[d]&&(t=""==t?"nine hundredth":"nine hundred and "+t));else if(4==h)return n;return t}
 			function getReadableDate(databaseFormattedDate){
 				//PRE: databaseFormattedDate format is YYYY-MM-DD
@@ -1046,7 +952,6 @@
 				if(hours >= 12){ampm = "pm";}
 				return formattedHours + ":" + minutes + ampm;
 			}
-
 			function toggleMapFilters(openFunction, closeFunction){
 				if(!openHeight($("#mapFilters"), function(){$("#mapFilters")[0].style.borderBottom="2px solid #aaa";$("#mapTitle").stop().animate({opacity:"0"});$("#mapScale").stop().animate({opacity:"0"});hideMapDownloadButton();})){
 					closeHeight($("#mapFilters"), function(){$("#mapFilters")[0].style.borderBottom="0px none transparent";$("#mapTitle").stop().animate({opacity:"1"});$("#mapScale").stop().animate({opacity:"1"});showMapDownloadButton();});
@@ -1073,7 +978,6 @@
 				}
 				return false;
 			}
-
 			function toggleMaxHeight(elements){
 				//switch the max height of all elements specified as "elements" between 0px and 250px
 				elements = $(elements);
@@ -1086,7 +990,6 @@
 					}
 				}
 			}
-
 			function getYPosition(element) {
 				element = $(element)[0];
     				var yPosition = 0;
@@ -1096,7 +999,6 @@
     				}
 				return yPosition;
 			}
-
 			var selectToggling = false;
 			function autoOpenSelect(selectElement){
 				if(!selectToggling){
@@ -1191,7 +1093,6 @@
 					}
 				}
 			}
-
 			function showSmallSelectOptions(selectedOption){
 				setTimeout(function(){
 					$(selectedOption).parent().find('.options').eq(0).css({display:"block"});
@@ -1200,7 +1101,6 @@
 			function smallSelectOption(option){
 				$(option).parent().parent().find('.selected').eq(0)[0].innerHTML = option.innerHTML.replace("<br/>", " ").replace("<br>", " ");
 			}
-
 			function enforceRange(ele, min, max, step){
 				ele = $(ele)[0];
 				if(ele.value == ""){
@@ -1218,7 +1118,6 @@
 					//queueNotice("alert", "Value must be between " + min + " and " + max + ".");
 				}
 			}
-
 			var monthStart = 1;
 			var monthEnd = 12;
 			var yearStart = 1980;
@@ -1227,7 +1126,6 @@
 			var absoluteYearEnd = yearEnd;
 			function setSliders(){
 				$("#years")[0].innerHTML = "Loading...";
-
 				var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 				$("#monthsSlider").slider({
 					range: true,
@@ -1269,7 +1167,6 @@
 					//complete
 				});
 			}
-
 			function resizeSuperHeader(){
 				if($("#rankings th").length > 0){
 					var superHeaderWidth = $("#rankings th").eq(2)[0].clientWidth + $("#rankings th").eq(3)[0].clientWidth + $("#rankings th").eq(4)[0].clientWidth + $("#rankings th").eq(5)[0].clientWidth;
@@ -1308,7 +1205,6 @@
 				}
 				return param;
 			}
-
 			var map;
 			var markers = {};
 			var lastMarker = null;
@@ -1383,7 +1279,6 @@
 				else{
 					$("#dataSection")[0].style.display = "block";
 					$("#noDataSection")[0].style.display = "none";
-
 					var dateParts = marker.siteInformation["MostRecentDateTime"].split(" ")[0].split('-');
 					var lastSurveyedDate = new Date();
 					lastSurveyedDate.setFullYear(Number(dateParts[0]));
@@ -1409,7 +1304,7 @@
 								"<tr>" +
 									"<th>Users</th>" +
 									"<th>Surveys</th>" +
-									"<th>Arthropod Groups</th>" +
+									"<th>Arthropod groups</th>" +
 									"<th>Arthropods</th>" +
 									"<th>Caterpillars</th>" +
 								"</tr>" +
@@ -1426,13 +1321,12 @@
 							"<ul class=\"scrollAnimationElement fadeInOnScroll\" style=\"opacity: 1;\">" +
 								"<li><span class=\"bold\">Users: </span>" + marker.siteInformation["UserCount"] + "</li>" +
 								"<li><span class=\"bold\">Surveys: </span>" + marker.siteInformation["SurveyCount"] + "</li>" +
-								"<li><span class=\"bold\">Arthropod Groups: </span>" + marker.siteInformation["ArthropodGroupCount"] + "</li>" +
+								"<li><span class=\"bold\">Arthropod groups: </span>" + marker.siteInformation["ArthropodGroupCount"] + "</li>" +
 								"<li><span class=\"bold\">Arthropods: </span>" + marker.siteInformation["ArthropodCount"] + "</li>" +
 								"<li><span class=\"bold\">Caterpillars: </span>" + marker.siteInformation["CaterpillarCount"] + "</li>" +
 							"</ul>" +
 						"</div>";
 				}
-
 				if(marker.siteInformation["MostRecentDateTime"] != "Never"){
 					clearSets();
 					clearCompositionSites();
@@ -1445,24 +1339,19 @@
 						showComposition();
 					});
 				}
-
 				$("#selectedSitePanel")[0].style.display = "block";
 				scrollToPanel(3);
-
 				 submitClassificationToSciStarter();
 			}
-
 			var currentSiteUserLeaderboardSiteID = -1;
 			var siteUserRankings = [];
 			function showSiteUserLeaderboard(siteID, callback){
 				if(siteID == currentSiteUserLeaderboardSiteID){return false;}
 				currentSiteUserLeaderboardSiteID = siteID;
 				callback = callback || function(){};
-
 				$("#showMoreSiteUserRankings")[0].style.display = "none";
 				$("#siteUserSuperHeader")[0].style.display = "none";
 				$("#siteUserLeaderboard")[0].innerHTML = "<div class=\"loading\"><img src=\"../images/rolling.svg\"/></div>";
-
 				console.log("Loading site user leaderbard.");
 				$.get("../php/getUserRankings.php?cron=false&siteID=" + siteID, function(data){
 					//success
@@ -1477,7 +1366,6 @@
 							$("#siteUserLeaderboard")[0].innerHTML = "";
 							queueNotice("error", data);
 						}
-
 					}
 				})
 				.fail(function(){
@@ -1492,7 +1380,6 @@
 					}
 				});
 			}
-
 			var numberOfShownSiteUserRankings = 10;
 			function showMoreSiteUserRankings(){
 				var NUMBER_OF_COLUMNS = 7;
@@ -1506,7 +1393,6 @@
 					$("#showMoreSiteUserRankings").fadeOut(200);
 				}
 			}
-
 			function populateSiteUserLeaderboard(sortingMetric, keepCurrentNumberShown){
 				var rankings = siteUserRankings.sort(function(a, b){
 					var aVal = a[sortingMetric];
@@ -1527,10 +1413,8 @@
 						aVal = Number(aVal);
 						bVal = Number(bVal);
 					}
-
 					if(aVal < bVal) return -1 * order;
 					if(aVal > bVal) return 1 * order;
-
 					if(sortingMetric != "Caterpillars"){
 						aVal = Number(a["Caterpillars"].replace("%", ''));
 						bVal = Number(b["Caterpillars"].replace("%", ''));
@@ -1603,7 +1487,6 @@
 				var rank = 1;
 				for(var i = 0; i < rankings.length; i++){
 					var unsubstantiatedCaterpillarStat = (sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10);
-
 					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This user has submitted fewer than 10 surveys and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
 					tempHtmlToAdd +=			"<td><div>" + (unsubstantiatedCaterpillarStat ? "&ndash;" : rank++) + "</div></td>";
 					tempHtmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\">" + rankings[i]["Name"] + "</div></td>";
@@ -1642,7 +1525,6 @@
 					numberOfShownSiteUserRankings = 10;
 				}
 			}
-
 			function hexToRgb(hex) {
 				// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
 				var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -1652,7 +1534,6 @@
 				var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 				return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [0, 0, 0];
 			}
-
 			function mapPercentToColor(percent){
 				percent = Number(percent.toString().replace("%", ""));
 				//alert(percent);
@@ -1674,14 +1555,12 @@
 						color1 = colors[i];
 						color2 = colors[i - 1];
 						percent = (percent - ((i - 1) * (1/(colors.length - 1)))) / ((i/(colors.length - 1)) - ((i - 1) * (1/(colors.length - 1))));
-
 					}
 				}
 				var w1 = ((percent * 2 - 1)/1+1) / 2;
 				var w2 = 1 - w1;
 				return "rgb(" + Math.round(color1[0] * w1 + color2[0] * w2) + ", " + Math.round(color1[1] * w1 + color2[1] * w2) + ", " + Math.round(color1[2] * w1 + color2[2] * w2) + ")";
 			}
-
 			function getNormalizedWeights(sitesArray){//data is in the form of: [{"ID": 2, "Name": "Example Site", "Data": 9999, ...etc}]
 				var max = 0;
 				var min = false;
@@ -1708,7 +1587,6 @@
 				}
 				return arrToReturn;
 			}
-
 			var filtering = false;
 			function filterMap(){
 				if(filtering){return false;}
@@ -1719,9 +1597,25 @@
 				if(includeWetLeaves){
 					readableIncludeWetLeaves = "including surveys with wet leaves";
 				}
-				var readableOccurrenceDensity = getSelectText($("#densityOccurrence"));
-				var occurrenceInsteadOfDensity = (getSelectValue($("#densityOccurrence")) == "occurrence");
+				var comparisonMetric = getSelectValue($("#comparisonMetric"));
 				var observationMethod = getSelectValue($("#observationMethod"));
+				
+				var readableComparisonMetric = "";
+				var readableComparisonMetricAfterText = "";
+				if(comparisonMetric == "occurrence"){
+					readableComparisonMetric = "Percent of surveys with";
+					if(observationMethod != "%"){
+						readableComparisonMetric = "percentage of surveys with";
+					}
+				}
+				else if(comparisonMetric == "density"){
+					readableComparisonMetric = "Number of ";
+					readableComparisonMetricAfterText = " per survey";
+				}
+				else{
+					readableComparisonMetric = "Biomass of ";
+					readableComparisonMetricAfterText = " per survey";
+				}
 				var readableObservationMethod = getSelectText($("#observationMethod")).replace("All", "");
 				var readableArthropod = getSelectText($("#arthropod"));
 				var arthropod = getSelectValue($("#arthropod"));
@@ -1737,10 +1631,10 @@
 					years = yearStart + " through " + yearEnd;
 				}
 				if(plantSpecies.replace(/ /g, "") == ""){plantSpecies = "%";}
-				$.get("../php/getSites.php?cron=false&observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&occurrenceInsteadOfDensity=" + occurrenceInsteadOfDensity + "&monthStart=" + monthStart + "&monthEnd=" + monthEnd + "&yearStart=" + yearStart + "&yearEnd=" + yearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies), function(data){
+				
+				$.get("../php/getSites.php?cron=false&observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&comparisonMetric=" + comparisonMetric + "&monthStart=" + monthStart + "&monthEnd=" + monthEnd + "&yearStart=" + yearStart + "&yearEnd=" + yearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies), function(data){
 					//success
 					saveMapFilters();
-
 					//clear old markers
 					for (var siteID in markers) {
 						if (markers.hasOwnProperty(siteID)) {
@@ -1748,7 +1642,6 @@
 						}
 					}
 					markers = {};
-
 					//set new markers
 					var sites = JSON.parse(data);
 					var normalizedWeights = getNormalizedWeights(sites);
@@ -1811,7 +1704,6 @@
 						if(rawValueNumber > maxRawValue){
 							maxRawValue = rawValueNumber;
 						}
-
 						if(sites[i]["Weight"] < minWeight || minWeight == -100){
 							minWeight = sites[i]["Weight"];
 						}
@@ -1823,10 +1715,13 @@
 						alreadyActiveMarker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
 					}
 					for(var i = 0; i < $(".scaleCircle").length; i++){
-						if(occurrenceInsteadOfDensity){
+						if(comparisonMetric == "occurrence"){
 							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1)))), 0) + "%</div>";
 						}
-						else{
+						else if(comparisonMetric == "meanBiomass"){
+							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1)))), 0) + "</div>";
+						}
+						else{//density
 							var scaleNumber = Math.pow(10, minWeight + ((maxWeight - minWeight) * (i * (1/($(".scaleCircle").length - 1)))));
 							if(i == 0){
 								scaleNumber = minRawValue;
@@ -1839,10 +1734,9 @@
 							}
 							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(scaleNumber, 2) + "</div>";
 						}
-
 						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
 					}
-					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">" + readableArthropod + " on " + plantSpecies.replace("%", "All Trees") + "<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">" + (readableObservationMethod + " " + readableOccurrenceDensity).toLowerCase().trim().charAt(0).toUpperCase() + (readableObservationMethod + " " + readableOccurrenceDensity).toLowerCase().trim().slice(1) + " of " + readableArthropod.toLowerCase() + " that are at least " + minSize + " mm long on " + plantSpecies.replace("%", "All Trees").toLowerCase() + " (" + readableIncludeWetLeaves + ") " + months + " over the period of " + years + "<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
+					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">" + readableArthropod + " on " + plantSpecies.replace("%", "All Trees") + "<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">" + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().charAt(0).toUpperCase() + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().slice(1) + " " + readableArthropod.toLowerCase() + readableComparisonMetricAfterText + " that are at least " + minSize + " mm long on " + plantSpecies.replace("%", "All Trees").toLowerCase() + " (" + readableIncludeWetLeaves + ") " + months + " over the period of " + years + "<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
 					closeHeight($("#mapFilters"), function(){$("#mapFilters")[0].style.borderBottom="0px none transparent";$("#mapTitle").stop().animate({opacity:"1"});$("#mapScale").stop().animate({opacity:"1"});showMapDownloadButton();});
 				})
 				.fail(function(){
@@ -1855,7 +1749,6 @@
 					filtering = false;
 				});
 			}
-
 			var mapFilters = {};
 			function saveMapFilters(){
 				var minimumLength = $("#minLength")[0].value;
@@ -1867,7 +1760,7 @@
 					plantSpecies = "All";
 				}
 				mapFilters = {
-					comparisonMetric: getSelectText($("#densityOccurrence")),
+					comparisonMetric: getSelectText($("#comparisonMetric")),
 					observationMethod: getSelectText($("#observationMethod")),
 					arthropodGroup: getSelectText($("#arthropod")),
 					minimumLength: minimumLength,
@@ -1879,19 +1772,17 @@
 					yearEnd: yearEnd
 				};
 			}
-
 			var siteNamesAndIDs = [];
 			function initializeMap() {
 				map = new google.maps.Map($('#map')[0], {
 					center: {lat: 37.068427, lng: -80.089019},
 					zoom: 5
 				});
-
-				$.get("../php/getSites.php?cron=false&observationMethod=" + encodeURIComponent("%") + "&includeWetLeaves=true&occurrenceInsteadOfDensity=true&monthStart=1&monthEnd=12&yearStart=0&yearEnd=99999&arthropod=caterpillar&minSize=0&plantSpecies=" + encodeURIComponent("%"), function(data){
+				
+				$.get("../php/getSites.php?cron=false&observationMethod=" + encodeURIComponent("%") + "&includeWetLeaves=true&comparisonMetric=occurrence&monthStart=1&monthEnd=12&yearStart=0&yearEnd=99999&arthropod=caterpillar&minSize=0&plantSpecies=" + encodeURIComponent("%"), function(data){
 					//success
 					console.log("Sites loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					saveMapFilters();
-
 					var sites = JSON.parse(data);
 					var normalizedWeights = getNormalizedWeights(sites);
 					var minRawValue = -1;
@@ -1948,15 +1839,13 @@
 						$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + Math.round(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1))))) + "%</div>";
 						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
 					}
-					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">Caterpillars on all trees<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">Occurrence of caterpillars that are at least 0 mm long on all trees (including surveys with wet leaves) from January to December over the period of all time<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
+					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">Caterpillars on all trees<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">Percent of surveys with caterpillars that are at least 0 mm long on all trees (including surveys with wet leaves) from January to December over the period of all time<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
 					siteNamesAndIDs.sort(function(a, b){
 						if(a[0] < b[0]) return -1;
 						if(a[0] > b[0]) return 1;
 						return 0;
 					});
-
 					showMapDownloadButton();
-
 					if(window.location.toString().indexOf("#") > -1){
 						var selectedSiteIDFromURL = window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace(/\D/g, "");
 						if(selectedSiteIDFromURL.length > 0){
@@ -1977,7 +1866,6 @@
 				$("#map")[0].style.height = mapHeight + "px";
 				$("#mapSpace")[0].style.height = mapHeight + "px";
 			}
-
 			var lastSiteSortingMetric = "Year";
 			var lastUserSortingMetric = "Year";
 			var numberOfShownSiteRankings = 10;
@@ -1991,9 +1879,7 @@
 					//success
 					console.log("Site ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					siteRankings = JSON.parse(data);
-
 					lastSiteSortingMetric = "Caterpillars";
-
 					if(++loadedRankingsDataCount == 2){
 						populateLeaderboard(lastSiteSortingMetric);
 					}
@@ -2006,16 +1892,13 @@
 				.always(function() {
 					//complete
 				});
-
 				$.get("../php/getUserRankings.php?cron=false", function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						console.log("User ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 						data = data.replace("true|", "");
 						userRankings = JSON.parse(data);
-
 						lastUserSortingMetric = "Caterpillars";
-
 						if(++loadedRankingsDataCount == 2){
 							populateLeaderboard(lastSiteSortingMetric);
 						}
@@ -2034,10 +1917,8 @@
 					//complete
 				});
 			}
-
 			function populateLeaderboard(sortingMetric){
 				if(loadedRankingsDataCount < 2){return false;}
-
 				var rankings = [];
 				if(shownRankings == "Site"){
 					rankings = siteRankings;
@@ -2050,7 +1931,6 @@
 				rankings = rankings.sort(function(a, b){
 					var aVal = a[sortingMetric];
 					var bVal = b[sortingMetric];
-
 					var order = -1;
 					if(sortingMetric == "Name"){
 						order = 1;
@@ -2067,10 +1947,8 @@
 						aVal = Number(aVal);
 						bVal = Number(bVal);
 					}
-
 					if(aVal < bVal) return -1 * order;
 					if(aVal > bVal) return 1 * order;
-
 					if(sortingMetric != "Caterpillars"){
 						aVal = Number(a["Caterpillars"].replace("%", ''));
 						bVal = Number(b["Caterpillars"].replace("%", ''));
@@ -2167,7 +2045,6 @@
 				$("#rankingsSwitch").stop().css({display:"inline-block"});
 				showCurrentNumberOfRankings();
 			}
-
 			function showMoreRankings(){
 				if(shownRankings == "Site"){
 					numberOfShownSiteRankings += 10;
@@ -2177,7 +2054,6 @@
 				}
 				showCurrentNumberOfRankings(true);
 			}
-
 			function showCurrentNumberOfRankings(showAnimation){
 				showAnimation = showAnimation || false;
 				var numberOfShownRankings = numberOfShownSiteRankings;
@@ -2202,7 +2078,6 @@
 					}
 				}
 			}
-
 			function switchRankingsTo(leaderboardType){
 				if(leaderboardType.toLowerCase() == "site"){
 					shownRankings='Site';
@@ -2225,7 +2100,6 @@
 					}, 1);
 				}
 			}
-
 			function switchGraphTo(graphType){
 				if(graphType == "bar"){
 					window.location = "#" + window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace("Phenology", "Composition");
@@ -2233,7 +2107,6 @@
 				else{
 					window.location = "#" + window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace("Composition", "Phenology");
 				}
-
 				$("#barGraphSwitchButton")[0].className = "";
 				$("#lineGraphSwitchButton")[0].className = "";
 				$("#" + graphType + "GraphSwitchButton")[0].className = "active";
@@ -2242,13 +2115,10 @@
 				$("#" + graphType + "Graph")[0].style.display = "block";
 				centerYAxisLabels();
 			}
-
 			//PHENOLOGY CHART STUFF
 			var LINE_TENSION = 0.1;
-
 			//PHENOLOGY COLORS:
 			var colors = ["rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(75, 192, 192)", "rgb(54, 162, 235)", "rgb(153, 102, 255)", "#333", "#00067d", "#4efc85", "#4efcfc", "#fc4ef0", "#9e6400", "#ff0000", "#006b10", "rgb(255, 205, 86)"];
-
 			//BAR CONTRAST v1: var barColors = ["#ff3333", "#b800b2", "#f200ff", "#fa7d7d", "#fcc37e", "#ff8c00", "#f7ff00", "#00ff11", "#00eeff", "#000dff", "#7f85ff", "#bbb", "#555", "#000"];
 			//BAR CONTRAST v2:
 			var barColors = ["#222222", "#000dff", "#00eeff", "#039e0d", "#00ff11", "#f7ff00", "#ff8c00", "#ff0000", "#96039e", "#f200ff", "#fa7d7d", "#fcc37e", "#bbbbbb", "#7f85ff"];
@@ -2295,7 +2165,6 @@
 					}
 				}
 			};
-
 			var barConfig = {
 				type: 'bar',
 				data: {},
@@ -2323,7 +2192,6 @@
 					}
 				}
 			};
-
 			function getClearPoint(x, y){
 				var background = "rgba(230,230,230,0)";
 				var border = "rgba(200,200,200,0)";
@@ -2361,7 +2229,7 @@
 				for(var i = 0; i < points.length; i++){
 					occurrenceLine.data[occurrenceLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][1])};
 				}
-
+				
 				var densityLine = {
 					label: label,
 					backgroundColor: transluscent(color),
@@ -2373,8 +2241,20 @@
 				for(var i = 0; i < points.length; i++){
 					densityLine.data[densityLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][2])};
 				}
-
-				return [occurrenceLine, densityLine];
+				
+				var meanBiomassLine = {
+					label: label,
+					backgroundColor: transluscent(color),
+					borderColor: opaque(color),
+					lineTension: LINE_TENSION,
+					fill: false,
+					data: []
+				};
+				for(var i = 0; i < points.length; i++){
+					meanBiomassLine.data[meanBiomassLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][3])};
+				}
+				
+				return [occurrenceLine, densityLine, meanBiomassLine];
 			}
 			function getLines(label, color, points){
 				points = points.sort(function(a, b) {
@@ -2396,19 +2276,21 @@
 					lines[lines.length] = getLine(label, color, pointSets[i]);
 				}
 				chartedSets[label] = lines;
-
-				if($("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML == $("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML){
-					var occurrenceLines = [];
-					for(var i = 0; i < lines.length; i++){
-						occurrenceLines[occurrenceLines.length] = lines[i][0];
-					}
-					return occurrenceLines;
+				
+				var comparisonMetric = $("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(2)[0].innerHTML, "meanBiomass");
+				var comparisonMetricIndex = 0;
+				if(comparisonMetric == "density"){
+					comparisonMetricIndex = 1;
 				}
-				var densityLines = [];
+				else if(comparisonMetric == "meanBiomass"){
+					comparisonMetricIndex = 2;
+				}
+				
+				var comparisonMetricLines = [];
 				for(var i = 0; i < lines.length; i++){
-					densityLines[densityLines.length] = lines[i][1];
+					comparisonMetricLines[comparisonMetricLines.length] = lines[i][comparisonMetricIndex];
 				}
-				return densityLines;
+				return comparisonMetricLines;
 			}
 			var labels = [];
 			function addSet(label, points, update){
@@ -2471,19 +2353,16 @@
 				htmlToAdd += "</div>";
 				$("#phenologyLegend")[0].innerHTML = htmlToAdd;
 			}
-
 			function showAddNewLineOptions(){
 				if(labels.length >= colors.length){
 					queueNotice("error", "You have too many lines on your phenology chart. Please delete at least one of them before adding more.");
 					return false;
 				}
-
 				$(".editDeleteSpan").fadeOut(0);
 				var siteSelectOptions = "";
 				for(var i = 0; i < siteNamesAndIDs.length; i++){
 					siteSelectOptions += "<div onclick=\"smallSelectOption(this);\">" + siteNamesAndIDs[i][0] + "</div>";
 				}
-
 				var yearOptions = "";
 				for(var i = absoluteYearEnd; i >= absoluteYearStart; i--){
 					yearOptions += "<div onclick=\"smallSelectOption(this);\">" + i + "</div>";
@@ -2533,7 +2412,6 @@
 							"</span>" +
 						"</div>";
 			}
-
 			function editSet(labelDiv){
 				//get options
 				var optionsString = $(labelDiv).find(".description").eq(0)[0].innerHTML;
@@ -2547,10 +2425,8 @@
 				}
 				var siteName = optionsString.substring(0, optionsString.lastIndexOf(" in")).replace(arthropod + " at ", "");
 				var year = Number(optionsString.substring(optionsString.lastIndexOf(" in")).replace(/\D/g, ""));
-
 				//Remove line
 				removeSet(labelDiv);
-
 				//Add new line with same presets
 				showAddNewLineOptions();
 				var labelDivs = $("#phenologyLegend .label");
@@ -2559,7 +2435,6 @@
 				selectedOptions.eq(0)[0].innerHTML = arthropod;
 				selectedOptions.eq(1)[0].innerHTML = siteName;
 				selectedOptions.eq(2)[0].innerHTML = year;
-
 				//Change x icon to cancel(presets)
 				var cancelFunction = function(){
 					addNewLineLabel[0].style.display = "none";
@@ -2570,7 +2445,6 @@
 				};
 				addNewLineLabel.find(".cancel").eq(0)[0].onclick = cancelFunction;
 			}
-
 			function addNewSet(labelDiv){
 				var options = $(labelDiv).find(".smallSelect .selected");
 				var arthropod = options.eq(0)[0].innerHTML;
@@ -2592,7 +2466,6 @@
 				addSetFromFilters({arthropod: arthropod, siteID: siteID, year: Number(options.eq(2)[0].innerHTML)});
 				labelDiv.outerHTML = "";
 			}
-
 			function removeSet(labelDiv){
 				var lineColor = opaque($(labelDiv).find(".box").eq(0)[0].style.background);
 				for(var i = (lineConfig.data.datasets.length - 1); i >= 0; i--){
@@ -2618,7 +2491,6 @@
 				centerYAxisLabels();
 				updatePhenologyLegend();
 			}
-
 			function addSetFromFilters(filters, callback){
 				callback = callback || function(){};
 				var color = "";
@@ -2634,18 +2506,15 @@
 						break;
 					}
 				}
-
 				$("#loadingLine .colorBlock")[0].style.background = transluscent(color);
 				$("#loadingLine .colorBlock")[0].style.border= "3px solid " + opaque(color);
 				$("#loadingLine")[0].style.display = "block";
-
 				console.log("Force phenology chart to front of composition queue: " + JSON.stringify(filters));
 				pauseCompositionLoads(function(){loadSetFromFilters(filters, function(){callback();resumeCompositionLoads();})});
-
 			}
-
 			function loadSetFromFilters(filters, callback){
 				console.log("Loading phenology: " + JSON.stringify(filters));
+				
 				$.get("https://caterpillarscount.unc.edu/php/getPhenology.php?lines=" + encodeURIComponent(JSON.stringify([filters])), function(data){
 					//success
 					console.log("Loaded phenology: " + JSON.stringify(filters));
@@ -2672,43 +2541,41 @@
 					callback();
 				});
 			}
-
 			function matchLinesWithYAxisLabel(){
 				//if we just have the invisible endpoints loaded on an empty chart, don't bother doing anything
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					return true;
 				}
-
 				//otherwise, set lines to match metric
-				var occurrenceInsteadOfDensity = ($("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML == $("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML);
+				var comparisonMetric = $("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "meanBiomass");
 				var newData = [];
 				for (var setLabel in chartedSets) {
 					if (chartedSets.hasOwnProperty(setLabel)) {
 						var setLines = chartedSets[setLabel];
 						for(var i = 0; i < setLines.length; i++){
-							if(occurrenceInsteadOfDensity){
+							if(comparisonMetric == "occurrence"){
 								newData[newData.length] = setLines[i][0];
 							}
-							else{
+							else if(comparisonMetric == "density"){
 								newData[newData.length] = setLines[i][1];
+							}
+							else{//mean biomass
+								newData[newData.length] = setLines[i][2];
 							}
 						}
 					}
 				}
 				lineConfig.data.datasets = newData;
-
 				//set tooltip to match units
-				if(occurrenceInsteadOfDensity){
+				if(comparisonMetric == "occurrence"){
 					lineConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel + '%';};
 				}
-				else{
+				else{//density or meanBiomass
 					lineConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel;};
 				}
-
 				//update
 				window.phenology.update();
 			}
-
 			function centerYAxisLabels(){
 				var yAxisLabels = $(".yAxisLabel");
 				var X_AXIS_LABEL_OFFSET = -21;
@@ -2719,7 +2586,6 @@
 				}
 			}
 			//END OF PHENOLOGY CHART STUFF
-
 			//COMPOSITION CHART STUFF
 			var compositions = {}
 			function getComposition(xAxis, yAxis, siteID){
@@ -2737,7 +2603,6 @@
 				}
 				compositions[siteID.toString()][xAxis][yAxis] = data;
 			}
-
 			var loadingComposition = null;
 			var compositionQueue = [];
 			function compositionIsOnRecord(xAxis, yAxis, siteID){
@@ -2754,7 +2619,6 @@
 				}
 				return false;
 			}
-
 			function queueCompositionLoad(xAxis, yAxis, siteID){
 				if(!compositionIsOnRecord(xAxis, yAxis, siteID)){console.log("queue: " + xAxis + " " + yAxis + " " + siteID);
 					//if not in progress or complete, queue it.
@@ -2776,7 +2640,6 @@
 					}
 				}
 			}
-
 			var loadCompositionsIsPaused = false;
 			var loadCompositionsPauseCallback = function(){};
 			function pauseCompositionLoads(callback){
@@ -2804,8 +2667,8 @@
 				var nextIndex = (compositionQueue.length - 1);
 				loadingComposition = compositionQueue[nextIndex];
 				compositionQueue.splice(nextIndex, 1);
-
 				console.log("Loading composition: " + loadingComposition[0] + " " + loadingComposition[1] + " " + loadingComposition[2]);
+				
 				$.get("https://caterpillarscount.unc.edu/php/getComposition.php?siteIDs=" + JSON.stringify([loadingComposition[2]]) + "&breakdown=" + loadingComposition[0] + "&comparisonMetric=" + loadingComposition[1], function(data){
 					if(data.indexOf("true|") == 0){
 						console.log("Loaded composition: " + loadingComposition[0] + " " + loadingComposition[1] + " " + loadingComposition[2]);
@@ -2818,23 +2681,18 @@
 					loadNextComposition();
 				});
 			}
-
 			var lastActiveSiteID = -1;
 			function loadNewActiveSiteCompositionDefaults(){
 				if(lastActiveSiteID == activeSiteID){return false;}
 				lastActiveSiteID = activeSiteID;
 				compositionQueue = [];
-
 				barConfig.data = {labels: [], datasets: {}};
 				window.composition.update();
-
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
-				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity");
-
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Number Per Survey", "absoluteDensity").replace("Biomass Per Survey", "meanBiomass");
 				queueCompositionLoad(xAxis, yAxis, activeSiteID);
-
 				var xAxes = ["site", "year", "plant species"];
-				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity"];
+				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity", "meanBiomass"];
 				for(var i = (xAxes.length - 1); i >= 0; i--){
 					for(var j = (yAxes.length - 1); j >= 0; j--){
 						if(xAxes[i] != xAxis || yAxes[j] != yAxis){
@@ -2843,7 +2701,6 @@
 					}
 				}
 			}
-
 			var compositionSiteIDs = [];
 			function clearCompositionSites(){
 				compositionSiteIDs = [];
@@ -2857,19 +2714,16 @@
 					compositionSiteIDs.splice(index, 1);
 				}
 			}
-
 			var compositionDataIsReadyCheck = null;
 			function showComposition(){
 				clearInterval(compositionDataIsReadyCheck);
 				$("#reloadComposition")[0].style.display = "none";
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
-				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Arthropods Per Survey", "absoluteDensity");
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Number Per Survey", "absoluteDensity").replace("Biomass Per Survey", "meanBiomass");
 				var siteIDs = compositionSiteIDs;
 				if(xAxis != "site"){siteIDs = [activeSiteID];}
-
 				$("#compositionLoadingCover").stop().fadeIn(300);
-
-				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity"];
+				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity", "meanBiomass"];
 				if(xAxis == "site"){
 					for(var i = 0; i < siteIDs.length; i++){
 						queueCompositionLoad("site", yAxis, siteIDs[i]);
@@ -2885,7 +2739,6 @@
 				else{
 					queueCompositionLoad(xAxis, yAxis, siteIDs[0]);
 				}
-
 				compositionDataIsReadyCheck = setInterval(function(){
 					var data = [];
 					for(var i = 0; i < siteIDs.length; i++){
@@ -2913,7 +2766,6 @@
 					}
 				}, 100);
 			}
-
 			function populateCompositionChart(xAxis, yAxis, data){
 				var readableArthropods = ["Ants", "Aphids and Psyllids", "Bees and Wasps", "Beetles", "Caterpillars", "Daddy Longlegs", "Flies", "Grasshoppers and Crickets", "Leaf Hoppers and Cicadas", "Butterflies and Moths", "Spiders", "True Bugs", "Other", "Unidentified"];
 				var barTitles = [];
@@ -2949,7 +2801,6 @@
 				else if($(window).width() < 800){
 					LABELS_IN_EACH_COLUMN = Math.ceil(readableArthropods.length / 2);
 				}
-
 				var arthropodNames = [];
 				for(var arthropodName in datasets){
 					if(datasets.hasOwnProperty(arthropodName)){
@@ -2964,7 +2815,6 @@
 						legendHTML += 	"<div class=\"box\" style=\"background:" + opaque(thisColor) + ";\"></div>";
 						legendHTML += 	"<span class=\"description\">" + arthropodName + "</span>";
 						legendHTML += "</div><br/>";
-
 						arthropodNames[arthropodNames.length] = arthropodName;
 					}
 				}
@@ -2984,7 +2834,7 @@
 				}
 				legendHTML += "</div>";
 				$("#compositionLegend")[0].innerHTML = legendHTML;
-				if(yAxis == "absoluteDensity"){
+				if(yAxis == "absoluteDensity" || yAxis == "meanBiomass"){
 					barConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel;};
 				}
 				else{
@@ -2995,7 +2845,6 @@
 					labels: barTitles,
 					datasets: formattedDatasets
 				};
-
 				try{
 					window.composition.update();
 				}
@@ -3006,7 +2855,6 @@
 				$("#compositionLoadingCover").stop().fadeOut(200);
 				centerYAxisLabels();
 			}
-
 			function updateCompositionLegend(){
 				var compositionLabels = $("#compositionLegend .shownLabel");
 				var LABELS_IN_EACH_COLUMN = Math.ceil(compositionLabels.length / 3);
@@ -3019,7 +2867,6 @@
 				if(compositionLabels.length == 0 || $("#compositionLegend>div").eq(0).find(".label").length == LABELS_IN_EACH_COLUMN){
 					return false;
 				}
-
 				var legendHTML = "";
 				for(var i = 0; i < compositionLabels.length; i++){
 					if(i % LABELS_IN_EACH_COLUMN == 0){
@@ -3041,13 +2888,11 @@
 				legendHTML += "</div>";
 				$("#compositionLegend")[0].innerHTML = legendHTML;
 			}
-
 			function updateSiteSelections(){
 				if($("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase() != "site"){
 					$(".siteSelectionText").css({display:"none"});
 					return true;
 				}
-
 				var options = "";
 				for(var i = 0; i < siteNamesAndIDs.length; i++){
 					if(compositionSiteIDs.indexOf(siteNamesAndIDs[i][1]) == -1 && Number(siteNamesAndIDs[i][1]) != Number(activeSiteID)){
@@ -3056,7 +2901,6 @@
 				}
 				$("#addSiteSelection")[0].innerHTML = "<div class=\"options\" style=\"width:200px;\">" + options + "</div>";
 				$("#addCompositionSiteButton")[0].style.display = "inline-block";
-
 				options = "";
 				for(var i = 0; i < siteNamesAndIDs.length; i++){
 					if(compositionSiteIDs.indexOf(siteNamesAndIDs[i][1]) > -1 && Number(siteNamesAndIDs[i][1]) != Number(activeSiteID)){
@@ -3064,9 +2908,7 @@
 					}
 				}
 				$("#removeSiteSelection")[0].innerHTML = "<div class=\"options\" style=\"width:200px;\">" + options + "</div>";
-
 				$(".siteSelectionText").css({display:"table-cell"});
-
 				if(compositionSiteIDs.length <= 1){
 					$("#removeCompositionSiteButton").parent()[0].style.display = "none";
 					$("#siteSelectionPipeline")[0].style.display = "none";
@@ -3076,7 +2918,6 @@
 				}
 			}
 			//END OF COMPOSITION CHART STUFF
-
 			function downloadMapData(){
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)")];
 				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
@@ -3094,7 +2935,6 @@
 				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCountMapData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
 				var links = $("#downloadLinks a");
 				links.eq(links.length - 1)[0].click();
-
 				//track download
 				var downloadedFile = "Dynamically Generated Map CSV";
 				var downloadFilters = "Comparison Metric: " + mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)") + ", Observation Method: " + mapFilters.observationMethod.replace("%", "All") + ", Arthropod Group: " + mapFilters.arthropodGroup.replace("%", "All") + ", Minimum Length (mm): " + mapFilters.minimumLength + ", Plant Species: " + mapFilters.plantSpecies + ", Wet Leaves: " + mapFilters.wetLeaves.toString() + ", Month Start: " + mapFilters.monthStart + ", Month End: " + mapFilters.monthEnd + ", Year Start: " + mapFilters.yearStart + ", YearEnd: " + mapFilters.yearEnd;
@@ -3108,19 +2948,16 @@
 				}
 				$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
 			}
-
 			function hideMapDownloadButton(){
 				$("#mapDownloadButton")[0].style.cursor = "default";
 				$("#mapDownloadButton")[0].onclick = function(){};
 				$("#mapDownloadButton").stop().animate({opacity:"0"});
 			}
-
 			function showMapDownloadButton(){
 				$("#mapDownloadButton")[0].style.cursor = "pointer";
 				$("#mapDownloadButton")[0].onclick = function(){downloadMapData();submitClassificationToSciStarter();};
 				$("#mapDownloadButton").stop().animate({opacity:"1"});
 			}
-
 			function getJulianDay(year, month, day){
 				year = Number(year);
 				month = Number(month);
@@ -3137,13 +2974,11 @@
 				dayCount += day;
 				return dayCount;
 			}
-
 			var indexedMarkers = {};
 			function findMarkerBySiteName(siteName){
 				if(siteName in indexedMarkers){
 					return indexedMarkers[siteName];
 				}
-
 				for (var siteID in markers) {
 					if (markers.hasOwnProperty(siteID)){
 						var thisSiteName = markers[siteID].siteInformation.Name;
@@ -3155,7 +2990,6 @@
 				}
 				return null;
 			}
-
 			function downloadPhenologyData(){
 				var metric = $("#lineGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Date", "Julian Day", metric];
@@ -3183,7 +3017,6 @@
 						}
 						var year = Number(optionsString.substring(optionsString.lastIndexOf(" in")).replace(/\D/g, ""));
 						var marker = findMarkerBySiteName(siteName);
-
 						var points = datasets[i].data;
 						for(var j = 0; j < points.length; j++){
 							var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), arthropod, year + "-" + points[j].x.substring(5, 7) + "-" + points[j].x.substring(8, 10), getJulianDay(year, points[j].x.substring(5, 7), points[j].x.substring(8, 10)), points[j].y];
@@ -3192,7 +3025,6 @@
 							}
 							csvString += row.join(",") + "\r\n";
 						}
-
 						filtersString += " " + arthropod + " at " + siteName + " in " + year + ";";
 					}
 				}
@@ -3200,7 +3032,6 @@
 				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCountPhenologyData-" + siteNames.join("-") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
 				var links = $("#downloadLinks a");
 				links.eq(links.length - 1)[0].click();
-
 				//track download
 				var downloadedFile = "Dynamically Generated Phenology CSV";
 				var downloadFilters = filtersString;
@@ -3214,12 +3045,10 @@
 				}
 				$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
 			}
-
 			function downloadCompositionData(){
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
 				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
 				var filtersString = "X-Axis: " + xAxis + ", Y-Axis: " + yAxis;
-
 				var headers = [];
 				var siteName = "";
 				if(xAxis == "site"){
@@ -3259,7 +3088,6 @@
 				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCount" + $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.replace(/ /g, "") + "CompositionData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
 				var links = $("#downloadLinks a");
 				links.eq(links.length - 1)[0].click();
-
 				//track download
 				var downloadedFile = "Dynamically Generated Composition CSV";
 				var downloadFilters = filtersString;
@@ -3273,13 +3101,11 @@
 				}
 				$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
 			}
-
 			var submittedClassificationToSciStarter = false;
 			function submitClassificationToSciStarter(){
 				if(!submittedClassificationToSciStarter && window.localStorage.getItem("email") !== null){
 					if(window.localStorage.getItem("email").length > 0){
 						submittedClassificationToSciStarter = true;
-
 						var formData = new FormData();
 						formData.append("email", window.localStorage.getItem("email"));
 						$.ajax({
@@ -3446,11 +3272,12 @@
 				<div id="mapFilters">
 					<div>
 						<div>
-							<div class="inputTitle">Comparison metric: <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Density shows the <span class=&quot;italic&quot;>average arthropod quantity</span> per survey, while occurrence shows the <span class=&quot;italic&quot;>proportion of surveys</span> that contain the arthropod. The key difference between these two comparison metrics is that when a large quantity of arthropods is found in a single survey, density takes into account the large quantity, but occurrence does not.');"/></div>
-							<div class="select" id="densityOccurrence" style="position:relative;">
-								<div class="option selected" onclick="selectOption(this);">		<div class="value">occurrence</div>		<div class="shown">			<div class="text">Occurrence</div></div></div>
-								<div class="option" onclick="selectOption(this);">		<div class="value">density</div>		<div class="shown">			<div class="text">Density</div></div></div>
-								<div id="densityOccurrenceArrow"></div>
+							<div class="inputTitle">Comparison metric: <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Percent of Surveys: The percent of survey branches examined with at least one arthropod of the type specified.<br/><br/>Number per Survey: The total number of arthropods encountered divided by the total number of surveys.<br/><br/>Biomass per Survey: The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (<em>M</em>) is estimated from reported lengths (<em>L</em>) using length-weight regressions of the form <em>M = a L<sup>b</sup></em> where <em>a</em> and <em>b</em> vary by arthropod group as shown in the table below. If needed, you can click the table to open a larger version of it.<br/><br/><a href=&quot;../lengthWeightRegressions&quot; target=&quot;_blank&quot; style=&quot;display:inline-block;margin:auto;&quot;><img src=&quot;../images/lengthWeightRegressions.png&quot; onclick=&quot;event.stopPropagation();&quot; style=&quot;cursor:pointer;&quot;/></a>');"/></div>
+							<div class="select" id="comparisonMetric" style="position:relative;">
+								<div class="option selected" onclick="selectOption(this);">		<div class="value">occurrence</div>		<div class="shown">			<div class="text">Percent of Surveys</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">density</div>		<div class="shown">			<div class="text">Number per Survey</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">meanBiomass</div>		<div class="shown">			<div class="text">Biomass per Survey</div></div></div>
+								<div id="comparisonMetricArrow"></div>
 							</div>
 							<div class="inputTitle" style="margin-top:20px;">Observation method: <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Beat sheet surveys are collected by shaking a branch over a &quot;beat sheet&quot; and counting the arthropods that fall off the branch. Visual surveys are simply visual observations of arthropods on 50 leaves.');"/></div>
 							<div class="select" id="observationMethod" style="position:relative;">
@@ -3480,7 +3307,7 @@
 								<div class="option" onclick="selectOption(this);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
 							</div>
 
-							<div class="inputTitle" style="margin-top:20px;">Minimum length (mm): <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Specify the minimum length for arthropods to be included in the density or occurrence estimate.');"/></div>
+							<div class="inputTitle" style="margin-top:20px;">Minimum length (mm): <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Specify the minimum length for arthropods to be included in the mapping calculations.');"/></div>
 							<input type="number" id="minLength" placeholder="0" onclick="this.select();" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');" onblur="enforceRange(this, 0, 300, 1)"/>
 						</div>
 						<div>
@@ -3556,10 +3383,11 @@
 											<div class="selected" onclick="showSmallSelectOptions(this);">Percent of Surveys</div>
 											<div class="options">
 												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Percent of Surveys</div>
-												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Arthropods Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Number Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Biomass Per Survey</div>
 											</div>
 										</div>
-										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Surveys: The percent of survey branches examined on a given day with at least one arthropod of the type specified.<br/><br/>Arthropods per Survey: The total number of arthropods encountered divided by the total number of surveys on a given day.');"/>
+										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Surveys: The percent of survey branches examined with at least one arthropod of the type specified.<br/><br/>Number per Survey: The total number of arthropods encountered divided by the total number of surveys.<br/><br/>Biomass per Survey: The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (<em>M</em>) is estimated from reported lengths (<em>L</em>) using length-weight regressions of the form <em>M = a L<sup>b</sup></em> where <em>a</em> and <em>b</em> vary by arthropod group as shown in the table below. If needed, you can click the table to open a larger version of it.<br/><br/><a href=&quot;../lengthWeightRegressions&quot; target=&quot;_blank&quot; style=&quot;display:inline-block;margin:auto;&quot;><img src=&quot;../images/lengthWeightRegressions.png&quot; onclick=&quot;event.stopPropagation();&quot; style=&quot;cursor:pointer;&quot;/></a>');"/>
 									</div>
 									<canvas id="phenologyChart" width="0" height="0"></canvas>
 								</div>
@@ -3582,10 +3410,11 @@
 											<div class="options">
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Percent of Arthropods</div>
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Percent of Surveys</div>
-												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Arthropods Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Number Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Biomass Per Survey</div>
 											</div>
 										</div>
-										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Arthropods: The percentage of all arthropods encountered by number of individuals. Must sum to 100 across arthropod groups.<br/><br/>Percent of Surveys: The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.<br/><br/>Arthropods per Survey: The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.');"/>
+										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Arthropods: The percentage of all arthropods encountered by number of individuals. Must sum to 100 across arthropod groups.<br/><br/>Percent of Surveys: The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.<br/><br/>Number per Survey: The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.<br/><br/>Biomass per Survey: The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (<em>M</em>) is estimated from reported lengths (<em>L</em>) using length-weight regressions of the form <em>M = a L<sup>b</sup></em> where <em>a</em> and <em>b</em> vary by arthropod group as shown in the table below. If needed, you can click the table to open a larger version of it.<br/><br/><a href=&quot;../lengthWeightRegressions&quot; target=&quot;_blank&quot; style=&quot;display:inline-block;margin:auto;&quot;><img src=&quot;../images/lengthWeightRegressions.png&quot; onclick=&quot;event.stopPropagation();&quot; style=&quot;cursor:pointer;&quot;/></a>');"/>
 									</div>
 									<canvas id="compositionChart" width="0" height="0"></canvas>
 								</div>
