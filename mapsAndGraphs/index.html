@@ -416,6 +416,11 @@
 				background:#bbb;
 				margin-bottom:4px;
 			}
+			
+			#mapButtons{
+				padding:20px;
+			}
+			
 			.select{
 				width:100%;
 				-webkit-appearance: none;
@@ -825,6 +830,9 @@
 				}
 			}
 			@media screen and (max-width: 900px){
+				#mapButtons{
+					padding:0px;
+				}
 				#mapFiltersToggleButton, #mapFilters, #mapDownloadButton{
 					display:none;
 				}
@@ -3253,7 +3261,7 @@
 							</div>
 						</div>
 						<div style="display:table-cell;width:100%;"></div>
-						<div style="display:table;padding:20px;">
+						<div style="display:table;" id="mapButtons">
 							<div style="display:table-cell;vertical-align:middle;">
 								<div id="mapDownloadButton" style="background:#ccc;opacity:0;cursor:default;">
 									<div id="mapDownloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
