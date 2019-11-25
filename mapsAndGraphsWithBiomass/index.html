@@ -56,7 +56,7 @@
 			}
 			
 			#alert img{
-				max-height:500px;
+				max-height:450px;
 				margin:0px;
 			}
 			
@@ -1597,9 +1597,25 @@
 				if(includeWetLeaves){
 					readableIncludeWetLeaves = "including surveys with wet leaves";
 				}
-				var readableComparisonMetric = getSelectText($("#comparisonMetric"));
 				var comparisonMetric = getSelectValue($("#comparisonMetric"));
 				var observationMethod = getSelectValue($("#observationMethod"));
+				
+				var readableComparisonMetric = "";
+				var readableComparisonMetricAfterText = "";
+				if(comparisonMetric == "occurrence"){
+					readableComparisonMetric = "Percent of surveys with";
+					if(observationMethod.length != ""){
+						readableComparisonMetric = "percentage of surveys with";
+					}
+				}
+				else if(comparisonMetric == "density"){
+					readableComparisonMetric = "Number of ";
+					readableComparisonMetricAfterText = " per survey";
+				}
+				else{
+					readableComparisonMetric = "Biomass of ";
+					readableComparisonMetricAfterText = " per survey";
+				}
 				var readableObservationMethod = getSelectText($("#observationMethod")).replace("All", "");
 				var readableArthropod = getSelectText($("#arthropod"));
 				var arthropod = getSelectValue($("#arthropod"));
@@ -1720,7 +1736,7 @@
 						}
 						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
 					}
-					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">" + readableArthropod + " on " + plantSpecies.replace("%", "All Trees") + "<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">" + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().charAt(0).toUpperCase() + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().slice(1) + " of " + readableArthropod.toLowerCase() + " that are at least " + minSize + " mm long on " + plantSpecies.replace("%", "All Trees").toLowerCase() + " (" + readableIncludeWetLeaves + ") " + months + " over the period of " + years + "<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
+					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">" + readableArthropod + " on " + plantSpecies.replace("%", "All Trees") + "<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">" + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().charAt(0).toUpperCase() + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().slice(1) + " " + readableArthropod.toLowerCase() + readableComparisonMetricAfterText + " that are at least " + minSize + " mm long on " + plantSpecies.replace("%", "All Trees").toLowerCase() + " (" + readableIncludeWetLeaves + ") " + months + " over the period of " + years + "<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
 					closeHeight($("#mapFilters"), function(){$("#mapFilters")[0].style.borderBottom="0px none transparent";$("#mapTitle").stop().animate({opacity:"1"});$("#mapScale").stop().animate({opacity:"1"});showMapDownloadButton();});
 				})
 				.fail(function(){
@@ -2673,7 +2689,7 @@
 				barConfig.data = {labels: [], datasets: {}};
 				window.composition.update();
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
-				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Number Per Survey", "absoluteDensity").replace("Mean Biomass Per Survey", "meanBiomass");
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Number Per Survey", "absoluteDensity").replace("Biomass Per Survey", "meanBiomass");
 				queueCompositionLoad(xAxis, yAxis, activeSiteID);
 				var xAxes = ["site", "year", "plant species"];
 				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity", "meanBiomass"];
@@ -2703,7 +2719,7 @@
 				clearInterval(compositionDataIsReadyCheck);
 				$("#reloadComposition")[0].style.display = "none";
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
-				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Number Per Survey", "absoluteDensity").replace("Mean Biomass Per Survey", "meanBiomass");
+				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Number Per Survey", "absoluteDensity").replace("Biomass Per Survey", "meanBiomass");
 				var siteIDs = compositionSiteIDs;
 				if(xAxis != "site"){siteIDs = [activeSiteID];}
 				$("#compositionLoadingCover").stop().fadeIn(300);
@@ -3256,11 +3272,11 @@
 				<div id="mapFilters">
 					<div>
 						<div>
-							<div class="inputTitle">Comparison metric: <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Density shows the <span class=&quot;italic&quot;>average arthropod quantity</span> per survey, while occurrence shows the <span class=&quot;italic&quot;>proportion of surveys</span> that contain the arthropod. The key difference between these two comparison metrics is that when a large quantity of arthropods is found in a single survey, density takes into account the large quantity, but occurrence does not.');"/></div>
+							<div class="inputTitle">Comparison metric: <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Percent of Surveys: The percent of survey branches examined with at least one arthropod of the type specified.<br/><br/>Number per Survey: The total number of arthropods encountered divided by the total number of surveys.<br/><br/>Biomass per Survey: The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (<em>M</em>) is estimated from reported lengths (<em>L</em>) using length-weight regressions of the form <em>M = a L<sup>b</sup></em> where <em>a</em> and <em>b</em> vary by arthropod group as shown in the table below. If needed, you can click the table to open a larger version of it.<br/><br/><a href=&quot;../lengthWeightRegressions&quot; target=&quot;_blank&quot; style=&quot;display:inline-block;margin:auto;&quot;><img src=&quot;../images/lengthWeightRegressions.png&quot; onclick=&quot;event.stopPropagation();&quot; style=&quot;cursor:pointer;&quot;/></a>');"/></div>
 							<div class="select" id="comparisonMetric" style="position:relative;">
-								<div class="option selected" onclick="selectOption(this);">		<div class="value">occurrence</div>		<div class="shown">			<div class="text">Occurrence</div></div></div>
-								<div class="option" onclick="selectOption(this);">		<div class="value">density</div>		<div class="shown">			<div class="text">Density</div></div></div>
-								<div class="option" onclick="selectOption(this);">		<div class="value">meanBiomass</div>		<div class="shown">			<div class="text">Mean Biomass</div></div></div>
+								<div class="option selected" onclick="selectOption(this);">		<div class="value">occurrence</div>		<div class="shown">			<div class="text">Percent of Surveys</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">density</div>		<div class="shown">			<div class="text">Number per Survey</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">meanBiomass</div>		<div class="shown">			<div class="text">Biomass per Survey</div></div></div>
 								<div id="comparisonMetricArrow"></div>
 							</div>
 							<div class="inputTitle" style="margin-top:20px;">Observation method: <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Beat sheet surveys are collected by shaking a branch over a &quot;beat sheet&quot; and counting the arthropods that fall off the branch. Visual surveys are simply visual observations of arthropods on 50 leaves.');"/></div>
@@ -3368,7 +3384,7 @@
 											<div class="options">
 												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Percent of Surveys</div>
 												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Number Per Survey</div>
-												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Mean Biomass Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();matchLinesWithYAxisLabel();">Biomass Per Survey</div>
 											</div>
 										</div>
 										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Surveys: The percent of survey branches examined with at least one arthropod of the type specified.<br/><br/>Number per Survey: The total number of arthropods encountered divided by the total number of surveys.<br/><br/>Biomass per Survey: The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (<em>M</em>) is estimated from reported lengths (<em>L</em>) using length-weight regressions of the form <em>M = a L<sup>b</sup></em> where <em>a</em> and <em>b</em> vary by arthropod group as shown in the table below. If needed, you can click the table to open a larger version of it.<br/><br/><a href=&quot;../lengthWeightRegressions&quot; target=&quot;_blank&quot; style=&quot;display:inline-block;margin:auto;&quot;><img src=&quot;../images/lengthWeightRegressions.png&quot; onclick=&quot;event.stopPropagation();&quot; style=&quot;cursor:pointer;&quot;/></a>');"/>
@@ -3395,7 +3411,7 @@
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Percent of Arthropods</div>
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Percent of Surveys</div>
 												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Number Per Survey</div>
-												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Mean Biomass Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();showComposition();">Biomass Per Survey</div>
 											</div>
 										</div>
 										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Arthropods: The percentage of all arthropods encountered by number of individuals. Must sum to 100 across arthropod groups.<br/><br/>Percent of Surveys: The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.<br/><br/>Number per Survey: The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.<br/><br/>Biomass per Survey: The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (<em>M</em>) is estimated from reported lengths (<em>L</em>) using length-weight regressions of the form <em>M = a L<sup>b</sup></em> where <em>a</em> and <em>b</em> vary by arthropod group as shown in the table below. If needed, you can click the table to open a larger version of it.<br/><br/><a href=&quot;../lengthWeightRegressions&quot; target=&quot;_blank&quot; style=&quot;display:inline-block;margin:auto;&quot;><img src=&quot;../images/lengthWeightRegressions.png&quot; onclick=&quot;event.stopPropagation();&quot; style=&quot;cursor:pointer;&quot;/></a>');"/>
