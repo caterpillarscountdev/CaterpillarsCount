@@ -1,7 +1,14 @@
 <?php
 	require_once('/opt/app-root/src/php/orm/resources/Keychain.php');
+	require_once('/opt/app-root/src/php/resultMemory.php');
 	
 	//Check if we need to run a fetch
+	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
+	$savedFinishedMonth = getSave($baseFileName . "finishedMonth", 31 * 24 * 60 * 60);
+	if(intval($savedFinishedMonth) == intval(date('n'))){
+		die();
+	}
+	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	$query = mysqli_query($dbconn, "SELECT MONTH(UTCLastCalled) AS `Month`, `Processing`, `Iteration` FROM `CronJobStatus` WHERE `Name`='iNaturalistExpertIdentificationFetch'");
 	if(mysqli_num_rows($query) == 0){
@@ -11,7 +18,11 @@
 	$month = intval($cronJobStatusRow["Month"]);
 	$processing = filter_var($cronJobStatusRow["Processing"], FILTER_VALIDATE_BOOLEAN);
 	$iteration = intval($cronJobStatusRow["Iteration"]);
-	if($processing || ($month == intval(date('n')) && $iteration == 0)){
+	if($processing){
+		die();
+	}
+	if($month == intval(date('n')) && $iteration == 0)){
+		save($baseFileName . "finishedMonth", date('n'));
 		die();
 	}
 
@@ -206,6 +217,7 @@
 	if(count($data["results"]) == 0){
 		//Finished for the month
 		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `Iteration`='0' WHERE `Name`='iNaturalistExpertIdentificationFetch'");
+		save($baseFileName . "finishedMonth", date('n'));
 	}
 	else{
 		//Finished with this run, but needs more iterations this month still
