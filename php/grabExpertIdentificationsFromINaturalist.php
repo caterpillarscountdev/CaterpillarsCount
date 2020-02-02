@@ -8,24 +8,24 @@
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
 	$savedFinishedMonth = getSave($baseFileName . "finishedMonth", 31 * 24 * 60 * 60);
 	if(intval($savedFinishedMonth) == intval(date('n'))){
-		die();
+		die("Already finished this month based on cache.");
 	}
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	$query = mysqli_query($dbconn, "SELECT MONTH(UTCLastCalled) AS `Month`, `Processing`, `Iteration` FROM `CronJobStatus` WHERE `Name`='iNaturalistExpertIdentificationFetch'");
 	if(mysqli_num_rows($query) == 0){
-		die();
+		die("\"iNaturalistExpertIdentificationFetch\" not in CronJobStatus table.");
 	}
 	$cronJobStatusRow = mysqli_fetch_assoc($query);
 	$month = intval($cronJobStatusRow["Month"]);
 	$processing = filter_var($cronJobStatusRow["Processing"], FILTER_VALIDATE_BOOLEAN);
 	$iteration = intval($cronJobStatusRow["Iteration"]);
 	if($processing){
-		die();
+		die("Already processing.");
 	}
 	if($month == intval(date('n')) && $iteration == 0){
 		save($baseFileName . "finishedMonth", date('n'));
-		die();
+		die("Already finished this month based on CronJobStatus table.");
 	}
 
 	//If so, mark as processing and increment interation
