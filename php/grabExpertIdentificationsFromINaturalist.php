@@ -62,7 +62,8 @@
   	
 	//Build update queries string
 	$updateMySQL = "";
-	for($i = 0; i < count($data["results"]); $i++){
+	for($i = 0; $i < count($data["results"]); $i++){
+		echo $i;
 		//GET VALUE: ArthropodSightingFK
 		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){
 			continue;
