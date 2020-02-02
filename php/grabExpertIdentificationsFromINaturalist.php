@@ -24,8 +24,8 @@
 		die("Already processing.");
 	}
 	if($month == intval(date('n')) && $iteration == 0){
-		save($baseFileName . "finishedMonth", date('n'));
-		die("Already finished this month based on CronJobStatus table.");
+		//save($baseFileName . "finishedMonth", date('n'));
+		//die("Already finished this month based on CronJobStatus table.");
 	}
 
 	//If so, mark as processing and increment interation
