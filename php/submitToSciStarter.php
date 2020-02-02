@@ -36,7 +36,7 @@
 			mysqli_query($dbconn, "UPDATE Survey SET NeedToSendToSciStarter='0' WHERE ID='" . $surveyID . "' LIMIT 1");
 			
 			//Mark that we're finished submitting to SciStarter
-			$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='SciStarter'");
+			$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='SciStarterCollectionSubmission'");
 		}
 	}
 ?>
