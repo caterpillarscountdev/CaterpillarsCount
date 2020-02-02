@@ -23,7 +23,7 @@
 	if($processing){
 		die();
 	}
-	if($month == intval(date('n')) && $iteration == 0)){
+	if($month == intval(date('n')) && $iteration == 0){
 		save($baseFileName . "finishedMonth", date('n'));
 		die();
 	}
