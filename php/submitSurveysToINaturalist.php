@@ -7,7 +7,7 @@
 	$BATCH_SIZE = 1;//You should move/alter `NeedToSendToINaturalist` and `Processing` database updates if you change $BATCH_SIZE. That extends into the submitToINaturalist.php file as well. I just left the code to assume $BATCH_SIZE is 1.
 
 	//If we're already submitting to iNaturalist, don't execute this call.
-	$query = mysqli_query($dbconn, "SELECT `Processing` FROM `CronJobStatus` WHERE `Name`='iNaturalist'");
+	$query = mysqli_query($dbconn, "SELECT `Processing` FROM `CronJobStatus` WHERE `Name`='iNaturalistSurveySubmission'");
 	if(mysqli_num_rows($query) > 0){
 		if(intval(mysqli_fetch_assoc($query)["Processing"]) == 1){
 			mysqli_close($dbconn);
@@ -21,7 +21,7 @@
 
 	//Otherwise,
 	//Mark that we're submitting to iNaturalist
-	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalist'");
+	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistSurveySubmission'");
 	
 	//Get batch
 	$query = mysqli_query($dbconn, "SELECT ID FROM ArthropodSighting WHERE NeedToSendToINaturalist='1' LIMIT " . $BATCH_SIZE);
@@ -33,7 +33,7 @@
 	}
 	else{
 		//Mark that we're finished submitting to iNaturalist
-		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalist'");
+		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");
 		mysqli_close($dbconn);
 		die();
 	}
