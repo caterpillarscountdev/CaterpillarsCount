@@ -28,9 +28,10 @@
 		//die("Already finished this month based on CronJobStatus table.");
 		echo "Already finished this month BUT NOT STOPPED based on CronJobStatus table.";
 	}
-
+	$call = "UPDATE `CronJobStatus` SET `Processing`='1', `Iteration`='" . (++$iteration) . "' WHERE `Name`='iNaturalistExpertIdentificationFetch'";
+	echo $call;
 	//If so, mark as processing and increment interation
-	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1', `Iteration`='" . (++$iteration) . "' WHERE `Name`='iNaturalistExpertIdentificationFetch'");
+	$query = mysqli_query($dbconn, $call);
 	
 	//Note which ArthropodSightingFK's have already been identified (so we know whether to UPDATE or INSERT later)
 	$previouslyIdentifiedArthropodSightingFKs = array();
