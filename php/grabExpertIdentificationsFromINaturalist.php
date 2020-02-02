@@ -7,7 +7,7 @@
 	//Check if we need to run a fetch
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
 	$savedFinishedMonth = getSave($baseFileName . "finishedMonth", 31 * 24 * 60 * 60);
-	if(intval($savedFinishedMonth) == intval(date('n'))){
+	if($savedFinishedMonth !== null && intval($savedFinishedMonth) == intval(date('n'))){
 		die("Already finished this month based on cache.");
 	}
 	
@@ -26,6 +26,7 @@
 	if($month == intval(date('n')) && $iteration == 0){
 		//save($baseFileName . "finishedMonth", date('n'));
 		//die("Already finished this month based on CronJobStatus table.");
+		echo "Already finished this month BUT NOT STOPPED based on CronJobStatus table.";
 	}
 
 	//If so, mark as processing and increment interation
