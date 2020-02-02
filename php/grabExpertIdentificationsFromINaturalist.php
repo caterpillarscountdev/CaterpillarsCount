@@ -50,7 +50,7 @@
 	
 	//Simplify the translation process from iNaturalistIDs to ArthropodSightingIDs
 	$iNaturalistIDs = [];
-	for($i = 0; i < count($data["results"]); $i++){
+	for($i = 0; $i < count($data["results"]); $i++){
 		$iNaturalistIDs[] = $data["results"][$i]["id"];
 	}
 
