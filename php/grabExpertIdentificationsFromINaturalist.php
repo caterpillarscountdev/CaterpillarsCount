@@ -29,7 +29,7 @@
 	if($month == intval(date('n')) && $iteration == 0){
 		//save($baseFileName . "finishedMonth", date('n'));
 		//die("Already finished this month based on CronJobStatus table.");
-		echo "Already finished this month BUT NOT STOPPED based on CronJobStatus table.";
+		echo "Already finished this month BUT NOT STOPPED based on CronJobStatus table.<br/>";
 	}
 	
 	//If so, mark as processing and increment interation
@@ -73,21 +73,21 @@
 	$updateMySQL = "";
 	for($i = 0; $i < count($data["results"]); $i++){echo $i . "<br/>";
 		//GET VALUE: ArthropodSightingFK
-		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){echo "CONTINUE 1";
+		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){echo "CONTINUE 1<br/>";
 			continue;
 		}
 		
 		$arthropodSightingFK = $iNaturalistIDTranslations[$data["results"][$i]["id"]];
 		
 		//GET VALUE: Finest Rank
-		if(!array_key_exists("taxon", $data["results"][$i]) || !array_key_exists("rank", $data["results"][$i]["taxon"])){echo "CONTINUE 2";
+		if(!array_key_exists("taxon", $data["results"][$i]) || !array_key_exists("rank", $data["results"][$i]["taxon"])){echo "CONTINUE 2<br/>";
 			continue;
 		}
 		
 		$rank = $data["results"][$i]["taxon"]["rank"];
 		
 		//GET VALUE: Finest Taxon Name
-		if(!array_key_exists("name", $data["results"][$i]["taxon"])){echo "CONTINUE 3";
+		if(!array_key_exists("name", $data["results"][$i]["taxon"])){echo "CONTINUE 3<br/>";
 			continue;
 		}
 		
@@ -96,12 +96,12 @@
 		//GET VALUE: Plurality Identification where Number of Votes > 1
 		$identificationVotes = array();
 		
-		if(!array_key_exists("identifications", $data["results"][$i])){echo "CONTINUE 4";
+		if(!array_key_exists("identifications", $data["results"][$i])){echo "CONTINUE 4<br/>";
 			continue;
 		}
 		
 		$identifications = $data["results"][$i]["identifications"];
-		if(count($identifications) < 2){echo "CONTINUE 5";
+		if(count($identifications) < 2){echo "CONTINUE 5<br/>";
 			continue;//don't allow single-vote winners
 		}
 		
@@ -119,7 +119,7 @@
 			$order = "";
 			$suborder = "";
 			$family = "";
-			if(!array_key_exists("taxon", $identifications[$j]) || !array_key_exists("rank", $identifications[$j]["taxon"]) || !array_key_exists("name", $identifications[$j]["taxon"])){echo "CONTINUE 6";
+			if(!array_key_exists("taxon", $identifications[$j]) || !array_key_exists("rank", $identifications[$j]["taxon"]) || !array_key_exists("name", $identifications[$j]["taxon"])){echo "CONTINUE 6<br/>";
 				continue;
 			}
 			$finestRank = $identifications[$j]["taxon"]["rank"];
@@ -137,7 +137,7 @@
 			if(array_key_exists("ancestors", $identifications[$j]["taxon"])){
 				$ancestors = $identifications[$j]["taxon"]["ancestors"];
 				for($t = 0; $t < count($ancestors); $t++){
-					if(!array_key_exists("rank", $ancestors[$t]) || !array_key_exists("name", $ancestors[$t])){echo "CONTINUE 7";
+					if(!array_key_exists("rank", $ancestors[$t]) || !array_key_exists("name", $ancestors[$t])){echo "CONTINUE 7<br/>";
 						continue;
 					}
 					
@@ -194,10 +194,10 @@
 			}
 		}
 		
-		$identificationVoteCounts = array_count_values($array);
+		$identificationVoteCounts = array_count_values($identificationVotes);
 		arsort($identificationVoteCounts);
 		$keys = array_keys($identificationVoteCounts);
-		if(count($identifications) < 2 || $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]]){echo "CONTINUE 8";
+		if(count($identifications) < 2 || $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]]){echo "CONTINUE 8<br/>";
 			continue;//don't allow ties
 		}
 		$pluralityIdentification = $keys[0];
@@ -235,5 +235,5 @@
 	else{
 		//Finished with this run, but needs more iterations this month still
 		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistExpertIdentificationFetch'");
-	}echo "done";
+	}echo "done<br/>";
 ?>
