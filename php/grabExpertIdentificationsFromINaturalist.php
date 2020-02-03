@@ -1,8 +1,6 @@
 <?php
-	//require_once('/opt/app-root/src/php/orm/resources/Keychain.php');
-	//require_once('/opt/app-root/src/php/resultMemory.php');
-	require_once('orm/resources/Keychain.php');
-	require_once('resultMemory.php');
+	require_once('/opt/app-root/src/php/orm/resources/Keychain.php');
+	require_once('/opt/app-root/src/php/resultMemory.php');
 	
 	//Check if we need to run a fetch
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
@@ -45,17 +43,8 @@
 	//Fetch data from iNaturalist
 	$ch = curl_init("https://api.inaturalist.org/v1/observations?project_id=caterpillars-count-foliage-arthropod-survey&user_login=caterpillarscount&page=" . $iteration . "&per_page=50&order=desc&order_by=created_at");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	$data = curl_exec($ch);
-	curl_close($ch);    
-
-	//curl_setopt($ch, CURLOPT_POST, 1);
-	//curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-	//curl_setopt($ch, CURLOPT_HEADER, 0);
-	//curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	//$data = curl_exec($ch);
-	//curl_close ($ch);
-	echo "<br/><br/>" . $data . "<br/><br/>";
-	$data = json_decode($data, true);
+	$data = json_decode(curl_exec($ch), true);
+	curl_close($ch);
 	
 	//Simplify the translation process from iNaturalistIDs to ArthropodSightingIDs
 	$iNaturalistIDs = [];
@@ -71,23 +60,23 @@
   	
 	//Build update queries string
 	$updateMySQL = "";
-	for($i = 0; $i < count($data["results"]); $i++){echo $i . "<br/>";
+	for($i = 0; $i < count($data["results"]); $i++){
 		//GET VALUE: ArthropodSightingFK
-		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){echo "CONTINUE 1<br/>";
+		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){
 			continue;
 		}
 		
 		$arthropodSightingFK = $iNaturalistIDTranslations[$data["results"][$i]["id"]];
 		
 		//GET VALUE: Finest Rank
-		if(!array_key_exists("taxon", $data["results"][$i]) || !array_key_exists("rank", $data["results"][$i]["taxon"])){echo "CONTINUE 2<br/>";
+		if(!array_key_exists("taxon", $data["results"][$i]) || !array_key_exists("rank", $data["results"][$i]["taxon"])){
 			continue;
 		}
 		
 		$rank = $data["results"][$i]["taxon"]["rank"];
 		
 		//GET VALUE: Finest Taxon Name
-		if(!array_key_exists("name", $data["results"][$i]["taxon"])){echo "CONTINUE 3<br/>";
+		if(!array_key_exists("name", $data["results"][$i]["taxon"])){
 			continue;
 		}
 		
@@ -96,12 +85,12 @@
 		//GET VALUE: Plurality Identification where Number of Votes > 1
 		$identificationVotes = array();
 		
-		if(!array_key_exists("identifications", $data["results"][$i])){echo "CONTINUE 4<br/>";
+		if(!array_key_exists("identifications", $data["results"][$i])){
 			continue;
 		}
 		
 		$identifications = $data["results"][$i]["identifications"];
-		if(count($identifications) < 2){echo "CONTINUE 5<br/>";
+		if(count($identifications) < 2){
 			continue;//don't allow single-vote winners
 		}
 		
@@ -119,7 +108,7 @@
 			$order = "";
 			$suborder = "";
 			$family = "";
-			if(!array_key_exists("taxon", $identifications[$j]) || !array_key_exists("rank", $identifications[$j]["taxon"]) || !array_key_exists("name", $identifications[$j]["taxon"])){echo "CONTINUE 6<br/>";
+			if(!array_key_exists("taxon", $identifications[$j]) || !array_key_exists("rank", $identifications[$j]["taxon"]) || !array_key_exists("name", $identifications[$j]["taxon"])){
 				continue;
 			}
 			$finestRank = $identifications[$j]["taxon"]["rank"];
@@ -137,7 +126,7 @@
 			if(array_key_exists("ancestors", $identifications[$j]["taxon"])){
 				$ancestors = $identifications[$j]["taxon"]["ancestors"];
 				for($t = 0; $t < count($ancestors); $t++){
-					if(!array_key_exists("rank", $ancestors[$t]) || !array_key_exists("name", $ancestors[$t])){echo "CONTINUE 7<br/>";
+					if(!array_key_exists("rank", $ancestors[$t]) || !array_key_exists("name", $ancestors[$t])){
 						continue;
 					}
 					
@@ -197,7 +186,7 @@
 		$identificationVoteCounts = array_count_values($identificationVotes);
 		arsort($identificationVoteCounts);
 		$keys = array_keys($identificationVoteCounts);
-		if(count($identifications) < 2 || $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]]){echo "CONTINUE 8<br/>";
+		if(count($identifications) < 2 || $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]]){
 			continue;//don't allow ties
 		}
 		$pluralityIdentification = $keys[0];
@@ -221,10 +210,9 @@
 	}
 	
 	//Run the update queries string we built
-	echo "<br/><br/>UPDATE MYSQL: " . $updateMySQL . "<br/><br/>";
 	if($updateMySQL != ""){
 		$query = mysqli_multi_query($dbconn, $updateMySQL);
-		while (mysqli_next_result($dbconn)){;}
+		while(mysqli_more_results($dbconn)){$temp = mysqli_next_result($dbconn);}
 	}
 	
 	//Mark the progress in the database
@@ -236,5 +224,5 @@
 	else{
 		//Finished with this run, but needs more iterations this month still
 		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistExpertIdentificationFetch'");
-	}echo "done<br/>";
+	}
 ?>
