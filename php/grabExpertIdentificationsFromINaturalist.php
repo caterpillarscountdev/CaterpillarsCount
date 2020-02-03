@@ -44,12 +44,16 @@
 	
 	//Fetch data from iNaturalist
 	$ch = curl_init("https://api.inaturalist.org/v1/observations?project_id=caterpillars-count-foliage-arthropod-survey&user_login=caterpillarscount&page=" . $iteration . "&per_page=50&order=desc&order_by=created_at");
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-	curl_setopt($ch, CURLOPT_HEADER, 0);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	$data = curl_exec($ch);
-	curl_close ($ch);
+	curl_close($ch);    
+
+	//curl_setopt($ch, CURLOPT_POST, 1);
+	//curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	//curl_setopt($ch, CURLOPT_HEADER, 0);
+	//curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	//$data = curl_exec($ch);
+	//curl_close ($ch);
 	echo "<br/><br/>" . $data . "<br/><br/>";
 	$data = json_decode($data, true);
 	
