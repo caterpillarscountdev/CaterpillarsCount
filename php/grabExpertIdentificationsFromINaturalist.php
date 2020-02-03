@@ -223,7 +223,8 @@
 	//Run the update queries string we built
 	echo "<br/><br/>UPDATE MYSQL: " . $updateMySQL . "<br/><br/>";
 	if($updateMySQL != ""){
-		$query = mysqli_multi_query($dbconn, $updateMySQL) or trigger_error(mysqli_error($dbconn));
+		$query = mysqli_multi_query($dbconn, $updateMySQL);
+		while (mysqli_next_result($dbconn)){;}
 	}
 	
 	//Mark the progress in the database
