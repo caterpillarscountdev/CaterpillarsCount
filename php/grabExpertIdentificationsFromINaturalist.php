@@ -28,18 +28,17 @@
 		//die("Already finished this month based on CronJobStatus table.");
 		echo "Already finished this month BUT NOT STOPPED based on CronJobStatus table.";
 	}
-	$call = "UPDATE `CronJobStatus` SET `Processing`='1', `Iteration`='" . (++$iteration) . "' WHERE `Name`='iNaturalistExpertIdentificationFetch'";
-	echo $call;
-	//If so, mark as processing and increment interation
-	$query = mysqli_query($dbconn, $call);
 	
+	//If so, mark as processing and increment interation
+	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1', `Iteration`='" . (++$iteration) . "' WHERE `Name`='iNaturalistExpertIdentificationFetch'");
+	echo "1";
 	//Note which ArthropodSightingFK's have already been identified (so we know whether to UPDATE or INSERT later)
 	$previouslyIdentifiedArthropodSightingFKs = array();
 	$query = mysqli_query($dbconn, "SELECT ArthropodSightingFK FROM ExpertIdentification WHERE 1");
 	while($row = mysqli_fetch_assoc($query)){
 		$previouslyIdentifiedArthropodSightingFKs[] = intval($row["ArthropodSightingFK"]);
 	}
-	
+	echo "2";
 	//Fetch data from iNaturalist
 	$ch = curl_init('https://api.inaturalist.org/v1/observations?project_id=caterpillars-count-foliage-arthropod-survey&user_login=caterpillarscount&page=" . $iteration . "&per_page=50&order=desc&order_by=created_at');
 	curl_setopt($ch, CURLOPT_POST, 1);
@@ -48,23 +47,23 @@
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	$data = json_decode(curl_exec($ch), true);
 	curl_close ($ch);
-	
+	echo "3";
 	//Simplify the translation process from iNaturalistIDs to ArthropodSightingIDs
 	$iNaturalistIDs = [];
 	for($i = 0; $i < count($data["results"]); $i++){
 		$iNaturalistIDs[] = $data["results"][$i]["id"];
 	}
-
+	echo "4";
 	$iNaturalistIDTranslations = array();
 	$query = mysqli_query($dbconn, "SELECT ID, INaturalistID FROM ArthropodSighting WHERE INaturalistID IN ('" . implode("', '", $iNaturalistIDs) . "')");
 	while($row = mysqli_fetch_assoc($query)){
 		$iNaturalistIDTranslations[$row["INaturalistID"]] = $row["ID"];
 	}
-  	
+  	echo "5";
 	//Build update queries string
 	$updateMySQL = "";
 	for($i = 0; $i < count($data["results"]); $i++){
-		echo $i;
+		echo "i: " . $i;
 		//GET VALUE: ArthropodSightingFK
 		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){
 			continue;
@@ -212,12 +211,12 @@
 			$updateMySQL .= "INSERT INTO `ExpertIdentification` (`ArthropodSightingFK`, `Rank`, `TaxonName`, `StandardGroup`, `Agreement`, `RunnerUpAgreement`) VALUES ('$arthropodSightingFK', '$rank', '$taxonName', '$pluralityIdentification', '$pluralityIdentificationAgreement', '$runnerUpIdentificationVoteAgreement');";
 		}
 	}
-	
+	echo "6";
 	//Run the update queries string we built
 	if($updateMySQL != ""){
 		$query = mysqli_query($dbconn, $updateMySQL);
 	}
-	
+	echo "7";
 	//Mark the progress in the database
 	if(count($data["results"]) == 0){
 		//Finished for the month
@@ -228,4 +227,5 @@
 		//Finished with this run, but needs more iterations this month still
 		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistExpertIdentificationFetch'");
 	}
+	echo "8";
 ?>
