@@ -213,7 +213,7 @@
 		
 		//Add to our update queries string
 		if(in_array(intval($arthropodSightingFK), $previouslyIdentifiedArthropodSightingFKs)){
-			$updateMySQL .= "UPDATE `ExpertIdentification` SET `Rank`='$rank', `TaxonName`='$taxonName', `StandardGroup`='$pluralityIdentification', `Agreement`='$pluralityIdentificationAgreement', `RunnerUpAgreement`='$runnerUpIdentificationVoteAgreement' WHERE `ArthropodSightingFK`='$arthropodSightingFK';";
+			$updateMySQL .= "UPDATE `ExpertIdentification` SET `Rank`='$rank', `TaxonName`='$taxonName', `StandardGroup`='$pluralityIdentification', `Agreement`='$pluralityIdentificationAgreement', `RunnerUpAgreement`='$runnerUpIdentificationVoteAgreement', `LastUpdated`=NOW() WHERE `ArthropodSightingFK`='$arthropodSightingFK';";
 		}
 		else{
 			$updateMySQL .= "INSERT INTO `ExpertIdentification` (`ArthropodSightingFK`, `Rank`, `TaxonName`, `StandardGroup`, `Agreement`, `RunnerUpAgreement`) VALUES ('$arthropodSightingFK', '$rank', '$taxonName', '$pluralityIdentification', '$pluralityIdentificationAgreement', '$runnerUpIdentificationVoteAgreement');";
@@ -230,11 +230,11 @@
 	//Mark the progress in the database
 	if(count($data["results"]) == 0){
 		//Finished for the month
-		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `Iteration`='0' WHERE `Name`='iNaturalistExpertIdentificationFetch'");
+		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `Iteration`='0', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistExpertIdentificationFetch'");
 		save($baseFileName . "finishedMonth", date('n'));
 	}
 	else{
 		//Finished with this run, but needs more iterations this month still
-		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistExpertIdentificationFetch'");
+		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistExpertIdentificationFetch'");
 	}echo "done<br/>";
 ?>
