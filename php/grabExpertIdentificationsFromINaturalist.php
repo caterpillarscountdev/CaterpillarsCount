@@ -71,23 +71,23 @@
   	
 	//Build update queries string
 	$updateMySQL = "";
-	for($i = 0; $i < count($data["results"]); $i++){
+	for($i = 0; $i < count($data["results"]); $i++){echo $i . "<br/>";
 		//GET VALUE: ArthropodSightingFK
-		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){
+		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){echo "CONTINUE 1";
 			continue;
 		}
 		
 		$arthropodSightingFK = $iNaturalistIDTranslations[$data["results"][$i]["id"]];
 		
 		//GET VALUE: Finest Rank
-		if(!array_key_exists("taxon", $data["results"][$i]) || !array_key_exists("rank", $data["results"][$i]["taxon"])){
+		if(!array_key_exists("taxon", $data["results"][$i]) || !array_key_exists("rank", $data["results"][$i]["taxon"])){echo "CONTINUE 2";
 			continue;
 		}
 		
 		$rank = $data["results"][$i]["taxon"]["rank"];
 		
 		//GET VALUE: Finest Taxon Name
-		if(!array_key_exists("name", $data["results"][$i]["taxon"])){
+		if(!array_key_exists("name", $data["results"][$i]["taxon"])){echo "CONTINUE 3";
 			continue;
 		}
 		
@@ -96,12 +96,12 @@
 		//GET VALUE: Plurality Identification where Number of Votes > 1
 		$identificationVotes = array();
 		
-		if(!array_key_exists("identifications", $data["results"][$i])){
+		if(!array_key_exists("identifications", $data["results"][$i])){echo "CONTINUE 4";
 			continue;
 		}
 		
 		$identifications = $data["results"][$i]["identifications"];
-		if(count($identifications) < 2){
+		if(count($identifications) < 2){echo "CONTINUE 5";
 			continue;//don't allow single-vote winners
 		}
 		
@@ -119,7 +119,7 @@
 			$order = "";
 			$suborder = "";
 			$family = "";
-			if(!array_key_exists("taxon", $identifications[$j]) || !array_key_exists("rank", $identifications[$j]["taxon"]) || !array_key_exists("name", $identifications[$j]["taxon"])){
+			if(!array_key_exists("taxon", $identifications[$j]) || !array_key_exists("rank", $identifications[$j]["taxon"]) || !array_key_exists("name", $identifications[$j]["taxon"])){echo "CONTINUE 6";
 				continue;
 			}
 			$finestRank = $identifications[$j]["taxon"]["rank"];
@@ -137,7 +137,7 @@
 			if(array_key_exists("ancestors", $identifications[$j]["taxon"])){
 				$ancestors = $identifications[$j]["taxon"]["ancestors"];
 				for($t = 0; $t < count($ancestors); $t++){
-					if(!array_key_exists("rank", $ancestors[$t]) || !array_key_exists("name", $ancestors[$t])){
+					if(!array_key_exists("rank", $ancestors[$t]) || !array_key_exists("name", $ancestors[$t])){echo "CONTINUE 7";
 						continue;
 					}
 					
@@ -197,7 +197,7 @@
 		$identificationVoteCounts = array_count_values($array);
 		arsort($identificationVoteCounts);
 		$keys = array_keys($identificationVoteCounts);
-		if(count($identifications) < 2 || $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]]){
+		if(count($identifications) < 2 || $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]]){echo "CONTINUE 8";
 			continue;//don't allow ties
 		}
 		$pluralityIdentification = $keys[0];
@@ -221,6 +221,7 @@
 	}
 	
 	//Run the update queries string we built
+	echo "<br/><br/>UPDATE MYSQL: " . $updateMySQL . "<br/><br/>";
 	if($updateMySQL != ""){
 		$query = mysqli_query($dbconn, $updateMySQL);
 	}
@@ -234,5 +235,5 @@
 	else{
 		//Finished with this run, but needs more iterations this month still
 		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistExpertIdentificationFetch'");
-	}
+	}echo "done";
 ?>
