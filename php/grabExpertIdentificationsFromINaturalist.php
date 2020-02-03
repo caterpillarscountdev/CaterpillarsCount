@@ -45,8 +45,10 @@
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	curl_setopt($ch, CURLOPT_HEADER, 0);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	$data = json_decode(curl_exec($ch), true);
+	$data = curl_exec($ch);
 	curl_close ($ch);
+	echo "<br/><br/>" . $data . "<br/><br/>";
+	$data = json_decode($data, true);
 	echo "3";
 	//Simplify the translation process from iNaturalistIDs to ArthropodSightingIDs
 	$iNaturalistIDs = [];
