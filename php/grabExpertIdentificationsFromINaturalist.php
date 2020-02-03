@@ -178,7 +178,7 @@
 			else if($order == "Hemiptera"){
 				$identificationVotes[] = "truebugs";
 			}
-			else{
+			else if($order != ""){
 				$identificationVotes[] = $order;
 			}
 		}
