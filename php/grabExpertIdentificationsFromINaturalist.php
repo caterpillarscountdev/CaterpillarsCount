@@ -12,6 +12,9 @@
 	}
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
+	if ($dbconn->connect_error) {
+   		die("Connection failed: " . $dbconn->connect_error);
+	}
 	$query = mysqli_query($dbconn, "SELECT MONTH(UTCLastCalled) AS `Month`, `Processing`, `Iteration` FROM `CronJobStatus` WHERE `Name`='iNaturalistExpertIdentificationFetch'");
 	if(mysqli_num_rows($query) == 0){
 		die("\"iNaturalistExpertIdentificationFetch\" not in CronJobStatus table.");
