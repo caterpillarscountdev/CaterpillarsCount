@@ -231,7 +231,7 @@
 			if(count($keys) > 1){
 				//if we haven't followed up with another identification yet, and there's a disagreement with our original identification
 				if(array_key_exists($mostRecentCaterpillarsCountIdentification, $identificationVoteCounts)){
-					$supporting = $identificationVoteCounts[$mostRecentCaterpillarsCountIdentification];
+					$supporting = $identificationVoteCounts[$mostRecentCaterpillarsCountIdentification] - 1;
 					$disputing = array_sum($identificationVoteCounts) - $supporting;
 					if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
 						//update
