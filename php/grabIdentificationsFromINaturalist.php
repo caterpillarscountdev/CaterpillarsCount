@@ -76,7 +76,7 @@
   	
 	//Build update queries string
 	$updateMySQL = "";
-	$updateDisagreementMySQL = "";
+	$updateDisputedMySQL = "";
 	for($i = 0; $i < count($data["results"]); $i++){
 		//GET VALUE: ArthropodSightingFK
 		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){
@@ -88,7 +88,7 @@
 		$originalGroup = $originalGroupTranslations[$data["results"][$i]["id"]];
 		
 		//GET VALUE: Finest Rank
-		if(!array_key_exists("taxon", $data["results"][$i]) || !array_key_exists("rank", $data["results"][$i]["taxon"])){
+		if($data["results"][$i] === null || !array_key_exists("taxon", $data["results"][$i]) || $data["results"][$i]["taxon"] === null || !array_key_exists("rank", $data["results"][$i]["taxon"])){
 			continue;
 		}
 		
@@ -114,7 +114,7 @@
 		}
 		
 		$isLarva = false;
-		if(array_key_exists("annotations", $data["results"][$i])){
+		if(array_key_exists("annotations", $data["results"][$i]) && $data["results"][$i]["annotations"] !== null){
 			for($j = 0; $j < count($data["results"][$i]["annotations"]); $j++){
 				if(array_key_exists("controlled_attribute_id", $data["results"][$i]["annotations"][$j]) && intval($data["results"][$i]["annotations"][$j]["controlled_attribute_id"]) == 1 && array_key_exists("controlled_value_id", $data["results"][$i]["annotations"][$j]) && intval($data["results"][$i]["annotations"][$j]["controlled_value_id"]) == 6){
 					$isLarva = true;
@@ -224,7 +224,7 @@
 		if($numberOfCaterpillarsCountIdentifications > 1){
 			$pluralityIdentification = $mostRecentCaterpillarsCountIdentification;//our follow-up identification trumps all other identifications
 			if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
-				$updateDisagreementMySQL .= "DELETE FROM DisputedIdentification WHERE ArthropodSightingFK='$arthropodSightingFK';";
+				$updateDisputedMySQL .= "DELETE FROM DisputedIdentification WHERE ArthropodSightingFK='$arthropodSightingFK';";
 			}
 		}
 		else{
@@ -235,16 +235,16 @@
 					$disputing = array_sum($identificationVoteCounts) - $supporting;
 					if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
 						//update
-						$updateDisagreementMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing' WHERE ArthropodSightingFK='$arthropodSightingFK';";
+						$updateDisputedMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing' WHERE ArthropodSightingFK='$arthropodSightingFK';";
 					}
 					else{
 						//insert
-						$updateDisagreementMySQL .= "INSERT INTO `DisputedIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `SupportingIdentifications`, `DisputingIdentifications`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$supporting', '$disputing', 'https://www.inaturalist.org/observations/$iNaturalistID');";
+						$updateDisputedMySQL .= "INSERT INTO `DisputedIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `SupportingIdentifications`, `DisputingIdentifications`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$supporting', '$disputing', 'https://www.inaturalist.org/observations/$iNaturalistID');";
 					}
 				}
 			}
 			else if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
-				$updateDisagreementMySQL .= "DELETE FROM DisputedIdentification WHERE ArthropodSightingFK='$arthropodSightingFK';";
+				$updateDisputedMySQL .= "DELETE FROM DisputedIdentification WHERE ArthropodSightingFK='$arthropodSightingFK';";
 			}
 			
 			if(count($identifications) < 2 || (count($keys) > 1 && $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]])){
@@ -283,8 +283,8 @@
 		while(mysqli_more_results($dbconn)){$temp = mysqli_next_result($dbconn);}
 	}
 	
-	if($updateDisagreementMySQL != ""){
-		$query = mysqli_multi_query($dbconn, $updateDisagreementMySQL);
+	if($updateDisputedMySQL != ""){
+		$query = mysqli_multi_query($dbconn, $updateDisputedMySQL);
 		while(mysqli_more_results($dbconn)){$temp = mysqli_next_result($dbconn);}
 	}
 	
