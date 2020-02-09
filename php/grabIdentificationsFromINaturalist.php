@@ -233,7 +233,7 @@
 					$disputing = array_sum($identificationVoteCounts) - $supporting;
 					if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
 						//update DisputedIdentification
-						$updateDisputedMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing' WHERE ArthropodSightingFK='$arthropodSightingFK';";
+						$updateDisputedMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing', `LastUpdated`=NOW() WHERE ArthropodSightingFK='$arthropodSightingFK';";
 					}
 					else{
 						//insert into DisputedIdentification
