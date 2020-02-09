@@ -13,34 +13,47 @@
 	if ($dbconn->connect_error) {
    		die("Connection failed: " . $dbconn->connect_error);
 	}
-	$query = mysqli_query($dbconn, "SELECT MONTH(UTCLastCalled) AS `Month`, `Processing`, `Iteration` FROM `CronJobStatus` WHERE `Name`='iNaturalistExpertIdentificationFetch'");
+	$query = mysqli_query($dbconn, "SELECT MONTH(UTCLastCalled) AS `Month`, `Processing`, `Iteration`, `UTCLastCalled` FROM `CronJobStatus` WHERE `Name`='iNaturalistIdentificationFetch'");
 	if(mysqli_num_rows($query) == 0){
-		die("\"iNaturalistExpertIdentificationFetch\" not in CronJobStatus table.");
+		mysqli_close($dbconn);
+		die("\"iNaturalistIdentificationFetch\" not in CronJobStatus table.");
 	}
 	$cronJobStatusRow = mysqli_fetch_assoc($query);
 	$month = intval($cronJobStatusRow["Month"]);
 	$processing = filter_var($cronJobStatusRow["Processing"], FILTER_VALIDATE_BOOLEAN);
 	$iteration = intval($cronJobStatusRow["Iteration"]);
 	if($processing){
+		if(strtotime($cronJobStatusRow["UTCLastCalled"]) < strtotime("-10 minutes")){
+			mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistIdentificationFetch'");
+		}
+		mysqli_close($dbconn);
 		die("Already processing.");
 	}
 	if($month == intval(date('n')) && $iteration == 0){
-		save($baseFileName . "finishedMonth", date('n'));
-		die("Already finished this month based on CronJobStatus table.");
+		/*save($baseFileName . "finishedMonth", date('n'));
+		mysqli_close($dbconn);
+		die("Already finished this month based on CronJobStatus table.");*/
 	}
 	
 	//If so, mark as processing and increment interation
-	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1', `Iteration`='" . (++$iteration) . "' WHERE `Name`='iNaturalistExpertIdentificationFetch'");
+	$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='1' WHERE `Name`='iNaturalistIdentificationFetch'");
 	
-	//Note which ArthropodSightingFK's have already been identified (so we know whether to UPDATE or INSERT later)
+	//Note which ArthropodSightingFK's have already been expertly identified (so we know whether to UPDATE or INSERT later)
 	$previouslyIdentifiedArthropodSightingFKs = array();
 	$query = mysqli_query($dbconn, "SELECT ArthropodSightingFK FROM ExpertIdentification WHERE 1");
 	while($row = mysqli_fetch_assoc($query)){
 		$previouslyIdentifiedArthropodSightingFKs[] = intval($row["ArthropodSightingFK"]);
 	}
 	
+	//Note which ArthropodSightingFK's have already been marked as disputed (so we know whether to DELETE, UPDATE, or INSERT later)
+	$previouslyDisputedArthropodSightingFKs = array();
+	$query = mysqli_query($dbconn, "SELECT ArthropodSightingFK FROM DisputedIdentification WHERE 1");
+	while($row = mysqli_fetch_assoc($query)){
+		$previouslyDisputedArthropodSightingFKs[] = intval($row["ArthropodSightingFK"]);
+	}
+	
 	//Fetch data from iNaturalist
-	$ch = curl_init("https://api.inaturalist.org/v1/observations?project_id=caterpillars-count-foliage-arthropod-survey&user_login=caterpillarscount&page=" . $iteration . "&per_page=50&order=desc&order_by=created_at");
+	$ch = curl_init("https://api.inaturalist.org/v1/observations?project_id=caterpillars-count-foliage-arthropod-survey&user_login=caterpillarscount&page=" . (++$iteration) . "&per_page=50&order=desc&order_by=created_at");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	$data = json_decode(curl_exec($ch), true);
 	curl_close($ch);
@@ -52,20 +65,25 @@
 	}
 	
 	$iNaturalistIDTranslations = array();
-	$query = mysqli_query($dbconn, "SELECT ID, INaturalistID FROM ArthropodSighting WHERE INaturalistID IN ('" . implode("', '", $iNaturalistIDs) . "')");
+	$originalGroupTranslations = array();
+	$query = mysqli_query($dbconn, "SELECT `ID`, `INaturalistID`, `Group` FROM ArthropodSighting WHERE INaturalistID IN ('" . implode("', '", $iNaturalistIDs) . "')");
 	while($row = mysqli_fetch_assoc($query)){
 		$iNaturalistIDTranslations[$row["INaturalistID"]] = $row["ID"];
+		$originalGroupTranslations[$row["INaturalistID"]] = $row["Group"];
 	}
   	
 	//Build update queries string
 	$updateMySQL = "";
+	$updateDisagreementMySQL = "";
 	for($i = 0; $i < count($data["results"]); $i++){
 		//GET VALUE: ArthropodSightingFK
 		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){
 			continue;
 		}
 		
+		$iNaturalistID = $data["results"][$i]["id"];
 		$arthropodSightingFK = $iNaturalistIDTranslations[$data["results"][$i]["id"]];
+		$originalGroup = $originalGroupTranslations[$data["results"][$i]["id"]];
 		
 		//GET VALUE: Finest Rank
 		if(!array_key_exists("taxon", $data["results"][$i]) || !array_key_exists("rank", $data["results"][$i]["taxon"])){
@@ -103,6 +121,9 @@
 			}
 		}
 		
+		$mostRecentCaterpillarsCountIdentification = "";
+		$mostRecentCaterpillarsCountIdentificationTimestamp = -1;
+		$numberOfCaterpillarsCountIdentifications = 0;
 		for($j = 0; $j < count($identifications); $j++){
 			$order = "";
 			$suborder = "";
@@ -147,6 +168,9 @@
 			else if($order == "Hemiptera" && $suborder == "Sternorrhyncha"){
 				$identificationVotes[] = "aphid";
 			}
+			else if($order == "Hymenoptera" && $suborder == "Symphyta"){
+				$identificationVotes[] = "sawfly";
+			}
 			else if($order == "Hymenoptera"){
 				$identificationVotes[] = "bee";
 			}
@@ -180,18 +204,54 @@
 			else if($order != ""){
 				$identificationVotes[] = $order;
 			}
+			
+			if(array_key_exists("user", $identifications[$j]) && array_key_exists("login", $identifications[$j]["user"]) && $identifications[$j]["user"]["login"] == "caterpillarscount" && array_key_exists("created_at", $identifications[$j])){
+				$timestamp = strtotime($identifications[$j]["created_at"]);
+				if($timestamp >= $mostRecentCaterpillarsCountIdentificationTimestamp){
+					$mostRecentCaterpillarsCountIdentificationTimestamp = $timestamp;
+					$mostRecentCaterpillarsCountIdentification = $identificationVotes[count($identificationVotes) - 1];
+				}
+				$numberOfCaterpillarsCountIdentifications++;
+			}
 		}
 		
 		$identificationVoteCounts = array_count_values($identificationVotes);
 		arsort($identificationVoteCounts);
 		$keys = array_keys($identificationVoteCounts);
-		if(count($identifications) < 2 || $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]]){
-			continue;//don't allow ties
-		}
 		$pluralityIdentification = $keys[0];
+		if($numberOfCaterpillarsCountIdentifications > 1){
+			$pluralityIdentification = $mostRecentCaterpillarsCountIdentification;//our follow-up identification trumps all other identifications
+			if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
+				$updateDisagreementMySQL .= "DELETE FROM DisputedIdentification WHERE ArthropodSightingFK='$arthropodSightingFK';";
+			}
+		}
+		else{
+			if(count($keys) > 1){
+				//if we haven't followed up with another identification yet, and there's a disagreement with our original identification
+				if(array_key_exists($mostRecentCaterpillarsCountIdentification, $identificationVoteCounts)){
+					$supporting = $identificationVoteCounts[$mostRecentCaterpillarsCountIdentification];
+					$disputing = array_sum($identificationVoteCounts) - $supporting;
+					if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
+						//update
+						$updateDisagreementMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing' WHERE ArthropodSightingFK='$arthropodSightingFK';";
+					}
+					else{
+						//insert
+						$updateDisagreementMySQL .= "INSERT INTO `DisputedIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `SupportingIdentifications`, `DisputingIdentifications`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$supporting', '$disputing', 'https://www.inaturalist.org/observations/$iNaturalistID');";
+					}
+				}
+			}
+			else if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
+				$updateDisagreementMySQL .= "DELETE FROM DisputedIdentification WHERE ArthropodSightingFK='$arthropodSightingFK';";
+			}
+			
+			if(count($identifications) < 2 || (count($keys) > 1 && $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]])){
+				continue;//don't allow ties
+			}
+		}
 		
 		//GET VALUE: Plurality Agreement
-		$pluralityIdentificationAgreement = $identificationVoteCounts[$keys[0]];
+		$pluralityIdentificationAgreement = $identificationVoteCounts[$pluralityIdentification];
 		
 		//GET VALUE: Runner-Up Agreement
 		$runnerUpIdentificationVoteAgreement = 0;
@@ -199,12 +259,19 @@
 			$runnerUpIdentificationVoteAgreement = $identificationVoteCounts[$keys[1]];
 		}
 		
+		//Mark sawflies as bees with sawfly being true
+		$isSawfly = false;
+		if($pluralityIdentification == "sawfly"){
+			$pluralityIdentification = "bee";
+			$isSawfly = true;
+		}
+		
 		//Add to our update queries string
 		if(in_array(intval($arthropodSightingFK), $previouslyIdentifiedArthropodSightingFKs)){
-			$updateMySQL .= "UPDATE `ExpertIdentification` SET `Rank`='$rank', `TaxonName`='$taxonName', `StandardGroup`='$pluralityIdentification', `Agreement`='$pluralityIdentificationAgreement', `RunnerUpAgreement`='$runnerUpIdentificationVoteAgreement', `LastUpdated`=NOW() WHERE `ArthropodSightingFK`='$arthropodSightingFK';";
+			$updateMySQL .= "UPDATE `ExpertIdentification` SET `Rank`='$rank', `TaxonName`='$taxonName', `StandardGroup`='$pluralityIdentification', `BeetleLarvaUpdated`='" . ($pluralityIdentificationAgreement == "beetle" && $isLarva) . "', `SawflyUpdated`='$isSawfly', `Agreement`='$pluralityIdentificationAgreement', `RunnerUpAgreement`='$runnerUpIdentificationVoteAgreement', `LastUpdated`=NOW() WHERE `ArthropodSightingFK`='$arthropodSightingFK';";
 		}
 		else{
-			$updateMySQL .= "INSERT INTO `ExpertIdentification` (`ArthropodSightingFK`, `Rank`, `TaxonName`, `StandardGroup`, `Agreement`, `RunnerUpAgreement`) VALUES ('$arthropodSightingFK', '$rank', '$taxonName', '$pluralityIdentification', '$pluralityIdentificationAgreement', '$runnerUpIdentificationVoteAgreement');";
+			$updateMySQL .= "INSERT INTO `ExpertIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `Rank`, `TaxonName`, `StandardGroup`, `BeetleLarvaUpdated`, `SawflyUpdated`, `Agreement`, `RunnerUpAgreement`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$rank', '$taxonName', '$pluralityIdentification', '" . ($pluralityIdentificationAgreement == "beetle" && $isLarva) . "', '$isSawfly', '$pluralityIdentificationAgreement', '$runnerUpIdentificationVoteAgreement', 'https://www.inaturalist.org/observations/$iNaturalistID');";
 		}
 	}
 	
@@ -214,14 +281,21 @@
 		while(mysqli_more_results($dbconn)){$temp = mysqli_next_result($dbconn);}
 	}
 	
+	if($updateDisagreementMySQL != ""){
+		$query = mysqli_multi_query($dbconn, $updateDisagreementMySQL);
+		while(mysqli_more_results($dbconn)){$temp = mysqli_next_result($dbconn);}
+	}
+	
 	//Mark the progress in the database
 	if(count($data["results"]) == 0){
 		//Finished for the month
-		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `Iteration`='0', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistExpertIdentificationFetch'");
+		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `Iteration`='0', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistIdentificationFetch'");
 		save($baseFileName . "finishedMonth", date('n'));
 	}
 	else{
 		//Finished with this run, but needs more iterations this month still
-		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistExpertIdentificationFetch'");
+		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `Iteration`='$iteration', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistIdentificationFetch'");
 	}
+	
+	mysqli_close($dbconn);
 ?>
