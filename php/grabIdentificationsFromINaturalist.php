@@ -77,7 +77,7 @@
 	$updateDisputedMySQL = "";
 	for($i = 0; $i < count($data["results"]); $i++){
 		//GET VALUE: ArthropodSightingFK
-		if(!array_key_exists("id", $data["results"][$i]) || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){
+		if(!array_key_exists("id", $data["results"][$i]) || $data["results"][$i]["id"] === null || !array_key_exists($data["results"][$i]["id"], $iNaturalistIDTranslations)){
 			continue;
 		}
 		
@@ -128,7 +128,7 @@
 			$order = "";
 			$suborder = "";
 			$family = "";
-			if(!array_key_exists("taxon", $identifications[$j]) || !array_key_exists("rank", $identifications[$j]["taxon"]) || !array_key_exists("name", $identifications[$j]["taxon"])){
+			if(!array_key_exists("taxon", $identifications[$j]) || $identifications[$j]["taxon"] === null || !array_key_exists("rank", $identifications[$j]["taxon"]) || $identifications[$j]["taxon"]["rank"] === null || !array_key_exists("name", $identifications[$j]["taxon"]) || $identifications[$j]["taxon"]["name"] === null){
 				continue;
 			}
 			$finestRank = $identifications[$j]["taxon"]["rank"];
@@ -143,10 +143,10 @@
 				$family = $finestName;
 			}
 			
-			if(array_key_exists("ancestors", $identifications[$j]["taxon"])){
+			if(array_key_exists("ancestors", $identifications[$j]["taxon"]) && $identifications[$j]["taxon"]["ancestors"] !== null){
 				$ancestors = $identifications[$j]["taxon"]["ancestors"];
 				for($t = 0; $t < count($ancestors); $t++){
-					if(!array_key_exists("rank", $ancestors[$t]) || !array_key_exists("name", $ancestors[$t])){
+					if(!array_key_exists("rank", $ancestors[$t]) || $ancestors[$t]["rank"] === null || !array_key_exists("name", $ancestors[$t]) || $ancestors[$t]["name"] === null){
 						continue;
 					}
 					
@@ -205,7 +205,7 @@
 				$identificationVotes[] = $order;
 			}
 			
-			if(array_key_exists("user", $identifications[$j]) && array_key_exists("login", $identifications[$j]["user"]) && $identifications[$j]["user"]["login"] == "caterpillarscount" && array_key_exists("created_at", $identifications[$j])){
+			if(array_key_exists("user", $identifications[$j]) && $identifications[$j]["user"] !== null && array_key_exists("login", $identifications[$j]["user"]) && $identifications[$j]["user"]["login"] == "caterpillarscount" && array_key_exists("created_at", $identifications[$j]) && $identifications[$j]["created_at"] !== null){
 				$timestamp = strtotime($identifications[$j]["created_at"]);
 				if($timestamp >= $mostRecentCaterpillarsCountIdentificationTimestamp){
 					$mostRecentCaterpillarsCountIdentificationTimestamp = $timestamp;
