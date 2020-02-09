@@ -232,21 +232,22 @@
 					$supporting = $identificationVoteCounts[$mostRecentCaterpillarsCountIdentification] - 1;
 					$disputing = array_sum($identificationVoteCounts) - $supporting;
 					if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
-						//update
+						//update DisputedIdentification
 						$updateDisputedMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing' WHERE ArthropodSightingFK='$arthropodSightingFK';";
 					}
 					else{
-						//insert
+						//insert into DisputedIdentification
 						$updateDisputedMySQL .= "INSERT INTO `DisputedIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `SupportingIdentifications`, `DisputingIdentifications`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$supporting', '$disputing', 'https://www.inaturalist.org/observations/$iNaturalistID');";
 					}
 				}
 			}
 			else if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
+				//delete from DisputedIdentification
 				$updateDisputedMySQL .= "DELETE FROM DisputedIdentification WHERE ArthropodSightingFK='$arthropodSightingFK';";
 			}
 			
 			if(count($identifications) < 2 || (count($keys) > 1 && $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]])){
-				continue;//don't allow ties
+				continue;//don't allow ties for ExpertIdentification plurality agreement
 			}
 		}
 		
@@ -256,7 +257,12 @@
 		//GET VALUE: Runner-Up Agreement
 		$runnerUpIdentificationVoteAgreement = 0;
 		if(count($keys) > 1){
-			$runnerUpIdentificationVoteAgreement = $identificationVoteCounts[$keys[1]];
+			if($keys[0] == $pluralityIdentification){
+				$runnerUpIdentificationVoteAgreement = $identificationVoteCounts[$keys[1]];
+			}
+			else{
+				$runnerUpIdentificationVoteAgreement = $identificationVoteCounts[$keys[0]];
+			}
 		}
 		
 		//Mark sawflies as bees with sawfly being true
