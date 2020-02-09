@@ -1,6 +1,8 @@
 <?php
-	require_once('/opt/app-root/src/php/orm/resources/Keychain.php');
-	require_once('/opt/app-root/src/php/resultMemory.php');
+	//require_once('/opt/app-root/src/php/orm/resources/Keychain.php');
+	//require_once('/opt/app-root/src/php/resultMemory.php');
+	require_once('orm/resources/Keychain.php');
+	require_once('resultMemory.php');
 	
 	//Check if we need to run a fetch
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
