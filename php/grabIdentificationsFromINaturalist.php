@@ -231,17 +231,17 @@
 				if(array_key_exists($mostRecentCaterpillarsCountIdentification, $identificationVoteCounts)){
 					$supporting = $identificationVoteCounts[$mostRecentCaterpillarsCountIdentification] - 1;
 					$disputing = array_sum($identificationVoteCounts) - $supporting;
-					$expertIdentification = $pluralityIdentification;
+					$expertIdentification = str_replace("sawfly", "bee (sawfly)", $pluralityIdentification);
 					if(count($identifications) < 2 || (count($keys) > 1 && $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]])){
 						$expertIdentification = "";
 					}
 					if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
 						//update DisputedIdentification
-						$updateDisputedMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing', `AllSuggestedIdentifications`='" . str_replace("'", "", implode(", ", $keys)) . "', `ExpertIdentification`='$expertIdentification', `LastUpdated`=NOW() WHERE ArthropodSightingFK='$arthropodSightingFK';";
+						$updateDisputedMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing', `AllSuggestedIdentifications`='" . str_replace("sawfly", "bee (sawfly)", str_replace("'", "", implode(", ", $keys))) . "', `ExpertIdentification`='$expertIdentification', `LastUpdated`=NOW() WHERE ArthropodSightingFK='$arthropodSightingFK';";
 					}
 					else{
 						//insert into DisputedIdentification
-						$updateDisputedMySQL .= "INSERT INTO `DisputedIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `SupportingIdentifications`, `DisputingIdentifications`, `AllSuggestedIdentifications`, `ExpertIdentification`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$supporting', '$disputing', '" . str_replace("'", "", implode(", ", $keys)) . "', '$expertIdentification', 'https://www.inaturalist.org/observations/$iNaturalistID');";
+						$updateDisputedMySQL .= "INSERT INTO `DisputedIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `SupportingIdentifications`, `DisputingIdentifications`, `AllSuggestedIdentifications`, `ExpertIdentification`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$supporting', '$disputing', '" . str_replace("sawfly", "bee (sawfly)", str_replace("'", "", implode(", ", $keys))) . "', '$expertIdentification', 'https://www.inaturalist.org/observations/$iNaturalistID');";
 					}
 				}
 			}
