@@ -121,17 +121,12 @@
 			}
 		}
 		
+		$oldestCaterpillarsCountIdentification = "";
+		$oldestCaterpillarsCountIdentificationTimestamp = "";
 		$mostRecentCaterpillarsCountIdentification = "";
 		$mostRecentCaterpillarsCountIdentificationTimestamp = -1;
 		$numberOfCaterpillarsCountIdentifications = 0;
 		for($j = 0; $j < count($identifications); $j++){
-			if(array_key_exists("current", $identifications[$j]) && $identifications[$j]["current"] === false){
-				if(array_key_exists("user", $identifications[$j]) && $identifications[$j]["user"] !== null && array_key_exists("login", $identifications[$j]["user"]) && $identifications[$j]["user"]["login"] == "caterpillarscount"){
-					$numberOfCaterpillarsCountIdentifications++;
-				}
-				continue;
-			}
-			
 			$order = "";
 			$suborder = "";
 			$family = "";
@@ -169,56 +164,67 @@
 				}
 			}
 			
+			$vote = "";
 			if($order == "Hymenoptera" && $family == "Formicidae"){
-				$identificationVotes[] = "ant";
+				$vote = "ant";
 			}
 			else if($order == "Hemiptera" && $suborder == "Sternorrhyncha"){
-				$identificationVotes[] = "aphid";
+				$vote = "aphid";
 			}
 			else if($order == "Hymenoptera" && $suborder == "Symphyta"){
-				$identificationVotes[] = "sawfly";
+				$vote = "sawfly";
 			}
 			else if($order == "Hymenoptera"){
-				$identificationVotes[] = "bee";
+				$vote = "bee";
 			}
 			else if($order == "Coleoptera"){
-				$identificationVotes[] = "beetle";
+				$vote = "beetle";
 			}
 			else if($order == "Lepidoptera" && $isLarva){
-				$identificationVotes[] = "caterpillar";
+				$vote = "caterpillar";
 			}
 			else if($order == "Opiliones"){
-				$identificationVotes[] = "daddylonglegs";
+				$vote = "daddylonglegs";
 			}
 			else if($order == "Diptera"){
-				$identificationVotes[] = "fly";
+				$vote = "fly";
 			}
 			else if($order == "Orthoptera"){
-				$identificationVotes[] = "grasshopper";
+				$vote = "grasshopper";
 			}
 			else if($order == "Hemiptera" && $suborder == "Auchenorrhyncha"){
-				$identificationVotes[] = "leafhopper";
+				$vote = "leafhopper";
 			}
 			else if($order == "Lepidoptera"){
-				$identificationVotes[] = "moths";
+				$vote = "moths";
 			}
 			else if($order == "Araneae"){
-				$identificationVotes[] = "spider";
+				$vote = "spider";
 			}
 			else if($order == "Hemiptera"){
-				$identificationVotes[] = "truebugs";
+				$vote = "truebugs";
 			}
 			else if($order != ""){
-				$identificationVotes[] = $order;
+				$vote = $order;
 			}
 			
-			if(array_key_exists("user", $identifications[$j]) && $identifications[$j]["user"] !== null && array_key_exists("login", $identifications[$j]["user"]) && $identifications[$j]["user"]["login"] == "caterpillarscount" && array_key_exists("created_at", $identifications[$j]) && $identifications[$j]["created_at"] !== null){
-				$timestamp = strtotime($identifications[$j]["created_at"]);
-				if($timestamp >= $mostRecentCaterpillarsCountIdentificationTimestamp){
-					$mostRecentCaterpillarsCountIdentificationTimestamp = $timestamp;
-					$mostRecentCaterpillarsCountIdentification = $identificationVotes[count($identificationVotes) - 1];
+			if(array_key_exists("user", $identifications[$j]) && $identifications[$j]["user"] !== null && array_key_exists("login", $identifications[$j]["user"]) && $identifications[$j]["user"]["login"] == "caterpillarscount"){
+				if(array_key_exists("created_at", $identifications[$j]) && $identifications[$j]["created_at"] !== null){
+					$timestamp = strtotime($identifications[$j]["created_at"]);
+					if($timestamp < $oldestCaterpillarsCountIdentificationTimestamp == -1 || $oldestCaterpillarsCountIdentificationTimestamp == -1){
+						$oldestCaterpillarsCountIdentificationTimestamp = $timestamp;
+						$oldestCaterpillarsCountIdentification = $vote;
+					}
+					if($timestamp >= $mostRecentCaterpillarsCountIdentificationTimestamp && !(array_key_exists("current", $identifications[$j]) && $identifications[$j]["current"] === false)){
+						$mostRecentCaterpillarsCountIdentificationTimestamp = $timestamp;
+						$mostRecentCaterpillarsCountIdentification = $vote;
+					}
 				}
 				$numberOfCaterpillarsCountIdentifications++;
+			}
+			
+			if(!(array_key_exists("current", $identifications[$j]) && $identifications[$j]["current"] === false) && $vote != ""){
+				$identificationVotes[] = $vote;
 			}
 		}
 		
@@ -233,23 +239,25 @@
 			}
 		}
 		else{
-			if(count($keys) > 1){
+			if(count($keys) > 1 || (count($keys > 0) && $keys[0] != $oldestCaterpillarsCountIdentification)){
 				//if we haven't followed up with another identification yet, and there's a disagreement with our original identification
-				if(array_key_exists($mostRecentCaterpillarsCountIdentification, $identificationVoteCounts)){
-					$supporting = $identificationVoteCounts[$mostRecentCaterpillarsCountIdentification] - 1;
-					$disputing = array_sum($identificationVoteCounts) - $supporting - 1;
-					$expertIdentification = str_replace("sawfly", "bee (sawfly)", $pluralityIdentification);
-					if(count($identifications) < 2 || (count($keys) > 1 && $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]])){
-						$expertIdentification = "";
-					}
-					if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
-						//update DisputedIdentification
-						$updateDisputedMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing', `AllSuggestedIdentifications`='" . str_replace("sawfly", "bee (sawfly)", str_replace("'", "", implode(", ", $keys))) . "', `ExpertIdentification`='$expertIdentification', `LastUpdated`=NOW() WHERE ArthropodSightingFK='$arthropodSightingFK';";
-					}
-					else{
-						//insert into DisputedIdentification
-						$updateDisputedMySQL .= "INSERT INTO `DisputedIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `SupportingIdentifications`, `DisputingIdentifications`, `AllSuggestedIdentifications`, `ExpertIdentification`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$supporting', '$disputing', '" . str_replace("sawfly", "bee (sawfly)", str_replace("'", "", implode(", ", $keys))) . "', '$expertIdentification', 'https://www.inaturalist.org/observations/$iNaturalistID');";
-					}
+				$supporting = 0;
+				if(array_key_exists($oldestCaterpillarsCountIdentification, $identificationVoteCounts)){
+					$supporting = $identificationVoteCounts[$oldestCaterpillarsCountIdentification] - 1;
+				}
+				
+				$disputing = array_sum($identificationVoteCounts) - $supporting - 1;
+				$expertIdentification = str_replace("sawfly", "bee (sawfly)", $pluralityIdentification);
+				if(count($identifications) < 2 || (count($keys) > 1 && $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]])){
+					$expertIdentification = "";
+				}
+				if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
+					//update DisputedIdentification
+					$updateDisputedMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing', `AllSuggestedIdentifications`='" . str_replace("sawfly", "bee (sawfly)", str_replace("'", "", implode(", ", $keys))) . "', `ExpertIdentification`='$expertIdentification', `LastUpdated`=NOW() WHERE ArthropodSightingFK='$arthropodSightingFK';";
+				}
+				else{
+					//insert into DisputedIdentification
+					$updateDisputedMySQL .= "INSERT INTO `DisputedIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `SupportingIdentifications`, `DisputingIdentifications`, `AllSuggestedIdentifications`, `ExpertIdentification`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$supporting', '$disputing', '" . str_replace("sawfly", "bee (sawfly)", str_replace("'", "", implode(", ", $keys))) . "', '$expertIdentification', 'https://www.inaturalist.org/observations/$iNaturalistID');";
 				}
 			}
 			else if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
