@@ -30,9 +30,9 @@
 		die("Already processing.");
 	}
 	if($month == intval(date('n')) && $iteration == 0){
-		save($baseFileName . "finishedMonth", date('n'));
+		/*save($baseFileName . "finishedMonth", date('n'));
 		mysqli_close($dbconn);
-		die("Already finished this month based on CronJobStatus table.");
+		die("Already finished this month based on CronJobStatus table.");*/
 	}
 	
 	//If so, mark as processing and increment interation
@@ -125,6 +125,13 @@
 		$mostRecentCaterpillarsCountIdentificationTimestamp = -1;
 		$numberOfCaterpillarsCountIdentifications = 0;
 		for($j = 0; $j < count($identifications); $j++){
+			if(array_key_exists("current", $identifications[$j]) && $identifications[$j]["current"] === false){
+				if(array_key_exists("user", $identifications[$j]) && $identifications[$j]["user"] !== null && array_key_exists("login", $identifications[$j]["user"]) && $identifications[$j]["user"]["login"] == "caterpillarscount"){
+					$numberOfCaterpillarsCountIdentifications++;
+				}
+				continue;
+			}
+			
 			$order = "";
 			$suborder = "";
 			$family = "";
@@ -219,7 +226,7 @@
 		arsort($identificationVoteCounts);
 		$keys = array_keys($identificationVoteCounts);
 		$pluralityIdentification = $keys[0];
-		if($numberOfCaterpillarsCountIdentifications > 1){
+		if($numberOfCaterpillarsCountIdentifications > 1 && $mostRecentCaterpillarsCountIdentification != ""){
 			$pluralityIdentification = $mostRecentCaterpillarsCountIdentification;//our follow-up identification trumps all other identifications
 			if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
 				$updateDisputedMySQL .= "DELETE FROM DisputedIdentification WHERE ArthropodSightingFK='$arthropodSightingFK';";
