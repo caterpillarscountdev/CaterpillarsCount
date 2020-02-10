@@ -30,9 +30,9 @@
 		die("Already processing.");
 	}
 	if($month == intval(date('n')) && $iteration == 0){
-		save($baseFileName . "finishedMonth", date('n'));
+		/*save($baseFileName . "finishedMonth", date('n'));
 		mysqli_close($dbconn);
-		die("Already finished this month based on CronJobStatus table.");
+		die("Already finished this month based on CronJobStatus table.");*/
 	}
 	
 	//If so, mark as processing and increment interation
@@ -230,7 +230,7 @@
 				//if we haven't followed up with another identification yet, and there's a disagreement with our original identification
 				if(array_key_exists($mostRecentCaterpillarsCountIdentification, $identificationVoteCounts)){
 					$supporting = $identificationVoteCounts[$mostRecentCaterpillarsCountIdentification] - 1;
-					$disputing = array_sum($identificationVoteCounts) - $supporting;
+					$disputing = array_sum($identificationVoteCounts) - $supporting - 1;
 					$expertIdentification = str_replace("sawfly", "bee (sawfly)", $pluralityIdentification);
 					if(count($identifications) < 2 || (count($keys) > 1 && $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]])){
 						$expertIdentification = "";
