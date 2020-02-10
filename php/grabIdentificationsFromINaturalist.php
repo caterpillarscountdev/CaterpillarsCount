@@ -278,10 +278,10 @@
 		
 		//Add to our update queries string
 		if(in_array(intval($arthropodSightingFK), $previouslyIdentifiedArthropodSightingFKs)){
-			$updateMySQL .= "UPDATE `ExpertIdentification` SET `Rank`='$rank', `TaxonName`='$taxonName', `StandardGroup`='$pluralityIdentification', `BeetleLarvaUpdated`='" . ($pluralityIdentificationAgreement == "beetle" && $isLarva) . "', `SawflyUpdated`='$isSawfly', `Agreement`='$pluralityIdentificationAgreement', `RunnerUpAgreement`='$runnerUpIdentificationVoteAgreement', `LastUpdated`=NOW() WHERE `ArthropodSightingFK`='$arthropodSightingFK';";
+			$updateMySQL .= "UPDATE `ExpertIdentification` SET `Rank`='$rank', `TaxonName`='$taxonName', `StandardGroup`='$pluralityIdentification', `BeetleLarvaUpdated`='" . ($pluralityIdentification == "beetle" && $isLarva) . "', `SawflyUpdated`='$isSawfly', `Agreement`='$pluralityIdentificationAgreement', `RunnerUpAgreement`='$runnerUpIdentificationVoteAgreement', `LastUpdated`=NOW() WHERE `ArthropodSightingFK`='$arthropodSightingFK';";
 		}
 		else{
-			$updateMySQL .= "INSERT INTO `ExpertIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `Rank`, `TaxonName`, `StandardGroup`, `BeetleLarvaUpdated`, `SawflyUpdated`, `Agreement`, `RunnerUpAgreement`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$rank', '$taxonName', '$pluralityIdentification', '" . ($pluralityIdentificationAgreement == "beetle" && $isLarva) . "', '$isSawfly', '$pluralityIdentificationAgreement', '$runnerUpIdentificationVoteAgreement', 'https://www.inaturalist.org/observations/$iNaturalistID');";
+			$updateMySQL .= "INSERT INTO `ExpertIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `Rank`, `TaxonName`, `StandardGroup`, `BeetleLarvaUpdated`, `SawflyUpdated`, `Agreement`, `RunnerUpAgreement`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$rank', '$taxonName', '$pluralityIdentification', '" . ($pluralityIdentification == "beetle" && $isLarva) . "', '$isSawfly', '$pluralityIdentificationAgreement', '$runnerUpIdentificationVoteAgreement', 'https://www.inaturalist.org/observations/$iNaturalistID');";
 		}
 	}
 	
