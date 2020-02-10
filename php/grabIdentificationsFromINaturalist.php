@@ -226,7 +226,7 @@
 		arsort($identificationVoteCounts);
 		$keys = array_keys($identificationVoteCounts);
 		$pluralityIdentification = $keys[0];
-		if($numberOfCaterpillarsCountIdentifications > 1 && $mostRecentCaterpillarsCountIdentification != ""){
+		if($numberOfCaterpillarsCountIdentifications > 1 && $mostRecentCaterpillarsCountIdentificationTimestamp > -1){
 			$pluralityIdentification = $mostRecentCaterpillarsCountIdentification;//our follow-up identification trumps all other identifications
 			if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
 				$updateDisputedMySQL .= "DELETE FROM DisputedIdentification WHERE ArthropodSightingFK='$arthropodSightingFK';";
