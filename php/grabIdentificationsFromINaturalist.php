@@ -260,11 +260,11 @@
 				
 				if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
 					//update DisputedIdentification
-					$updateDisputedMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing', `AllSuggestedIdentifications`='$suggestedGroups', `ExpertIdentification`='$expertIdentification', `LastUpdated`=NOW() WHERE ArthropodSightingFK='$arthropodSightingFK';";
+					$updateDisputedMySQL .= "UPDATE `DisputedIdentification` SET `SupportingIdentifications`='$supporting', `DisputingIdentifications`='$disputing', `SuggestedGroups`='$suggestedGroups', `ExpertIdentification`='$expertIdentification', `LastUpdated`=NOW() WHERE ArthropodSightingFK='$arthropodSightingFK';";
 				}
 				else{
 					//insert into DisputedIdentification
-					$updateDisputedMySQL .= "INSERT INTO `DisputedIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `SupportingIdentifications`, `DisputingIdentifications`, `AllSuggestedIdentifications`, `ExpertIdentification`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$supporting', '$disputing', '$suggestedGroups', '$expertIdentification', 'https://www.inaturalist.org/observations/$iNaturalistID');";
+					$updateDisputedMySQL .= "INSERT INTO `DisputedIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `SupportingIdentifications`, `DisputingIdentifications`, `SuggestedGroups`, `ExpertIdentification`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$supporting', '$disputing', '$suggestedGroups', '$expertIdentification', 'https://www.inaturalist.org/observations/$iNaturalistID');";
 				}
 			}
 			else if(in_array(intval($arthropodSightingFK), $previouslyDisputedArthropodSightingFKs)){
