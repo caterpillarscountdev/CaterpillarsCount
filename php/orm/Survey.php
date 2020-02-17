@@ -170,7 +170,7 @@ class Survey
 		$arthropodSearch = trim($filters["arthropod"]);
 		if(strlen($arthropodSearch) > 0){
 			$baseTable = "`ArthropodSighting` JOIN `Survey` ON ArthropodSighting.SurveyFK = Survey.ID";
-			$additionalSQL .= " AND (ArthropodSighting.Group='" . $arthropodSearch . "' OR ArthropodSighting.LeadingGroup='" . $arthropodSearch . "')";
+			$additionalSQL .= " AND (ArthropodSighting.OriginalGroup='" . $arthropodSearch . "' OR ArthropodSighting.LeadingGroup='" . $arthropodSearch . "')";
 			$groupBy = " GROUP BY ArthropodSighting.SurveyFK";
 		}
 		
@@ -612,8 +612,8 @@ class Survey
 	
 
 //FUNCTIONS
-	public function addArthropodSighting($group, $length, $quantity, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva){
-		return ArthropodSighting::create($this, $group, $length, $quantity, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
+	public function addArthropodSighting($originalGroup, $length, $quantity, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva){
+		return ArthropodSighting::create($this, $originalGroup, $length, $quantity, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
 	}
 }		
 ?>
