@@ -170,7 +170,7 @@ class Survey
 		$arthropodSearch = trim($filters["arthropod"]);
 		if(strlen($arthropodSearch) > 0){
 			$baseTable = "`ArthropodSighting` JOIN `Survey` ON ArthropodSighting.SurveyFK = Survey.ID";
-			$additionalSQL .= " AND ArthropodSighting.Group='" . $arthropodSearch . "'";
+			$additionalSQL .= " AND (ArthropodSighting.Group='" . $arthropodSearch . "' OR ArthropodSighting.LeadingGroup='" . $arthropodSearch . "')";
 			$groupBy = " GROUP BY ArthropodSighting.SurveyFK";
 		}
 		
