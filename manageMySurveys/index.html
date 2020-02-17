@@ -1160,7 +1160,7 @@
 									if(surveys[i]["arthropodSightings"][j]["quantity"] > 1){
 										sawflyLarvaText = "These are sawfly larvae";
 									}
-									if(surveys[i]["arthropodSightings"][j]["sawfly"]){
+									if(surveys[i]["arthropodSightings"][j]["originalSawfly"]){
 								   		htmlToAdd += 			"<div><div class=\"toggleable true beeOption\">" + sawflyLarvaText + "</div></div>";
 									}
 									else{
@@ -1172,7 +1172,7 @@
 										htmlToAdd +=		" style=\"display:none;\"";
 									}
 									htmlToAdd +=			">";
-									if(surveys[i]["arthropodSightings"][j]["beetleLarva"]){
+									if(surveys[i]["arthropodSightings"][j]["originalBeetleLarva"]){
 								   		htmlToAdd += 			"<div><div class=\"toggleable true beetleOption\">In larva form</div></div>";
 									}
 									else{
@@ -2017,18 +2017,18 @@
 					var hairy = false;
 					var leafRoll = false;
 					var silkTent = false;
-					var sawfly = false;
-					var beetleLarva = false;
+					var originalSawfly = false;
+					var originalBeetleLarva = false;
 					if(originalGroup == "caterpillar"){
 						hairy = arthropodSightings.eq(i).find(".toggleable").eq(0).hasClass("true");
 						leafRoll = arthropodSightings.eq(i).find(".toggleable").eq(1).hasClass("true");
 						silkTent = arthropodSightings.eq(i).find(".toggleable").eq(2).hasClass("true");
 					}
 					if(originalGroup == "bee"){
-						sawfly = arthropodSightings.eq(i).find(".toggleable").eq(3).hasClass("true");
+						originalSawfly = arthropodSightings.eq(i).find(".toggleable").eq(3).hasClass("true");
 					}
 					if(originalGroup == "beetle"){
-						beetleLarva = arthropodSightings.eq(i).find(".toggleable").eq(4).hasClass("true");
+						originalBeetleLarva = arthropodSightings.eq(i).find(".toggleable").eq(4).hasClass("true");
 					}
 					var notes = arthropodSightings.eq(i).find(".editable").eq(2)[0].innerHTML.trim();
 					if(notes == "[notes]"){
@@ -2040,7 +2040,7 @@
 					}
 					//qualifiers
 					if(quantity > 0 && length > 0){
-						arthropodData[arthropodData.length] = [originalGroup, length, quantity, notes, hairy, leafRoll, silkTent, sawfly, beetleLarva, photoURL];
+						arthropodData[arthropodData.length] = [originalGroup, length, quantity, notes, hairy, leafRoll, silkTent, originalSawfly, originalBeetleLarva, photoURL];
 					}
 				}
 				console.log([code, date, time, observationMethod, numberOfLeaves, wetLeaves, averageLeafLength, herbivoryScore, siteNotes, arthropodData]);
