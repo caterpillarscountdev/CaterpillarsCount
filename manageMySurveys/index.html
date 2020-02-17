@@ -2022,7 +2022,7 @@
 				var arthropodData = [];
 				var arthropodSightings = $("#" + id + " .arthropodSighting");
 				for(var i = 0; i < arthropodSightings.length; i++){
-					var id = Number(arthropodSightings[i].id);
+					var arthropodSightingID = Number(arthropodSightings[i].id);
 					var quantity = Number(arthropodSightings.eq(i).find(".editable").eq(0)[0].innerHTML);
 					var length = Number(arthropodSightings.eq(i).find(".editable").eq(1)[0].innerHTML);
 					var originalGroup = singular(arthropodSightings.eq(i).find(".selected").eq(0)[0].innerHTML.replace("bees/wasps/sawflies", "bee").replace("flies", "fly").replace("bee/wasp/sawfly", "bee")).replace("daddylongleg", "daddylonglegs").replace("moth", "moths").replace("truebug", "truebugs");
@@ -2052,7 +2052,7 @@
 					}
 					//qualifiers
 					if(quantity > 0 && length > 0){
-						arthropodData[arthropodData.length] = [id, originalGroup, length, quantity, notes, hairy, leafRoll, silkTent, originalSawfly, originalBeetleLarva, photoURL];
+						arthropodData[arthropodData.length] = [arthropodSightingID, originalGroup, length, quantity, notes, hairy, leafRoll, silkTent, originalSawfly, originalBeetleLarva, photoURL];
 					}
 				}
 				console.log([code, date, time, observationMethod, numberOfLeaves, wetLeaves, averageLeafLength, herbivoryScore, siteNotes, arthropodData]);
