@@ -265,6 +265,8 @@ class ArthropodSighting
 	public function setAllEditables($originalGroup, $length, $quantity, $notes, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva){
 		if(!$this->deleted)
 		{
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			
 			$originalGroup = self::validGroup($dbconn, $originalGroup);
 			$length = self::validLength($dbconn, $length);
 			$quantity = self::validQuantity($dbconn, $quantity);
@@ -295,23 +297,20 @@ class ArthropodSighting
 				return $failures;
 			}
 			
-			$dbconn = (new Keychain)->getDatabaseConnection();
-			$photoURL = self::validPhotoURL($dbconn, $photoURL);
-			if($photoURL !== false){
-				mysqli_query($dbconn, "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `OriginalBeetleLarva`='$originalBeetleLarva' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
-				$this->originalGroup = $originalGroup;
-				$this->length = $length;
-				$this->quantity = $quantity;
-				$this->notes = $notes;
-				$this->hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
-				$this->rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
-				$this->tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
-				$this->originalSawfly = filter_var($originalSawfly, FILTER_VALIDATE_BOOLEAN);
-				$this->originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
-				return true;
-			}
+			mysqli_query($dbconn, "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `OriginalBeetleLarva`='$originalBeetleLarva' WHERE ID='" . $this->id . "'");
 			mysqli_close($dbconn);
+
+			$this->originalGroup = $originalGroup;
+			$this->length = $length;
+			$this->quantity = $quantity;
+			$this->notes = $notes;
+			$this->hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
+			$this->rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
+			$this->tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
+			$this->originalSawfly = filter_var($originalSawfly, FILTER_VALIDATE_BOOLEAN);
+			$this->originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+
+			return true;
 		}
 		return false;
 	}
