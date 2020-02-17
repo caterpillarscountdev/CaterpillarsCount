@@ -42,6 +42,7 @@
 							"leadingSawfly" => $arthropodSightings[$j]->getLeadingSawfly(),
 							"originalBeetleLarva" => $arthropodSightings[$j]->getOriginalBeetleLarva(),
 							"leadingBeetleLarva" => $arthropodSightings[$j]->getLeadingBeetleLarva(),
+							"iNaturalistObservationURL" => $arthropodSightings[$j]->getINaturalistObservationURL(),
 						);
 					}
 				}
