@@ -9,6 +9,7 @@ class ArthropodSighting
 	private $id;							//INT
 	private $survey;
 	private $group;
+	private $leadingGroup;
 	private $length;
 	private $quantity;
 	private $photoURL;
@@ -63,16 +64,17 @@ class ArthropodSighting
 			return $failures;
 		}
 		
-		mysqli_query($dbconn, "INSERT INTO ArthropodSighting (`SurveyFK`, `Group`, `Length`, `Quantity`, `PhotoURL`, `Notes`, `Hairy`, `Rolled`, `Tented`, `Sawfly`, `BeetleLarva`) VALUES ('" . $survey->getID() . "', '$group', '$length', '$quantity', '', '$notes', '$hairy', '$rolled', '$tented', '$sawfly', '$beetleLarva')");
+		mysqli_query($dbconn, "INSERT INTO ArthropodSighting (`SurveyFK`, `Group`, `LeadingGroup`, `Length`, `Quantity`, `PhotoURL`, `Notes`, `Hairy`, `Rolled`, `Tented`, `Sawfly`, `BeetleLarva`) VALUES ('" . $survey->getID() . "', '$group', '$group', '$length', '$quantity', '', '$notes', '$hairy', '$rolled', '$tented', '$sawfly', '$beetleLarva')");
 		$id = intval(mysqli_insert_id($dbconn));
 		mysqli_close($dbconn);
 		
-		return new ArthropodSighting($id, $survey, $group, $length, $quantity, "", $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
+		return new ArthropodSighting($id, $survey, $group, $group, $length, $quantity, "", $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
 	}
-	private function __construct($id, $survey, $group, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva){
+	private function __construct($id, $survey, $group, $leadingGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva){
 		$this->id = intval($id);
 		$this->survey = $survey;
 		$this->group = $group;
+		$this->leadingGroup = $leadingGroup;
 		$this->length = intval($length);
 		$this->quantity = intval($quantity);
 		$this->photoURL = $photoURL;
@@ -101,6 +103,7 @@ class ArthropodSighting
 		
 		$survey = Survey::findByID($arthropodSightingRow["SurveyFK"]);
 		$group = $arthropodSightingRow["Group"];
+		$leadingGroup = $arthropodSightingRow["LeadingGroup"];
 		$length = $arthropodSightingRow["Length"];
 		$quantity = $arthropodSightingRow["Quantity"];
 		$photoURL = $arthropodSightingRow["PhotoURL"];
@@ -111,7 +114,7 @@ class ArthropodSighting
 		$sawfly = $arthropodSightingRow["Sawfly"];
 		$beetleLarva = $arthropodSightingRow["BeetleLarva"];
 		
-		return new ArthropodSighting($id, $survey, $group, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
+		return new ArthropodSighting($id, $survey, $group, $leadingGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
 	}
 	
 	public static function findArthropodSightingsBySurvey($survey){
@@ -124,6 +127,7 @@ class ArthropodSighting
 			$id = $arthropodSightingRow["ID"];
 			$survey = Survey::findByID($arthropodSightingRow["SurveyFK"]);
 			$group = $arthropodSightingRow["Group"];
+			$leadingGroup = $arthropodSightingRow["LeadingGroup"];
 			$length = $arthropodSightingRow["Length"];
 			$quantity = $arthropodSightingRow["Quantity"];
 			$photoURL = $arthropodSightingRow["PhotoURL"];
@@ -134,7 +138,7 @@ class ArthropodSighting
 			$sawfly = $arthropodSightingRow["Sawfly"];
 			$beetleLarva = $arthropodSightingRow["BeetleLarva"];
 
-			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $group, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
+			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $group, $leadingGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $sawfly, $beetleLarva);
 		}
 		return $arthropodSightingsArray;
 	}
@@ -153,6 +157,11 @@ class ArthropodSighting
 	public function getGroup() {
 		if($this->deleted){return null;}
 		return $this->group;
+	}
+	
+	public function getLeadingGroup() {
+		if($this->deleted){return null;}
+		return $this->leadingGroup;
 	}
 	
 	public function getLength() {
