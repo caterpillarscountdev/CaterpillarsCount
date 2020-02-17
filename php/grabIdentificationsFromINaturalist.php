@@ -66,10 +66,10 @@
 	
 	$iNaturalistIDTranslations = array();
 	$originalGroupTranslations = array();
-	$query = mysqli_query($dbconn, "SELECT `ID`, `INaturalistID`, `Group` FROM ArthropodSighting WHERE INaturalistID IN ('" . implode("', '", $iNaturalistIDs) . "')");
+	$query = mysqli_query($dbconn, "SELECT `ID`, `INaturalistID`, `OriginalGroup` FROM ArthropodSighting WHERE INaturalistID IN ('" . implode("', '", $iNaturalistIDs) . "')");
 	while($row = mysqli_fetch_assoc($query)){
 		$iNaturalistIDTranslations[$row["INaturalistID"]] = $row["ID"];
-		$originalGroupTranslations[$row["INaturalistID"]] = $row["Group"];
+		$originalGroupTranslations[$row["INaturalistID"]] = $row["OriginalGroup"];
 	}
   	
 	//Build update queries string
