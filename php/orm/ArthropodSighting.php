@@ -262,6 +262,60 @@ class ArthropodSighting
 		return false;
 	}
 	
+	public function setAllEditables($originalGroup, $length, $quantity, $notes, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva){
+		if(!$this->deleted)
+		{
+			$originalGroup = self::validGroup($dbconn, $originalGroup);
+			$length = self::validLength($dbconn, $length);
+			$quantity = self::validQuantity($dbconn, $quantity);
+			$notes = self::validNotes($dbconn, $notes);
+			$hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
+			$rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
+			$tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
+			$originalSawfly = filter_var($originalSawfly, FILTER_VALIDATE_BOOLEAN);
+			$originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+			
+			$failures = "";
+		
+			if($originalGroup === false){
+				$originalGroup = "Invalid arthropod group";
+				$failures .= "Invalid arthropod group. ";
+			}
+			if($length === false){
+				$failures .= $originalGroup . " length must be between 1mm and 300mm. ";
+			}
+			if($quantity === false){
+				$failures .= $originalGroup . " quantity must be between 1 and 1000. ";
+			}
+			if($notes === false){
+				$failures .= "Invalid " . $originalGroup . " notes. ";
+			}
+
+			if($failures != ""){
+				return $failures;
+			}
+			
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			$photoURL = self::validPhotoURL($dbconn, $photoURL);
+			if($photoURL !== false){
+				mysqli_query($dbconn, "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `OriginalBeetleLarva`='$originalBeetleLarva' WHERE ID='" . $this->id . "'");
+				mysqli_close($dbconn);
+				$this->originalGroup = $originalGroup;
+				$this->length = $length;
+				$this->quantity = $quantity;
+				$this->notes = $notes;
+				$this->hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
+				$this->rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
+				$this->tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
+				$this->originalSawfly = filter_var($originalSawfly, FILTER_VALIDATE_BOOLEAN);
+				$this->originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+				return true;
+			}
+			mysqli_close($dbconn);
+		}
+		return false;
+	}
+	
 //REMOVER
 	public function permanentDelete()
 	{
