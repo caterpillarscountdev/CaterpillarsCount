@@ -21,6 +21,7 @@ class ArthropodSighting
 	private $leadingSawfly;
 	private $originalBeetleLarva;
 	private $leadingBeetleLarva;
+	private $iNaturalistID;
 	
 	private $deleted;
 
@@ -70,9 +71,9 @@ class ArthropodSighting
 		$id = intval(mysqli_insert_id($dbconn));
 		mysqli_close($dbconn);
 		
-		return new ArthropodSighting($id, $survey, $originalGroup, $originalGroup, $length, $quantity, "", $notes, $hairy, $rolled, $tented, $originalSawfly, $originalSawfly, $originalBeetleLarva, $originalBeetleLarva);
+		return new ArthropodSighting($id, $survey, $originalGroup, $originalGroup, $length, $quantity, "", $notes, $hairy, $rolled, $tented, $originalSawfly, $originalSawfly, $originalBeetleLarva, $originalBeetleLarva, "");
 	}
-	private function __construct($id, $survey, $originalGroup, $leadingGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $originalSawfly, $leadingSawfly, $originalBeetleLarva, $leadingBeetleLarva){
+	private function __construct($id, $survey, $originalGroup, $leadingGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $originalSawfly, $leadingSawfly, $originalBeetleLarva, $leadingBeetleLarva, $iNaturalistID){
 		$this->id = intval($id);
 		$this->survey = $survey;
 		$this->originalGroup = $originalGroup;
@@ -88,6 +89,7 @@ class ArthropodSighting
 		$this->leadingSawfly = filter_var($leadingSawfly, FILTER_VALIDATE_BOOLEAN);
 		$this->originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
 		$this->leadingBeetleLarva = filter_var($leadingBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+		$this->iNaturalistID = intval($iNaturalistID);
 		
 		$this->deleted = false;
 	}
@@ -119,8 +121,9 @@ class ArthropodSighting
 		$leadingSawfly = $arthropodSightingRow["LeadingSawfly"];
 		$originalBeetleLarva = $arthropodSightingRow["OriginalBeetleLarva"];
 		$leadingBeetleLarva = $arthropodSightingRow["LeadingBeetleLarva"];
+		$iNaturalistID = $arthropodSightingRow["INaturalistID"];
 		
-		return new ArthropodSighting($id, $survey, $originalGroup, $leadingGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $originalSawfly, $leadingSawfly, $originalBeetleLarva, $leadingBeetleLarva);
+		return new ArthropodSighting($id, $survey, $originalGroup, $leadingGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $originalSawfly, $leadingSawfly, $originalBeetleLarva, $leadingBeetleLarva, $iNaturalistID);
 	}
 	
 	public static function findArthropodSightingsBySurvey($survey){
@@ -145,8 +148,9 @@ class ArthropodSighting
 			$leadingSawfly = $arthropodSightingRow["LeadingSawfly"];
 			$originalBeetleLarva = $arthropodSightingRow["OriginalBeetleLarva"];
 			$leadingBeetleLarva = $arthropodSightingRow["LeadingBeetleLarva"];
+			$iNaturalistID = $arthropodSightingRow["INaturalistID"];
 
-			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $originalGroup, $leadingGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $originalSawfly, $leadingSawfly, $originalBeetleLarva, $leadingBeetleLarva);
+			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $originalGroup, $leadingGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $originalSawfly, $leadingSawfly, $originalBeetleLarva, $leadingBeetleLarva, $iNaturalistID);
 		}
 		return $arthropodSightingsArray;
 	}
@@ -225,6 +229,16 @@ class ArthropodSighting
 	public function getLeadingBeetleLarva() {
 		if($this->deleted){return null;}
 		return filter_var($this->leadingBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+	}
+	
+	public function getINaturalistID() {
+		if($this->deleted){return null;}
+		return intval($this->iNaturalistID);
+	}
+	
+	public function getINaturalistObservationURL() {
+		if($this->deleted){return null;}
+		return "https://www.inaturalist.org/observations/" . intval($this->iNaturalistID);
 	}
 	
 //SETTERS
