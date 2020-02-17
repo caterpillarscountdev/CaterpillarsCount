@@ -886,7 +886,7 @@
 							var data = JSON.parse(data.replace("true|", ""));
 							var totalSurveys = data[0];
 							var totalPages = data[1];
-							var surveys = data[2];console.log(surveys);
+							var surveys = data[2];
 							var isASiteAuthority = data[3];
 							var iNaturalistObserverID = data[5];
 							var haveINaturalistObservations = data[6];
@@ -1657,7 +1657,8 @@
 					var hrefParts = photoLinks.eq(i)[0].href.replace(/\//g, " ").trim().split(" ");
 					photoLinks.eq(i)[0].id = hrefParts[hrefParts.length - 1];
 				}
-				$("#" + id + " .arthropodSighting a").attr("href", "javascript:;");
+				$("#" + id + " .arthropodSighting a").removeAttr("href");
+				$("#" + id + " .arthropodSighting a").removeAttr("target");
 				$("#" + id + " .arthropodSighting a").css({cursor:"auto"});
 
 				//allow arthropod delete
