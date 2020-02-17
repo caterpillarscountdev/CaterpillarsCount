@@ -29,7 +29,7 @@
 					if(is_object($arthropodSightings[$j]) && get_class($arthropodSightings[$j]) == "ArthropodSighting"){
 						$arthropodSightingsArray[] = array(
 							"id" => $arthropodSightings[$j]->getID(),
-							"group" => $arthropodSightings[$j]->getGroup(),
+							"originalGroup" => $arthropodSightings[$j]->getOriginalGroup(),
 							"leadingGroup" => $arthropodSightings[$j]->getLeadingGroup(),
 							"length" => $arthropodSightings[$j]->getLength(),
 							"quantity" => $arthropodSightings[$j]->getQuantity(),
