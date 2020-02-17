@@ -38,8 +38,10 @@
 							"hairy" => $arthropodSightings[$j]->getHairy(),
 							"rolled" => $arthropodSightings[$j]->getRolled(),
 							"tented" => $arthropodSightings[$j]->getTented(),
-							"sawfly" => $arthropodSightings[$j]->getSawfly(),
-							"beetleLarva" => $arthropodSightings[$j]->getBeetleLarva(),
+							"originalSawfly" => $arthropodSightings[$j]->getOriginalSawfly(),
+							"leadingSawfly" => $arthropodSightings[$j]->getLeadingSawfly(),
+							"originalBeetleLarva" => $arthropodSightings[$j]->getOriginalBeetleLarva(),
+							"leadingBeetleLarva" => $arthropodSightings[$j]->getLeadingBeetleLarva(),
 						);
 					}
 				}
