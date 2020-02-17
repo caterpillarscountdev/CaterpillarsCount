@@ -30,6 +30,7 @@
 						$arthropodSightingsArray[] = array(
 							"id" => $arthropodSightings[$j]->getID(),
 							"group" => $arthropodSightings[$j]->getGroup(),
+							"leadingGroup" => $arthropodSightings[$j]->getLeadingGroup(),
 							"length" => $arthropodSightings[$j]->getLength(),
 							"quantity" => $arthropodSightings[$j]->getQuantity(),
 							"photoURL" => $arthropodSightings[$j]->getPhotoURL(),
