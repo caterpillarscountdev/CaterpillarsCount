@@ -122,7 +122,7 @@
 		}
 		
 		$oldestCaterpillarsCountIdentification = "";
-		$oldestCaterpillarsCountIdentificationTimestamp = "";
+		$oldestCaterpillarsCountIdentificationTimestamp = -1;
 		$mostRecentCaterpillarsCountIdentification = "";
 		$mostRecentCaterpillarsCountIdentificationTimestamp = -1;
 		$numberOfCaterpillarsCountIdentifications = 0;
@@ -211,7 +211,7 @@
 			if(array_key_exists("user", $identifications[$j]) && $identifications[$j]["user"] !== null && array_key_exists("login", $identifications[$j]["user"]) && $identifications[$j]["user"]["login"] == "caterpillarscount"){
 				if(array_key_exists("created_at", $identifications[$j]) && $identifications[$j]["created_at"] !== null){
 					$timestamp = strtotime($identifications[$j]["created_at"]);
-					if($timestamp < $oldestCaterpillarsCountIdentificationTimestamp == -1 || $oldestCaterpillarsCountIdentificationTimestamp == -1){
+					if($timestamp < $oldestCaterpillarsCountIdentificationTimestamp || $oldestCaterpillarsCountIdentificationTimestamp == -1){
 						$oldestCaterpillarsCountIdentificationTimestamp = $timestamp;
 						$oldestCaterpillarsCountIdentification = $vote;
 					}
