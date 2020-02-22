@@ -30,7 +30,7 @@
 						$arthropodSightingsArray[] = array(
 							"id" => $arthropodSightings[$j]->getID(),
 							"originalGroup" => $arthropodSightings[$j]->getOriginalGroup(),
-							"leadingGroup" => $arthropodSightings[$j]->getLeadingGroup(),
+							"updatedGroup" => $arthropodSightings[$j]->getUpdatedGroup(),
 							"length" => $arthropodSightings[$j]->getLength(),
 							"quantity" => $arthropodSightings[$j]->getQuantity(),
 							"photoURL" => $arthropodSightings[$j]->getPhotoURL(),
@@ -39,9 +39,9 @@
 							"rolled" => $arthropodSightings[$j]->getRolled(),
 							"tented" => $arthropodSightings[$j]->getTented(),
 							"originalSawfly" => $arthropodSightings[$j]->getOriginalSawfly(),
-							"leadingSawfly" => $arthropodSightings[$j]->getLeadingSawfly(),
+							"updatedSawfly" => $arthropodSightings[$j]->getUpdatedSawfly(),
 							"originalBeetleLarva" => $arthropodSightings[$j]->getOriginalBeetleLarva(),
-							"leadingBeetleLarva" => $arthropodSightings[$j]->getLeadingBeetleLarva(),
+							"updatedBeetleLarva" => $arthropodSightings[$j]->getUpdatedBeetleLarva(),
 							"iNaturalistObservationURL" => $arthropodSightings[$j]->getINaturalistObservationURL(),
 						);
 					}
