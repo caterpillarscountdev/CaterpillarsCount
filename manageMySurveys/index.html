@@ -1193,7 +1193,7 @@
 										else if(surveys[i]["arthropodSightings"][j]["leadingBeetleLarva"]){
 											iNaturalistGroupDecision = "beetle larvae";
 										}
-										htmlToAdd +=		"<div><a href=\"" + surveys[i]["arthropodSightings"][j]["iNaturalistObservationURL"] + "\" target=\"_blank\">iNaturalist experts decided on \"" + iNaturalistGroupDecision + "\" instead.</a></div>";
+										htmlToAdd +=		"<div><a href=\"" + surveys[i]["arthropodSightings"][j]["iNaturalistObservationURL"] + "\" target=\"_blank\">Users on iNaturalist suggested this is a" + (["a", "e", "i", "o", "u"].indexOf(iNaturalistGroupDecision.charAt(0).toLowerCase()) > -1 ? "n" : "") + " \"" + iNaturalistGroupDecision + "\".</a></div>";
 									}
 									htmlToAdd +=		"</div>";
 									htmlToAdd += 		"<div class=\"deleteArthropodSighting\"></div>";
