@@ -61,7 +61,7 @@
 		$rankingsArray[strval($row["SiteFK"])]["UniqueDatesThisYear"] = intval($row["UniqueDatesThisYear"]);
 	}
 
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND Plant.SiteFK<>2 AND ArthropodSighting.LeadingGroup='caterpillar' GROUP BY Plant.SiteFK");
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND Plant.SiteFK<>2 AND ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Plant.SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
 		$rankingsArray[strval($row["SiteFK"])]["Caterpillars"] = round(((floatval($row["Caterpillars"]) / floatval($rankingsArray[strval($row["SiteFK"])]["Total"])) * 100), 2) . "%";
 	}
