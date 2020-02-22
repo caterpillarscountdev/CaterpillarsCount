@@ -1185,12 +1185,12 @@
 									else{
 										htmlToAdd +=		"<div class=\"italic notes\" style=\"display:none;\">*<div class=\"editable\">[notes]</div></div>";
 									}
-									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != surveys[i]["arthropodSightings"][j]["leadingGroup"] || surveys[i]["arthropodSightings"][j]["originalSawfly"] != surveys[i]["arthropodSightings"][j]["leadingSawfly"] || surveys[i]["arthropodSightings"][j]["originalBeetleLarva"] != surveys[i]["arthropodSightings"][j]["leadingBeetleLarva"]){
-										var iNaturalistGroupDecision = surveys[i]["arthropodSightings"][j]["leadingGroup"];
-										if(surveys[i]["arthropodSightings"][j]["leadingSawfly"]){
+									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != surveys[i]["arthropodSightings"][j]["updatedGroup"] || surveys[i]["arthropodSightings"][j]["originalSawfly"] != surveys[i]["arthropodSightings"][j]["updatedSawfly"] || surveys[i]["arthropodSightings"][j]["originalBeetleLarva"] != surveys[i]["arthropodSightings"][j]["updatedBeetleLarva"]){
+										var iNaturalistGroupDecision = surveys[i]["arthropodSightings"][j]["updatedGroup"];
+										if(surveys[i]["arthropodSightings"][j]["updatedSawfly"]){
 											iNaturalistGroupDecision = "sawflies";
 										}
-										else if(surveys[i]["arthropodSightings"][j]["leadingBeetleLarva"]){
+										else if(surveys[i]["arthropodSightings"][j]["updatedBeetleLarva"]){
 											iNaturalistGroupDecision = "beetle larvae";
 										}
 										htmlToAdd +=		"<div><a href=\"" + surveys[i]["arthropodSightings"][j]["iNaturalistObservationURL"] + "\" target=\"_blank\">Users on iNaturalist suggested this is a" + (["a", "e", "i", "o", "u"].indexOf(iNaturalistGroupDecision.charAt(0).toLowerCase()) > -1 ? "n" : "") + " \"" + iNaturalistGroupDecision + "\".</a></div>";
