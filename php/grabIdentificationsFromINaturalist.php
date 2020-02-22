@@ -305,13 +305,13 @@
 		else{
 			$updateMySQL .= "INSERT INTO `ExpertIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `Rank`, `TaxonName`, `StandardGroup`, `BeetleLarvaUpdated`, `SawflyUpdated`, `Agreement`, `RunnerUpAgreement`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$rank', '$taxonName', '$pluralityIdentification', '" . ($pluralityIdentification == "beetle" && $isLarva) . "', '$isSawfly', '$pluralityIdentificationAgreement', '$runnerUpIdentificationVoteAgreement', 'https://www.inaturalist.org/observations/$iNaturalistID');";
 		}
-		//Update LeadingGroup in ArthropodSighting table
+		//Update UpdatedGroup in ArthropodSighting table
 		$allGroups = array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "other");
-		$leadingGroup = $pluralityIdentification;
-		if(!in_array($leadingGroup, $allGroups)){
-			$leadingGroup = "other";
+		$updatedGroup = $pluralityIdentification;
+		if(!in_array($updatedGroup, $allGroups)){
+			$updatedGroup = "other";
 		}
-		$updateMySQL .= "UPDATE `ArthropodSighting` SET `LeadingGroup`='$leadingGroup', `LeadingBeetleLarva`='" . ($pluralityIdentification == "beetle" && $isLarva) . "', `LeadingSawfly`='$isSawfly' WHERE `ID`='$arthropodSightingFK';";
+		$updateMySQL .= "UPDATE `ArthropodSighting` SET `UpdatedGroup`='$updatedGroup', `UpdatedBeetleLarva`='" . ($pluralityIdentification == "beetle" && $isLarva) . "', `UpdatedSawfly`='$isSawfly' WHERE `ID`='$arthropodSightingFK';";
 	}
 	
 	//Run the update queries string we built
