@@ -41,10 +41,14 @@
 	//Note which ArthropodSightingFK's have already been expertly identified (so we know whether to UPDATE or INSERT later)
 	$previouslyIdentifiedArthropodSightingFKs = array();
 	$previouslyIdentifiedStandardGroups = array();
-	$query = mysqli_query($dbconn, "SELECT ArthropodSightingFK, StandardGroup FROM ExpertIdentification WHERE 1");
+	$query = mysqli_query($dbconn, "SELECT ArthropodSightingFK, StandardGroup, SawflyUpdated, BeetleLarvaUpdated FROM ExpertIdentification WHERE 1");
 	while($row = mysqli_fetch_assoc($query)){
 		$previouslyIdentifiedArthropodSightingFKs[] = intval($row["ArthropodSightingFK"]);
-		$previouslyIdentifiedStandardGroupsByArthropodSightingFK[strval($row["ArthropodSightingFK"])] = $row["StandardGroup"];
+		$previouslyIdentifiedStandardGroupsByArthropodSightingFK[strval($row["ArthropodSightingFK"])] = array(
+			"standardGroup" => $row["StandardGroup"],
+			"sawflyUpdated" => $row["SawflyUpdated"],
+			"beetleLarvaUpdated" => $row["BeetleLarvaUpdated"]
+		);
 	}
 	
 	//Note which ArthropodSightingFK's have already been marked as disputed (so we know whether to DELETE, UPDATE, or INSERT later)
@@ -310,11 +314,30 @@
 		
 		//Log ExpertIdentification change in TemporaryExpertIdentificationChangeLog table
 		$previouslyIdentifiedStandardGroup = "";
+		$previouslyIdentifiedSawfly = false;
+		$previouslyIdentifiedBeetleLarva = false;
 		if(array_key_exists(strval($arthropodSightingFK), $previouslyIdentifiedStandardGroupsByArthropodSightingFK)){
-			$previouslyIdentifiedStandardGroup = $previouslyIdentifiedStandardGroupsByArthropodSightingFK[strval($arthropodSightingFK)];
+			$previouslyIdentifiedStandardGroup = $previouslyIdentifiedStandardGroupsByArthropodSightingFK[strval($arthropodSightingFK)]["standardGroup"];
+			$previouslyIdentifiedSawfly = boolval($previouslyIdentifiedStandardGroupsByArthropodSightingFK[strval($arthropodSightingFK)]["sawflyUpdated"]);
+			$previouslyIdentifiedBeetleLarva = boolval($previouslyIdentifiedStandardGroupsByArthropodSightingFK[strval($arthropodSightingFK)]["beetleLarvaUpdated"]);
 		}
-		if($previouslyIdentifiedStandardGroup != $pluralityIdentification){
-			$updateMySQL .= "INSERT INTO `TemporaryExpertIdentificationChangeLog` (`ArthropodSightingFK`, `PreviousExpertIdentification`, `NewExpertIdentification`) VALUES ('$arthropodSightingFK', '$previouslyIdentifiedStandardGroup', '$pluralityIdentification');";
+		if($previouslyIdentifiedStandardGroup == "" || ($previouslyIdentifiedStandardGroup != $pluralityIdentification || $previouslyIdentifiedSawfly != $isSawfly || $previouslyIdentifiedBeetleLarva != ($pluralityIdentification == "beetle" && $isLarva))){
+			if($previouslyIdentifiedBeetleLarva){
+				$previouslyIdentifiedStandardGroup = "beetle larva";
+			}
+			else if($previouslyIdentifiedSawfly){
+				$previouslyIdentifiedStandardGroup = "sawfly";
+			}
+			
+			$currentStandardGroupToEmailLater = $pluralityIdentification;
+			if($currentStandardGroupToEmailLater == "beetle" && $isLarva){
+				$currentStandardGroupToEmailLater = "beetle larva";
+			}
+			else if($isSawfly){
+				$currentStandardGroupToEmailLater = "sawfly";
+			}
+			
+			$updateMySQL .= "INSERT INTO `TemporaryExpertIdentificationChangeLog` (`ArthropodSightingFK`, `PreviousExpertIdentification`, `NewExpertIdentification`) VALUES ('$arthropodSightingFK', '$previouslyIdentifiedStandardGroup', '$currentStandardGroupToEmailLater');";
 		}
 		
 		//Update UpdatedGroup in ArthropodSighting table
