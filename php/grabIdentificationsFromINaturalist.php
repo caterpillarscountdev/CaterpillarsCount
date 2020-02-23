@@ -40,9 +40,11 @@
 	
 	//Note which ArthropodSightingFK's have already been expertly identified (so we know whether to UPDATE or INSERT later)
 	$previouslyIdentifiedArthropodSightingFKs = array();
-	$query = mysqli_query($dbconn, "SELECT ArthropodSightingFK FROM ExpertIdentification WHERE 1");
+	$previouslyIdentifiedStandardGroups = array();
+	$query = mysqli_query($dbconn, "SELECT ArthropodSightingFK, StandardGroup FROM ExpertIdentification WHERE 1");
 	while($row = mysqli_fetch_assoc($query)){
 		$previouslyIdentifiedArthropodSightingFKs[] = intval($row["ArthropodSightingFK"]);
+		$previouslyIdentifiedStandardGroupsByArthropodSightingFK[strval($row["ArthropodSightingFK"])] = $row["StandardGroup"];
 	}
 	
 	//Note which ArthropodSightingFK's have already been marked as disputed (so we know whether to DELETE, UPDATE, or INSERT later)
@@ -305,6 +307,14 @@
 		else{
 			$updateMySQL .= "INSERT INTO `ExpertIdentification` (`ArthropodSightingFK`, `OriginalGroup`, `Rank`, `TaxonName`, `StandardGroup`, `BeetleLarvaUpdated`, `SawflyUpdated`, `Agreement`, `RunnerUpAgreement`, `INaturalistObservationURL`) VALUES ('$arthropodSightingFK', '$originalGroup', '$rank', '$taxonName', '$pluralityIdentification', '" . ($pluralityIdentification == "beetle" && $isLarva) . "', '$isSawfly', '$pluralityIdentificationAgreement', '$runnerUpIdentificationVoteAgreement', 'https://www.inaturalist.org/observations/$iNaturalistID');";
 		}
+		
+		//Log ExpertIdentification change in TemporaryExpertIdentificationChangeLog table
+		$previouslyIdentifiedStandardGroup = "";
+		if(array_key_exists(strval($arthropodSightingFK), $previouslyIdentifiedStandardGroupsByArthropodSightingFK)){
+			$previouslyIdentifiedStandardGroup = $previouslyIdentifiedStandardGroupsByArthropodSightingFK[strval($arthropodSightingFK)];
+		}
+		$updateMySQL .= "INSERT INTO `TemporaryExpertIdentificationChangeLog` (`ArthropodSightingFK`, `PreviousExpertIdentification`, `NewExpertIdentification`) VALUES ('$arthropodSightingFK', '$previouslyIdentifiedStandardGroup', '$pluralityIdentification');";
+		
 		//Update UpdatedGroup in ArthropodSighting table
 		$allGroups = array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "other");
 		$updatedGroup = $pluralityIdentification;
