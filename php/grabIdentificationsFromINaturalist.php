@@ -71,11 +71,15 @@
 	}
 	
 	$iNaturalistIDTranslations = array();
-	$originalGroupTranslations = array();
-	$query = mysqli_query($dbconn, "SELECT `ID`, `INaturalistID`, `OriginalGroup` FROM ArthropodSighting WHERE INaturalistID IN ('" . implode("', '", $iNaturalistIDs) . "')");
+	$originalTranslations = array();
+	$query = mysqli_query($dbconn, "SELECT `ID`, `INaturalistID`, `OriginalGroup`, `OriginalSawfly`, `OriginalBeetleLarva` FROM ArthropodSighting WHERE INaturalistID IN ('" . implode("', '", $iNaturalistIDs) . "')");
 	while($row = mysqli_fetch_assoc($query)){
 		$iNaturalistIDTranslations[$row["INaturalistID"]] = $row["ID"];
-		$originalGroupTranslations[$row["INaturalistID"]] = $row["OriginalGroup"];
+		$originalTranslations[$row["INaturalistID"]] = array(
+			"originalGroup" => $row["OriginalGroup"],
+			"originalSawfly" => boolval($row["OriginalSawfly"]),
+			"originalBeetleLarva" => boolval($row["OriginalBeetleLarva"]),
+		);
 	}
   	
 	//Build update queries string
@@ -89,7 +93,9 @@
 		
 		$iNaturalistID = $data["results"][$i]["id"];
 		$arthropodSightingFK = $iNaturalistIDTranslations[$data["results"][$i]["id"]];
-		$originalGroup = $originalGroupTranslations[$data["results"][$i]["id"]];
+		$originalGroup = $originalTranslations[$data["results"][$i]["id"]]["originalGroup"];
+		$originalSawfly = $originalTranslations[$data["results"][$i]["id"]]["originalSawfly"];
+		$originalBeetleLarva = $originalTranslations[$data["results"][$i]["id"]]["originalBeetleLarva"];
 		
 		//GET VALUE: Finest Rank
 		if($data["results"][$i] === null || !array_key_exists("taxon", $data["results"][$i]) || $data["results"][$i]["taxon"] === null || !array_key_exists("rank", $data["results"][$i]["taxon"])){
@@ -321,7 +327,7 @@
 			$previouslyIdentifiedSawfly = boolval($previouslyIdentifiedStandardGroupsByArthropodSightingFK[strval($arthropodSightingFK)]["sawflyUpdated"]);
 			$previouslyIdentifiedBeetleLarva = boolval($previouslyIdentifiedStandardGroupsByArthropodSightingFK[strval($arthropodSightingFK)]["beetleLarvaUpdated"]);
 		}
-		if($previouslyIdentifiedStandardGroup == "" || ($previouslyIdentifiedStandardGroup != $pluralityIdentification || $previouslyIdentifiedSawfly != $isSawfly || $previouslyIdentifiedBeetleLarva != ($pluralityIdentification == "beetle" && $isLarva))){
+		if(($previouslyIdentifiedStandardGroup == "" && ($pluralityIdentification != $originalGroup || $isSawfly != $originalSawfly || ($pluralityIdentification == "beetle" && $isLarva) != $originalBeetleLarva)) || ($previouslyIdentifiedStandardGroup != $pluralityIdentification || $previouslyIdentifiedSawfly != $isSawfly || $previouslyIdentifiedBeetleLarva != ($pluralityIdentification == "beetle" && $isLarva))){
 			if($previouslyIdentifiedBeetleLarva){
 				$previouslyIdentifiedStandardGroup = "beetle larva";
 			}
