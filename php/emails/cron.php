@@ -529,6 +529,6 @@
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
 	$finishedExpertIdentificationEmailsBeforeMonth = getSave($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", 31 * 24 * 60 * 60);
 	if($finishedExpertIdentificationEmailsBeforeMonth === null || intval($finishedExpertIdentificationEmailsBeforeMonth) !== intval(date('n'))){
-		sendExpertIdentifications();
+		//sendExpertIdentifications();
 	}
 ?>
