@@ -325,11 +325,14 @@
 			$changeLIs = "";
 			$percentSuppporting = 0;
 			$processedTemporaryExpertIdentificationChangeLogIDs = array();
+			$lastArthropodSightingFK = "";
 			while($row = mysqli_fetch_assoc($query)){
-				if(!boolval($row["Hidden"])){
+				if(!boolval($row["Hidden"]) && strval($row["ArthropodSightingFK"]) !== $lastArthropodSightingFK){
 					if($userID !== -1 && $userID !== intval($row["UserID"])){
 						break;
 					}
+					
+					$lastArthropodSightingFK = strval($row["ArthropodSightingFK"]);
 
 					if($userID == -1){
 						$userID = intval($row["UserID"]);
