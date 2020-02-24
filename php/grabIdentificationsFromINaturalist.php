@@ -216,7 +216,7 @@
 			else if($order == "Hemiptera"){
 				$vote = "truebugs";
 			}
-			else if($order != ""){
+			else{
 				$vote = $order;
 			}
 			
@@ -243,6 +243,10 @@
 		$identificationVoteCounts = array_count_values($identificationVotes);
 		arsort($identificationVoteCounts);
 		$keys = array_keys($identificationVoteCounts);
+		if(count($keys) == 0){
+			$updateMySQL .= "DELETE FROM `ExpertIdentification` WHERE `ArthropodSightingFK`='$arthropodSightingFK';";
+			continue;
+		}
 		$pluralityIdentification = $keys[0];
 		if($numberOfCaterpillarsCountIdentifications > 1 && $mostRecentCaterpillarsCountIdentificationTimestamp > -1){
 			$pluralityIdentification = $mostRecentCaterpillarsCountIdentification;//our follow-up identification trumps all other identifications
@@ -285,6 +289,7 @@
 			}
 			
 			if(count($identifications) < 2 || (count($keys) > 1 && $identificationVoteCounts[$keys[0]] == $identificationVoteCounts[$keys[1]])){
+				$updateMySQL .= "DELETE FROM `ExpertIdentification` WHERE `ArthropodSightingFK`='$arthropodSightingFK';";
 				continue;//don't allow ties for ExpertIdentification plurality agreement
 			}
 		}
