@@ -308,7 +308,7 @@
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
 		global $baseFileName;
-		emailExpertIdentifications("plocharczykweb@gmail.com", "", "test3", "", "", "", "", "", "");
+		
 		if($emailsSent < $MAX_EMAIL_SENDS){
 			//Haven't already finished ExpertIdentification emails before this month based on cache.
 			$dbconn = (new Keychain)->getDatabaseConnection();
@@ -393,8 +393,8 @@
 				}
 				$processedTemporaryExpertIdentificationChangeLogIDs[] = $row["ID"];
 			}
-			emailExpertIdentifications("plocharczykweb@gmail.com", "", "test4", "", "", "", "", "", "");
-			if($userID != -1){
+			
+			if($userID != -1){emailExpertIdentifications("plocharczykweb@gmail.com", "", "test5", "", "", "", "", "", "");
 				$distinctFeatures = array(
 					"ant" => "Ants have 3 distinct body sections and a narrow waist.",
 					"aphid" => "Aphids and pysillids are quite small, usually a few millimeters at most, and are often green, yellow, orange in color.",
@@ -430,12 +430,12 @@
 				}
 
 				$query = mysqli_query($dbconn, "DELETE FROM TemporaryExpertIdentificationChangeLog WHERE ID IN ('" . implode("', '", $processedTemporaryExpertIdentificationChangeLogIDs) . "');");
-				mysqli_close($dbconn);
+				mysqli_close($dbconn);emailExpertIdentifications("plocharczykweb@gmail.com", "", "test7", "", "", "", "", "", "");
 				//emailExpertIdentifications($userEmail, $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
 				emailExpertIdentifications("plocharczykweb@gmail.com", $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
 				$emailsSent++;
 			}
-			else{
+			else{emailExpertIdentifications("plocharczykweb@gmail.com", "", "test6", "", "", "", "", "", "");
 				mysqli_close($dbconn);
 				save($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", date('n'));
 			}
