@@ -30,9 +30,9 @@
 		die("Already processing.");
 	}
 	if($month == intval(date('n')) && $iteration == 0){
-		save($baseFileName . "finishedMonth", date('n'));
+		/*save($baseFileName . "finishedMonth", date('n'));
 		mysqli_close($dbconn);
-		die("Already finished this month based on CronJobStatus table.");
+		die("Already finished this month based on CronJobStatus table.");*/
 	}
 	
 	//If so, mark as processing
