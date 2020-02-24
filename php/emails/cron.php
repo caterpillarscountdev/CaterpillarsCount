@@ -345,7 +345,7 @@
 						$supportingTotal = intval(mysqli_fetch_assoc($innerQuery)["SupportingTotal"]);
 						$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS Total FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID';");
 						$total = intval(mysqli_fetch_assoc($innerQuery)["Total"]);
-						$percentSuppporting = round(($supportingTotal / $total) * 100, 2);
+						$percentSuppporting = $total == 0 ? 0 : round(($supportingTotal / $total) * 100, 2);
 					}
 
 					$originalGroup = $row["OriginalGroup"];
