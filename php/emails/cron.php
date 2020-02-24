@@ -312,7 +312,7 @@
 		if($emailsSent < $MAX_EMAIL_SENDS){
 			//Haven't already finished ExpertIdentification emails before this month based on cache.
 			$dbconn = (new Keychain)->getDatabaseConnection();
-			$query = mysqli_query($dbconn, "SELECT TemporaryExpertIdentificationChangeLog.*, `User.ID` AS UserID, `User`.`Hidden`, `User`.FirstName, `User`.Email, ArthropodSighting.INaturalistID, ArthropodSighting.OriginalGroup, ArthropodSighting.PhotoURL, `User`.`INaturalistObserverID` FROM `TemporaryExpertIdentificationChangeLog` JOIN ArthropodSighting ON TemporaryExpertIdentificationChangeLog.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID WHERE (MONTH(Timestamp)<>MONTH(NOW()) OR YEAR(Timestamp)<>YEAR(NOW())) AND `User`.`Hidden`='0' ORDER BY User.ID, ArthropodSightingFK, Timestamp DESC");
+			$query = mysqli_query($dbconn, "SELECT TemporaryExpertIdentificationChangeLog.*, `User`.ID AS UserID, `User`.`Hidden`, `User`.FirstName, `User`.Email, ArthropodSighting.INaturalistID, ArthropodSighting.OriginalGroup, ArthropodSighting.PhotoURL, `User`.`INaturalistObserverID` FROM `TemporaryExpertIdentificationChangeLog` JOIN ArthropodSighting ON TemporaryExpertIdentificationChangeLog.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID WHERE (MONTH(Timestamp)<>MONTH(NOW()) OR YEAR(Timestamp)<>YEAR(NOW())) AND `User`.`Hidden`='0' ORDER BY User.ID, ArthropodSightingFK, Timestamp DESC");
 			$userID = -1;
 			$userEmail = "";
 			$userFirstName = "iNaturalist results are in";
