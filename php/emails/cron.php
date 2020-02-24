@@ -334,6 +334,9 @@
 					if($userID == -1){
 						$userID = intval($row["UserID"]);
 						$userEmail = $row["Email"];
+						if($row["FirstName"] != ""){
+							$userFirstName = $row["FirstName"]
+						}
 						$iNaturalistObserverID = $row["INaturalistObserverID"];
 						$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS SupportingTotal FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID' AND (ExpertIdentification.OriginalGroup=ExpertIdentification.StandardGroup OR (ExpertIdentification.OriginalGroup IN ('other', 'unidentified') AND (ExpertIdentification.StandardGroup NOT IN ('ant', 'aphid', 'bee', 'beetle', 'caterpillar', 'daddylonglegs', 'fly', 'grasshopper', 'leafhopper', 'moths', 'spider', 'truebugs'))));");
 						$supportingTotal = intval(mysqli_fetch_assoc($innerQuery)["SupportingTotal"]);
@@ -361,17 +364,20 @@
 						"moths" => "moth", 
 						"truebugs" => "truebug", 
 					);
-
+					
+					$previousExpertIdentificationSingular = $previousExpertIdentification;
 					if(array_key_exists($previousExpertIdentification, $arthropodNameTranslations)){
-						$previousExpertIdentification = $arthropodNameTranslations[$previousExpertIdentification];
+						$previousExpertIdentificationSingular = $arthropodNameTranslations[$previousExpertIdentification];
 					}
+					
+					$newExpertIdentificationSingular = $newExpertIdentification;
 					if(array_key_exists($newExpertIdentification, $arthropodNameTranslations)){
-						$newExpertIdentification = $arthropodNameTranslations[$newExpertIdentification];
+						$newExpertIdentificationSingular = $arthropodNameTranslations[$newExpertIdentification];
 					}
 
-					$newExpertIdentificationN = in_array(strtolower(substr($newExpertIdentification, 0, 1)), array("a", "e", "i", "o", "u")) ? "n" : "";
+					$newExpertIdentificationN = in_array(strtolower(substr($newExpertIdentificationSingular, 0, 1)), array("a", "e", "i", "o", "u")) ? "n" : "";
 
-					$changeLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\"><a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/observations/" . $iNaturalistObservationID . "\" target=\"_blank\"><span style=\"color: #6faf6d;\">This " . $previousExpertIdentification . " observation</span></a> is actually a" . $newExpertIdentificationN . " " . $newExpertIdentification . ".</span></li>";
+					$changeLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\"><a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/observations/" . $iNaturalistObservationID . "\" target=\"_blank\"><span style=\"color: #6faf6d;\">This " . $previousExpertIdentificationSingular . " observation</span></a> is actually a" . $newExpertIdentificationN . " " . $newExpertIdentificationSingular . ".</span></li>";
 
 					if(in_array($previousExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
 						if(!in_array($previousExpertIdentification, $normalArthropodsInvolved)){
@@ -394,7 +400,7 @@
 				$processedTemporaryExpertIdentificationChangeLogIDs[] = $row["ID"];
 			}
 			
-			if($userID != -1){emailExpertIdentifications("plocharczykweb@gmail.com", "", "test5", "", "", "", "", "", "");
+			if($userID != -1){
 				$distinctFeatures = array(
 					"ant" => "Ants have 3 distinct body sections and a narrow waist.",
 					"aphid" => "Aphids and pysillids are quite small, usually a few millimeters at most, and are often green, yellow, orange in color.",
@@ -414,7 +420,7 @@
 
 				$distinctFeatureLIs = "";
 				for($i = 0; $i < count($normalArthropodsInvolved); $i++){
-					if(in_array($normalArthropodsInvolved[$i], $distinctFeatures)){
+					if(array_key_exists($normalArthropodsInvolved[$i], $distinctFeatures)){
 						$distinctFeatureLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\">" . $distinctFeatures[$normalArthropodsInvolved[$i]] . "</span></li>";
 					}
 				}
@@ -430,12 +436,12 @@
 				}
 
 				$query = mysqli_query($dbconn, "DELETE FROM TemporaryExpertIdentificationChangeLog WHERE ID IN ('" . implode("', '", $processedTemporaryExpertIdentificationChangeLogIDs) . "');");
-				mysqli_close($dbconn);emailExpertIdentifications("plocharczykweb@gmail.com", "", "test7", "", "", "", "", "", "");
+				mysqli_close($dbconn);
 				//emailExpertIdentifications($userEmail, $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
 				emailExpertIdentifications("plocharczykweb@gmail.com", $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
 				$emailsSent++;
 			}
-			else{emailExpertIdentifications("plocharczykweb@gmail.com", "", "test6", "", "", "", "", "", "");
+			else{
 				mysqli_close($dbconn);
 				save($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", date('n'));
 			}
