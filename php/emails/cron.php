@@ -335,7 +335,7 @@
 						$userID = intval($row["UserID"]);
 						$userEmail = $row["Email"];
 						if($row["FirstName"] != ""){
-							$userFirstName = $row["FirstName"]
+							$userFirstName = $row["FirstName"];
 						}
 						$iNaturalistObserverID = $row["INaturalistObserverID"];
 						$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS SupportingTotal FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID' AND (ExpertIdentification.OriginalGroup=ExpertIdentification.StandardGroup OR (ExpertIdentification.OriginalGroup IN ('other', 'unidentified') AND (ExpertIdentification.StandardGroup NOT IN ('ant', 'aphid', 'bee', 'beetle', 'caterpillar', 'daddylonglegs', 'fly', 'grasshopper', 'leafhopper', 'moths', 'spider', 'truebugs'))));");
