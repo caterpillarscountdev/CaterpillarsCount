@@ -393,6 +393,7 @@
 				}
 				$processedTemporaryExpertIdentificationChangeLogIDs[] = $row["ID"];
 			}
+			
 			if($userID != -1){
 				$distinctFeatures = array(
 					"ant" => "Ants have 3 distinct body sections and a narrow waist.",
@@ -429,11 +430,13 @@
 				}
 
 				$query = mysqli_query($dbconn, "DELETE FROM TemporaryExpertIdentificationChangeLog WHERE ID IN ('" . implode("', '", $processedTemporaryExpertIdentificationChangeLogIDs) . "');");
+				mysqli_close($dbconn);
 				//emailExpertIdentifications($userEmail, $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
 				emailExpertIdentifications("plocharczykweb@gmail.com", $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
 				$emailsSent++;
 			}
 			else{
+				mysqli_close($dbconn);
 				save($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", date('n'));
 			}
    		}
@@ -516,10 +519,12 @@
 		send7();
 		send8();
 	}
-	
+
+	emailExpertIdentifications("plocharczykweb@gmail.com", "", "test1", "", "", "", "", "", "");
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
 	$finishedExpertIdentificationEmailsBeforeMonth = getSave($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", 31 * 24 * 60 * 60);
 	if($finishedExpertIdentificationEmailsBeforeMonth === null || intval($finishedExpertIdentificationEmailsBeforeMonth) !== intval(date('n'))){
+		emailExpertIdentifications("plocharczykweb@gmail.com", "", "test2", "", "", "", "", "", "");
 		sendExpertIdentifications();
 	}
 ?>
