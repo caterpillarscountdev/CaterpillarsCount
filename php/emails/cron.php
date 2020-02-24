@@ -308,7 +308,7 @@
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
 		global $baseFileName;
-		
+		emailExpertIdentifications("plocharczykweb@gmail.com", "", "test3", "", "", "", "", "", "");
 		if($emailsSent < $MAX_EMAIL_SENDS){
 			//Haven't already finished ExpertIdentification emails before this month based on cache.
 			$dbconn = (new Keychain)->getDatabaseConnection();
@@ -393,7 +393,7 @@
 				}
 				$processedTemporaryExpertIdentificationChangeLogIDs[] = $row["ID"];
 			}
-			
+			emailExpertIdentifications("plocharczykweb@gmail.com", "", "test4", "", "", "", "", "", "");
 			if($userID != -1){
 				$distinctFeatures = array(
 					"ant" => "Ants have 3 distinct body sections and a narrow waist.",
@@ -520,11 +520,9 @@
 		send8();
 	}
 
-	emailExpertIdentifications("plocharczykweb@gmail.com", "", "test1", "", "", "", "", "", "");
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
 	$finishedExpertIdentificationEmailsBeforeMonth = getSave($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", 31 * 24 * 60 * 60);
 	if($finishedExpertIdentificationEmailsBeforeMonth === null || intval($finishedExpertIdentificationEmailsBeforeMonth) !== intval(date('n'))){
-		emailExpertIdentifications("plocharczykweb@gmail.com", "", "test2", "", "", "", "", "", "");
 		sendExpertIdentifications();
 	}
 ?>
