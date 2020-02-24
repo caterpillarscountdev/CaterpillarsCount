@@ -13,6 +13,7 @@
 	require_once('/opt/app-root/src/php/resultMemory.php');
 
 	date_default_timezone_set('US/Eastern');
+	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
 	
 	//ADJUSTABLE LIMITS:
 	//WARNING: If you change these limits, make sure to adjust the time that the TemporaryEmailLog clears. You want it to clear while no emails are being sent out so you dont end up with duplicate sends.
@@ -306,6 +307,7 @@
 	function sendExpertIdentifications(){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
+		global $baseFileName;
 		
 		if($emailsSent < $MAX_EMAIL_SENDS){
 			//Haven't already finished ExpertIdentification emails before this month based on cache.
