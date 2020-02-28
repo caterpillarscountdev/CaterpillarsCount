@@ -9,15 +9,15 @@
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	$includeWetLeaves = filter_var($_GET["includeWetLeaves"], FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
-	$comparisonMetric = mysqli_real_escape_string($dbconn, rawurldecode($_GET["comparisonMetric"]));
-	$observationMethod = mysqli_real_escape_string($dbconn, $_GET["observationMethod"]);
+	$comparisonMetric = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($_GET["comparisonMetric"])));
+	$observationMethod = mysqli_real_escape_string($dbconn, htmlentities($_GET["observationMethod"]));
 	$monthStart = sprintf('%02d', intval($_GET["monthStart"]));
 	$monthEnd = sprintf('%02d', intval($_GET["monthEnd"]));
 	$yearStart = intval($_GET["yearStart"]);
 	$yearEnd = intval($_GET["yearEnd"]);
-	$arthropod = mysqli_real_escape_string($dbconn, rawurldecode($_GET["arthropod"]));//% if all
+	$arthropod = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($_GET["arthropod"])));//% if all
 	$minSize = intval($_GET["minSize"]);
-	$plantSpecies = mysqli_real_escape_string($dbconn, rawurldecode($_GET["plantSpecies"]));//% if all
+	$plantSpecies = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($_GET["plantSpecies"])));//% if all
 	if($cron){
 		$includeWetLeaves = 1;
 		$comparisonMetric = "occurrence";
@@ -26,7 +26,7 @@
 		$monthEnd = sprintf('%02d', 12);
 		$yearStart = 0;
 		$yearEnd = 99999;
-		$arthropod = mysqli_real_escape_string($dbconn, "caterpillar");//% if all
+		$arthropod = mysqli_real_escape_string($dbconn, htmlentities("caterpillar"));//% if all
 		$minSize = 0;
 		$plantSpecies = "%";//% if all
 	}
