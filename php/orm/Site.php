@@ -79,8 +79,8 @@ class Site
 			return $failures;
 		}
 		
-		$salt = mysqli_real_escape_string($dbconn, hash("sha512", rand() . rand() . rand()));
-		$saltedPasswordHash = mysqli_real_escape_string($dbconn, hash("sha512", $salt . $password));
+		$salt = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", rand() . rand() . rand())));
+		$saltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $salt . $password)));
 		
 		mysqli_query($dbconn, "INSERT INTO Site (`UserFKOfCreator`, `Name`, `Description`, `URL`, `Latitude`, `Longitude`, `Region`, `Salt`, `SaltedPasswordHash`, `OpenToPublic`, `Active`) VALUES ('" . $creator->getID() . "', '$name', '$description', '$url', '$latitude', '$longitude', '$region', '$salt', '$saltedPasswordHash', '$openToPublic', '1')");
 		$id = intval(mysqli_insert_id($dbconn));
@@ -112,7 +112,7 @@ class Site
 //FINDERS
 	public static function findByID($id) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$id = mysqli_real_escape_string($dbconn, $id);
+		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `ID`='$id' LIMIT 1");
 		mysqli_close($dbconn);
 		
@@ -482,7 +482,7 @@ class Site
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$password = self::validPassword($dbconn, $password);
 			if($password != false){
-				$saltedPasswordHash = mysqli_real_escape_string($dbconn, hash("sha512", $this->salt . $password));
+				$saltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $this->salt . $password)));
 				mysqli_query($dbconn, "UPDATE Site SET SaltedPasswordHash='$saltedPasswordHash' WHERE ID='" . $this->id . "'");
 				mysqli_close($dbconn);
 				$this->saltedPasswordHash = $saltedPasswordHash;
@@ -585,7 +585,7 @@ class Site
 	}
 	
 	public static function validNameFormat($dbconn, $name){
-		$name = trim(mysqli_real_escape_string($dbconn, rawurldecode($name)));
+		$name = trim(mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($name))));
 		
 		if(preg_replace('/\s+/', '', $name) == ""){
 			return false;
@@ -595,7 +595,7 @@ class Site
 	
 	public static function validDescription($dbconn, $description){
 		$description = preg_replace("/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/", "[URL Removed]", rawurldecode($description));
-		$description = mysqli_real_escape_string($dbconn, $description);
+		$description = mysqli_real_escape_string($dbconn, htmlentities($description));
 		
 		if(strlen($description) == 0 || strlen($description) > 255){
 			return false;
@@ -604,11 +604,11 @@ class Site
 	}
 	
 	public static function validURL($dbconn, $url){
-		return mysqli_real_escape_string($dbconn, rawurldecode(trim($url)));
+		return mysqli_real_escape_string($dbconn, htmlentities(rawurldecode(trim($url))));
 	}
 	
 	public static function validLatitude($dbconn, $latitude){
-		$latitude = floatval(mysqli_real_escape_string($dbconn, preg_replace("/[^0-9.-]/", "", trim(rawurldecode((string)$latitude)))));
+		$latitude = floatval(mysqli_real_escape_string($dbconn, preg_replace("/[^0-9.-]/", "", trim(htmlentities(rawurldecode((string)$latitude))))));
 		if(abs($latitude) > 90){
 			return false;
 		}
@@ -616,7 +616,7 @@ class Site
 	}
 	
 	public static function validLongitude($dbconn, $longitude){
-		$longitude = floatval(mysqli_real_escape_string($dbconn, preg_replace("/[^0-9.-]/", "", trim(rawurldecode((string)$longitude)))));
+		$longitude = floatval(mysqli_real_escape_string($dbconn, preg_replace("/[^0-9.-]/", "", trim(htmlentities(rawurldecode((string)$longitude))))));
 		if(abs($longitude) > 180){
 			return false;
 		}
@@ -624,7 +624,7 @@ class Site
 	}
 	
 	public static function validZoom($dbconn, $zoom){
-		$zoom = intval(mysqli_real_escape_string($dbconn, preg_replace("/[^0-9]/", "", trim(rawurldecode((string)$zoom)))));
+		$zoom = intval(mysqli_real_escape_string($dbconn, preg_replace("/[^0-9]/", "", trim(htmlentities(rawurldecode((string)$zoom))))));
 		if($zoom < 10){
 			return false;
 		}
@@ -632,7 +632,7 @@ class Site
 	}
 	
 	public static function validRegion($dbconn, $region){
-		$region = mysqli_real_escape_string($dbconn, rawurldecode($region));
+		$region = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($region)));
 		return $region;
 	}
 	
@@ -652,6 +652,7 @@ class Site
 	}
 	
 	public static function validPassword($dbconn, $password){
+		$password = htmlentities($password);
 		$spacelessPassword = mysqli_real_escape_string($dbconn, preg_replace('/ /', '', rawurldecode((string)$password)));
 		
 		if(strlen($password) != strlen($spacelessPassword) || strlen($spacelessPassword) < 4){
@@ -712,7 +713,7 @@ class Site
 	public function passwordIsCorrect($password){
 		$password = rawurldecode($password);
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$testSaltedPasswordHash = mysqli_real_escape_string($dbconn, hash("sha512", $this->salt . $password));
+		$testSaltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $this->salt . $password)));
 		if($testSaltedPasswordHash == $this->saltedPasswordHash){
 			mysqli_close($dbconn);
 			return true;
