@@ -117,7 +117,7 @@ class Survey
 //FINDERS
 	public static function findByID($id) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$id = mysqli_real_escape_string($dbconn, $id);
+		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `Survey` WHERE `ID`='$id' LIMIT 1");
 		mysqli_close($dbconn);
 		
@@ -148,11 +148,11 @@ class Survey
 		//returns all surveys user has completed
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		
-		$start = mysqli_real_escape_string($dbconn, ($start . ""));
-		$limit = mysqli_real_escape_string($dbconn, ($limit . ""));
+		$start = mysqli_real_escape_string($dbconn, htmlentities(($start . "")));
+		$limit = mysqli_real_escape_string($dbconn, htmlentities(($limit . "")));
 		$filterKeys = array_keys($filters);
 		foreach($filterKeys as $filterKey) {
-			$filters[$filterKey] = mysqli_real_escape_string($dbconn, ($filters[$filterKey] . ""));
+			$filters[$filterKey] = mysqli_real_escape_string($dbconn, htmlentities(($filters[$filterKey] . "")));
 		}
 		
 		$surveysArray = array();
@@ -193,7 +193,7 @@ class Survey
 			}
 		}
 		
-		$dateSearch = mysqli_real_escape_string($dbconn, trim(strval($filters["date"])));
+		$dateSearch = mysqli_real_escape_string($dbconn, trim(htmlentities(strval($filters["date"]))));
 		
 		$totalCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS `Count` FROM (SELECT DISTINCT Survey.ID FROM " . $baseTable . " JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `User` ON Survey.UserFKOfObserver=User.ID WHERE (Plant.SiteFK IN (" . join(",", $siteIDs) . ") OR Survey.UserFKOfObserver='" . $user->getID() . "') AND Survey.LocalDate LIKE '" . $dateSearch . "'" . $additionalSQL . $groupBy . ") AS Results"))["Count"]);
 		if($limit === "max"){
@@ -541,7 +541,7 @@ class Survey
 	}
 	
 	public static function validNotes($dbconn, $notes){
-		$notes = mysqli_real_escape_string($dbconn, rawurldecode($notes));
+		$notes = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($notes)));
 		return $notes;
 	}
 	
