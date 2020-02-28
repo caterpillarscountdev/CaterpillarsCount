@@ -97,7 +97,7 @@ class ArthropodSighting
 //FINDERS
 	public static function findByID($id) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$id = mysqli_real_escape_string($dbconn, $id);
+		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `ArthropodSighting` WHERE `ID`='$id' LIMIT 1");
 		mysqli_close($dbconn);
 		
@@ -380,11 +380,11 @@ class ArthropodSighting
 	
 	public static function validPhotoURL($dbconn, $photoURL){
 		//TODO: validate domain
-		return mysqli_real_escape_string($dbconn, rawurldecode($photoURL));
+		return mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($photoURL)));
 	}
 	
 	public static function validNotes($dbconn, $notes){
-		return mysqli_real_escape_string($dbconn, rawurldecode($notes));
+		return mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($notes)));
 	}
 	
 	
