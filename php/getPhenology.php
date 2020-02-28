@@ -35,7 +35,7 @@
 			continue;
 		}
 		$siteName = mysqli_fetch_assoc($query)["Name"];
-		$arthropod = mysqli_real_escape_string($dbconn, $lines[$i]["arthropod"]);
+		$arthropod = mysqli_real_escape_string($dbconn, htmlentities($lines[$i]["arthropod"]));
 		$year = intval($lines[$i]["year"]);
 		
 		//CHECK FOR SAVE
