@@ -96,7 +96,7 @@
 		}
 		$yearStart = intval($_POST["yearStart"]);
 		$yearEnd = intval($_POST["yearEnd"]);
-		$arthropod = mysqli_real_escape_string($dbconn, $_POST["arthropod"]);
+		$arthropod = mysqli_real_escape_string($dbconn, htmlentities($_POST["arthropod"]));
 		mysqli_close($dbconn);
 		
 		$tableArray = getArrayFromTable($siteID, $yearStart, $yearEnd, $arthropod);
