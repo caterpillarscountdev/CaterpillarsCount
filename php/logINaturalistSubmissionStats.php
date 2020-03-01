@@ -20,7 +20,7 @@
 
   $query = mysqli_query($dbconn, "SELECT Survey.UserFKOfObserver AS UserID, COUNT(*) AS ExpertTotal FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID GROUP BY Survey.UserFKOfObserver;");
   while($row = mysqli_fetch_assoc($query)){
-    $iNaturalistStatsByUserID[strval($row["UserID"])]["overturnedTotal"] = intval($row["ExpertTotal"]) - $iNaturalistStatsByUserID[strval($row["UserID"])]["SupportingTotal"];
+    $iNaturalistStatsByUserID[strval($row["UserID"])]["overturnedTotal"] = intval($row["ExpertTotal"]) - $iNaturalistStatsByUserID[strval($row["UserID"])]["supportingTotal"];
   }
 
   $updateMySQL = "";
