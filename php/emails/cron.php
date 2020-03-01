@@ -309,143 +309,148 @@
 		global $MAX_EMAIL_SENDS;
 		global $baseFileName;
 		
-		if($emailsSent < $MAX_EMAIL_SENDS){
-			//Haven't already finished ExpertIdentification emails before this month based on cache.
+		//Haven't already finished ExpertIdentification emails before this month based on cache.
+		
+		if($emailsSent < $MAX_EMAIL_SENDS && intval(date("d")) > 1){
 			$dbconn = (new Keychain)->getDatabaseConnection();
-			$query = mysqli_query($dbconn, "SELECT TemporaryExpertIdentificationChangeLog.*, `User`.ID AS UserID, `User`.`Hidden`, `User`.FirstName, `User`.Email, ArthropodSighting.INaturalistID, ArthropodSighting.OriginalGroup, ArthropodSighting.PhotoURL, `User`.`INaturalistObserverID` FROM `TemporaryExpertIdentificationChangeLog` JOIN ArthropodSighting ON TemporaryExpertIdentificationChangeLog.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID WHERE (MONTH(Timestamp)<>MONTH(NOW()) OR YEAR(Timestamp)<>YEAR(NOW())) AND `User`.`Hidden`='0' ORDER BY User.ID, ArthropodSightingFK, Timestamp DESC");
-			$userID = -1;
-			$userEmail = "";
-			$userFirstName = "iNaturalist results are in";
-			$iNaturalistObserverID = "";
-			$firstNewExpertIdentification = "";
-			$firstNewExpertIdentificationPhotoURL = "";
-			$numberOfChanges = 0;
-			$normalArthropodsInvolved = array();
-			$abnormalArthropodsInvolved = array();
-			$changeLIs = "";
-			$percentSuppporting = 0;
-			$processedTemporaryExpertIdentificationChangeLogIDs = array();
-			$lastArthropodSightingFK = "";
-			while($row = mysqli_fetch_assoc($query)){
-				if(!boolval($row["Hidden"]) && strval($row["ArthropodSightingFK"]) !== $lastArthropodSightingFK){
-					if($userID !== -1 && $userID !== intval($row["UserID"])){
-						break;
-					}
-					
-					$lastArthropodSightingFK = strval($row["ArthropodSightingFK"]);
-
-					if($userID == -1){
-						$userID = intval($row["UserID"]);
-						$userEmail = $row["Email"];
-						if($row["FirstName"] != ""){
-							$userFirstName = $row["FirstName"];
+			$query = mysqli_query($dbconn, "SELECT `Iteration` FROM `CronJobStatus` WHERE `Name`='iNaturalistIdentificationFetch';");
+			if(intval(mysqli_fetch_assoc($query)["Iteration"]) == 0){
+				//finished grabbing ExpertIdentifications from iNaturalist
+				$query = mysqli_query($dbconn, "SELECT TemporaryExpertIdentificationChangeLog.*, `User`.ID AS UserID, `User`.`Hidden`, `User`.FirstName, `User`.Email, ArthropodSighting.INaturalistID, ArthropodSighting.OriginalGroup, ArthropodSighting.PhotoURL, `User`.`INaturalistObserverID` FROM `TemporaryExpertIdentificationChangeLog` JOIN ArthropodSighting ON TemporaryExpertIdentificationChangeLog.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID WHERE (MONTH(Timestamp)<>MONTH(NOW()) OR YEAR(Timestamp)<>YEAR(NOW())) AND `User`.`Hidden`='0' ORDER BY User.ID, ArthropodSightingFK, Timestamp DESC");
+				$userID = -1;
+				$userEmail = "";
+				$userFirstName = "iNaturalist results are in";
+				$iNaturalistObserverID = "";
+				$firstNewExpertIdentification = "";
+				$firstNewExpertIdentificationPhotoURL = "";
+				$numberOfChanges = 0;
+				$normalArthropodsInvolved = array();
+				$abnormalArthropodsInvolved = array();
+				$changeLIs = "";
+				$percentSuppporting = 0;
+				$processedTemporaryExpertIdentificationChangeLogIDs = array();
+				$lastArthropodSightingFK = "";
+				while($row = mysqli_fetch_assoc($query)){
+					if(!boolval($row["Hidden"]) && strval($row["ArthropodSightingFK"]) !== $lastArthropodSightingFK){
+						if($userID !== -1 && $userID !== intval($row["UserID"])){
+							break;
 						}
-						$iNaturalistObserverID = $row["INaturalistObserverID"];
-						$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS SupportingTotal FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID' AND (ExpertIdentification.OriginalGroup=ExpertIdentification.StandardGroup OR (ExpertIdentification.OriginalGroup IN ('other', 'unidentified') AND (ExpertIdentification.StandardGroup NOT IN ('ant', 'aphid', 'bee', 'beetle', 'caterpillar', 'daddylonglegs', 'fly', 'grasshopper', 'leafhopper', 'moths', 'spider', 'truebugs'))));");
-						$supportingTotal = intval(mysqli_fetch_assoc($innerQuery)["SupportingTotal"]);
-						$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS ExpertTotal FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID';");
-						$expertTotal = intval(mysqli_fetch_assoc($innerQuery)["ExpertTotal"]);
-						$percentSuppporting = $total == 0 ? 0 : round(($supportingTotal / $expertTotal) * 100, 2);
-					}
 
-					$originalGroup = $row["OriginalGroup"];
-					$previousExpertIdentification = $row["PreviousExpertIdentification"];
-					if($previousExpertIdentification == ""){
-						$previousExpertIdentification = $originalGroup;
-					}
-					$newExpertIdentification = $row["NewExpertIdentification"];
-					$iNaturalistObservationID = $row["INaturalistID"];
-					$numberOfChanges++;
+						$lastArthropodSightingFK = strval($row["ArthropodSightingFK"]);
 
-					if($firstNewExpertIdentification == ""){
-						$firstNewExpertIdentification = $newExpertIdentification;
-						$firstNewExpertIdentificationPhotoURL = "https://caterpillarscount.unc.edu/images/arthropods/" . $row["PhotoURL"];
-					}
+						if($userID == -1){
+							$userID = intval($row["UserID"]);
+							$userEmail = $row["Email"];
+							if($row["FirstName"] != ""){
+								$userFirstName = $row["FirstName"];
+							}
+							$iNaturalistObserverID = $row["INaturalistObserverID"];
+							$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS SupportingTotal FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID' AND (ExpertIdentification.OriginalGroup=ExpertIdentification.StandardGroup OR (ExpertIdentification.OriginalGroup IN ('other', 'unidentified') AND (ExpertIdentification.StandardGroup NOT IN ('ant', 'aphid', 'bee', 'beetle', 'caterpillar', 'daddylonglegs', 'fly', 'grasshopper', 'leafhopper', 'moths', 'spider', 'truebugs'))));");
+							$supportingTotal = intval(mysqli_fetch_assoc($innerQuery)["SupportingTotal"]);
+							$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS ExpertTotal FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID';");
+							$expertTotal = intval(mysqli_fetch_assoc($innerQuery)["ExpertTotal"]);
+							$percentSuppporting = $total == 0 ? 0 : round(($supportingTotal / $expertTotal) * 100, 2);
+						}
 
-					$arthropodNameTranslations = array( 
-						"daddylonglegs" => "daddylongleg", 
-						"moths" => "moth", 
-						"truebugs" => "truebug", 
+						$originalGroup = $row["OriginalGroup"];
+						$previousExpertIdentification = $row["PreviousExpertIdentification"];
+						if($previousExpertIdentification == ""){
+							$previousExpertIdentification = $originalGroup;
+						}
+						$newExpertIdentification = $row["NewExpertIdentification"];
+						$iNaturalistObservationID = $row["INaturalistID"];
+						$numberOfChanges++;
+
+						if($firstNewExpertIdentification == ""){
+							$firstNewExpertIdentification = $newExpertIdentification;
+							$firstNewExpertIdentificationPhotoURL = "https://caterpillarscount.unc.edu/images/arthropods/" . $row["PhotoURL"];
+						}
+
+						$arthropodNameTranslations = array( 
+							"daddylonglegs" => "daddylongleg", 
+							"moths" => "moth", 
+							"truebugs" => "truebug", 
+						);
+
+						$previousExpertIdentificationSingular = $previousExpertIdentification;
+						if(array_key_exists($previousExpertIdentification, $arthropodNameTranslations)){
+							$previousExpertIdentificationSingular = $arthropodNameTranslations[$previousExpertIdentification];
+						}
+
+						$newExpertIdentificationSingular = $newExpertIdentification;
+						if(array_key_exists($newExpertIdentification, $arthropodNameTranslations)){
+							$newExpertIdentificationSingular = $arthropodNameTranslations[$newExpertIdentification];
+						}
+
+						$newExpertIdentificationN = in_array(strtolower(substr($newExpertIdentificationSingular, 0, 1)), array("a", "e", "i", "o", "u")) ? "n" : "";
+
+						$changeLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\"><a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/observations/" . $iNaturalistObservationID . "\" target=\"_blank\"><span style=\"color: #6faf6d;\">This " . $previousExpertIdentificationSingular . " observation</span></a> is actually a" . $newExpertIdentificationN . " " . $newExpertIdentificationSingular . ".</span></li>";
+
+						if(in_array($previousExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
+							if(!in_array($previousExpertIdentification, $normalArthropodsInvolved)){
+								$normalArthropodsInvolved[] = $previousExpertIdentification;
+							}
+						}
+						else if(!in_array($previousExpertIdentification, $abnormalArthropodsInvolved)){
+							$abnormalArthropodsInvolved[] = $previousExpertIdentification;
+						}
+
+						if(in_array($newExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
+							if(!in_array($newExpertIdentification, $normalArthropodsInvolved)){
+								$normalArthropodsInvolved[] = $newExpertIdentification;
+							}
+						}
+						else if(!in_array($newExpertIdentification, $abnormalArthropodsInvolved)){
+							$abnormalArthropodsInvolved[] = $newExpertIdentification;
+						}
+					}
+					$processedTemporaryExpertIdentificationChangeLogIDs[] = $row["ID"];
+				}
+
+				if($userID != -1){
+					$distinctFeatures = array(
+						"ant" => "Ants have 3 distinct body sections and a narrow waist.",
+						"aphid" => "Aphids and pysillids are quite small, usually a few millimeters at most, and are often green, yellow, orange in color.",
+						"bee" => "Bees and wasps have 2 pairs of wings with the hind wings smaller than the front wings.",
+						"beetle" => "Beetles have a straight line down the back where the two hard wing casings meet.",
+						"caterpillar" => "Some caterpillars are camouflaged and look like the twigs or leaves that they are found on.",
+						"daddylonglegs" => "Daddy longlegs have 8 very long legs, and they appear to have a single round body.",
+						"fly" => "Flies have just a single pair of membranous wings.",
+						"grasshopper" => "Grasshoppers and crickets have large hind legs for jumping.",
+						"leafhopper" => "Leafhoppers, planthoppers, and cicadas usually have a wide head relative to their body. Hoppers have wings folded tentlike over their back, while cicadas have large membranous wings.",
+						"moths" => "Butterflies and moths have four large wings covered by fine scales.",
+						"spider" => "Spiders have 8 legs, and the abdomen is distinct from the rest of the body.",
+						"truebugs" => "True Bugs have semi-transparent wings which partially overlap on the back making a triangle or \"X\" shape on the back. The often have obvious pointy \"shoulders\" too.",
+						"sawfly" => "Sawfly larvae look much like caterpillars, but they have 6 or more pairs of prolegs (false, fleshy leg like projections) in addition to the three pairs of true legs close to the head. Caterpillars have only 2-5 pairs of prolegs.",
+						"beetle larva" => "Beetle larvae are usually less than an inch long with soft, pointed bodies that resemble caterpillars. They commonly lie on their sides in a C-shaped position, have a dirty white/brownish head, and have six well-developed legs."
 					);
-					
-					$previousExpertIdentificationSingular = $previousExpertIdentification;
-					if(array_key_exists($previousExpertIdentification, $arthropodNameTranslations)){
-						$previousExpertIdentificationSingular = $arthropodNameTranslations[$previousExpertIdentification];
-					}
-					
-					$newExpertIdentificationSingular = $newExpertIdentification;
-					if(array_key_exists($newExpertIdentification, $arthropodNameTranslations)){
-						$newExpertIdentificationSingular = $arthropodNameTranslations[$newExpertIdentification];
-					}
 
-					$newExpertIdentificationN = in_array(strtolower(substr($newExpertIdentificationSingular, 0, 1)), array("a", "e", "i", "o", "u")) ? "n" : "";
-
-					$changeLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\"><a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/observations/" . $iNaturalistObservationID . "\" target=\"_blank\"><span style=\"color: #6faf6d;\">This " . $previousExpertIdentificationSingular . " observation</span></a> is actually a" . $newExpertIdentificationN . " " . $newExpertIdentificationSingular . ".</span></li>";
-
-					if(in_array($previousExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
-						if(!in_array($previousExpertIdentification, $normalArthropodsInvolved)){
-							$normalArthropodsInvolved[] = $previousExpertIdentification;
+					$distinctFeatureLIs = "";
+					for($i = 0; $i < count($normalArthropodsInvolved); $i++){
+						if(array_key_exists($normalArthropodsInvolved[$i], $distinctFeatures)){
+							$distinctFeatureLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\">" . $distinctFeatures[$normalArthropodsInvolved[$i]] . "</span></li>";
 						}
 					}
-					else if(!in_array($previousExpertIdentification, $abnormalArthropodsInvolved)){
-						$abnormalArthropodsInvolved[] = $previousExpertIdentification;
-					}
-
-					if(in_array($newExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
-						if(!in_array($newExpertIdentification, $normalArthropodsInvolved)){
-							$normalArthropodsInvolved[] = $newExpertIdentification;
+					if(count($abnormalArthropodsInvolved) > 0){
+						$abnormalArthropodsString = $abnormalArthropodsInvolved[0];
+						if(count($abnormalArthropodsInvolved) == 2){
+							$abnormalArthropodsString .= " and " . $abnormalArthropodsInvolved[1];
 						}
+						else if(count($abnormalArthropodsInvolved) > 2){
+							$abnormalArthropodsString = implode(", ", array_slice($abnormalArthropodsInvolved, 0, count($abnormalArthropodsInvolved) - 1)) . ", and " . $abnormalArthropodsInvolved[count($abnormalArthropodsInvolved) - 1];
+						}
+						$distinctFeatureLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\">" . $abnormalArthropodsString . " may require expert analysis, so we're glad you uploaded a photo!</span></li>";
 					}
-					else if(!in_array($newExpertIdentification, $abnormalArthropodsInvolved)){
-						$abnormalArthropodsInvolved[] = $newExpertIdentification;
-					}
-				}
-				$processedTemporaryExpertIdentificationChangeLogIDs[] = $row["ID"];
-			}
-			
-			if($userID != -1){
-				$distinctFeatures = array(
-					"ant" => "Ants have 3 distinct body sections and a narrow waist.",
-					"aphid" => "Aphids and pysillids are quite small, usually a few millimeters at most, and are often green, yellow, orange in color.",
-					"bee" => "Bees and wasps have 2 pairs of wings with the hind wings smaller than the front wings.",
-					"beetle" => "Beetles have a straight line down the back where the two hard wing casings meet.",
-					"caterpillar" => "Some caterpillars are camouflaged and look like the twigs or leaves that they are found on.",
-					"daddylonglegs" => "Daddy longlegs have 8 very long legs, and they appear to have a single round body.",
-					"fly" => "Flies have just a single pair of membranous wings.",
-					"grasshopper" => "Grasshoppers and crickets have large hind legs for jumping.",
-					"leafhopper" => "Leafhoppers, planthoppers, and cicadas usually have a wide head relative to their body. Hoppers have wings folded tentlike over their back, while cicadas have large membranous wings.",
-					"moths" => "Butterflies and moths have four large wings covered by fine scales.",
-					"spider" => "Spiders have 8 legs, and the abdomen is distinct from the rest of the body.",
-					"truebugs" => "True Bugs have semi-transparent wings which partially overlap on the back making a triangle or \"X\" shape on the back. The often have obvious pointy \"shoulders\" too.",
-					"sawfly" => "Sawfly larvae look much like caterpillars, but they have 6 or more pairs of prolegs (false, fleshy leg like projections) in addition to the three pairs of true legs close to the head. Caterpillars have only 2-5 pairs of prolegs.",
-					"beetle larva" => "Beetle larvae are usually less than an inch long with soft, pointed bodies that resemble caterpillars. They commonly lie on their sides in a C-shaped position, have a dirty white/brownish head, and have six well-developed legs."
-				);
 
-				$distinctFeatureLIs = "";
-				for($i = 0; $i < count($normalArthropodsInvolved); $i++){
-					if(array_key_exists($normalArthropodsInvolved[$i], $distinctFeatures)){
-						$distinctFeatureLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\">" . $distinctFeatures[$normalArthropodsInvolved[$i]] . "</span></li>";
-					}
+					$query = mysqli_query($dbconn, "DELETE FROM TemporaryExpertIdentificationChangeLog WHERE ID IN ('" . implode("', '", $processedTemporaryExpertIdentificationChangeLogIDs) . "');");
+					mysqli_close($dbconn);
+					emailExpertIdentifications($userEmail, $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
+					$emailsSent++;
 				}
-				if(count($abnormalArthropodsInvolved) > 0){
-					$abnormalArthropodsString = $abnormalArthropodsInvolved[0];
-					if(count($abnormalArthropodsInvolved) == 2){
-						$abnormalArthropodsString .= " and " . $abnormalArthropodsInvolved[1];
-					}
-					else if(count($abnormalArthropodsInvolved) > 2){
-						$abnormalArthropodsString = implode(", ", array_slice($abnormalArthropodsInvolved, 0, count($abnormalArthropodsInvolved) - 1)) . ", and " . $abnormalArthropodsInvolved[count($abnormalArthropodsInvolved) - 1];
-					}
-					$distinctFeatureLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\">" . $abnormalArthropodsString . " may require expert analysis, so we're glad you uploaded a photo!</span></li>";
+				else{
+					mysqli_close($dbconn);
+					save($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", date('n'));
 				}
-
-				$query = mysqli_query($dbconn, "DELETE FROM TemporaryExpertIdentificationChangeLog WHERE ID IN ('" . implode("', '", $processedTemporaryExpertIdentificationChangeLogIDs) . "');");
-				mysqli_close($dbconn);
-				emailExpertIdentifications($userEmail, $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
-				$emailsSent++;
-			}
-			else{
-				mysqli_close($dbconn);
-				save($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", date('n'));
 			}
    		}
 	}
