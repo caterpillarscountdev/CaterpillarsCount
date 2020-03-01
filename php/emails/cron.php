@@ -417,7 +417,7 @@
 					"moths" => "Butterflies and moths have four large wings covered by fine scales.",
 					"spider" => "Spiders have 8 legs, and the abdomen is distinct from the rest of the body.",
 					"truebugs" => "True Bugs have semi-transparent wings which partially overlap on the back making a triangle or \"X\" shape on the back. The often have obvious pointy \"shoulders\" too.",
-					"sawfly" => "Sawflies are up to an inch long. Adult females have black and yellow bands on their abdomens, and adult males have a distinct white spot just behind the wings with the rest of abdomen being reddish-brown. Sawfly <i>larvae</i> look much like caterpillars, but they have three true legs at the front, with five or more \"stumpy\" prolegs extending down the abdomen.",
+					"sawfly" => "Sawflies are up to an inch long. Adult females have black and yellow bands on their abdomens, and adult males have reddish-brown abdomens with a distinct white spot just behind their wings. Sawfly <i>larvae</i> look much like caterpillars, but they have 6 or more pairs of prolegs (false, fleshy leg like projections) in addition to the three pairs of true legs close to their heads. Caterpillars have only 2-5 pairs of prolegs.",
 					"beetle larva" => "Beetle larvae are usually less than an inch long with soft, pointed bodies that resemble caterpillars. They commonly lie on their sides in a C-shaped position, have a dirty white/brownish head, and have six well-developed legs."
 				);
 
