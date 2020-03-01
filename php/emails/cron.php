@@ -444,8 +444,7 @@
 
 				$query = mysqli_query($dbconn, "DELETE FROM TemporaryExpertIdentificationChangeLog WHERE ID IN ('" . implode("', '", $processedTemporaryExpertIdentificationChangeLogIDs) . "');");
 				mysqli_close($dbconn);
-				//emailExpertIdentifications($userEmail, $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
-				emailExpertIdentifications("plocharczykweb@gmail.com", $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
+				emailExpertIdentifications($userEmail, $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
 				$emailsSent++;
 			}
 			else{
