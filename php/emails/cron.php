@@ -343,9 +343,13 @@
 						$iNaturalistObserverID = $row["INaturalistObserverID"];
 						$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS SupportingTotal FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID' AND (ExpertIdentification.OriginalGroup=ExpertIdentification.StandardGroup OR (ExpertIdentification.OriginalGroup IN ('other', 'unidentified') AND (ExpertIdentification.StandardGroup NOT IN ('ant', 'aphid', 'bee', 'beetle', 'caterpillar', 'daddylonglegs', 'fly', 'grasshopper', 'leafhopper', 'moths', 'spider', 'truebugs'))));");
 						$supportingTotal = intval(mysqli_fetch_assoc($innerQuery)["SupportingTotal"]);
-						$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS Total FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID';");
+						$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS ExpertTotal FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID';");
+						$expertTotal = intval(mysqli_fetch_assoc($innerQuery)["ExpertTotal"]);
+						$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS Total FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID' AND ArthropodSighting.INaturalistID<>'';");
 						$total = intval(mysqli_fetch_assoc($innerQuery)["Total"]);
-						$percentSuppporting = $total == 0 ? 0 : round(($supportingTotal / $total) * 100, 2);
+						$percentSuppporting = $total == 0 ? 0 : round(($supportingTotal / $expertTotal) * 100, 2);
+						
+						mysqli_query($dbconn, "UPDATE `User` SET `INaturalistSubmissions`='$total', `SupportedINaturalistSubmissions`='$supportingTotal', `OverturnedINaturalistSubmissions`='" . ($expertTotal - $supportingTotal) . "' WHERE `ID`='$userID'");
 					}
 
 					$originalGroup = $row["OriginalGroup"];
