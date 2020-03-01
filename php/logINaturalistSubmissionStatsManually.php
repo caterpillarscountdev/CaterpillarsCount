@@ -23,15 +23,13 @@
     $iNaturalistStatsByUserID[strval($row["UserID"])]["overturnedTotal"] = intval($row["ExpertTotal"]) - $iNaturalistStatsByUserID[strval($row["UserID"])]["supportingTotal"];
   }
 
-  $updateMySQL = "";
+  $updateMySQL = "UPDATE `User` SET `INaturalistSubmissions`='0', `SupportedINaturalistSubmissions`='0', `OverturnedINaturalistSubmissions`='0', `INaturalistSubmissionsLastUpdated`=NOW();";
   foreach($iNaturalistStatsByUserID as $userID => $statsArray){
     $updateMySQL .= "UPDATE `User` SET `INaturalistSubmissions`='" . $statsArray["total"] . "', `SupportedINaturalistSubmissions`='" . $statsArray["supportingTotal"] . "', `OverturnedINaturalistSubmissions`='" . $statsArray["overturnedTotal"] . "', `INaturalistSubmissionsLastUpdated`=NOW() WHERE `ID`='$userID';";
   }
 
-  if($updateMySQL != ""){
-    $query = mysqli_multi_query($dbconn, $updateMySQL);
-    while(mysqli_more_results($dbconn)){$temp = mysqli_next_result($dbconn);}
-  }
+  $query = mysqli_multi_query($dbconn, $updateMySQL);
+  while(mysqli_more_results($dbconn)){$temp = mysqli_next_result($dbconn);}
   
   mysqli_close($dbconn);
 ?>
