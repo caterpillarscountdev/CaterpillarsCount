@@ -420,9 +420,9 @@
 						"leafhopper" => "Leafhoppers, planthoppers, and cicadas usually have a wide head relative to their body. Hoppers have wings folded tentlike over their back, while cicadas have large membranous wings.",
 						"moths" => "Butterflies and moths have four large wings covered by fine scales.",
 						"spider" => "Spiders have 8 legs, and the abdomen is distinct from the rest of the body.",
-						"truebugs" => "True Bugs have semi-transparent wings which partially overlap on the back making a triangle or \"X\" shape on the back. The often have obvious pointy \"shoulders\" too.",
+						"truebugs" => "True Bugs have semi-transparent wings which partially overlap on the back making a triangle or \"X\" shape on the back. They often have obvious pointy \"shoulders\" too.",
 						"sawfly" => "Sawfly larvae look much like caterpillars, but they have 6 or more pairs of prolegs (false, fleshy leg like projections) in addition to the three pairs of true legs close to the head. Caterpillars have only 2-5 pairs of prolegs.",
-						"beetle larva" => "Beetle larvae are usually less than an inch long with soft, pointed bodies that resemble caterpillars. They commonly lie on their sides in a C-shaped position, have a dirty white/brownish head, and have six well-developed legs."
+						"beetle larva" => "Beetle larvae found on foliage are usually less than an inch long with soft, pointed bodies that may sometimes resemble caterpillars, but with only 6 legs near the head and no prolegs."
 					);
 
 					$distinctFeatureLIs = "";
