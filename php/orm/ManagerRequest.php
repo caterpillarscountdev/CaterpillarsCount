@@ -65,7 +65,7 @@ class ManagerRequest
 	//FINDERS
 	public static function findByID($id){
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$id = mysqli_real_escape_string($dbconn, $id);
+		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `ManagerRequest` WHERE `ID`='$id' LIMIT 1");
 		mysqli_close($dbconn);
 		
@@ -85,7 +85,7 @@ class ManagerRequest
 	
 	public static function findByManagerAndSite($manager, $site){
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$id = mysqli_real_escape_string($dbconn, $id);
+		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `ManagerRequest` WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `SiteFK`='" . $site->getID() . "' LIMIT 1");
 		mysqli_close($dbconn);
 		

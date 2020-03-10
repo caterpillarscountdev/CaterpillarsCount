@@ -85,7 +85,7 @@ class Plant
 //FINDERS
 	public static function findByID($id) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$id = mysqli_real_escape_string($dbconn, $id);
+		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `ID`='$id' LIMIT 1");
 		mysqli_close($dbconn);
 		
@@ -319,7 +319,7 @@ class Plant
 	}
 	
 	public static function validCode($dbconn, $code){
-		$code = mysqli_real_escape_string($dbconn, str_replace("0", "O", preg_replace('/\s+/', '', strtoupper(rawurldecode($code)))));
+		$code = mysqli_real_escape_string($dbconn, str_replace("0", "O", preg_replace('/\s+/', '', strtoupper(htmlentities(rawurldecode($code))))));
 		
 		if($code == ""){
 			return false;
@@ -392,7 +392,7 @@ class Plant
 		
 		//then, return a sanitized version of the full code that is safe to use with a MySQL query
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$code = mysqli_real_escape_string($dbconn, $code);
+		$code = mysqli_real_escape_string($dbconn, htmlentities($code));
 		mysqli_close($dbconn);
 		return $code;
 	}

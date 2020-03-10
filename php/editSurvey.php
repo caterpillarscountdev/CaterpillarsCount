@@ -47,27 +47,24 @@
 				$survey->setNotes($siteNotes);
 				$arthropodData = json_decode($_POST["arthropodData"]);		//JSON
 				
-				//delete old arthropod sightings
+				//update arthropod sightings
 				$arthropodSightings = $survey->getArthropodSightings();
+				$failures = "";
 				for($i = 0; $i < count($arthropodSightings); $i++){
-					$arthropodSightings[$i]->permanentDelete();
-				}
-				
-				//add new arthropod sightings
-				for($i = 0; $i < count($arthropodData); $i++){
-					$arthropodSightingFailures = "";
-					$arthropodSighting = $survey->addArthropodSighting($arthropodData[$i][0], $arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6], $arthropodData[$i][7], $arthropodData[$i][8]);
-					if(is_object($arthropodSighting) && get_class($arthropodSighting) == "ArthropodSighting"){
-						if($arthropodData[$i][9] != ""){
-							$arthropodSighting->setPhotoURL($arthropodData[$i][9], false);
+					for($j = 0; $j < count($arthropodData); $j++){
+						if(strval($arthropodSightings[$i]->getID()) == strval($arthropodData[$j][0])){
+							$updateResult = $arthropodSightings[$i]->setAllEditables($arthropodData[$j][1], $arthropodData[$j][2], $arthropodData[$j][3], $arthropodData[$j][4], $arthropodData[$j][5], $arthropodData[$j][6], $arthropodData[$j][7], $arthropodData[$j][8], $arthropodData[$j][9]);
+							if($updateResult === false){
+								$failures .= "Could not locate " . $arthropodData[$j][1] . " sighting record. ";
+							}
+							else if($updateResult !== true){
+								$failures .= $updateResult;
+							}
 						}
 					}
-					else{
-						$arthropodSightingFailures .= $arthropodSighting;
-					}
 				}
-				if($arthropodSightingFailures != ""){
-					die("false|" . $arthropodSightingFailures);
+				if($failures != ""){
+					die("false|" . $failures);
 				}
 				die("true|");
 			}

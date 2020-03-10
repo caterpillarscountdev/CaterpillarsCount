@@ -29,7 +29,8 @@
 					if(is_object($arthropodSightings[$j]) && get_class($arthropodSightings[$j]) == "ArthropodSighting"){
 						$arthropodSightingsArray[] = array(
 							"id" => $arthropodSightings[$j]->getID(),
-							"group" => $arthropodSightings[$j]->getGroup(),
+							"originalGroup" => $arthropodSightings[$j]->getOriginalGroup(),
+							"updatedGroup" => $arthropodSightings[$j]->getUpdatedGroup(),
 							"length" => $arthropodSightings[$j]->getLength(),
 							"quantity" => $arthropodSightings[$j]->getQuantity(),
 							"photoURL" => $arthropodSightings[$j]->getPhotoURL(),
@@ -37,8 +38,11 @@
 							"hairy" => $arthropodSightings[$j]->getHairy(),
 							"rolled" => $arthropodSightings[$j]->getRolled(),
 							"tented" => $arthropodSightings[$j]->getTented(),
-							"sawfly" => $arthropodSightings[$j]->getSawfly(),
-							"beetleLarva" => $arthropodSightings[$j]->getBeetleLarva(),
+							"originalSawfly" => $arthropodSightings[$j]->getOriginalSawfly(),
+							"updatedSawfly" => $arthropodSightings[$j]->getUpdatedSawfly(),
+							"originalBeetleLarva" => $arthropodSightings[$j]->getOriginalBeetleLarva(),
+							"updatedBeetleLarva" => $arthropodSightings[$j]->getUpdatedBeetleLarva(),
+							"iNaturalistObservationURL" => $arthropodSightings[$j]->getINaturalistObservationURL(),
 						);
 					}
 				}

@@ -1051,8 +1051,8 @@
 								htmlToAdd +=	"</div>";
 								htmlToAdd += 	"<div class=\"arthropodSightingsInfo\">";
 								surveys[i]["arthropodSightings"].sort(function(a, b){
-									if(a["group"].toLowerCase() < b["group"].toLowerCase()){return -1;}
-									if(a["group"].toLowerCase() > b["group"].toLowerCase()){return 1;}
+									if(a["originalGroup"].toLowerCase() < b["originalGroup"].toLowerCase()){return -1;}
+									if(a["originalGroup"].toLowerCase() > b["originalGroup"].toLowerCase()){return 1;}
 									return 0;
 								});
 								var arthropodCount = 0;
@@ -1061,7 +1061,7 @@
 									
 									htmlToAdd +=	"<div class=\"arthropodSighting\" id=\"" + surveys[i]["arthropodSightings"][j]["id"] + "\">";
 									htmlToAdd +=		"<div>";
-									htmlToAdd +=			"<div class=\"arthropodImage\" style=\"background-image:url('../images/selectIcons/orders/" + surveys[i]["arthropodSightings"][j]["group"] + ".png');\"></div>";
+									htmlToAdd +=			"<div class=\"arthropodImage\" style=\"background-image:url('../images/selectIcons/orders/" + surveys[i]["arthropodSightings"][j]["originalGroup"] + ".png');\"></div>";
 									htmlToAdd +=		"</div>";
 									htmlToAdd +=		"<div>";
 									htmlToAdd +=			"<div>";
@@ -1071,11 +1071,11 @@
 									htmlToAdd +=				"<div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 1000);\">" + surveys[i]["arthropodSightings"][j]["quantity"] + "</div> <div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 300);\">" + surveys[i]["arthropodSightings"][j]["length"] + "</div>mm ";
 									if(surveys[i]["arthropodSightings"][j]["quantity"] == 1){
 										htmlToAdd += 			"<div class=\"smallSelect\">";
-										var selectedGroup = singular(surveys[i]["arthropodSightings"][j]["group"]);
-										if(selectedGroup == "bee"){
-											selectedGroup = "bee/wasp/sawfly";
+										var selectedOriginalGroup = singular(surveys[i]["arthropodSightings"][j]["originalGroup"]);
+										if(selectedOriginalGroup == "bee"){
+											selectedOriginalGroup = "bee/wasp/sawfly";
 										}
-										htmlToAdd +=				"<div class=\"selected\">" + selectedGroup + "</div>";
+										htmlToAdd +=				"<div class=\"selected\">" + selectedOriginalGroup + "</div>";
 										htmlToAdd +=				"<div class=\"options\">";
 										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ant</div>";
 										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphid</div>";
@@ -1096,11 +1096,11 @@
 									}
 									else{
 										htmlToAdd += 			"<div class=\"smallSelect\">";
-										var selectedGroup = plural(surveys[i]["arthropodSightings"][j]["group"]);
-										if(selectedGroup == "bees"){
-											selectedGroup = "bees/wasps/sawflies";
+										var selectedOriginalGroup = plural(surveys[i]["arthropodSightings"][j]["originalGroup"]);
+										if(selectedOriginalGroup == "bees"){
+											selectedOriginalGroup = "bees/wasps/sawflies";
 										}
-										htmlToAdd +=				"<div class=\"selected\">" + selectedGroup + "</div>";
+										htmlToAdd +=				"<div class=\"selected\">" + selectedOriginalGroup + "</div>";
 										htmlToAdd +=				"<div class=\"options\">";
 										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ants</div>";
 										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphids</div>";
@@ -1125,7 +1125,7 @@
 									}
 									htmlToAdd +=			"</div>";
 									htmlToAdd +=			"<div class=\"caterpillarOptions\"";
-									if(surveys[i]["arthropodSightings"][j]["group"] != "caterpillar"){
+									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != "caterpillar"){
 										htmlToAdd +=		" style=\"display:none;\"";
 									}
 									htmlToAdd +=			">";
@@ -1151,7 +1151,7 @@
 									}
 									htmlToAdd +=			"</div>";
 									htmlToAdd +=			"<div class=\"beeOptions\"";
-									if(surveys[i]["arthropodSightings"][j]["group"] != "bee"){
+									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != "bee"){
 										htmlToAdd +=		" style=\"display:none;\"";
 									}
 									htmlToAdd +=			">";
@@ -1160,7 +1160,7 @@
 									if(surveys[i]["arthropodSightings"][j]["quantity"] > 1){
 										sawflyLarvaText = "These are sawfly larvae";
 									}
-									if(surveys[i]["arthropodSightings"][j]["sawfly"]){
+									if(surveys[i]["arthropodSightings"][j]["originalSawfly"]){
 								   		htmlToAdd += 			"<div><div class=\"toggleable true beeOption\">" + sawflyLarvaText + "</div></div>";
 									}
 									else{
@@ -1168,11 +1168,11 @@
 									}
 									htmlToAdd +=			"</div>";
 									htmlToAdd +=			"<div class=\"beetleOptions\"";
-									if(surveys[i]["arthropodSightings"][j]["group"] != "beetle"){
+									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != "beetle"){
 										htmlToAdd +=		" style=\"display:none;\"";
 									}
 									htmlToAdd +=			">";
-									if(surveys[i]["arthropodSightings"][j]["beetleLarva"]){
+									if(surveys[i]["arthropodSightings"][j]["originalBeetleLarva"]){
 								   		htmlToAdd += 			"<div><div class=\"toggleable true beetleOption\">In larva form</div></div>";
 									}
 									else{
@@ -1184,6 +1184,16 @@
 									}
 									else{
 										htmlToAdd +=		"<div class=\"italic notes\" style=\"display:none;\">*<div class=\"editable\">[notes]</div></div>";
+									}
+									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != surveys[i]["arthropodSightings"][j]["updatedGroup"] || surveys[i]["arthropodSightings"][j]["originalSawfly"] != surveys[i]["arthropodSightings"][j]["updatedSawfly"] || surveys[i]["arthropodSightings"][j]["originalBeetleLarva"] != surveys[i]["arthropodSightings"][j]["updatedBeetleLarva"]){
+										var iNaturalistGroupDecision = surveys[i]["arthropodSightings"][j]["updatedGroup"];
+										if(surveys[i]["arthropodSightings"][j]["updatedSawfly"]){
+											iNaturalistGroupDecision = "sawflies";
+										}
+										else if(surveys[i]["arthropodSightings"][j]["updatedBeetleLarva"]){
+											iNaturalistGroupDecision = "beetle larvae";
+										}
+										htmlToAdd +=		"<div><a href=\"" + surveys[i]["arthropodSightings"][j]["iNaturalistObservationURL"] + "\" target=\"_blank\">Users on iNaturalist suggested this is a" + (["a", "e", "i", "o", "u"].indexOf(iNaturalistGroupDecision.charAt(0).toLowerCase()) > -1 ? "n" : "") + " \"" + iNaturalistGroupDecision + "\".</a></div>";
 									}
 									htmlToAdd +=		"</div>";
 									htmlToAdd += 		"<div class=\"deleteArthropodSighting\"></div>";
@@ -1647,7 +1657,8 @@
 					var hrefParts = photoLinks.eq(i)[0].href.replace(/\//g, " ").trim().split(" ");
 					photoLinks.eq(i)[0].id = hrefParts[hrefParts.length - 1];
 				}
-				$("#" + id + " .arthropodSighting a").attr("href", "javascript:;");
+				$("#" + id + " .arthropodSighting a").removeAttr("href");
+				$("#" + id + " .arthropodSighting a").removeAttr("target");
 				$("#" + id + " .arthropodSighting a").css({cursor:"auto"});
 
 				//allow arthropod delete
@@ -2011,24 +2022,25 @@
 				var arthropodData = [];
 				var arthropodSightings = $("#" + id + " .arthropodSighting");
 				for(var i = 0; i < arthropodSightings.length; i++){
+					var arthropodSightingID = Number(arthropodSightings[i].id);
 					var quantity = Number(arthropodSightings.eq(i).find(".editable").eq(0)[0].innerHTML);
 					var length = Number(arthropodSightings.eq(i).find(".editable").eq(1)[0].innerHTML);
-					var group = singular(arthropodSightings.eq(i).find(".selected").eq(0)[0].innerHTML.replace("bees/wasps/sawflies", "bee").replace("flies", "fly").replace("bee/wasp/sawfly", "bee")).replace("daddylongleg", "daddylonglegs").replace("moth", "moths").replace("truebug", "truebugs");
+					var originalGroup = singular(arthropodSightings.eq(i).find(".selected").eq(0)[0].innerHTML.replace("bees/wasps/sawflies", "bee").replace("flies", "fly").replace("bee/wasp/sawfly", "bee")).replace("daddylongleg", "daddylonglegs").replace("moth", "moths").replace("truebug", "truebugs");
 					var hairy = false;
 					var leafRoll = false;
 					var silkTent = false;
-					var sawfly = false;
-					var beetleLarva = false;
-					if(group == "caterpillar"){
+					var originalSawfly = false;
+					var originalBeetleLarva = false;
+					if(originalGroup == "caterpillar"){
 						hairy = arthropodSightings.eq(i).find(".toggleable").eq(0).hasClass("true");
 						leafRoll = arthropodSightings.eq(i).find(".toggleable").eq(1).hasClass("true");
 						silkTent = arthropodSightings.eq(i).find(".toggleable").eq(2).hasClass("true");
 					}
-					if(group == "bee"){
-						sawfly = arthropodSightings.eq(i).find(".toggleable").eq(3).hasClass("true");
+					if(originalGroup == "bee"){
+						originalSawfly = arthropodSightings.eq(i).find(".toggleable").eq(3).hasClass("true");
 					}
-					if(group == "beetle"){
-						beetleLarva = arthropodSightings.eq(i).find(".toggleable").eq(4).hasClass("true");
+					if(originalGroup == "beetle"){
+						originalBeetleLarva = arthropodSightings.eq(i).find(".toggleable").eq(4).hasClass("true");
 					}
 					var notes = arthropodSightings.eq(i).find(".editable").eq(2)[0].innerHTML.trim();
 					if(notes == "[notes]"){
@@ -2040,7 +2052,7 @@
 					}
 					//qualifiers
 					if(quantity > 0 && length > 0){
-						arthropodData[arthropodData.length] = [group, length, quantity, notes, hairy, leafRoll, silkTent, sawfly, beetleLarva, photoURL];
+						arthropodData[arthropodData.length] = [arthropodSightingID, originalGroup, length, quantity, notes, hairy, leafRoll, silkTent, originalSawfly, originalBeetleLarva, photoURL];
 					}
 				}
 				console.log([code, date, time, observationMethod, numberOfLeaves, wetLeaves, averageLeafLength, herbivoryScore, siteNotes, arthropodData]);

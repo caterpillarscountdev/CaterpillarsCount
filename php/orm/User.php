@@ -64,8 +64,8 @@ class User
 			return $failures;
 		}
 
-		$salt = mysqli_real_escape_string($dbconn, hash("sha512", rand() . rand() . rand()));
-		$saltedPasswordHash = mysqli_real_escape_string($dbconn, hash("sha512", $salt . $password));
+		$salt = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", rand() . rand() . rand())));
+		$saltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $salt . $password)));
 
 		mysqli_query($dbconn, "INSERT INTO User (`FirstName`, `LastName`, `DesiredEmail`, `Salt`, `SaltedPasswordHash`) VALUES ('$firstName', '$lastName', '$desiredEmail', '$salt', '$saltedPasswordHash')");
 		$id = intval(mysqli_insert_id($dbconn));
@@ -90,7 +90,7 @@ class User
 //FINDERS
 	public static function findByID($id) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$id = mysqli_real_escape_string($dbconn, $id);
+		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `User` WHERE `ID`='$id' LIMIT 1");
 		mysqli_close($dbconn);
 
@@ -142,7 +142,7 @@ class User
 	public static function findBySignInKey($email, $salt){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$email = self::validEmailFormat($dbconn, $email);
-		$salt = mysqli_real_escape_string($dbconn, $salt);
+		$salt = mysqli_real_escape_string($dbconn, htmlentities($salt));
 		if($email === false){
 			return null;
 		}
@@ -207,8 +207,8 @@ class User
 			$password = rawurldecode($password);
 			if($this->passwordIsCorrect($password)){
 				//sign in
-				$salt = mysqli_real_escape_string($dbconn, hash("sha512", rand() . rand() . rand()));
-				$saltedPasswordHash = mysqli_real_escape_string($dbconn, hash("sha512", $salt . $password));
+				$salt = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", rand() . rand() . rand())));
+				$saltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $salt . $password)));
 
 
 				mysqli_query($dbconn, "UPDATE User SET `Salt`='$salt', `SaltedPasswordHash`='$saltedPasswordHash' WHERE `ID`='" . $this->id . "'");
@@ -346,7 +346,7 @@ class User
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$password = self::validPassword($dbconn, $password);
 			if($password !== false){
-				$saltedPasswordHash = mysqli_real_escape_string($dbconn, hash("sha512", $this->salt . $password));
+				$saltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $this->salt . $password)));
 				mysqli_query($dbconn, "UPDATE User SET SaltedPasswordHash='$saltedPasswordHash' WHERE ID='" . $this->id . "'");
 				mysqli_close($dbconn);
 				$this->saltedPasswordHash = $saltedPasswordHash;
@@ -442,7 +442,7 @@ class User
 
 //validity ensurance
 	public static function validFirstName($dbconn, $firstName){
-		$firstName = mysqli_real_escape_string($dbconn, ucfirst(trim(rawurldecode($firstName))));
+		$firstName = mysqli_real_escape_string($dbconn, ucfirst(trim(htmlentities(rawurldecode($firstName)))));
 		if(strlen($firstName) == 0 || strlen($firstName) > 255){
 			return false;
 		}
@@ -450,7 +450,7 @@ class User
 	}
 
 	public static function validLastName($dbconn, $lastName){
-		$lastName = mysqli_real_escape_string($dbconn, ucfirst(trim(rawurldecode($lastName))));
+		$lastName = mysqli_real_escape_string($dbconn, ucfirst(trim(htmlentities(rawurldecode($lastName)))));
 		if(strlen($lastName) == 0 || strlen($lastName) > 255){
 			return false;
 		}
@@ -461,7 +461,7 @@ class User
 		$email = filter_var(rawurldecode($email), FILTER_SANITIZE_EMAIL);
 
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false && mysqli_num_rows(mysqli_query($dbconn, "SELECT `ID` FROM `User` WHERE `Email`='" . $email . "' LIMIT 1")) == 0) {
-			return mysqli_real_escape_string($dbconn, $email);
+			return mysqli_real_escape_string($dbconn, htmlentities($email));
 		}
 		return false;
 	}
@@ -470,13 +470,13 @@ class User
 		$email = filter_var(rawurldecode($email), FILTER_SANITIZE_EMAIL);
 
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-			return mysqli_real_escape_string($dbconn, $email);
+			return mysqli_real_escape_string($dbconn, htmlentities($email));
 		}
 		return false;
 	}
 
 	public static function validPassword($dbconn, $password){
-		$password = rawurldecode((string)$password);
+		$password = htmlentities(rawurldecode((string)$password));
 		$spacelessPassword = mysqli_real_escape_string($dbconn, preg_replace('/ /', '', $password));
 
 		if(strlen($password) != strlen($spacelessPassword) || strlen($spacelessPassword) < 8){
@@ -511,7 +511,7 @@ class User
 		$verificationCode = (string)rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
 
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$usersId = mysqli_real_escape_string($dbconn, $usersId);
+		$usersId = mysqli_real_escape_string($dbconn, htmlentities($usersId));
 		$query = mysqli_query($dbconn, "SELECT `DesiredEmail` FROM `User` WHERE `ID`='$usersId' LIMIT 1");
 		if(mysqli_num_rows($query) == 0){
 			mysqli_close($dbconn);
@@ -530,7 +530,7 @@ class User
 
 	public function verifyEmail($verificationCode){
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$verificationCode = mysqli_real_escape_string($dbconn, rawurldecode($verificationCode));
+		$verificationCode = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($verificationCode)));
 
 		if(self::validEmail($dbconn, $this->desiredEmail) === false){
 			return false;
@@ -599,7 +599,7 @@ class User
 	public function passwordIsCorrect($password){
 		$password = rawurldecode($password);
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$testSaltedPasswordHash = mysqli_real_escape_string($dbconn, hash("sha512", $this->salt . $password));
+		$testSaltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $this->salt . $password)));
 		if($testSaltedPasswordHash == $this->saltedPasswordHash){
 			mysqli_close($dbconn);
 			return true;
