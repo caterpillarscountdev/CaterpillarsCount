@@ -1,66 +1,89 @@
 <html>
-	<style>
-		body{
-			text-align:center;
-			margin: 0px;
-		}
-		.tag{
-			font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-			padding:3px;
-			display:inline-block;
-			margin:10px 10px 9px 10px;
-			border-radius:0px;
-			border:5px solid;
-			border-top:38px solid;
-			border-bottom:14px solid;
-			position:relative;
-		}
-		.tag>div:nth-of-type(1), .tag>div:nth-of-type(2){
-			color:#333;
-			padding:5px;
-			text-align:center;
-			font-weight:bold;
-		}
-		.tag>div:nth-of-type(1){
-			margin-top:-42px;
-		}
-		.tag>div:nth-of-type(2){
-			margin-top:-16px;
-		}
-		
-		.whiteBox{
-			position:relative;
-			background:#fff;
-			text-align:center;
-			font-size:50px;
-			padding:0px 16px;
-		}
-		
-		.urlStamp{
-			position:absolute;
-			bottom:-18px;
-			left:8px;
-			right: 8px;
-		}
-		
-		@page {
-		    margin:0cm;
-		}
-	</style>
-	<script>
-		function setSVGWidths(){
-			var headers = document.getElementsByClassName("tag");
-			var svgs = document.getElementsByTagName("svg");
-			for(var i = 0; i < headers.length; i++){
-				svgs[i].style.width = headers[i].clientWidth;
-				svgs[i].style.display = "block";
-				headers[i].getElementsByTagName("span")[0].outerHTML = "";
+	<head>
+		<title>Print Tags | Caterpillars Count!</title>
+		<meta name="robots" content="noindex"/>
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../../images/favicon/apple-touch-icon-57x57.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../images/favicon/apple-touch-icon-114x114.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../images/favicon/apple-touch-icon-72x72.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../images/favicon/apple-touch-icon-144x144.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="60x60" href="../../images/favicon/apple-touch-icon-60x60.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="120x120" href="../../images/favicon/apple-touch-icon-120x120.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="76x76" href="../../images/favicon/apple-touch-icon-76x76.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../images/favicon/apple-touch-icon-152x152.png" />
+		<link rel="icon" type="image/png" href="../../images/favicon/favicon-196x196.png" sizes="196x196" />
+		<link rel="icon" type="image/png" href="../../images/favicon/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/png" href="../../images/favicon/favicon-32x32.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="../../images/favicon/favicon-16x16.png" sizes="16x16" />
+		<link rel="icon" type="image/png" href="../../images/favicon/favicon-128.png" sizes="128x128" />
+		<meta name="msapplication-TileColor" content="transparent" />
+		<meta name="msapplication-TileImage" content="../../images/favicon/mstile-144x144.png" />
+		<meta name="msapplication-square70x70logo" content="../../images/favicon/mstile-70x70.png" />
+		<meta name="msapplication-square150x150logo" content="../../images/favicon/mstile-150x150.png" />
+		<meta name="msapplication-wide310x150logo" content="../../images/favicon/mstile-310x150.png" />
+		<meta name="msapplication-square310x310logo" content="../../images/favicon/mstile-310x310.png" />
+		<style>
+			body{
+				text-align:center;
+				margin: 0px;
 			}
-		}
-		
-		function ptask(){
-		}
-	</script>
+			.tag{
+				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+				padding:3px;
+				display:inline-block;
+				margin:10px 10px 9px 10px;
+				border-radius:0px;
+				border:5px solid;
+				border-top:38px solid;
+				border-bottom:14px solid;
+				position:relative;
+			}
+			.tag>div:nth-of-type(1), .tag>div:nth-of-type(2){
+				color:#333;
+				padding:5px;
+				text-align:center;
+				font-weight:bold;
+			}
+			.tag>div:nth-of-type(1){
+				margin-top:-42px;
+			}
+			.tag>div:nth-of-type(2){
+				margin-top:-16px;
+			}
+
+			.whiteBox{
+				position:relative;
+				background:#fff;
+				text-align:center;
+				font-size:50px;
+				padding:0px 16px;
+			}
+
+			.urlStamp{
+				position:absolute;
+				bottom:-18px;
+				left:8px;
+				right: 8px;
+			}
+
+			@page {
+			    margin:0cm;
+			}
+		</style>
+		<script>
+			function setSVGWidths(){
+				var headers = document.getElementsByClassName("tag");
+				var svgs = document.getElementsByTagName("svg");
+				for(var i = 0; i < headers.length; i++){
+					svgs[i].style.width = headers[i].clientWidth;
+					svgs[i].style.display = "block";
+					headers[i].getElementsByTagName("span")[0].outerHTML = "";
+				}
+			}
+
+			function ptask(){
+			}
+		</script>
+	</head>
 	<body onload="window.print();">
 		<?php
 			require_once("orm/Site.php");
