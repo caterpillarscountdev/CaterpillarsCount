@@ -503,10 +503,8 @@
 					queueNotice("error", "Select a site first.");
 					return false;
 				}
-				queueNotice('alert', 'Complete or cancel print job to continue using site.');
-				setTimeout(function(){
-					window.open("../php/printPlantCodes.php?q=" + encodeURIComponent(id), "_blank");
-				}, 350);
+				
+				window.open("../php/printPlantCodes.php?q=" + encodeURIComponent(id), "_blank");
 			}
 
 			function editSurveyPlants(){
