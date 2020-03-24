@@ -1,0 +1,225 @@
+<html>
+	<head>
+		<!-- Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+			gtag('config', 'UA-113319025-1');
+		</script>
+		<!-- End of Google Analytics -->
+
+		<title>Backyard | Caterpillars Count!</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../images/favicon/apple-touch-icon-114x114.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../images/favicon/apple-touch-icon-72x72.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../images/favicon/apple-touch-icon-144x144.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="60x60" href="../images/favicon/apple-touch-icon-60x60.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="120x120" href="../images/favicon/apple-touch-icon-120x120.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="76x76" href="../images/favicon/apple-touch-icon-76x76.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="152x152" href="../images/favicon/apple-touch-icon-152x152.png" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-196x196.png" sizes="196x196" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-32x32.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-16x16.png" sizes="16x16" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-128.png" sizes="128x128" />
+		<meta name="msapplication-TileColor" content="transparent" />
+		<meta name="msapplication-TileImage" content="../images/favicon/mstile-144x144.png" />
+		<meta name="msapplication-square70x70logo" content="../images/favicon/mstile-70x70.png" />
+		<meta name="msapplication-square150x150logo" content="../images/favicon/mstile-150x150.png" />
+		<meta name="msapplication-wide310x150logo" content="../images/favicon/mstile-310x150.png" />
+		<meta name="msapplication-square310x310logo" content="../images/favicon/mstile-310x310.png" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<link href="../css/template.css" rel="stylesheet">
+		<script src="../js/template.js?v=1"></script>
+		<script>
+			$(document).ready(function(){
+				loadBackgroundImage($("#splashImage"), "../images/splash.png");
+			});
+		</script>
+	</head>
+	<body>
+		<div id="managerRequest">
+			<div id="managerRequestMessage"></div>
+			<div id="managerRequestButtons">
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('deny');">Deny</div>
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('approve');">Accept</div>
+			</div>
+		</div>
+		<div id="error" onclick="hideNotice();"></div>
+		<div id="confirmation" onclick="hideNotice();"></div>
+		<div id="alert" onclick="hideNotice();"></div>
+		<div id="promptInteractionBlock"></div>
+		<div id="noticeInteractionBlock" onclick="hideNotice();"></div>
+		<div id="confirm">
+			<div></div>
+			<div>
+				<button>OK</button>
+				<button>Cancel</button>
+				<div class="clearBoth"></div>
+			</div>
+		</div>
+
+		<div id="splash">
+			<div id="splashImage"></div>
+			<div id="splashOverlay">
+				<div id="splashIntroText">Welcome to</div>
+				<div id="splashMainText">Caterpillars Count!</div>
+				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">Host a Survey Site</button>
+			</div>
+		</div>
+		<header>
+			<h1><a href="../">Caterpillars Count!</a></h1>
+			<div id="hamburger" onclick="toggleNav();">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div id="navKnockDown" class="clearBoth"></div>
+			<nav class="loadingNav">
+				<ul>
+					<li onclick="accessSubMenu(this);">
+						<span>Participate</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../getStarted">Get Started</a></li>
+							<li><a href="../conductASurvey">Conduct a Survey</a></li>
+							<li><a href="../submitObservations">Submit Observations</a></li>
+							<li><a href="../hostASurveySite">Host a Survey Site</a></li>
+							<li><a href="../resources">Resources</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Explore</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
+							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="../dataDownload">Data Download</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Learn</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../identificationSkills">Identification Skills</a></li>
+							<li><a href="../virtualSurvey">Virtual Survey Game</a></li>
+							<li><a href="../forEducators">For Educators</a></li>
+						</ul>
+					</li>
+					<li onclick="window.location = '../news';">
+						<span>News</span>
+					</li>
+					<li onclick="window.location = '../faq';">
+						<span>FAQ</span>
+					</li>
+					<li onclick="window.location = '../signIn';">
+						<span>Sign In</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../createNewSite">Create New Site</a></li>
+							<li><a href="../manageMySites">Manage My Sites</a></li>
+							<li><a href="../manageMySurveys">Manage My Surveys</a></li>
+							<li><a href="../settings">Settings</a></li>
+							<li><a href="" onclick="logOut();">Sign Out</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="navBack" onclick="resetMenu(false);">&#10094;</div>
+		</header>
+		<main>
+			<div class="panel">
+				<h2>Caterpillars Count! in Your Backyard</h2>
+
+				<div class="content">
+					<h3>Looking for a science activity to do with your kids? Do you have trees or shrubs with reachable branches? Participate in Caterpillars Count! to learn about:</h3>
+					<ul class="scrollAnimationElement fadeInOnScroll">
+						<li>biodiversity</li>
+						<li>insects and other arthropods</li>
+						<li>food webs</li>
+						<li>phenology (or the timing of seasonal events)</li>
+						<li>climate change</li>
+						<li>making and interpreting graphs</li>
+					</ul>
+					<p class="leftText" style="margin:0px 0px 10px 0px;">Lots of information can be found throughout our project website, and especially our <a href="../faq" class="highlighted">Frequently Asked Questions page</a>, but here's the quick summary of what you need to know.</p>
+
+					<h3>Project Goal</h3>
+					<p class="leftText" style="margin:0px 0px 10px 0px;">Caterpillars and other bugs play an important role in ecosystems. Their abundance on vegetation varies geographically, across host plant species, and with the seasons. The data you collect can help document this variation by conducting weekly branch surveys throughout the spring and summer, and can also shed light on the impacts of climate change on trends in insect biomass and seasonal timing.</p>
+
+					<h3>What is required to participate?</h3>
+					<ul class="scrollAnimationElement fadeInOnScroll">
+						<li>At least 10 branches of woody vegetation at eye level or lower.</li>
+						<li>A homemade beat sheet, instructions <a href="../pdfs/Building%20A%20Beat%20Sheet.pdf">here</a>. (Participants 12 and older may elect to do "visual surveys" that do not require a beat sheet, but beat sheets are more fun and don't require as much attention to detail!)</li>
+						<li>Willingness to learn how to identify arthropod groups to order (i.e. beetle, fly, leafhopper, caterpillar, etc.).</li>
+						<li>A phone or computer for submitting data.</li>
+					</ul>
+
+					<h3>How it works</h3>
+					<ol class="scrollAnimationElement fadeInOnScroll">
+						<li><a href="../signUp">Create</a> a personal <strong>Caterpillars Count!</strong> account.</li>
+						<li>Create an official <strong>Caterpillars Count!</strong> site at our website <a href="../createNewSite">here</a>.</li>
+							<ul>
+								<li>For the site name, choose something that is likely to be unique. "Hurlbert Backyard", "Riverview Drive Backyard", and "Fido's Amazing Backyard" are all probably okay, whereas "My backyard" is probably not.</li>
+								<li>Select the number of branches you plan to survey at your site in multiples of 5, with a minimum of 10.</li>
+								<li>If available branches are limiting, feel free to choose whatever is available. If you have lots of woody vegetation on your property to choose from, consider laying out your survey branches as suggested in the <strong>Setting up a New Site</strong> section of <a href="../hostASurveySite/">this page</a>.</li>
+							</ul>
+						<li>Print branch tags unique to your site. Log in to the website and click on My Account > <a href="../manageMySites">Manage My Sites</a> > and click <strong>Print Tags</strong>.</li>
+							<ul>
+								<li>Tags can be "laminated" with clear packing tape, and then hung from their respective branches with twist ties.</li>
+								<li>If you can identify the plant species for each branch, enter them first using My Account > <a href="../manageMySites">Manage My Sites</a> > <strong>Edit Survey Plants</strong>. Now the plant species name will appear on your printed tags!</li>
+							</ul>
+						<li>Learn to identify different bug groups using our <a href="../pdfs/ArthropodIDGuide.pdf">identification sheet</a>, the <a href="../arthropodQuiz">Arthropod Photo ID Quiz</a>, and our <a href="../virtualSurvey">Virtual Survey Game</a>.</li>
+						<li>Whack each branch over a beat sheet and see what bugs you find! See detailed protocol info <a href="../conductASurvey/">here</a> including this <a href="https://www.youtube.com/watch?v=LrfZFeDymXg&feature=youtu.be">video demonstration</a>.</li>
+							<ul>
+								<li>All branches should be surveyed on the same day.</li>
+								<li>Try to conduct surveys once each week.</li>
+								<li>If participants are 12 or older or you are unable to make a beat sheet, you can use the <strong>Visual Survey</strong> protocol (<a href="https://youtu.be/aijyZikzKB8">video here</a>).</li>
+							</ul>
+						<li>You can submit observations with our free Caterpillars Count! mobile app (iOS and Android), or record observations on a <a href="../pdfs/paperDataSheet.pdf">paper data sheet</a> and then submit them later on the <a href="../submitObservations">website</a>.</li>
+							<ul>
+								<li>Take photos of what you find with the app and then follow up on id's through our <a href="https://www.inaturalist.org/observations/caterpillarscount">iNaturalist integration</a>.</li>
+							</ul>
+					</ol>
+
+					<h3>Learning activities and extras</h3>
+					<ol class="scrollAnimationElement fadeInOnScroll">
+						<li><a href="../signUp">Create</a> a personal <strong>Caterpillars Count!</strong> account.</li>
+						<li>The data you collect (and indeed data from throughout the entire Caterpillars Count! project) can be explored and visualized on the <a href="../mapsAndGraphs">Maps and Graphs</a> page.</li>
+							<ul>
+								<li>Click on your site on the map to get a detailed summary of patterns of abundance, biomass, and composition.</li>
+								<li>This <a href="../pdfs/Data%20Exploration.pdf">document</a> provides a detailed guide to the data visualizations available, and to the types of questions that can be answered.</li>
+							</ul>
+						<li>Our <a href="../resources">Resources</a> page (go to "For Educators") has links to a variety of learning activities for different age groups.</li>
+						<li>See <a href="">this page</a> for some ideas for other Side Projects that could be done in conjunction with <strong>Caterpillars Count!</strong> data collection.</li>
+					</ol>
+
+					<h3>Questions?</h3>
+					<p class="leftText" style="margin:0px 0px 10px 0px;">Check out the <a href="../faq">Frequently Asked Questions</a> page, and if your question is not answered there, feel free to post a question on the Google Forum at the bottom of that page.</p>
+					<p>&nbsp;  </p>
+					<p>&nbsp;  </p>
+					<p class="leftText" style="margin:0px 0px 10px 0px;"><i>We hope you enjoy getting outside and discovering what kinds of bugs are common in your yard, and how their composition changes over the course of spring and summer!</p>
+				</div>
+			</div>
+
+		</main>
+		<footer>
+			<div>Part of the <a href="http://pheno-mismatch.org" target="_blank">Pheno Mismatch</a> project funded by the National Science Foundation</div>
+
+			<div><img src="../images/unc.png"/></div><div>
+				<a target="_blank" href="https://www.facebook.com/Caterpillars-Count-1854259101283140/"><img src="../images/facebook.png" alt="facebook"/></a><a target="_blank" href="https://twitter.com/CaterpillarsCt"><img src="../images/twitter.png" alt="twitter"/></a>
+			</div>
+
+			<div>Contact us: <a href="mailto:caterpillarscount@gmail.com">caterpillarscount@gmail.com</a></div>
+
+			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
+		</footer>
+	</body>
+</html>
