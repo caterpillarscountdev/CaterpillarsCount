@@ -53,7 +53,7 @@
 		while ($row = mysqli_fetch_assoc($query)){
 			$rowArray = array();
 			for($i = 0; $i < count($colHeaders); $i++){
-				$rowArray[] = $row[$colHeaders[$i]];
+				$rowArray[] = ($row[$colHeaders[$i]] == "bee" && ($colHeaders[$i] == "OriginalArthropodGroup" || $colHeaders[$i] == "UpdatedArthropodGroup")) ? "bee/wasp/sawfly" : $row[$colHeaders[$i]];
 			}
 			$tableArray[] = $rowArray;
 			$surveyIDsWithSightings[] = $row["ID"];
