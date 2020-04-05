@@ -91,6 +91,41 @@
 		return $bTime - $aTime;
 	}
 
+	function generateRandomString($length) {
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+		return $randomString;
+	}
+	
+	function zipAndDownload($pathnames){
+		$zip = new ZipArchive();
+		$zipPathname = "CaterpillarsCountData_timestamp-" . time() . "_uniqueid-" . generateRandomString(5) . ".zip";
+		
+		if($zip->open($zipPathname, ZipArchive::CREATE) === true){
+			for($i = 0; $i < count($pathnames); $i++){
+				$zip->addFile($pathnames[$i]);
+			}
+			
+			$zip->close();
+		}
+		
+		if(file_exists($zipPathname)){
+			header('Content-Type: application/zip');
+			header('Content-Disposition: attachment; filename="'.basename($zipPathname).'"');
+			header('Content-Length: ' . filesize($zipPathname));
+			//header("Pragma: no-cache");
+			//header("Expires: 0"); 
+			
+			flush();
+			readfile($zipPathname);
+			unlink($zipPathname);
+		}
+	}
+
 	if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['download'])){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		
@@ -108,16 +143,20 @@
 		array_unshift($tableArray, $colHeaders);
 		ob_end_clean();
 		
-		$filename = "CaterpillarsCountDataAtTimestamp_" . time() . ".csv";
+		$filename = "CaterpillarsCountData_timestamp-" . time() . "_uniqueid-" . generateRandomString(5) . ".csv";
 		$fp = fopen($filename, 'w');
 		foreach ($tableArray as $line) fputcsv($fp, $line);
-
+		
+		zipAndDownload(array($filename, "includes/field-descriptions.txt"));
+		
+		/*
 		header('Content-Type: application/octet-stream');
 		header("Content-Transfer-Encoding: Binary"); 
 		header("Content-disposition: attachment; filename=\"" . basename($filename) . "\"");
 
 		readfile($filename);
-		//note that each line in this data pertains to a specific arthropod sighting, so surveys which contained no arthropod sightings are excluded from this data.
+		*/
+		
 		unlink($filename);
 		exit();
 	}
