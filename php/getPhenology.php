@@ -13,7 +13,7 @@
 		"%" => "All arthropods",
 		"ant" => "Ants",
 		"aphid" => "Aphids and psyllids",
-		"bee" => "Bees, wasps, sawflies",
+		"bee" => "Bees and wasps",
 		"beetle" => "Beetles",
 		"caterpillar" => "Caterpillars",
 		"daddylonglegs" => "Daddy longlegs",
