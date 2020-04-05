@@ -164,7 +164,9 @@
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
+		<link href="../css/checkbox.css?v=1" rel="stylesheet">
 		<script src="../js/template.js?v=1"></script>
+		<script src="../js/checkbox.js?v=1"></script>
 		<style>
 			.loadingDiv{
 				background:#e6e6e6;
@@ -525,6 +527,11 @@
 			}
 			
 			function download(){
+				if(!checkboxIsChecked($("#acknowledgmentCheckbox"))){
+					queueNotice("error", "Use the checkbox to verify that you have read and acknowledged the Caterpillars Count! data use and attribution policies before downloading.");
+					return false;
+				}
+				
 				var downloadedFile = "Dynamically Generated CSV";
 				var downloadFilters = "Site: " + getSelectValue($("#siteSelect")).replace("%", "All") + ", YearStart: " + yearStart + ", YearEnd: " + yearEnd + ", Arthropod: " + getSelectValue($("#arthropodSelect")).replace("%", "All");
 				var page = window.location.toString().replace("http://", "").replace("https://", "");
@@ -670,6 +677,14 @@
 						<div class="option" onclick="selectOption(this);">		<div class="value">other</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/other.png');"></div>		<div class="text">Other</div></div></div>
 						<div class="option" onclick="selectOption(this);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
 					</div>
+					
+					<h3>Attribution policies:</h3>
+					<table class="checkboxTable">
+						<tr onclick="toggleCheckbox($(this).find('.checkbox'));">
+							<td><div class="checkbox" id="acknowledgmentCheckbox"></div></td>
+							<td>I have read and acknowledged the Caterpillars Count! data use and attribution policies.</td>
+						<tr>
+					</table>
 					
 					<button id="shownDownloadButton" onclick="download();">Download</button>
 					<p id="disclaimer">Data submitted by Caterpillars Count! participants are provided "as is", and no warranty, express or implied, is made regarding their accuracy, completeness, or reliability. These data are licensed under a <a href="https://creativecommons.org/publicdomain/zero/1.0/legalcode" target="_blank">Creative Commons CCZero 1.0 License</a>.</p>
