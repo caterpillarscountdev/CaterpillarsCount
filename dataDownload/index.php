@@ -682,7 +682,7 @@
 					<table class="checkboxTable">
 						<tr onclick="toggleCheckbox($(this).find('.checkbox'));">
 							<td><div class="checkbox" id="acknowledgmentCheckbox"></div></td>
-							<td>I have read and acknowledged the Caterpillars Count! data use and attribution policies.</td>
+							<td>I have read and acknowledged the Caterpillars Count! <a href="../dataUsePolicy" target="_blank">data use<a> and attribution policies.</td>
 						<tr>
 					</table>
 					
