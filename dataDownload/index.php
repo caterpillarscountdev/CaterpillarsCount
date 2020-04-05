@@ -678,7 +678,7 @@
 						<div class="option" onclick="selectOption(this);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
 					</div>
 					
-					<h3>Attribution policies:</h3>
+					<h3>Policies:</h3>
 					<table class="checkboxTable">
 						<tr onclick="toggleCheckbox($(this).find('.checkbox'));">
 							<td><div class="checkbox" id="acknowledgmentCheckbox"></div></td>
