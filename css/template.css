@@ -46,7 +46,7 @@
 				left:50%;
 				margin:100px 0px 0px -250px;
 				z-index:99998;
-				padding:20px 30px;
+				padding:20px 30px 0px 30px;
 				color:#444;
 				font-size:16px;
 				display:none;
@@ -65,7 +65,7 @@
 				}
 			}
 			#confirm div:nth-of-type(2){
-				margin:20px -30px -20px -30px;
+				margin:20px -30px 0px -30px;
 				border-top:1px solid #eee;
 				padding:0px 15px;
 			}
