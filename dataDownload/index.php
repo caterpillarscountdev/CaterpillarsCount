@@ -147,7 +147,7 @@
 		$fp = fopen($filename, 'w');
 		foreach ($tableArray as $line) fputcsv($fp, $line);
 		
-		zipAndDownload(array($filename, "field-descriptions.txt"));
+		zipAndDownload(array($filename, "metadata.txt"));
 		
 		/*
 		header('Content-Type: application/octet-stream');
