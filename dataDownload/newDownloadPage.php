@@ -137,7 +137,7 @@
       $siteName = "";
       $query = mysqli_query($dbconn, "SELECT `Name` FROM `Site` WHERE `ID`='$siteID'");
       while ($row = mysqli_fetch_assoc($query)){
-        $siteName .= $row["Name"] . ". "
+        $siteName .= $row["Name"] . ". ";
       }
       $siteName = trim($siteName);
       if($siteName == ""){
