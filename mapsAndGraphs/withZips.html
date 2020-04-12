@@ -3068,7 +3068,7 @@
 					"longitude": "Longitude of the Caterpillars Count! site",
 					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
 					"date": "The Gregorian calendar date in the form YYYY-MM-DD",
-					"julian day": "The number of days since the beginning of the year, starting with January 1st as 1.",
+					"julian day": "The number of days since the beginning of the year, starting with January 1st as 1",
 					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
 					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
 					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
@@ -3078,6 +3078,18 @@
 				for(var i = 0; i < headers.length; i++){
 					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
 				}
+				
+				untouchedSiteNames.sort(function(a, b){
+					if(a.toLowerCase() < b.toLowerCase()) return -1;
+					if(a.toLowerCase() > b.toLowerCase()) return 1;
+					return 0;
+				});
+				
+				siteNames.sort(function(a, b){
+					if(a.toLowerCase() < b.toLowerCase()) return -1;
+					if(a.toLowerCase() > b.toLowerCase()) return 1;
+					return 0;
+				});
 				
 				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Phenology Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
 				
