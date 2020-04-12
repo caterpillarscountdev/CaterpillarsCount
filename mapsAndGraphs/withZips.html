@@ -2931,7 +2931,7 @@
 			//END OF COMPOSITION CHART STUFF
 			function downloadMapData(){//TODO: continue here
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)")];
-				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+				var csvString = headers.join(",") + "\r\n";
 				for (var siteID in markers) {
 					if (markers.hasOwnProperty(siteID)) {
 						var marker = markers[siteID];
@@ -2942,7 +2942,43 @@
 						csvString += row.join(",") + "\r\n";
 					}
 				}
+				
+				var headerDescriptions = {
+					"site": "Name of the Caterpillars Count! site",
+					"description": "Description of the Caterpillars Count! site",
+					"latitude": "Latitude of the Caterpillars Count! site",
+					"longitude": "Longitude of the Caterpillars Count! site",
+					"included observation methods": "Observtion methods included in the mapping calculations (\"Visual\", \"Beat Sheet\", or \"All\"). Beat sheet surveys are collected by shaking a branch over a \"beat sheet\" and counting the arthropods that fall off the branch. Visual surveys are simply visual observations of arthropods on 50 leaves.",
+					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
+					"minimum arthropod length (mm)": "The minimum length for arthropods to be included in the mapping calculations.",
+					"plant species": "The specific plant species included in the mapping calculations. \"All\"  means no particular plant species was specified, so all were included.",
+					"surveys with wet leaves are included": "Data includes surveys where the leaves were wet at the time of the survey; FALSE = no, TRUE = yes",
+					"earliest allowed month": "The earliest month included in the mapping calculations; 1 - 12, with 1 denoting January and 12 denoting December.",
+					"latest allowed month": "The latest month included in the mapping calculations; 1 - 12, with 1 denoting January and 12 denoting December.",
+					"earliest allowed year": "The earliest year included in the mapping calculations",
+					"latest allowed year": "The latest year included in the mapping calculations",
+					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified in \"Arthropod Group\". Need not sum to 100 across arthropod groups.",
+					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for the arthropod type specified in \"Arthropod Group\".",
+					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group (found in the \"Arthropod Group\" field) divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
+				};
+				
+				var metadataText = "";
+				for(var i = 0; i < headers.length; i++){
+					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
+				}
+				
 				var date = new Date();
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Map Data. " + ("0" + mapFilters.monthStart).slice(-2) + "/01/" + mapFilters.yearStart + "-" + ("0" + mapFilters.monthEnd).slice(-2) + "/" + getMonthLength(mapFilters.monthEnd, mapFilters.yearEnd) + "/" + mapFilters.yearEnd + " for Site: All sites. Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
+				
+				var zip = new JSZip();
+				var folder = zip.folder("Caterpillars Count! " + siteNames.join(" - ") + " phenology data");
+				folder.file("metadata.txt", metadataText);
+				folder.file("data.csv", csvString);
+				zip.generateAsync({type:"blob"})
+				.then(function(content) {
+					saveAs(content, "CaterpillarsCountPhenologyData-" + siteNames.join("-") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".zip");
+				});
+				
 				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCountMapData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
 				var links = $("#downloadLinks a");
 				links.eq(links.length - 1)[0].click();
@@ -2984,6 +3020,16 @@
 				}
 				dayCount += day;
 				return dayCount;
+			}
+			function getMonthLength(month, year){
+				year = Number(year);
+				month = Number(month);
+				var isLeapYear = (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
+				var monthCounts = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+				if(isLeapYear){
+					monthCounts[1] += 1;
+				}
+				return monthCounts[month - 1];
 			}
 			var indexedMarkers = {};
 			function findMarkerBySiteName(siteName){
