@@ -1826,6 +1826,7 @@
 							siteInformation: {
 								ID: sites[i]["ID"],
 								Name: sites[i]["Name"],
+								DateEstablished: sites[i]["DateEstablished"],
 								Description: sites[i]["Description"],
 								UserCount: sites[i]["UserCount"],
 								ArthropodGroupCount: sites[i]["ArthropodGroupCount"],
@@ -3061,6 +3062,7 @@
 				var filtersString = "X-Axis: " + xAxis + ", Y-Axis: " + yAxis;
 				var headers = [];
 				var siteName = "";
+				var siteMarkers = {};
 				if(xAxis == "site"){
 					headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", yAxis];
 					filtersString += ", Sites Included:";
@@ -3083,6 +3085,7 @@
 						filtersString += " " + siteName;
 					}
 					var marker = findMarkerBySiteName(siteName);
+					siteMarkers[siteName] = marker;
 					for(var j = 0; j < barConfig.data.datasets.length; j++){
 						var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), barConfig.data.datasets[j].label, barConfig.data.datasets[j].data[i]];
 						if(xAxis != "site"){
@@ -3115,12 +3118,38 @@
 				for(var i = 0; i < headers.length; i++){
 					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
 				}
+				
 				var todaysDate = new Date();
-				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + todaysDate.getFullYear() + ". Foliage Arthropod Data. Data type: [Raw Data]. [01/01/2010-12/31/2019] for Site: [All sites]. Chapel Hill, North Carolina, USA. Data set accessed [04/07/2020] at https://caterpillarscount.unc.edu."
+				
+				var earliestEstablishedYear = todaysDate.getFullYear();
+				var siteNames = [];
+				for(var siteName in siteMarkers){
+					if(Object.prototype.hasOwnProperty.call(siteMarkers, siteName)){
+						siteNames[siteNames.length] = siteName;
+						if("DateEstablished" in siteMarkers[siteName].siteInformation && siteMarkers[siteName].siteInformation.DateEstablished.indexOf("-") > -1){
+							var yearEstablished = Number(siteMarkers[siteName].siteInformation.DateEstablished.split("-")[0]);
+							if(yearEstablished > 0 && yearEstablished < Number(earliestEstablishedYear)){
+								earliestEstablishedYear = yearEstablished;
+							}
+						}
+					}
+				}
+				
+				var mostRecentlySurveyedYear = earliestEstablishedYear;
+				for(var i = 0; i < siteNames.length; i++){
+					if("MostRecentDateTime" in siteMarkers[siteNames[i]].siteInformation && siteMarkers[siteNames[i]].siteInformation.MostRecentDateTime.indexOf("-") > -1){
+						var mostRecentYear = Number(siteMarkers[siteNames[i]].siteInformation.MostRecentDateTime.split("-")[0]);
+						if(mostRecentYear > 0 && mostRecentYear > Number(mostRecentlySurveyedYear)){
+							mostRecentlySurveyedYear = mostRecentYear;
+						}
+					}
+				}
+				
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + todaysDate.getFullYear() + ". Foliage Arthropod Data. Data type: Composition Data. [01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + "] for Site" + (siteNames.length > 1 ? "s" : "") + ": " + siteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (todaysDate.getMonth() + 1)).slice(-2) + "/" + ('0' + todaysDate.getDate()).slice(-2) + "/" + todaysDate.getFullYear() + " at https://caterpillarscount.unc.edu.";
 				
 				var zip = new JSZip();
 				var folder = zip.folder("Caterpillars Count! " + xAxis.toLowerCase() + " composition data");
-				folder.file("metadata.txt", "Hello World\n");
+				folder.file("metadata.txt", metadataText);
 				folder.file("data.csv", csvString);
 				zip.generateAsync({type:"blob"})
 				.then(function(content) {
