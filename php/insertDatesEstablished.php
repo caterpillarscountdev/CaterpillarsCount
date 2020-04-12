@@ -1,5 +1,7 @@
 <?php
   require_once('orm/resources/Keychain.php');
+
+  $dbconn = (new Keychain)->getDatabaseConnection();
   
   $query = mysqli_query($dbconn, "SELECT ID FROM `Site`");
   while($row = mysqli_fetch_assoc($query)){
