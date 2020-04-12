@@ -11,6 +11,7 @@ class Site
 //PRIVATE VARS
 	private $id;							//INT
 	private $creator;							//User object
+	private $dateEstablished;						//STRING (YYYY-MM-DD)
 	private $name;					//STRING			email that has been signed up for but not necessarilly verified
 	private $description;
 	private $url;
@@ -82,7 +83,7 @@ class Site
 		$salt = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", rand() . rand() . rand())));
 		$saltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $salt . $password)));
 		
-		mysqli_query($dbconn, "INSERT INTO Site (`UserFKOfCreator`, `Name`, `Description`, `URL`, `Latitude`, `Longitude`, `Region`, `Salt`, `SaltedPasswordHash`, `OpenToPublic`, `Active`) VALUES ('" . $creator->getID() . "', '$name', '$description', '$url', '$latitude', '$longitude', '$region', '$salt', '$saltedPasswordHash', '$openToPublic', '1')");
+		mysqli_query($dbconn, "INSERT INTO Site (`UserFKOfCreator`, `Name`, `DateEstablished`, `Description`, `URL`, `Latitude`, `Longitude`, `Region`, `Salt`, `SaltedPasswordHash`, `OpenToPublic`, `Active`) VALUES ('" . $creator->getID() . "', '$name', '" . date("Y-m-d") . "', '$description', '$url', '$latitude', '$longitude', '$region', '$salt', '$saltedPasswordHash', '$openToPublic', '1')");
 		$id = intval(mysqli_insert_id($dbconn));
 		mysqli_close($dbconn);
 		
@@ -90,12 +91,13 @@ class Site
 		if($openToPublic){$publicPrivateString = "Public";}
 		email("caterpillarscount@gmail.com", "New Caterpillars Count! Site Created!", "<html> <head> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style> body{ margin:0px; } table{ font-size:20px; } td{ padding:20px; box-sizing:border-box; word-break: break-word; } td:nth-of-type(2){ color:#777; } @media only screen and (max-width: 500px){ table{ font-size:16px; } } @media only screen and (max-width: 400px){ table{ font-size:13px; } } </style> </head> <body> <div style=\"padding:20px;text-align:center;border-radius:5px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"> <div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\"> <table style=\"width:100%;table-layout: fixed;border-collapse:collapse;background:#f7f7f7;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;color:#555;\"> <tr> <td colspan=\"2\" style=\"background:#70c6ff;text-align:center;\"><img src=\"https://caterpillarscount.unc.edu/images/newSite.png\" style=\"height:150px;\"/></td> </tr> <tr> <td>Name: </td> <td>" . $name . "</td> </tr> <tr> <td>Description: </td> <td>" . $description . "</td> </tr> <tr> <td>Region: </td> <td>" . $region . "</td> </tr> <tr> <td>Coordinates: </td> <td><a href=\"https://www.google.com/maps/search/?api=1&query=" . $latitude . "," . $longitude . "\" style=\"color:#70c6ff;\">" . $latitude . "," . $longitude . "</a></td> </tr> <tr> <td>Visibility: </td> <td>" . $publicPrivateString . "</td> </tr> <tr> <td>Created by: </td> <td>" . $creator->getFullName() . "</td> </tr> <tr> <td>Email: </td> <td><a href=\"mailto:" . $creator->getEmail() . "\" style=\"color:#70c6ff;\">" . $creator->getEmail() . "</a></td> </tr> </table> </div> </div> </body></html>");
 		email("caterpilarscountalerts@gmail.com", "New Caterpillars Count! Site Created!", "<html> <head> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style> body{ margin:0px; } table{ font-size:20px; } td{ padding:20px; box-sizing:border-box; word-break: break-word; } td:nth-of-type(2){ color:#777; } @media only screen and (max-width: 500px){ table{ font-size:16px; } } @media only screen and (max-width: 400px){ table{ font-size:13px; } } </style> </head> <body> <div style=\"padding:20px;text-align:center;border-radius:5px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"> <div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\"> <table style=\"width:100%;table-layout: fixed;border-collapse:collapse;background:#f7f7f7;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;color:#555;\"> <tr> <td colspan=\"2\" style=\"background:#70c6ff;text-align:center;\"><img src=\"https://caterpillarscount.unc.edu/images/newSite.png\" style=\"height:150px;\"/></td> </tr> <tr> <td>Name: </td> <td>" . $name . "</td> </tr> <tr> <td>Description: </td> <td>" . $description . "</td> </tr> <tr> <td>Region: </td> <td>" . $region . "</td> </tr> <tr> <td>Coordinates: </td> <td><a href=\"https://www.google.com/maps/search/?api=1&query=" . $latitude . "," . $longitude . "\" style=\"color:#70c6ff;\">" . $latitude . "," . $longitude . "</a></td> </tr> <tr> <td>Visibility: </td> <td>" . $publicPrivateString . "</td> </tr> <tr> <td>Created by: </td> <td>" . $creator->getFullName() . "</td> </tr> <tr> <td>Email: </td> <td><a href=\"mailto:" . $creator->getEmail() . "\" style=\"color:#70c6ff;\">" . $creator->getEmail() . "</a></td> </tr> </table> </div> </div> </body></html>");
-		return new Site($id, $creator, $name, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, true);
+		return new Site($id, $creator, $name, date("Y-m-d"), $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, true);
 	}
-	private function __construct($id, $creator, $name, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, $active) {
+	private function __construct($id, $creator, $name, $dateEstablished, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, $active) {
 		$this->id = intval($id);
 		$this->creator = $creator;
 		$this->name = $name;
+		$this->dateEstablished = $dateEstablished;
 		$this->description = $description;
 		$this->url = $url;
 		$this->latitude = $latitude;
@@ -124,6 +126,7 @@ class Site
 		
 		$creator = User::findByID($siteRow["UserFKOfCreator"]);
 		$name = $siteRow["Name"];
+		$dateEstablished = $siteRow["DateEstablished"];
 		$description = $siteRow["Description"];
 		$url = $siteRow["URL"];
 		$latitude = $siteRow["Latitude"];
@@ -134,7 +137,7 @@ class Site
 		$openToPublic = $siteRow["OpenToPublic"];
 		$active = filter_var($siteRow["Active"], FILTER_VALIDATE_BOOLEAN);
 		
-		return new Site($id, $creator, $name, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, $active);
+		return new Site($id, $creator, $name, $dateEstablished, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, $active);
 	}
 	
 	public static function findByName($name) {
@@ -160,6 +163,7 @@ class Site
 		while($siteRow = mysqli_fetch_assoc($query)){
 			$id = $siteRow["ID"];
 			$name = $siteRow["Name"];
+			$dateEstablished = $siteRow["DateEstablished"];
 			$description = $siteRow["Description"];
 			$url = $siteRow["URL"];
 			$latitude = $siteRow["Latitude"];
@@ -169,7 +173,7 @@ class Site
 			$saltedPasswordHash = $siteRow["SaltedPasswordHash"];
 			$openToPublic = $siteRow["OpenToPublic"];
 			$active = filter_var($siteRow["Active"], FILTER_VALIDATE_BOOLEAN);
-			$site = new Site($id, $creator, $name, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, $active);
+			$site = new Site($id, $creator, $name, $dateEstablished, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, $active);
 			
 			array_push($sitesArray, $site);
 		}
@@ -202,6 +206,7 @@ class Site
 			$id = $siteRow["ID"];
 			$creator = User::findByID($siteRow["UserFKOfCreator"]);
 			$name = $siteRow["Name"];
+			$dateEstablished = $siteRow["DateEstablished"];
 			$description = $siteRow["Description"];
 			$url = $siteRow["URL"];
 			$latitude = $siteRow["Latitude"];
@@ -211,7 +216,7 @@ class Site
 			$saltedPasswordHash = $siteRow["SaltedPasswordHash"];
 			$active = filter_var($siteRow["Active"], FILTER_VALIDATE_BOOLEAN);
 			
-			$site = new Site($id, $creator, $name, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, true, $active);
+			$site = new Site($id, $creator, $name, $dateEstablished, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, true, $active);
 			
 			if($active){
 				array_push($sitesArray, $site);
@@ -234,6 +239,7 @@ class Site
 			$id = $siteRow["ID"];
 			$creator = User::findByID($siteRow["UserFKOfCreator"]);
 			$name = $siteRow["Name"];
+			$dateEstablished = $siteRow["DateEstablished"];
 			$description = $siteRow["Description"];
 			$url = $siteRow["URL"];
 			$latitude = $siteRow["Latitude"];
@@ -243,7 +249,7 @@ class Site
 			$saltedPasswordHash = $siteRow["SaltedPasswordHash"];
 			$active = filter_var($siteRow["Active"], FILTER_VALIDATE_BOOLEAN);
 			
-			$site = new Site($id, $creator, $name, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, true, $active);
+			$site = new Site($id, $creator, $name, $dateEstablished, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, true, $active);
 			array_push($sitesArray, $site);
 		}
 		return $sitesArray;
@@ -276,6 +282,11 @@ class Site
 	public function getName() {
 		if($this->deleted){return null;}
 		return $this->name;
+	}
+	
+	public function getDateEstablished() {
+		if($this->deleted){return null;}
+		return $this->dateEstablished;
 	}
 	
 	public function getDescription() {
