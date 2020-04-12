@@ -9,5 +9,8 @@
     if(mysqli_num_rows($innerQuery) == 1){
       mysqli_query($dbconn, "UPDATE Site SET `DateEstablished`='" . mysqli_fetch_assoc($innerQuery)["EarliestDate"] . "' WHERE `ID`='" . $row["ID"] . "'");
     }
+    else{
+      mysqli_query($dbconn, "UPDATE Site SET `DateEstablished`='0000-00-00' WHERE `ID`='" . $row["ID"] . "'");
+    }
   }
 ?>
