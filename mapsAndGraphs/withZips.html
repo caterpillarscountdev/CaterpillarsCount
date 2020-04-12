@@ -2929,7 +2929,7 @@
 				}
 			}
 			//END OF COMPOSITION CHART STUFF
-			function downloadMapData(){//TODO: continue here
+			function downloadMapData(){
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)")];
 				var csvString = headers.join(",") + "\r\n";
 				for (var siteID in markers) {
@@ -2971,17 +2971,14 @@
 				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Map Data. " + ("0" + mapFilters.monthStart).slice(-2) + "/01/" + mapFilters.yearStart + "-" + ("0" + mapFilters.monthEnd).slice(-2) + "/" + getMonthLength(mapFilters.monthEnd, mapFilters.yearEnd) + "/" + mapFilters.yearEnd + " for Site: All sites. Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
 				
 				var zip = new JSZip();
-				var folder = zip.folder("Caterpillars Count! " + siteNames.join(" - ") + " phenology data");
+				var folder = zip.folder("Caterpillars Count! map data");
 				folder.file("metadata.txt", metadataText);
 				folder.file("data.csv", csvString);
 				zip.generateAsync({type:"blob"})
 				.then(function(content) {
-					saveAs(content, "CaterpillarsCountPhenologyData-" + siteNames.join("-") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".zip");
+					saveAs(content, "CaterpillarsCountMapData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".zip");
 				});
 				
-				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCountMapData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
-				var links = $("#downloadLinks a");
-				links.eq(links.length - 1)[0].click();
 				//track download
 				var downloadedFile = "Dynamically Generated Map CSV";
 				var downloadFilters = "Comparison Metric: " + mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)") + ", Observation Method: " + mapFilters.observationMethod.replace("%", "All") + ", Arthropod Group: " + mapFilters.arthropodGroup.replace("%", "All") + ", Minimum Length (mm): " + mapFilters.minimumLength + ", Plant Species: " + mapFilters.plantSpecies + ", Wet Leaves: " + mapFilters.wetLeaves.toString() + ", Month Start: " + mapFilters.monthStart + ", Month End: " + mapFilters.monthEnd + ", Year Start: " + mapFilters.yearStart + ", YearEnd: " + mapFilters.yearEnd;
