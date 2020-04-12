@@ -3084,12 +3084,18 @@
 					if(a.toLowerCase() > b.toLowerCase()) return 1;
 					return 0;
 				});
+				if(untouchedSiteNames.length == 0){
+					untouchedSiteNames = ["No sites"];
+				}
 				
 				siteNames.sort(function(a, b){
 					if(a.toLowerCase() < b.toLowerCase()) return -1;
 					if(a.toLowerCase() > b.toLowerCase()) return 1;
 					return 0;
 				});
+				if(siteNames.length == 0){
+					siteNames = ["No sites".replace(/[\W_]+/g," ")];
+				}
 				
 				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Phenology Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
 				
