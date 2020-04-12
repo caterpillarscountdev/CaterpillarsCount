@@ -40,6 +40,8 @@
 		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<script src="../js/libraries/jszip.min.js"></script>
+		<script src="../js/libraries/FileSaver.js"></script>
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=2"></script>
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
@@ -2926,7 +2928,7 @@
 				}
 			}
 			//END OF COMPOSITION CHART STUFF
-			function downloadMapData(){
+			function downloadMapData(){//TODO: continue here
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)")];
 				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
 				for (var siteID in markers) {
@@ -3071,7 +3073,7 @@
 					headers = ["Site", "Description", "Latitude", "Longitude", "Plant Species", "Arthropod Group", yAxis];
 					siteName = $("#selectedSitePanel h2").eq(0)[0].innerHTML;
 				}
-				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+				var csvString = headers.join(",") + "\r\n";
 				for(var i = 0; i < barConfig.data.labels.length; i++){
 					if(xAxis == "site"){
 						siteName = barConfig.data.labels[i];
@@ -3093,9 +3095,38 @@
 					}
 				}
 				var date = new Date();
-				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCount" + $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.replace(/ /g, "") + "CompositionData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
+				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"\">download csv</a>");
 				var links = $("#downloadLinks a");
 				links.eq(links.length - 1)[0].click();
+				
+				var headerDescriptions = {
+					"site": "Name of the Caterpillars Count! site",
+					"description": "Description of the Caterpillars Count! site",
+					"latitude": "Latitude of the Caterpillars Count! site",
+					"longitude": "Longitude of the Caterpillars Count! site",
+					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
+					"percent of arthropods": "The percentage of all arthropods encountered by number of individuals. Must sum to 100 across arthropod groups.",
+					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
+					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
+					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
+				};
+				
+				var metadataText = "";
+				for(var i = 0; i < headers.length; i++){
+					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
+				}
+				var todaysDate = new Date();
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + todaysDate.getFullYear() + ". Foliage Arthropod Data. Data type: [Raw Data]. [01/01/2010-12/31/2019] for Site: [All sites]. Chapel Hill, North Carolina, USA. Data set accessed [04/07/2020] at https://caterpillarscount.unc.edu."
+				
+				var zip = new JSZip();
+				var folder = zip.folder("Caterpillars Count! " + xAxis.toLowerCase() + " composition data");
+				folder.file("metadata.txt", "Hello World\n");
+				folder.file("data.csv", csvString);
+				zip.generateAsync({type:"blob"})
+				.then(function(content) {
+					saveAs(content, "CaterpillarsCount" + xAxis.replace(/ /g, "").charAt(0).toUpperCase() + xAxis.replace(/ /g, "").substring(1) + "CompositionData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".zip");
+				});
+				
 				//track download
 				var downloadedFile = "Dynamically Generated Composition CSV";
 				var downloadFilters = filtersString;
