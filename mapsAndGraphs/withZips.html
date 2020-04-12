@@ -3004,14 +3004,20 @@
 			function downloadPhenologyData(){
 				var metric = $("#lineGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Date", "Julian Day", metric];
-				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+				var csvString = headers.join(",") + "\r\n";
 				var filtersString = "Y-Axis: " + metric + ", Lines:";
+				
+				var date = new Date();
+				var earliestEstablishedYear = date.getFullYear();
+				var mostRecentlySurveyedYear = 0;
+				var untouchedSiteNames = ["No sites"];
+				var siteNames = [];
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					//nodata
 				}
 				else{
 					var datasets = lineConfig.data.datasets;
-					var siteNames = [];
+					untouchedSiteNames = [];
 					for(var i = 0; i < datasets.length; i++){
 						var optionsString = datasets[i].label;
 						var arthropod = optionsString;
@@ -3026,6 +3032,9 @@
 						if(siteNames.indexOf(siteName.replace(/[\W_]+/g," ")) == -1){
 							siteNames[siteNames.length] = siteName.replace(/[\W_]+/g," ");
 						}
+						if(untouchedSiteNames.indexOf(siteName) == -1){
+						   untouchedSiteNames[untouchedSiteNames.length] = siteName;
+						}
 						var year = Number(optionsString.substring(optionsString.lastIndexOf(" in")).replace(/\D/g, ""));
 						var marker = findMarkerBySiteName(siteName);
 						var points = datasets[i].data;
@@ -3037,12 +3046,50 @@
 							csvString += row.join(",") + "\r\n";
 						}
 						filtersString += " " + arthropod + " at " + siteName + " in " + year + ";";
+						
+						if(year < Number(earliestEstablishedYear)){
+							earliestEstablishedYear = year;
+						}
+						
+						if(year > Number(mostRecentlySurveyedYear)){
+							mostRecentlySurveyedYear = year;
+						}
 					}
 				}
-				var date = new Date();
-				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCountPhenologyData-" + siteNames.join("-") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
-				var links = $("#downloadLinks a");
-				links.eq(links.length - 1)[0].click();
+				
+				if(mostRecentlySurveyedYear == 0){
+					mostRecentlySurveyedYear = earliestEstablishedYear;
+				}
+				
+				var headerDescriptions = {
+					"site": "Name of the Caterpillars Count! site",
+					"description": "Description of the Caterpillars Count! site",
+					"latitude": "Latitude of the Caterpillars Count! site",
+					"longitude": "Longitude of the Caterpillars Count! site",
+					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
+					"date": "The Gregorian calendar date in the form YYYY-MM-DD",
+					"julian day": "The number of days since the beginning of the year, starting with January 1st as 1.",
+					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
+					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
+					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
+				};
+				
+				var metadataText = "";
+				for(var i = 0; i < headers.length; i++){
+					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
+				}
+				
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Phenology Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
+				
+				var zip = new JSZip();
+				var folder = zip.folder("Caterpillars Count! " + siteNames.join(" - ") + " phenology data");
+				folder.file("metadata.txt", metadataText);
+				folder.file("data.csv", csvString);
+				zip.generateAsync({type:"blob"})
+				.then(function(content) {
+					saveAs(content, "CaterpillarsCountPhenologyData-" + siteNames.join("-") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".zip");
+				});
+				
 				//track download
 				var downloadedFile = "Dynamically Generated Phenology CSV";
 				var downloadFilters = filtersString;
@@ -3098,9 +3145,6 @@
 					}
 				}
 				var date = new Date();
-				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"\">download csv</a>");
-				var links = $("#downloadLinks a");
-				links.eq(links.length - 1)[0].click();
 				
 				var headerDescriptions = {
 					"site": "Name of the Caterpillars Count! site",
@@ -3119,9 +3163,7 @@
 					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
 				}
 				
-				var todaysDate = new Date();
-				
-				var earliestEstablishedYear = todaysDate.getFullYear();
+				var earliestEstablishedYear = date.getFullYear();
 				var siteNames = [];
 				for(var siteName in siteMarkers){
 					if(Object.prototype.hasOwnProperty.call(siteMarkers, siteName)){
@@ -3145,7 +3187,13 @@
 					}
 				}
 				
-				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + todaysDate.getFullYear() + ". Foliage Arthropod Data. Data type: Composition Data. [01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + "] for Site" + (siteNames.length > 1 ? "s" : "") + ": " + siteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (todaysDate.getMonth() + 1)).slice(-2) + "/" + ('0' + todaysDate.getDate()).slice(-2) + "/" + todaysDate.getFullYear() + " at https://caterpillarscount.unc.edu.";
+				siteNames.sort(function(a, b){
+					if(a.toLowerCase() < b.toLowerCase()) return -1;
+					if(a.toLowerCase() > b.toLowerCase()) return 1;
+					return 0;
+				});
+				
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Composition Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (siteNames.length > 1 ? "s" : "") + ": " + siteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
 				
 				var zip = new JSZip();
 				var folder = zip.folder("Caterpillars Count! " + xAxis.toLowerCase() + " composition data");
