@@ -433,6 +433,21 @@ class Site
 		return false;
 	}
 	
+	public function setDateEstablished($dateEstablished){
+		if(!$this->deleted){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			$dateEstablished = self::validDate($dbconn, $dateEstablished);
+			if($dateEstablished !== false){
+				mysqli_query($dbconn, "UPDATE Site SET DateEstablished='$dateEstablished' WHERE ID='" . $this->id . "'");
+				mysqli_close($dbconn);
+				$this->dateEstablished = $dateEstablished;
+				return true;
+			}
+			mysqli_close($dbconn);
+		}
+		return false;
+	}
+	
 	public function setDescription($description){
 		if(!$this->deleted){
 			$dbconn = (new Keychain)->getDatabaseConnection();
@@ -602,6 +617,22 @@ class Site
 			return false;
 		}
 		return $name;
+	}
+	
+	public static function validDate($dbconn, $date){
+		$dateParts = explode("-", trim($date));
+		if(count($dateParts != 3)){
+			return false;
+		}
+		
+		$dateParts[0] = preg_replace("/[^0-9]/", "", $dateParts[0]);
+		$dateParts[1] = preg_replace("/[^0-9]/", "", $dateParts[1]);
+		$dateParts[2] = preg_replace("/[^0-9]/", "", $dateParts[2]);
+		if(strlen($dateParts[0]) != 4 || strlen($dateParts[0]) != 2 || strlen($dateParts[0]) != 2 || !checkdate(intval($dateParts[1]), intval($dateParts[2]), intval($dateParts[0]))){
+			return false;
+		}
+		
+		return mysqli_real_escape_string($dbconn, htmlentities(implode("-", $dateParts)));
 	}
 	
 	public static function validDescription($dbconn, $description){
