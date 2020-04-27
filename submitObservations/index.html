@@ -435,7 +435,7 @@
 									<div class="group" id="arthropodPhotoGroup">
 										<div class="observationFieldTitle">Optional photo:</div>
 										<div class="fileInputHolder" id="arthropodFileInputHolder" onclick="$('#uploadedImageFile')[0].click();">
-											<input type="file" style="display:none;" id="uploadedImageFile" onchange="if(this.files.length == 1){if(jQuery.isFunction(showUploadedImageFromFile)){showUploadedImageFromFile(this.files[0]);}}else if(this.files.length > 1){queueNotice('error', 'You may only upload one picture per arthropod sighting.');}"/>
+											<input type="file" style="display:none;" accept="image/*" id="uploadedImageFile" onchange="if(this.files.length == 1){if(jQuery.isFunction(showUploadedImageFromFile)){showUploadedImageFromFile(this.files[0]);}}else if(this.files.length > 1){queueNotice('error', 'You may only upload one picture per arthropod sighting.');}"/>
 											<div class="uploadedImage" style="background-image:url('#');">
 												<div id="uploadedImageGrayOutCover" onclick="event.stopPropagation();"></div>
 											</div>
