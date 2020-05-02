@@ -1,0 +1,2541 @@
+<html>
+	<head>
+		<!-- Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+			gtag('config', 'UA-113319025-1');
+		</script>
+		<!-- End of Google Analytics -->
+
+		<title>Manage My Surveys | Caterpillars Count!</title>
+<meta name="robots" content="noindex"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../images/favicon/apple-touch-icon-114x114.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../images/favicon/apple-touch-icon-72x72.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../images/favicon/apple-touch-icon-144x144.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="60x60" href="../images/favicon/apple-touch-icon-60x60.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="120x120" href="../images/favicon/apple-touch-icon-120x120.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="76x76" href="../images/favicon/apple-touch-icon-76x76.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="152x152" href="../images/favicon/apple-touch-icon-152x152.png" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-196x196.png" sizes="196x196" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-32x32.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-16x16.png" sizes="16x16" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-128.png" sizes="128x128" />
+		<meta name="msapplication-TileColor" content="transparent" />
+		<meta name="msapplication-TileImage" content="../images/favicon/mstile-144x144.png" />
+		<meta name="msapplication-square70x70logo" content="../images/favicon/mstile-70x70.png" />
+		<meta name="msapplication-square150x150logo" content="../images/favicon/mstile-150x150.png" />
+		<meta name="msapplication-wide310x150logo" content="../images/favicon/mstile-310x150.png" />
+		<meta name="msapplication-square310x310logo" content="../images/favicon/mstile-310x310.png" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<link href="../css/template.css" rel="stylesheet">
+		<script src="../js/template.js?v=1"></script>
+		<link href="../css/checkbox.css?v=1" rel="stylesheet">
+		<script src="../js/checkbox.js?v=1"></script>
+		<style>
+			.loading{
+				background:rgba(0,0,0,0.1);
+				padding:20px;
+				text-align:center;
+				border-radius:5px;
+			}
+
+			.loading>img{
+				height:30px;
+			}
+
+			h3:nth-of-type(1) ~ h3{
+				margin-top:10px;
+				padding-top:1em;
+				border-top:2px solid rgba(0,0,0,0.03);
+				width:100%
+			}
+
+			#surveys .survey{
+				margin-bottom:20px;
+				font-family: 'Roboto Slab', serif;
+				border-radius:5px;
+				background:rgba(0,0,0,0.05);
+			}
+
+			#surveys .survey .headInfo{
+				background:#333;
+				color:#fff;
+				display:none;
+				border-radius:5px 5px 0px 0px;
+			}
+
+			#surveys .survey .headInfo>div{
+				padding:5px;
+				display:inline-block;
+			}
+
+			#surveys .survey .siteInfo{
+				padding:5px;
+				color:#fff;
+				padding-right:143px;
+				position:relative;
+				border-radius:5px 5px 0px 0px;
+				overflow:hidden;
+			}
+
+			#surveys .survey .siteInfo .options{
+				position:absolute;
+				right:0px;
+				top:0px;
+				background:rgba(0,0,0,0.5);
+				box-sizing:border-box;
+				display:table;
+				text-align:center;
+				width:53px;
+				height:31px;
+				padding:0px 5px;
+			}
+			#surveys .survey .siteInfo .options>div{
+				display:table-cell;
+				vertical-align:middle;
+				box-sizing:border-box;
+			}
+
+			#surveys .survey .siteInfo .options>div>img{
+				cursor:pointer;
+				opacity:0.5;
+			}
+
+			#surveys .survey.hasAuthorityToEdit .siteInfo .options>div>img{
+				opacity:1;
+			}
+
+			#surveys .survey .siteInfo .checkbox{
+				opacity:0.5;
+			}
+
+			#surveys .survey.hasAuthorityToEdit .siteInfo .checkbox{
+				opacity:1;
+			}
+
+			#surveys .survey .siteInfo .options>div>.checkboxHolder{
+				display:none;
+			}
+
+			#surveys .survey .siteInfo .options>div>.checkboxHolder>.checkbox{
+				height:17px;
+				width:17px;
+				cursor:pointer;
+			}
+
+			#surveys .survey .siteInfo .time{
+				position:absolute;
+				right:53px;
+				top:0px;
+				padding:5px;
+				background:rgba(0,0,0,0.2);
+				box-sizing:border-box;
+				width:80px;
+				text-align:center;
+			}
+
+			#surveys .survey .surveyInfo{
+				color:#555;
+			}
+
+			#surveys .survey .surveyInfo>div:first-of-type{
+				display:table;
+				width:100%;
+			}
+
+			#surveys .survey .surveyInfo>div:first-of-type>div{
+				display:table-cell;
+				vertical-align:top;
+				width:20%;
+				text-align:center;
+				font-size:12px;
+				padding:5px 10px;
+				box-sizing:border-box;
+				text-transform:uppercase;
+				border-right:1px solid rgba(0,0,0,0.05);
+				margin-right:-1px;
+			}
+
+			#surveys .survey .surveyInfo>div:first-of-type>div:nth-of-type(5){
+				border-right:0px none transparent;
+				margin-right:0px;
+			}
+
+			#surveys .survey .surveyInfo>div:last-of-type{
+				float:none;
+				clear:both;
+				width:100%;
+				padding:0px;
+				text-align:center;
+			}
+
+			#surveys .survey .surveyInfo>div:last-of-type>div{
+				border-top:1px solid rgba(0,0,0,0.05);
+				padding:5px;
+				box-sizing:border-box;
+				font-style:italic;
+				text-transform:none;
+				font-size:10px;
+			}
+
+			#surveys .survey .surveyInfo>div:first-of-type .surveyInfoIcon{
+				width:100%;
+				height:20px;
+				font-size:20px;
+				opacity:0.3;
+				background-position:center;
+				background-size:contain;
+				background-repeat:no-repeat;
+				color:#000;
+				text-transform:none;
+			}
+
+			#surveys .survey .editable, #surveys .survey .toggleable{
+				display:inline-block;
+				min-width:5px;
+				border-radius:4px;
+			}
+			#surveys .survey .editable{
+				text-decoration:inherit;
+			}
+
+			#surveys .survey .smallSelect{
+    				position:relative;
+        			display:inline-block;
+				text-decoration:inherit;
+    			}
+   			#surveys .survey .smallSelect .selected{
+				border-radius:4px;
+				text-decoration:inherit;
+    			}
+    			#surveys .survey .smallSelect .options{
+    				position:absolute;
+        			top:0px;
+				left:-5px;
+        			background:white;
+        			min-width:100%;
+        			border-radius:5px;
+        			overflow:hidden;
+        			border:1px solid #ddd;
+        			border-bottom:2px solid #ddd;
+        			font-size:12px;
+        			display:none;
+				z-index:1;
+    			}
+    			#surveys .survey .smallSelect .options>div{
+    				padding:5px;
+        			cursor:pointer;
+    			}
+    			#surveys .survey .smallSelect .options>div:hover{
+    				background:#ebfeff;
+    			}
+
+			#surveys .survey .surveyInfo>div:first-of-type>div>div:nth-of-type(2){
+				margin-top:5px;
+			}
+
+			#surveys .survey .arthropodSightingsInfo{
+				max-height:0px;
+				overflow:hidden;
+				color:#999;
+				background:rgba(0,0,0,0.05);
+			}
+
+			#surveys .survey .arthropodSightingsInfo .arthropodSighting{
+				border-top:1px solid rgba(0,0,0,0.05);
+				padding:3px 5px;
+				display:table;
+				width:100%;
+				box-sizing:border-box;
+				font-size:13px;
+				position:relative;
+			}
+
+			#surveys .survey .arthropodSightingsInfo .arthropodSighting>div.deleteArthropodSighting{
+				position:absolute;
+				width:10px;
+				height:10px;
+				right:10px;
+				top:50%;
+				margin-top:-5px;
+				background-image:url("../images/close.png");
+				background-size:contain;
+				background-position:center;
+				background-repeat:no-repeat;
+				opacity:.2;
+				cursor:pointer;
+				display:none;
+			}
+
+			#surveys .survey .arthropodSightingsInfo .arthropodSighting>div{
+				display:table-cell;
+				vertical-align:middle;
+			}
+
+			#surveys .survey .arthropodSightingsInfo .arthropodSighting>div:nth-of-type(1){
+				width:20px;
+			}
+			#surveys .survey .arthropodSightingsInfo .arthropodSighting>div:nth-of-type(2){
+				padding-left:7px;
+			}
+
+			#surveys .survey .arthropodSightingsInfo .arthropodSighting .arthropodImage{
+				width:20px;
+				height:20px;
+				opacity:0.3;
+				background-position:center;
+				background-size:contain;
+				background-repeat:no-repeat;
+			}
+
+			#surveys .survey .arthropodSightingsDropdownButtonDiv{
+				padding:5px;
+				border-top:1px solid rgba(0,0,0,0.05);
+				color:#aaa;
+				text-align:center;
+				cursor:pointer;
+				background:rgba(0,0,0,0.05);
+				font-size:13px;
+			}
+
+			#pageNav{
+				text-align:center;
+				font-size:16px;
+				font-family: 'Roboto Slab', serif;
+				background:#333;
+				border-radius:5px;
+				overflow:hidden;
+				display:none;
+			}
+
+			#pageNav .autoPage{
+				padding:10px;
+				color:#d4b957;
+				cursor:pointer;
+				display:inline-block;
+			}
+
+			#pageNav #pageNumbers{
+				display:inline-block;
+			}
+
+			#pageNav #pageNumbers .pageNumber{
+				padding:10px;
+				color:#fed136;
+				cursor:pointer;
+				display:inline-block;
+			}
+			#pageNav #pageNumbers .pageNumber:first-of-type{
+				padding-left:20px;
+			}
+			#pageNav #pageNumbers .pageNumber:last-of-type{
+				padding-right:20px;
+			}
+
+			#pageNav #pageNumbers #currentPageNumber{
+				color:#fff;
+				cursor:default;
+			}
+
+			#iconBar{
+				background:#eee;
+				padding:20px;
+			}
+			
+			#iconBar>div{
+				text-align:right;
+				min-height:45px;
+				display:none;
+			}
+			
+			#iconBar>div>img{
+				height:25px;
+				opacity:.5;
+				cursor:pointer;
+				float:right;
+				display:none;
+			}
+			#batchDeleteIcon{
+				padding-right:20px;
+			}
+			
+			.iconButton{
+				display:table;
+				background:#fed136;
+				padding:10px;
+				color:#fff;
+				font-family:'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				font-weight:bold;
+				text-transform:uppercase;
+				border-radius:4px;
+				overflow:hidden;
+				border-bottom:2px solid rgba(0,0,0,0.1);
+				cursor:pointer;
+				width:auto;
+				box-sizing:border-box;
+				float:right;
+			}
+			
+			#batchDeleteIconButton{
+				margin-right:20px;
+				background:#ccc;
+			}
+			
+			.iconButton>div{
+				display:table-cell;
+				vertical-align:middle;
+			}
+			.iconButton img{
+				height:23px;
+				width:23px;
+				background-position:center;
+				background-size:contain;
+				background-repeat:no-repeat;
+			}
+			.iconButton>div{
+				padding-left:10px;
+				padding-right:3px;
+				font-size:17px;
+				padding-top:2px;
+			}
+
+			#filtersDropdown, #batchDeleteDropdown{
+				background:#eee;
+				border-top:1px solid rgba(0,0,0,0.05);
+				max-height:0px;
+				overflow:hidden;
+			}
+
+			#batchDeleteDropdown>div{
+				padding:20px;
+				font-size:17px;
+				font-family: 'Roboto Slab', serif;
+				color:#aaa;
+				text-align:center;
+				background:rgba(0,0,0,0.01);
+				border-top:1px solid rgba(0,0,0,0.05);
+			}
+
+			#filters{
+				display:table;
+				width:100%;
+				background:rgba(0,0,0,0.01);
+			}
+
+			#filters>.filter{
+				border-right:1px solid rgba(0,0,0,0.05);
+				padding:20px;
+				display:table-cell;
+				vertical-align:top;
+				box-sizing:border-box;
+				width:33.33%;
+			}
+
+			#filters.full>.filter{
+				width:25%;
+				border-right:2px solid rgba(0,0,0,0.05);
+			}
+
+			#filters>.filter:first-of-type{
+				display:none;
+			}
+
+			#filters.full>.filter:first-of-type{
+				display:table-cell;
+			}
+
+			#filters>.filter:last-of-type, #filters.full>.filter:last-of-type{
+				border-right:0px none transparent;
+				border-bottom:0px none transparent;
+			}
+
+			#filters>.filter .inputTitle{
+				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				color:#666;
+				text-transform:uppercase;
+				font-size:14px;
+			}
+
+			#filters>.filter .toggleLink{
+				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				color:#aaa;
+				text-transform:uppercase;
+				font-size:10px;
+				margin-top:5px;
+				margin-right:5px;
+				text-align:right;
+			}
+
+			#circleSearchDiv{
+				padding-top:20px;
+				display:none;
+			}
+
+			#locationFilters{
+				overflow:hidden;
+			}
+
+			#surveylocationCodeFilter{
+				display:none;
+			}
+
+			#filtersDropdown>button{
+				margin:0px;
+				width:100%;
+				border-radius:0px;
+				background:rgba(0,0,0,0.09);
+			}
+
+			#noSurveys{
+				padding:20px 0px;
+				font-size:20px;
+				color:#777;
+				text-align:center;
+				font-family: 'Roboto Slab', serif;
+			}
+
+			.false.caterpillarOption, .false.beeOption, .false.beetleOption{
+				color:#c5c5c5;
+				text-decoration:line-through;
+			}
+
+			.true.caterpillarOption::after, .true.beeOption::after, .true.beetleOption::after{
+				content:"!";
+			}
+
+			#editExtras{
+				max-height:0px;
+				overflow:hidden;
+			}
+
+			#dateFilter{
+				background:#fff;
+				border:1px solid #ddd;
+				border-bottom:2px solid #ddd;
+				border-radius:4px;
+    				overflow:hidden;
+			}
+
+			#dateFilter>div:first-of-type>div{
+				padding:16px 5px;
+				float:left;
+				width:33.33%;
+				box-sizing:border-box;
+				color:#aaa;
+				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				border-right:1px solid #ddd;
+				cursor:pointer;
+				text-align:center;
+			}
+
+			#dateFilter>div:first-of-type>div:last-of-type{
+				border-right:0px none transparent;
+			}
+
+			#dateFilter .select{
+				border:0px none transparent;
+				border-radius:0px;
+				margin-top:0px;
+			}
+
+			#dateFilter .option:first-of-type{
+				display:none;
+			}
+
+			.select{
+				width:100%;
+				-webkit-appearance: none;
+    				-moz-appearance: none;
+    				appearance: none;
+    				border-radius:4px;
+    				overflow:hidden;
+    				background:#fff;
+				border:1px solid #ddd;
+				border-bottom:2px solid #ddd;
+				color:#aaa;
+				box-sizing:border-box;
+				margin-top:5px;
+				cursor:pointer;
+			}
+
+			.select{
+				padding:0px;
+				color:#aaa;
+				font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+			}
+
+			.select .option{
+				max-height:0px;
+				overflow:hidden;
+			}
+
+			.select .option.selected{
+				max-height:250px;
+				overflow:hidden;
+			}
+
+			.select .option .value{
+				display:none;
+			}
+
+			.select .option .shown{
+				padding:16px;
+				position:relative;
+				font-size:16px;
+			}
+
+			.select .option:nth-of-type(even){
+				background:#f7f7f7;
+			}
+
+			.select .option .shown .image{
+				height:34px;
+				width:34px;
+				background-size:contain;
+				background-repeat:no-repeat;
+				background-position:center;
+				display:inline-block;
+				opacity:.4;
+				position:absolute;
+				right:20px;
+				top:10px;
+			}
+
+			.select .option .shown .text{
+				display:inline-block;
+			}
+			
+			.promptInput{
+				margin-top:10px;
+				font-size:14px;
+				color:#555;
+				border:0px none transparent;
+				padding:10px 0px 0px 0px;
+				width:100%;
+				outline:none;
+			}
+			
+			#sciStarterNotice{
+				background-image:url("../images/infoIcon.png");
+				background-size:18px auto;
+				background-position:10px 11px;
+				background-repeat:no-repeat;
+				padding:10px 10px 10px 34px;
+				font-size:14px;
+				color:#777;
+				background-color:#eee;
+				border-radius:4px;
+				overflow:hidden;
+				margin:20px 0px;
+				font-family: 'Roboto Slab', serif;
+			}
+
+			@media screen and (max-width: 900px) {
+				.iconButton{
+					display:none;
+				}
+				#iconBar>div{
+					min-height:25px;
+				}
+				#iconBar>div>img{
+					display:block;
+				}
+				
+				#surveys .survey .headInfo{
+					display:block;
+				}
+
+				#surveys .survey .siteInfo{
+					border-radius:0px;
+				}
+
+				#surveys .survey .surveyInfo>div:first-of-type>div:first-of-type{
+					display:none;
+				}
+
+				#surveys .survey .surveyInfo>div:first-of-type>div{
+					width:50%;
+					border-right:0px none transparent;
+					margin-right:0px;
+					display:block;
+					float:left;
+				}
+				#surveys .survey .surveyInfo>div:first-of-type>div:nth-of-type(2){
+					border-bottom:1px solid rgba(0,0,0,0.05);
+					margin-bottom:-1px;
+					border-right:1px solid rgba(0,0,0,0.05);
+					margin-right:-1px;
+				}
+				#surveys .survey .surveyInfo>div:first-of-type>div:nth-of-type(3){
+					border-bottom:1px solid rgba(0,0,0,0.05);
+					margin-bottom:-1px;
+				}
+				#surveys .survey .surveyInfo>div:first-of-type>div:nth-of-type(4){
+					border-right:1px solid rgba(0,0,0,0.05);
+					margin-right:-1px;
+				}
+
+				#pageNav{
+					font-size:20px;
+				}
+
+				#pageNav #pageNumbers .pageNumber, #pageNav .autoPage{
+					padding:20px 10px;
+				}
+
+				#filters>.filter{
+					width:100%;
+					display:block;
+					border-right:0px none transparent;
+					border-bottom:0px solid rgba(0,0,0,0.05);
+				}
+
+				#filters.full>.filter{
+					border-right:0px none transparent;
+					border-bottom:2px solid rgba(0,0,0,0.05);
+					width:100%;
+					display:block;
+				}
+
+				#filters.full>.filter:first-of-type{
+					display:block;
+				}
+
+				#filters.full>.filter{
+					border-right:0px none transparent;
+					border-bottom:2px solid rgba(0,0,0,0.05);
+					width:100%;
+					display:block;
+				}
+			}
+			@media screen and (max-width: 610px){
+				#pageNav{
+					font-size:23px;
+				}
+			}
+		</style>
+		<script>
+			$(document).ready(function(){
+				loadBackgroundImage($("#splashImage"), "../images/splash.png");
+
+				loadFirstPage(true);
+
+				populateSurveySites();
+
+				showYears();
+
+				$(window).resize(function(){
+					updatePageNavigationBar();
+				});
+
+				requireLogIn();
+			});
+			
+			function email(fullName, emailParts){
+				var possessiveS = "s";
+				if(fullName.length > 0 && fullName[fullName.length - 1] == 's'){
+					possessiveS = "";
+				}
+				if(getDeviceType() == "desktop"){
+					promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join("@") + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Copy to clipboard!", function(){}, function(){
+						$('.promptInput').eq(0)[0].outerHTML = $('.promptInput').eq(0)[0].outerHTML;
+						$('.promptInput').eq(0)[0].select();
+						var copied = true;
+						try{
+							document.execCommand("copy");
+						}
+						catch(err){
+							copied = false;
+							setTimeout(function(){
+								promptConfirm("<strong>Sorry! We had trouble copying that for you. Please manually right-click and copy the email address here:</strong><br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join('@') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Got it!", function(){}, function(){});
+								$('.promptInput').eq(0)[0].outerHTML = $('.promptInput').eq(0)[0].outerHTML;
+								$(".promptInput").eq(0)[0].select();
+							}, 1);
+						}
+						if(copied){
+							queueNotice("confirmation", "Copied to clipboard!");
+						}
+					});
+				}
+				else{
+					promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join('@') + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput').eq(0)[0].select();\"/>", "Never mind.", "Got it!", function(){}, function(){});
+					$('.promptInput').eq(0)[0].outerHTML = $('.promptInput').eq(0)[0].outerHTML;
+				}
+				$(".promptInput").eq(0)[0].select();
+			}
+
+			function showYears(){
+				var htmlToAdd = "<div class=\"option selected\" onclick=\"selectOption(this);showDateLabel('year', this);\">	<div class=\"value\">____</div>		<div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/selectIcons/notselected.png');\"></div>		<div class=\"text\">Year</div></div></div>";
+				var date = new Date();
+				var year = date.getFullYear();
+				for(var i = year; i >= 1980; i--){
+					htmlToAdd += "<div class=\"option\" onclick=\"selectOption(this, true);showDateLabel('year', this);\">		<div class=\"value\">" + i + "</div>		<div class=\"shown\"><div class=\"image\"></div>			<div class=\"text\">" + i + "</div></div></div>";
+				}
+				$("#yearFilter")[0].innerHTML = htmlToAdd;
+			}
+
+			function singular(word){
+				if(word[word.length - 1] == "s"){
+					return word.substring(0, (word.length - 1));
+				}
+				return word;
+			}
+
+			function plural(word){
+				if(word[word.length - 1] == "y" && ["a", "e", "i", "o", "u"].indexOf(word[word.length - 2]) == -1){
+					return word.substring(0, (word.length - 1)) + "ies";
+				}
+				if(word[word.length - 1] == "s"){
+					return word;
+				}
+				return word + "s";
+			}
+
+			function getOrdinal(e){n=e.toString();for(var t="",h=0,d=n.length-1;d>=0;d--)if(1==++h)"0"==n[d]||("1"==n[d]?t="first":"2"==n[d]?t="second":"3"==n[d]?t="third":"4"==n[d]?t="fourth":"5"==n[d]?t="fifth":"6"==n[d]?t="sixth":"7"==n[d]?t="seventh":"8"==n[d]?t="eighth":"9"==n[d]&&(t="ninth"));else if(2==h)"0"==n[d]||("1"==n[d]?"0"==n[d+1]?t="tenth":"1"==n[d+1]?t="eleventh":"2"==n[d+1]?t="twelfth":"3"==n[d+1]?t="thirteenth":"4"==n[d+1]?t="fourteenth":"5"==n[d+1]?t="fifteenth":"6"==n[d+1]?t="sixteenth":"7"==n[d+1]?t="seventeenth":"8"==n[d+1]?t="eighteenth":"9"==n[d+1]&&(t="nineteenth"):"2"==n[d]?t=""==t?"twentieth":"twenty-"+t:"3"==n[d]?t=""==t?"thirtieth":"thirty-"+t:"4"==n[d]?t=""==t?"fortieth":"forty-"+t:"5"==n[d]?t=""==t?"fiftieth":"fifty-"+t:"6"==n[d]?t=""==t?"sixtieth":"sixty-"+t:"7"==n[d]?t=""==t?"seventieth":"seventy-"+t:"8"==n[d]?t=""==t?"eightieth":"eighty-"+t:"9"==n[d]&&(t=""==t?"ninetieth":"ninety-"+t));else if(3==h)"0"==n[d]||("1"==n[d]?t=""==t?"one hundredth":"one hundred and "+t:"2"==n[d]?t=""==t?"two hundredth":"two hundred and "+t:"3"==n[d]?t=""==t?"three hundredth":"three hundred and "+t:"4"==n[d]?t=""==t?"four hundredth":"four hundred and "+t:"5"==n[d]?t=""==t?"five hundredth":"five hundred and "+t:"6"==n[d]?t=""==t?"six hundredth":"six hundred and "+t:"7"==n[d]?t=""==t?"seven hundredth":"seven hundred and "+t:"8"==n[d]?t=""==t?"eight hundredth":"eight hundred and "+t:"9"==n[d]&&(t=""==t?"nine hundredth":"nine hundred and "+t));else if(4==h)return n;return t}
+
+			function getReadableDate(databaseFormattedDate){
+				//PRE: databaseFormattedDate format is YYYY-MM-DD
+				var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+				//var months = ["Jan.", "Feb.", "March", "April", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
+
+				var year = databaseFormattedDate.substring(0, 4);
+				var month = months[Number(databaseFormattedDate.substring(5, 7)) - 1];
+				var fullOrdinal = getOrdinal(Number(databaseFormattedDate.substring(8)));
+				var day = Number(databaseFormattedDate.substring(8)) + fullOrdinal.substring(fullOrdinal.length - 2);
+
+				return month + " " + day + ", " + year;
+			}
+
+			function getTwelveHourTime(militaryTime){
+				//PRE: militaryTime format is HH:MM:SS
+				var hours = Number(militaryTime.substring(0, 2));
+				var minutes = militaryTime.substring(3, 5);
+
+				var formattedHours = hours;
+				if(hours == 0){formattedHours = 12;}
+				else if(hours > 12){formattedHours = hours - 12;}
+				var ampm = "am";
+				if(hours >= 12){ampm = "pm";}
+				return formattedHours + ":" + minutes + ampm;
+			}
+
+			$(document).click(function(){
+				$(".smallSelect .options").fadeOut(0);
+			});
+
+			function showSmallSelectOptions(selectedOption){
+				setTimeout(function(){
+					//$('.smallSelect .options').css({display:"none"});
+					$(selectedOption).parent().find('.options').eq(0).css({display:"block"});
+				}, 1);
+			}
+
+			function smallSelectOption(option){
+				//$(option).parent().fadeOut(0);
+				$(option).parent().parent().find('.selected').eq(0)[0].innerHTML = option.innerHTML.replace("<br/>", " ").replace("<br>", " ");
+			}
+			
+			function r(search, replace, subject){
+				return subject.replace(/search/g, replace);
+			}
+			function myUrlEncode(str) {
+	    			return r(" ", "%20", r(">", "%3E", r("!", "%21", r("*", "%2A", r("(", "%28", r(")", "%29", r(";", "%3B", r(":", "%3A", r("@", "%40", r("&", "%26", r("=", "%3D", r("+", "%2B", r("$", "%24", r(",", "%2C", r("/", "%2F", r("?", "%3F", r("%", "%25", str)))))))))))))))));
+			}
+			function cleanParam(param){
+				param = myUrlEncode(param.toString().trim().replace(/[^a-zA-Z0-9.!*();:@&=+$,\/?%>-]/gi, " ").trim().replace(/ +(?= )/g,' '));
+				if(param == ""){
+					return "None";
+				}
+				return param;
+			}
+
+			var selected = [];
+			var unselected = [];
+			var GLOBALPageNumber = 1;
+			var GLOBALTotalSurveys = 0;
+			var GLOBALTotalPages = 0;
+			var GLOBALFilters = {"user":"", "arthropod":"", "site":"", "circle":"", "code":"", date:"____-__-__"};
+			var loadingPage = false;
+			function loadPage(pageNumber, filters, firstLoad){
+				firstLoad = firstLoad || false;
+				if(!loadingPage){
+					loadingPage = true;
+					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)), function(data){
+						//success
+						if(data.indexOf("true|") == 0){
+							GLOBALFilters = filters;
+							$("#filtersDropdown button").eq(0)[0].innerHTML = "Apply Filters";
+							closeHeight($('#filtersDropdown'));
+							closeHeight($("#editExtras"));
+							$("#pageNav").fadeIn(0);
+							$("#iconBar>div").fadeIn(300);
+							$(".loading").fadeOut(0);
+							$("#surveys").fadeIn(0);
+
+							var herbivoryScores = ["None", "Trace (1-5%)", "Light (6-10%)", "Moderate (11-25%)", "Heavy (> 25%)"]
+							var data = JSON.parse(data.replace("true|", ""));
+							var totalSurveys = data[0];
+							var totalPages = data[1];
+							var surveys = data[2];
+							var isASiteAuthority = data[3];
+							var iNaturalistObserverID = data[5];
+							var haveINaturalistObservations = data[6];
+							if(isASiteAuthority){
+								$("#filters").addClass("full");
+								var tagline = "This page shows all the surveys you've personally submitted, plus all the surveys submitted at the sites you manage.";
+							}
+							else{
+								var tagline = "This page shows all the surveys you've personally submitted.";
+							}
+							
+							if(haveINaturalistObservations){
+								tagline += " You can also check for expert identifications of your personal arthropod photos on this <a target=\"_blank\" href=\"https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=" + iNaturalistObserverID + "\">iNaturalist page</a>!";
+							}
+							else{
+								tagline += " You haven't submitted any surveys with photos yet, so your personal <a target=\"_blank\" href=\"https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=" + iNaturalistObserverID + "\">iNaturalist page</a> is currently empty.";
+							}
+							var sites = [];
+							for(var i = 0; i < data[4].length; i++){
+								sites[sites.length] = "<a target=\"_blank\" href=\"https://www.inaturalist.org/observations?field:Site%20Name=" + cleanParam(data[4][i]) + "\">" + data[4][i] + "</a>";
+							}
+							if(sites.length > 0){
+								sites.sort(function(a, b){
+									if(a.toLowerCase().trim() < b.toLowerCase().trim()){return -1;}
+									if(a.toLowerCase().trim() > b.toLowerCase().trim()){return 1;}
+									return 0;
+								});
+								tagline += " You can find all photo observations submitted for a given site here: ";
+								var sitesString = sites[0];
+								if(sites.length == 2){
+									sitesString += (" and " + sites[1]);
+								}
+								else{
+									for(var i = 1; i < sites.length; i++){
+										if(i < (sites.length - 1)){
+											sitesString += ", " + sites[i];
+										}
+										else{
+											sitesString += ", and " + sites[i];
+										}
+									}
+								}
+								tagline += sitesString;
+							}
+							$(".tagline").eq(0)[0].innerHTML = tagline;
+
+							if(surveys.length == 0){
+								if(pageNumber > 1){
+									return false;
+								}
+								$("#surveys")[0].innerHTML = "<div id='noSurveys'>No surveys found.</div>";
+								$("#pageNav").fadeOut(0);
+							}
+							if(pageNumber == "last"){
+								GLOBALPageNumber = totalPages;
+							}
+							else{
+								GLOBALPageNumber = pageNumber;
+							}
+							if(!firstLoad){
+								scrollToElement($("#iconBar"));
+							}
+							GLOBALTotalSurveys = totalSurveys;
+							GLOBALTotalPages = totalPages;
+							updatePageNavigationBar();
+							var htmlToAdd = "";
+							var lastDate = "";
+							for(var i = 0; i < surveys.length; i++){
+								if(surveys[i]["localDate"] !== lastDate){
+									lastDate = surveys[i]["localDate"];
+									htmlToAdd += "<h3>" + getReadableDate(surveys[i]["localDate"]) + "</h3>";
+								}
+								htmlToAdd += "<div class=\"survey";
+								if(surveys[i]["editable"]){
+								   	htmlToAdd += " hasAuthorityToEdit";
+								}
+								htmlToAdd += "\" id=\"" + surveys[i]["id"] + "\">";
+								htmlToAdd += 	"<div class=\"headInfo\">";
+								htmlToAdd +=		"<div class=\"underline pointer\" onclick=\"email('" + surveys[i]["observerFullName"].replace(/'/g, "\\'") + "', ['" + surveys[i]["observerEmail"].split("@")[0].replace(/'/g, "\\'") + "', '" + surveys[i]["observerEmail"].split("@")[1].replace(/'/g, "\\'") + "']);\">" + surveys[i]["observerFullName"] + "</div>";
+								htmlToAdd +=	"</div>";
+								htmlToAdd += 	"<div class=\"siteInfo\" style=\"background:" + surveys[i]["color"] + ";\"><div class=\"editable\" style=\"font-weight:bold;text-transform:uppercase;\" oninput=\"populatePlant(this);\">" + surveys[i]["plantCode"] + "</div><span class=\"plantCodeData\">: <a href=\"https://www.google.com/maps/search/?api=1&query=" + surveys[i]["siteCoordinates"] + "\" target=\"_blank\">" + surveys[i]["siteName"] + " (" + surveys[i]["siteRegion"] + ")</a>, Circle " + surveys[i]["circle"] + ", " + surveys[i]["plantSpecies"] + "</span><div class=\"date\" style=\"display:none;\">" + getReadableDate(surveys[i]["localDate"]) + "</div><div class=\"time\"><div class=\"editable\" onblur=\"forceTime(this);\">" + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "</div></div><div class=\"options\"><div";
+								if($("#batchDeleteDropdown")[0].style.maxHeight != "" && $("#batchDeleteDropdown")[0].style.maxHeight != "0px"){
+									htmlToAdd += " style=\"display:none;\"><img src=\"../images/editWhite.png\" style=\"height:12px;padding-top:1px;\" onclick=\"editSurvey(" + surveys[i]["id"] + ");\"/></div><div style=\"display:none;\"><img src=\"../images/deleteWhite.png\" style=\"height:13px;\" onclick=\"promptConfirm('Are you sure you want to delete " + surveys[i]["observerFullName"] + "\\'s " + surveys[i]["plantCode"] + " survey from " + getReadableDate(surveys[i]["localDate"]) + " at " + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "? You will not be able to undo this action.', 'Never mind.', 'Yes, I am sure!', function(){}, function(){deleteSurvey(" + surveys[i]["id"] + ");});\"/></div><div><div class=\"checkboxHolder\" style=\"display:block;\"><div class=\"checkbox"
+									if(isSelected(surveys[i]["id"])){
+										htmlToAdd += " checked";
+									}
+								}
+								else{
+									htmlToAdd += "><img src=\"../images/editWhite.png\" style=\"height:12px;padding-top:1px;\" onclick=\"editSurvey(" + surveys[i]["id"] + ");\"/></div><div><img src=\"../images/deleteWhite.png\" style=\"height:13px;\" onclick=\"promptConfirm('Are you sure you want to delete " + surveys[i]["observerFullName"] + "\\'s " + surveys[i]["plantCode"] + " survey from " + getReadableDate(surveys[i]["localDate"]) + " at " + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "? You will not be able to undo this action.', 'Never mind.', 'Yes, I am sure!', function(){}, function(){deleteSurvey(" + surveys[i]["id"] + ");});\"/></div><div><div class=\"checkboxHolder\"><div class=\"checkbox"
+								}
+								htmlToAdd +=	"\" onclick=\"toggleCheckbox($(this));toggleSelected($(this), " + surveys[i]["id"] + ");\"></div></div></div></div></div>";
+								htmlToAdd += 	"<div class=\"surveyInfo\">";
+								htmlToAdd += 		"<div>";
+								htmlToAdd += 			"<div>";
+								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/userIcon.png');\"></div>";
+								htmlToAdd += 				"<div class=\"underline pointer\" onclick=\"email('" + surveys[i]["observerFullName"].replace(/'/g, "\\'") + "', ['" + surveys[i]["observerEmail"].split("@")[0].replace(/'/g, "\\'") + "', '" + surveys[i]["observerEmail"].split("@")[1].replace(/'/g, "\\'") + "']);\">" + surveys[i]["observerFullName"] + "</div>";
+								htmlToAdd +=			"</div>";
+								htmlToAdd += 			"<div>";
+								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/" + surveys[i]["observaionMethod"].replace(/ /g, "").replace(surveys[i]["observaionMethod"][0], surveys[i]["observaionMethod"][0].toLowerCase()) + ".png');\"></div>";
+								htmlToAdd += 				"<div>";
+								htmlToAdd += 					"<div class=\"smallSelect\">";
+								htmlToAdd +=						"<div class=\"selected\">" + surveys[i]["observaionMethod"] + "</div>";
+								htmlToAdd +=						"<div class=\"options\">";
+								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon').eq(0)[0].style.backgroundImage=&quot;url('../images/beatsheet.png')&quot;;\">BEAT SHEET</div>";
+								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon').eq(0)[0].style.backgroundImage=&quot;url('../images/visual.png')&quot;;\">VISUAL</div>";
+								htmlToAdd +=						"</div>";
+								htmlToAdd += 					"</div>";
+								htmlToAdd += 				"</div>";
+								htmlToAdd +=			"</div>";
+								htmlToAdd +=			"<div>";
+								htmlToAdd += 				"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 500);\">" + surveys[i]["numberOfLeaves"] + "</div></div>";
+								htmlToAdd += 				"<div>";
+								htmlToAdd += 					"<div class=\"smallSelect\">";
+								htmlToAdd +=						"<div class=\"selected\">"
+								if(surveys[i]["wetLeaves"]){
+									htmlToAdd +=					"wet"
+								}
+								else{
+									htmlToAdd += 					"dry";
+								}
+								htmlToAdd += 						"</div>";
+								htmlToAdd +=						"<div class=\"options\">";
+								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);\">WET</div>";
+								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);\">DRY</div>";
+								htmlToAdd +=						"</div>";
+								htmlToAdd += 					"</div>";
+								if(surveys[i]["numberOfLeaves"] == 1){
+									htmlToAdd += 			" leaf</div>";
+								}
+								else{
+									htmlToAdd += 			" leaves</div>";
+								}
+								htmlToAdd +=			"</div>";
+								htmlToAdd +=			"<div>";
+								htmlToAdd += 				"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 60);\">" + surveys[i]["averageLeafLength"] + "</div>cm</div>";
+								htmlToAdd += 				"<div>leaf length</div>";
+								htmlToAdd +=			"</div>";
+								htmlToAdd +=			"<div>";
+								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/selectIcons/herbivoryScores/" + ["none", "trace", "light", "moderate", "heavy"][surveys[i]["herbivoryScore"]] + ".png');\"></div>";
+								htmlToAdd += 				"<div>";
+								htmlToAdd += 					"<div class=\"smallSelect\">";
+								htmlToAdd +=						"<div class=\"selected\">" + herbivoryScores[surveys[i]["herbivoryScore"]] + "</div>";
+								htmlToAdd +=						"<div class=\"options\">";
+								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/none.png')&quot;;\">NONE</div>";
+								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/trace.png')&quot;;\">TRACE<br/>(1-5%)</div>";
+								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/light.png')&quot;;\">LIGHT<br/>(6-10%)</div>";
+								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/moderate.png')&quot;;\">MODERATE<br/>(11-25%)</div>";
+								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/heavy.png')&quot;;\">HEAVY<br/>(> 25%)</div>";
+								htmlToAdd +=						"</div>";
+								htmlToAdd += 					"</div>";
+								htmlToAdd += 				"</div>";
+								htmlToAdd +=			"</div>";
+								htmlToAdd += 		"</div>";
+								htmlToAdd += 		"<div>";
+								if(surveys[i]["notes"].trim().length > 0){
+									htmlToAdd += 		"<div class=\"notes\">*<div class=\"editable\">" + surveys[i]["notes"] + "</div></div>";
+								}
+								else{
+									htmlToAdd += 		"<div class=\"notes\" style=\"display:none;\">*<div class=\"editable\">[notes]</div></div>";
+								}
+								htmlToAdd += 		"</div>";
+								htmlToAdd +=	"</div>";
+								htmlToAdd += 	"<div class=\"arthropodSightingsInfo\">";
+								surveys[i]["arthropodSightings"].sort(function(a, b){
+									if(a["originalGroup"].toLowerCase() < b["originalGroup"].toLowerCase()){return -1;}
+									if(a["originalGroup"].toLowerCase() > b["originalGroup"].toLowerCase()){return 1;}
+									return 0;
+								});
+								var arthropodCount = 0;
+								for(var j = 0; j < surveys[i]["arthropodSightings"].length; j++){
+									arthropodCount += surveys[i]["arthropodSightings"][j]["quantity"];
+									
+									htmlToAdd +=	"<div class=\"arthropodSighting\" id=\"" + surveys[i]["arthropodSightings"][j]["id"] + "\">";
+									htmlToAdd +=		"<div>";
+									htmlToAdd +=			"<div class=\"arthropodImage\" style=\"background-image:url('../images/selectIcons/orders/" + surveys[i]["arthropodSightings"][j]["originalGroup"] + ".png');\"></div>";
+									htmlToAdd +=		"</div>";
+									htmlToAdd +=		"<div>";
+									htmlToAdd +=			"<div>";
+									if(surveys[i]["arthropodSightings"][j]["photoURL"].length > 0){
+										htmlToAdd +=			"<a href=\"../images/arthropods/" + surveys[i]["arthropodSightings"][j]["photoURL"] + "\" target=\"_blank\">";
+									}
+									htmlToAdd +=				"<div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 1000);\">" + surveys[i]["arthropodSightings"][j]["quantity"] + "</div> <div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 300);\">" + surveys[i]["arthropodSightings"][j]["length"] + "</div>mm ";
+									if(surveys[i]["arthropodSightings"][j]["quantity"] == 1){
+										htmlToAdd += 			"<div class=\"smallSelect\">";
+										var selectedOriginalGroup = singular(surveys[i]["arthropodSightings"][j]["originalGroup"]);
+										if(selectedOriginalGroup == "bee"){
+											selectedOriginalGroup = "bee/wasp/sawfly";
+										}
+										htmlToAdd +=				"<div class=\"selected\">" + selectedOriginalGroup + "</div>";
+										htmlToAdd +=				"<div class=\"options\">";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ant</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphid</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/bee.png')&quot;\">bee/wasp/sawfly</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/beetle.png')&quot;\">beetle</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/caterpillar.png')&quot;\">caterpillar</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/daddylonglegs.png')&quot;\">daddylongleg</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/fly.png')&quot;\">fly</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/grasshopper.png')&quot;\">grasshopper</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/leafhopper.png')&quot;\">leafhopper</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/moths.png')&quot;\">moth</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/spider.png')&quot;\">spider</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/truebugs.png')&quot;\">truebug</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/other.png')&quot;\">other</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/unidentified.png')&quot;\">unidentified</div>";
+										htmlToAdd +=				"</div>";
+										htmlToAdd += 			"</div>";
+									}
+									else{
+										htmlToAdd += 			"<div class=\"smallSelect\">";
+										var selectedOriginalGroup = plural(surveys[i]["arthropodSightings"][j]["originalGroup"]);
+										if(selectedOriginalGroup == "bees"){
+											selectedOriginalGroup = "bees/wasps/sawflies";
+										}
+										htmlToAdd +=				"<div class=\"selected\">" + selectedOriginalGroup + "</div>";
+										htmlToAdd +=				"<div class=\"options\">";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ants</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphids</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/bee.png')&quot;\">bees/wasps/sawflies</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/beetle.png')&quot;\">beetles</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/caterpillar.png')&quot;\">caterpillars</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/daddylonglegs.png')&quot;\">daddylonglegs</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/fly.png')&quot;\">flies</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/grasshopper.png')&quot;\">grasshoppers</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/leafhopper.png')&quot;\">leafhoppers</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/moths.png')&quot;\">moths</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/spider.png')&quot;\">spiders</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/truebugs.png')&quot;\">truebugs</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/other.png')&quot;\">others</div>";
+										htmlToAdd +=					"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/unidentified.png')&quot;\">unidentifieds</div>";
+										htmlToAdd +=				"</div>";
+										htmlToAdd += 			"</div>";
+										
+									}
+									if(surveys[i]["arthropodSightings"][j]["photoURL"].length > 0){
+										htmlToAdd +=			"</a>";
+									}
+									htmlToAdd +=			"</div>";
+									htmlToAdd +=			"<div class=\"caterpillarOptions\"";
+									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != "caterpillar"){
+										htmlToAdd +=		" style=\"display:none;\"";
+									}
+									htmlToAdd +=			">";
+									if(surveys[i]["arthropodSightings"][j]["hairy"]){
+								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption\">With hairy/spiny characteristics</div></div>";
+									}
+									else{
+								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption\">With hairy/spiny characteristics</div></div>";
+									}
+
+									if(surveys[i]["arthropodSightings"][j]["rolled"]){
+								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption\">In a leaf roll</div></div>";
+									}
+									else{
+								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption\">In a leaf roll</div></div>";
+									}
+
+									if(surveys[i]["arthropodSightings"][j]["tented"]){
+								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption\">In a silk tent</div></div>";
+									}
+									else{
+								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption\">In a silk tent</div></div>";
+									}
+									htmlToAdd +=			"</div>";
+									htmlToAdd +=			"<div class=\"beeOptions\"";
+									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != "bee"){
+										htmlToAdd +=		" style=\"display:none;\"";
+									}
+									htmlToAdd +=			">";
+									
+									var sawflyLarvaText = "It is a sawfly larva";
+									if(surveys[i]["arthropodSightings"][j]["quantity"] > 1){
+										sawflyLarvaText = "These are sawfly larvae";
+									}
+									if(surveys[i]["arthropodSightings"][j]["originalSawfly"]){
+								   		htmlToAdd += 			"<div><div class=\"toggleable true beeOption\">" + sawflyLarvaText + "</div></div>";
+									}
+									else{
+								   		htmlToAdd += 			"<div><div class=\"toggleable false beeOption\">" + sawflyLarvaText + "</div></div>";
+									}
+									htmlToAdd +=			"</div>";
+									htmlToAdd +=			"<div class=\"beetleOptions\"";
+									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != "beetle"){
+										htmlToAdd +=		" style=\"display:none;\"";
+									}
+									htmlToAdd +=			">";
+									if(surveys[i]["arthropodSightings"][j]["originalBeetleLarva"]){
+								   		htmlToAdd += 			"<div><div class=\"toggleable true beetleOption\">In larva form</div></div>";
+									}
+									else{
+								   		htmlToAdd += 			"<div><div class=\"toggleable false beetleOption\">In larva form</div></div>";
+									}
+									htmlToAdd +=			"</div>";
+									if(surveys[i]["arthropodSightings"][j]["notes"].trim().length > 0){
+										htmlToAdd +=		"<div class=\"italic notes\">*<div class=\"editable\">" + surveys[i]["arthropodSightings"][j]["notes"] + "</div></div>";
+									}
+									else{
+										htmlToAdd +=		"<div class=\"italic notes\" style=\"display:none;\">*<div class=\"editable\">[notes]</div></div>";
+									}
+									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != surveys[i]["arthropodSightings"][j]["updatedGroup"] || surveys[i]["arthropodSightings"][j]["originalSawfly"] != surveys[i]["arthropodSightings"][j]["updatedSawfly"] || surveys[i]["arthropodSightings"][j]["originalBeetleLarva"] != surveys[i]["arthropodSightings"][j]["updatedBeetleLarva"]){
+										var iNaturalistGroupDecision = surveys[i]["arthropodSightings"][j]["updatedGroup"];
+										if(surveys[i]["arthropodSightings"][j]["updatedSawfly"]){
+											iNaturalistGroupDecision = "sawflies";
+										}
+										else if(surveys[i]["arthropodSightings"][j]["updatedBeetleLarva"]){
+											iNaturalistGroupDecision = "beetle larvae";
+										}
+										htmlToAdd +=		"<div><a href=\"" + surveys[i]["arthropodSightings"][j]["iNaturalistObservationURL"] + "\" target=\"_blank\">Users on iNaturalist suggested this is a" + (["a", "e", "i", "o", "u"].indexOf(iNaturalistGroupDecision.charAt(0).toLowerCase()) > -1 ? "n" : "") + " \"" + iNaturalistGroupDecision + "\".</a></div>";
+									}
+									htmlToAdd +=		"</div>";
+									htmlToAdd += 		"<div class=\"deleteArthropodSighting\"></div>";
+									htmlToAdd +=	"</div>";
+								}
+								htmlToAdd += 	"</div>";
+								if(arthropodCount > 1){
+									htmlToAdd += 	"<div class=\"arthropodSightingsDropdownButtonDiv\" onclick=\"toggleArthropodSightings(this.parentNode.getElementsByClassName('arthropodSightingsInfo')[0]);\">Show " + arthropodCount + " Arthropods Found</div>";
+								}
+								else if(arthropodCount > 0){
+									htmlToAdd += 	"<div class=\"arthropodSightingsDropdownButtonDiv\" onclick=\"toggleArthropodSightings(this.parentNode.getElementsByClassName('arthropodSightingsInfo')[0]);\">Show " + arthropodCount + " Arthropod Found</div>";
+								}
+								else{
+									htmlToAdd += 	"<div class=\"arthropodSightingsDropdownButtonDiv\" style=\"display:none;\" onclick=\"toggleArthropodSightings(this.parentNode.getElementsByClassName('arthropodSightingsInfo')[0]);\">Show 0 Arthropods Found</div>";
+								}
+								htmlToAdd += "</div>";
+							}
+							if(surveys.length > 0){
+								$("#surveys")[0].innerHTML = htmlToAdd;
+							}
+						}
+						else{
+							queueNotice("error", data.replace("false|", ""));
+							if(data.replace("false|", "")  == "Your log in dissolved. Maybe you logged in on another device."){
+								logOut();
+							}
+						}
+					})
+					.fail(function(){
+						//error
+						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+					})
+					.always(function() {
+						//complete
+						loadingPage = false;
+					});
+				}
+			}
+
+			function loadFirstPage(firstLoad){
+				firstLoad = firstLoad || false;
+				loadPage(1, GLOBALFilters, firstLoad);
+			}
+
+			function loadLastPage(){
+				loadPage("last", GLOBALFilters);
+			}
+
+			function loadNextPage(){
+				loadPage(GLOBALPageNumber + 1, GLOBALFilters);
+			}
+
+			function loadPreviousPage(){
+				if(GLOBALPageNumber > 1){
+					loadPage(GLOBALPageNumber - 1, GLOBALFilters);
+				}
+			}
+
+			function reloadPage(){
+				loadPage(GLOBALPageNumber, GLOBALFilters);
+			}
+
+			function toggleSelected(checkbox, surveyID){
+				if(!$("#" + surveyID).hasClass("hasAuthorityToEdit")){
+					queueNotice("error", "For sites that you do not own or manage, you only have 2 weeks after submitting a survey to come back and edit or delete it. You can no longer edit or delete this survey. If you really must edit or delete this survey, ask your site director to do so for you.");
+					uncheckCheckbox(checkbox);
+					return false;
+				}
+
+				if(checkboxIsChecked(checkbox)){
+					if(selected == "all"){
+						var index = unselected.indexOf(surveyID + "");
+						if(index > -1) {
+							unselected.splice(index, 1);
+						}
+					}
+					else{
+						selected[selected.length] = surveyID + "";
+					}
+				}
+				else{
+					if(selected == "all"){
+						unselected[unselected.length] = surveyID + "";
+					}
+					else{
+						var index = selected.indexOf(surveyID + "");
+						if(index > -1) {
+							selected.splice(index, 1);
+						}
+					}
+				}
+
+				var amountChecked = 0;
+				if(selected == "all"){amountChecked = (GLOBALTotalSurveys - unselected.length);}
+				else{amountChecked = selected.length;}
+
+				if(selected.length == 1){
+					$("#batchDeleteButton")[0].innerHTML = "Batch Delete " + amountChecked + " Survey";
+				}
+				else{
+					$("#batchDeleteButton")[0].innerHTML = "Batch Delete " + amountChecked + " Surveys";
+				}
+			}
+
+			function isSelected(surveyID){
+				if(selected == "all"){
+					return unselected.indexOf(surveyID + "") == -1;
+				}
+				return selected.indexOf(surveyID + "") > -1;
+			}
+
+			//selectall function
+
+			function deselectAll(){
+				$(".checked").removeClass("checked");
+				selected = [];
+				unselected = [];//used when selected == "all"
+				$("#batchDeleteButton")[0].innerHTML = "Batch Delete 0 Surveys";
+			}
+
+			function updatePageNavigationBar(){
+				//some odd number representing max number of pages in page nav
+				var numberOfPagesInNav = 9;
+				if($(window).width() <= 490){
+					var numberOfPagesInNav = 1;
+				}
+				else if($(window).width() <= 610){
+					var numberOfPagesInNav = 3;
+				}
+				else if($(window).width() <= 900){
+					var numberOfPagesInNav = 5;
+				}
+
+				var highPageNumber = GLOBALPageNumber + ((numberOfPagesInNav - 1) / 2);
+				var lowPageNumber = GLOBALPageNumber - ((numberOfPagesInNav - 1) / 2);
+				if(numberOfPagesInNav > GLOBALTotalPages){
+				      	numberOfPagesInNav = GLOBALTotalPages;
+					highPageNumber = GLOBALTotalPages;
+					lowPageNumber = 1;
+				}
+				else if(highPageNumber > GLOBALTotalPages){
+					   //high
+					highPageNumber = GLOBALTotalPages;
+					lowPageNumber = (GLOBALTotalPages - numberOfPagesInNav) + 1;
+					if(lowPageNumber < 1){
+						lowPageNumber = 1;
+					}
+				}
+				else if(lowPageNumber < 1){
+					//low
+					highPageNumber = numberOfPagesInNav;
+					lowPageNumber = 1;
+				}
+				var htmlToAdd = "";
+				for(var i = lowPageNumber; i <= highPageNumber; i++){
+					htmlToAdd += "<div class=\"pageNumber\"";
+					if(i == GLOBALPageNumber){
+						htmlToAdd += " id=\"currentPageNumber\">" + i + "</div>";
+					}
+					else{
+						htmlToAdd += " onclick=\"loadPage(" + i + ", GLOBALFilters);\">" + i + "</div>";
+					}
+				}
+				$("#pageNumbers")[0].innerHTML = htmlToAdd;
+			}
+
+			function toggleArthropodSightings(arthropodSightingsInfoDiv){
+				if(arthropodSightingsInfoDiv.style.maxHeight == "0px" || arthropodSightingsInfoDiv.style.maxHeight == ""){
+					arthropodSightingsInfoDiv.parentNode.getElementsByClassName("arthropodSightingsDropdownButtonDiv")[0].innerHTML = arthropodSightingsInfoDiv.parentNode.getElementsByClassName("arthropodSightingsDropdownButtonDiv")[0].innerHTML.replace("Show", "Hide");
+					$(arthropodSightingsInfoDiv).stop().animate({maxHeight:"99999999px"}, 259999);
+				}
+				else{
+					arthropodSightingsInfoDiv.style.maxHeight = arthropodSightingsInfoDiv.clientHeight + "px";
+					arthropodSightingsInfoDiv.style.overflow = "hidden";
+					$(arthropodSightingsInfoDiv).find(".smallSelect .options").fadeOut(0);
+					$(arthropodSightingsInfoDiv).stop().animate({maxHeight:"0px"}, 300, function(){
+						arthropodSightingsInfoDiv.parentNode.getElementsByClassName("arthropodSightingsDropdownButtonDiv")[0].innerHTML = arthropodSightingsInfoDiv.parentNode.getElementsByClassName("arthropodSightingsDropdownButtonDiv")[0].innerHTML.replace("Hide", "Show");
+					});
+				}
+			}
+
+			function filter(){
+				if(!loadingPage){
+					var filters = {"user": $('#userSearch')[0].value.trim(), "arthropod": getSelectValue($('#arthropodSearch')), "site": getSelectValue($('#siteSearch .select').eq(0)), "circle": $('#circleSearch')[0].value.trim(), "code": $('#codeSearch')[0].value.trim(), "date": getSelectValue($("#yearFilter")) + "-" + getSelectValue($("#monthFilter")) + "-" + getSelectValue($("#dayFilter"))};
+					$("#filtersDropdown button").eq(0)[0].innerHTML = "<img src=\"../images/rolling.svg\" alt=\"loading...\"/>";
+					loadPage(1, filters);
+					/*
+					if(GLOBALPageNumber != 1){
+						loadPage(1, filters);
+						return true;
+					}
+					for (var property in filters) {
+						if (filters.hasOwnProperty(property) && GLOBALFilters[property] !== filters[property]) {
+							$("#filtersDropdown button").eq(0)[0].innerHTML = "<img src=\"../images/rolling.svg\" alt=\"loading...\"/>"
+							loadPage(1, filters);
+							return true;
+						}
+					}
+					closeHeight($('#filtersDropdown'));
+					*/
+				}
+			}
+
+			function toggleHeight(ele, closeFunction){
+				closeFunction = closeFunction || function(){};
+				if(!openHeight(ele)){
+					closeHeight(ele, closeFunction);
+				}
+			}
+
+			function closeHeight(ele, closeFunction){
+				ele = $(ele)[0];
+				closeFunction = closeFunction || function(){};
+				if(ele.style.maxHeight != "0px" && ele.style.maxHeight != ""){
+					ele.style.maxHeight = ele.clientHeight + "px";
+					$(ele).stop().animate({maxHeight:"0px"}, 300, closeFunction);
+					return true;
+				}
+				return false;
+			}
+
+			function openHeight(ele){
+				ele = $(ele)[0];
+				if(ele.style.maxHeight == "0px" || ele.style.maxHeight == ""){
+					$(ele).stop().animate({maxHeight:"99999999px"}, 259999);
+					return true;
+				}
+				return false;
+			}
+
+			function toggleCheckboxes(){
+				if($("#surveys .survey .siteInfo .options>div:nth-of-type(3)>.checkboxHolder").length > 0 && $("#surveys .survey .siteInfo .options>div:nth-of-type(3)>.checkboxHolder").eq(0)[0].style.display == "block"){
+					hideCheckboxes();
+				}
+				else{
+					showCheckboxes();
+				}
+			}
+
+			function showCheckboxes(){
+				$("#surveys .survey .siteInfo .options>div:nth-of-type(1)").stop().hide(300);
+				$("#surveys .survey .siteInfo .options>div:nth-of-type(2)").stop().hide(300);
+				$("#surveys .survey .siteInfo .options>div:nth-of-type(3)>.checkboxHolder").stop().show(300);
+			}
+
+			function hideCheckboxes(){
+				deselectAll();
+				$("#surveys .survey .siteInfo .options>div:nth-of-type(1)").stop().show(300);
+				$("#surveys .survey .siteInfo .options>div:nth-of-type(2)").stop().show(300);
+				$("#surveys .survey .siteInfo .options>div:nth-of-type(3)>.checkboxHolder").stop().hide(300);
+			}
+
+			function populateSurveySites(){
+				$.get("../php/getMySurveySites.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+					//success
+					if(data.indexOf("true|") == 0){
+						var sites = JSON.parse(data.replace("true|", ""));
+						sites.sort(function(a, b){
+							if((a["name"] + " (" + a["region"] + ")").toLowerCase() < (b["name"] + " (" + b["region"] + ")").toLowerCase()){return -1;}
+							if((a["name"] + " (" + a["region"] + ")").toLowerCase() > (b["name"] + " (" + b["region"] + ")").toLowerCase()){return 1;}
+							return 0;
+						});
+						var htmlToAdd = "<div class=\"select\">";
+						htmlToAdd += "<div class=\"option selected\" onclick=\"selectOption(this);$('#circleSearchDiv').hide(300);\">	<div class=\"value\"></div>			<div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/selectIcons/notselected.png');\"></div>		<div class=\"text\">Not selected</div></div></div>";
+						for(var i = 0; i < sites.length; i++){
+							htmlToAdd += "<div class=\"option\" onclick=\"selectOption(this);$('#circleSearchDiv').show(300);\">	<div class=\"value\">" + sites[i]["id"] + "</div>			<div class=\"shown\"><div class=\"image\"></div>		<div class=\"text\">" + sites[i]["name"] + " (" + sites[i]["region"] + ")</div></div></div>";
+						}
+						htmlToAdd += "</div>";
+						$("#siteSearch")[0].innerHTML = htmlToAdd;
+					}
+					else{
+						queueNotice("error", data.replace("false|", ""));
+					}
+				})
+				.fail(function(){
+					//error
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+				});
+			}
+
+			function showSurveyLocationCodeFilter(){
+				$("#locationFilters").stop().hide(200, function(){
+					$('#siteCircleFilter').fadeOut(0);
+					setSelectValue($('#siteSearch .select').eq(0), '');
+					$('#circleSearch')[0].value = '';
+					$('#circleSearchDiv').fadeOut(0);
+					$('#surveylocationCodeFilter').fadeIn(0);
+					setTimeout(function(){
+						$("#locationFilters").stop().show(200);
+					}, 100);
+				});
+			}
+
+			function showSiteCircleFilter(){
+				$("#locationFilters").stop().hide(200, function(){
+					$('#surveylocationCodeFilter').fadeOut(0);
+					$('#codeSearch')[0].value='';
+					$('#siteCircleFilter').fadeIn(0);
+					setTimeout(function(){
+						$("#locationFilters").stop().show(200);
+					}, 100);
+				});
+			}
+
+			function deleteSurvey(id){
+				if(!$("#" + id).hasClass("hasAuthorityToEdit")){
+					queueNotice("error", "For sites that you do not own or manage, you only have 2 weeks after submitting a survey to come back and delete it. You can no longer delete this survey. If you really must delete this survey, ask your site director to do so for you.");
+					return false;
+				}
+
+				$.get("../php/deleteSurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + localStorage.getItem("salt") + "&selected=" + JSON.stringify([id]) + "&unselected=" + JSON.stringify([]), function(data){
+					//success
+					if(data.indexOf("true|") == 0){
+						queueNotice("confirmation", "Survey deleted!");
+						reloadPage();
+					}
+					else{
+						queueNotice("error", data.replace("false|", ""));
+					}
+				})
+				.fail(function(){
+					//error
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+				})
+				.always(function() {
+					//complete
+				});
+			}
+
+			function addArthropodToSurvey(id){
+				var arthropodSightingID = Math.round(Math.random() * 100000000000000000);
+				var htmlToAdd =	"<div class=\"arthropodSighting\" id=\"" + arthropodSightingID + "\">";
+				htmlToAdd +=		"<div>";
+				htmlToAdd +=			"<div class=\"arthropodImage\" style=\"background-image:url('../images/selectIcons/orders/unidentified.png');\"></div>";
+				htmlToAdd +=		"</div>";
+				htmlToAdd +=		"<div>";
+				htmlToAdd +=			"<div>";
+				htmlToAdd +=				"<div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 1000);\">0</div> <div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 300);\">0</div>mm ";
+				htmlToAdd += 				"<div class=\"smallSelect\">";
+				htmlToAdd +=					"<div class=\"selected\">" + plural("unidentified") + "</div>";
+				htmlToAdd +=					"<div class=\"options\">";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/ant.png')&quot;\">ants</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/aphid.png')&quot;\">aphids</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/bee.png')&quot;\">bees/wasps/sawflies</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/beetle.png')&quot;\">beetles</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeIn(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/caterpillar.png')&quot;\">caterpillars</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/daddylonglegs.png')&quot;\">daddylonglegs</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/fly.png')&quot;\">flies</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/grasshopper.png')&quot;\">grasshoppers</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/leafhopper.png')&quot;\">leafhoppers</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/moths.png')&quot;\">moths</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/spider.png')&quot;\">spiders</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/truebugs.png')&quot;\">truebugs</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/other.png')&quot;\">others</div>";
+				htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().parent().find('.caterpillarOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beeOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.beetleOptions').eq(0).stop().fadeOut(0);$(this).parent().parent().parent().parent().parent().find('.arthropodImage').eq(0)[0].style.backgroundImage=&quot;url('../images/selectIcons/orders/unidentified.png')&quot;\">unidentifieds</div>";
+				htmlToAdd +=					"</div>";
+				htmlToAdd += 				"</div>";
+				htmlToAdd +=			"</div>";
+				htmlToAdd +=			"<div class=\"caterpillarOptions\" style=\"display:none;\">";
+				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">With hairy/spiny characteristics</div></div>";
+				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In a leaf roll</div></div>";
+				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In a silk tent</div></div>";
+				htmlToAdd +=			"</div>";
+				htmlToAdd +=			"<div class=\"beeOptions\" style=\"display:none;\">";
+				htmlToAdd += 				"<div><div class=\"toggleable false beeOption\">These are sawfly larvae</div></div>";
+				htmlToAdd +=			"</div>";
+				htmlToAdd +=			"<div class=\"beetleOptions\" style=\"display:none;\">";
+				htmlToAdd += 				"<div><div class=\"toggleable false beetleOption\">In larva form</div></div>";
+				htmlToAdd +=			"</div>";
+				htmlToAdd +=			"<div class=\"italic notes\">*<div class=\"editable\">[notes]</div></div>";
+				htmlToAdd +=		"</div>";
+				htmlToAdd += 		"<div class=\"deleteArthropodSighting\"></div>";
+				htmlToAdd +=	"</div>";
+
+				$("#" + id + " .arthropodSightingsInfo").eq(0).append(htmlToAdd);
+
+				//editable basics
+				$("#" + arthropodSightingID + " .editable").css({display:"inline-block"});
+				$("#" + arthropodSightingID + " .editable").attr("contenteditable", "true");
+				$("#" + arthropodSightingID + " .editable").click(function(){
+					document.execCommand('selectAll',false,null)
+				});
+
+				//small select click functions
+				$("#" + arthropodSightingID + " .smallSelect .selected").click(function(){
+					showSmallSelectOptions(this);
+					$("#" + id + " .arthropodSightingsInfo").eq(0)[0].style.overflow = "visible";
+				});
+
+				//set background colors
+				$("#" + arthropodSightingID + " .smallSelect .selected").stop().animate({backgroundColor:"rgba(0,0,0,0.05)"});
+				$("#" + arthropodSightingID + " .editable").stop().animate({backgroundColor:"rgba(0,0,0,0.05)"});
+				$("#" + arthropodSightingID + " .toggleable").stop().animate({backgroundColor:"rgba(0,0,0,0.05)"});
+
+				//caterpillar options
+				$("#" + arthropodSightingID + " .toggleable").css({cursor:"pointer"});
+				$("#" + arthropodSightingID + " .caterpillarOption").click(function(){
+					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+				
+				//bee options
+				$("#" + arthropodSightingID + " .beeOption").click(function(){
+					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+				
+				//beetle options
+				$("#" + arthropodSightingID + " .beetleOption").click(function(){
+					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+
+				//allow arthropod delete
+				$("#" + arthropodSightingID).css({padding:"3px 30px 3px 5px"});
+				$("#" + arthropodSightingID + " .deleteArthropodSighting").stop().fadeIn(0);
+				$("#" + arthropodSightingID + " .deleteArthropodSighting").click(function(){
+					this.parentNode.outerHTML = "";
+				});
+			}
+
+			var backupSurveyTime = "";
+			var backupSurveyDate = "";
+			function editSurvey(id){
+				if(!$("#" + id).hasClass("hasAuthorityToEdit")){
+					queueNotice("error", "For sites that you do not own or manage, you only have 2 weeks after submitting a survey to come back and edit it. You can no longer edit this survey. If you really must edit this survey, ask your site director to do so for you.");
+					return false;
+				}
+
+				//back up info
+				backupSurveyTime = $("#" + id + " .time .editable").eq(0)[0].innerHTML;
+				backupSurveyDate = $("#" + id + " .date").eq(0)[0].innerHTML;
+
+				//hide iconBar icons
+				$("#iconBar>div").fadeOut(200);
+
+				//hide other surveys
+				$(".survey").stop().css({overflow:"hidden", maxHeight:"1000px"});
+				$(".survey").animate({maxHeight:"0px", marginBottom:"0px"}, 300);
+				$("#" + id).stop().css({overflow:"visible", maxHeight:""});
+
+				//hide page nav
+				$("#pageNav").fadeOut(0);
+
+				//set date header
+				$("h3").stop().hide(300);
+				$("h3:first-of-type").stop().show(0);
+				$("h3:first-of-type").eq(0)[0].innerHTML = $("#" + id + " .date").eq(0)[0].innerHTML;
+
+				//make date editable
+				$("h3:first-of-type").css({display:"inline-block"});
+				$("h3:first-of-type").attr("contenteditable", "true");
+				$("h3:first-of-type").off("click");
+				$("h3:first-of-type").click(function(){
+					document.execCommand('selectAll',false,null)
+				});
+				$("h3:first-of-type").blur(function(){
+					forceDate(this);
+				});
+
+				//disable photo links
+				var photoLinks = $("#" + id + " .arthropodSighting a");
+				for(var i = 0; i < photoLinks.length; i++){
+					var hrefParts = photoLinks.eq(i)[0].href.replace(/\//g, " ").trim().split(" ");
+					photoLinks.eq(i)[0].id = hrefParts[hrefParts.length - 1];
+				}
+				$("#" + id + " .arthropodSighting a").removeAttr("href");
+				$("#" + id + " .arthropodSighting a").removeAttr("target");
+				$("#" + id + " .arthropodSighting a").css({cursor:"auto"});
+
+				//allow arthropod delete
+				$("#" + id + " .arthropodSighting").css({padding:"3px 30px 3px 5px"});
+				$("#" + id + " .arthropodSighting .deleteArthropodSighting").stop().fadeIn(0);
+				$("#" + id + " .arthropodSighting .deleteArthropodSighting").off("click");
+				$("#" + id + " .arthropodSighting .deleteArthropodSighting").click(function(){
+					this.parentNode.outerHTML = "";
+				});
+
+				//show edit extras
+				openHeight($("#editExtras"));
+				$("#editExtras button").off("click");
+				$("#editExtras button").eq(0).click(function(){
+					requestSiteValidation(id);
+				});
+
+				//hide siteinfo options (edit and delete icons)
+				//and move time to the far right
+				$("#" + id + " .siteInfo .options").fadeOut(200);
+				$("#" + id + " .siteInfo .time").animate({right:"0px"});
+
+				//show arthropod sightings
+				$("#" + id + " .arthropodSightingsDropdownButtonDiv").fadeIn(200);
+				$("#" + id + " .arthropodSightingsDropdownButtonDiv").eq(0)[0].innerHTML = "ADD ARTHROPOD SIGHTING";
+				$("#" + id + " .arthropodSightingsDropdownButtonDiv").eq(0)[0].onclick = function(){addArthropodToSurvey(id);};
+				$("#" + id + " .arthropodSightingsInfo").eq(0).stop().animate({maxHeight:"99999999px"}, 259999);
+
+				//smallselect basics
+				$(".selected").css({cursor:"pointer"});
+
+				//editable basics
+				$("#" + id + " .editable").css({display:"inline-block"});
+				$("#" + id + " .editable").attr("contenteditable", "true");
+				$("#" + id + " .editable").off("click");
+				$("#" + id + " .editable").click(function(){
+					document.execCommand('selectAll',false,null)
+				});
+
+				//small select click functions
+				$("#" + id + " .surveyInfo .smallSelect .selected").off("click");
+				$("#" + id + " .surveyInfo .smallSelect .selected").click(function(){
+					showSmallSelectOptions(this);
+				});
+				$("#" + id + " .arthropodSightingsInfo .smallSelect .selected").off("click");
+				$("#" + id + " .arthropodSightingsInfo .smallSelect .selected").click(function(){
+					showSmallSelectOptions(this);
+					$("#" + id + " .arthropodSightingsInfo").eq(0)[0].style.overflow = "visible";
+				});
+
+				//set background colors
+				$("h3:first-of-type").stop().animate({backgroundColor:"rgba(0,0,0,0.05)"});
+				$("#" + id + " .smallSelect .selected").stop().animate({backgroundColor:"rgba(0,0,0,0.1)"});
+				$("#" + id + " .editable").stop().animate({backgroundColor:"rgba(0,0,0,0.1)"});
+				$("#" + id + " .arthropodSightingsInfo .smallSelect .selected").stop().animate({backgroundColor:"rgba(0,0,0,0.05)"});
+				$("#" + id + " .arthropodSightingsInfo .editable").stop().animate({backgroundColor:"rgba(0,0,0,0.05)"});
+				$("#" + id + " .arthropodSightingsInfo .toggleable").stop().animate({backgroundColor:"rgba(0,0,0,0.05)"});
+				$("#" + id + " .surveyInfoIcon .editable").stop().animate({backgroundColor:"rgba(0,0,0,0.3)"});
+
+				//show notes
+				$("#" + id + " .notes").css({display:"block"});
+
+				//caterpillar options
+				$("#" + id + " .toggleable").css({cursor:"pointer"});
+				$("#" + id + " .caterpillarOption").off("click");
+				$("#" + id + " .caterpillarOption").click(function(){
+					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+				
+				//bee options
+				$("#" + id + " .beeOption").off("click");
+				$("#" + id + " .beeOption").click(function(){
+					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+				
+				//beetle options
+				$("#" + id + " .beetleOption").off("click");
+				$("#" + id + " .beetleOption").click(function(){
+					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+			}
+
+			var batchDeleting = false;
+			function batchDelete(){
+				var numberOfSurveys = Number($("#batchDeleteButton")[0].innerHTML.replace(/\D/g, ""));
+				var message = "Take a moment to make sure you have selected the correct surveys. Are you sure you want to delete these " + numberOfSurveys + " surveys? You will not be able to undo this action.";
+				if(numberOfSurveys < 1){
+					queueNotice("error", "Select at least one survey first. Checkboxes are located at the top right corner of each survey.");
+					return false;
+				}
+				else if(numberOfSurveys == 1){
+					message = "Take a moment to make sure you have selected the correct survey. Are you sure you want to delete this survey? You will not be able to undo this action.";
+				}
+				batchDeleting = true;
+				promptConfirm(message, 'Never mind.', 'Yes, I am sure!', function(){batchDeleting = false;}, function(){
+					$.get("../php/deleteSurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&selected=" + JSON.stringify(selected) + "&unselected=" + JSON.stringify(unselected), function(data){
+						//success
+						deselectAll();
+						closeHeight($('#batchDeleteDropdown'));
+						hideCheckboxes();
+						if(data.indexOf("true|") == 0){
+							var numberOfSurveys = Number(data.replace("true|", ""));
+							if(numberOfSurveys == 1){
+							   	queueNotice("confirmation", "Survey deleted!");
+							}
+							else{
+								queueNotice("confirmation", numberOfSurveys + " surveys deleted!");
+							}
+							reloadPage();
+						}
+						else{
+							var batchDeleteError = data.replace("false|", "");
+							queueNotice("error", batchDeleteError);
+							if(batchDeleteError.indexOf("Only") == 0){
+								reloadPage();
+							}
+						}
+					})
+					.fail(function(){
+						//error
+						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+					})
+					.always(function() {
+						//complete
+						batchDeleting = false;
+					});
+				});
+			}
+
+			function getCaretCharacterOffsetWithin(d){var b=0,a=d.ownerDocument||d.document,e=a.defaultView||a.parentWindow;if("undefined"!=typeof e.getSelection){var c=e.getSelection();0<c.rangeCount&&(a=e.getSelection().getRangeAt(0),b=a.cloneRange(),b.selectNodeContents(d),b.setEnd(a.endContainer,a.endOffset),b=b.toString().length)}else(c=a.selection)&&"Control"!=c.type&&(b=c.createRange(),a=a.body.createTextRange(),a.moveToElementText(d),a.setEndPoint("EndToEnd",b),b=a.text.length);return b}
+			function setCaretPosition(d,b){for(var a=document.createRange(),e=window.getSelection(),c=null,f,g=0;g<d.childNodes.length;g++){f=c;for(c=d.childNodes[g];0<c.childNodes.length;)c=c.childNodes[0];null!=f&&(b-=f.length);if(b<=c.length)break}null!=c&&(a.setStart(c,b),a.collapse(!0),e.removeAllRanges(),e.addRange(a))};
+
+			var plantCodeDataNumber = 0;
+			var populatingPlant = false;
+			function populatePlant(plantCodeDiv){
+				populatingPlant = true;
+				var caretPosition = getCaretCharacterOffsetWithin($(plantCodeDiv).get(0));
+				var newInnerHTML = plantCodeDiv.innerHTML.toUpperCase().replace(/ /g, '').replace(/[^A-Z]/g, '');
+				var replacementOffset = plantCodeDiv.innerHTML.length - newInnerHTML.length;
+				plantCodeDiv.innerHTML = newInnerHTML;
+				setCaretPosition($(plantCodeDiv).get(0), (caretPosition - replacementOffset));
+				$(plantCodeDiv).parent().find(".plantCodeData").innerHTML = "";
+				var thisPlantCodeDataNumer = ++plantCodeDataNumber;
+				setTimeout(function(){
+					if(thisPlantCodeDataNumer != plantCodeDataNumber){return false;}
+					var code = plantCodeDiv.innerHTML;
+					$.get("../php/getPlantCodeInfo.php?code=" + encodeURIComponent(code) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+						if(thisPlantCodeDataNumer != plantCodeDataNumber){return false;}
+						if(data.indexOf("true|") == 0){
+							var data = JSON.parse(data.replace("true|", ""));
+							$(plantCodeDiv).parent()[0].style.background = data["color"];
+							$(plantCodeDiv).parent().find(".plantCodeData").eq(0)[0].innerHTML = ": <a href=\"https://www.google.com/maps/search/?api=1&query=" + data["latitude"] + "," + data["longitude"] + "\" target=\"_blank\">" + data["siteName"] + " (" + data["region"] + ")</a>, Circle " + data["circle"] + ", " + data["species"];
+							if(data["validated"]){plantCodeDiv.id = code;}
+						}
+						else{
+							var plantCodeDataError = data.replace("false|", "");
+							$(plantCodeDiv).parent()[0].style.background = "#444";
+							$(plantCodeDiv).parent().find(".plantCodeData").eq(0)[0].innerHTML = "";
+							if(plantCodeDataError != "no plant"){
+								queueNotice("error", plantCodeDataError);
+								if(plantCodeDataError == "Your log in dissolved. Maybe you logged in on another device."){
+									logOut();
+								}
+							}
+						}
+					})
+					.always(function(){
+						populatingPlant = false;
+					});
+				}, 300);
+			}
+
+			function forceNumber(editableDiv){
+				var caretPosition = getCaretCharacterOffsetWithin($(editableDiv).get(0));
+				var newInnerHTML = Number(editableDiv.innerHTML.replace(/\D/g, '')).toString();
+				var replacementOffset = editableDiv.innerHTML.length - newInnerHTML.length;
+				editableDiv.innerHTML = newInnerHTML;
+				setCaretPosition($(editableDiv).get(0), (caretPosition - replacementOffset));
+			}
+
+			function forceTime(editableDiv){
+				var time = editableDiv.innerHTML.toLowerCase().replace(/ /g, "");
+				var timeNumbers = time.replace(/\D/g, "");
+				if(timeNumbers.length >= 1 && timeNumbers.length <= 4 && (time.indexOf("am") > -1 || time.indexOf("pm") > -1)){
+					var ampm = "am";
+					if(time.indexOf("pm") > -1){ampm = "pm";}
+					if(timeNumbers.length <= 2){
+						if(Number(timeNumbers) > 0 && Number(timeNumbers) <= 12){
+							time = timeNumbers + ":00" + ampm;
+						}
+						else{
+							editableDiv.innerHTML = backupSurveyTime;
+							return false;
+						}
+					}
+					else{
+						if(Number(timeNumbers.substring(0, timeNumbers.length - 2)) > 0 && Number(timeNumbers.substring(0, timeNumbers.length - 2)) <= 12 && timeNumbers.substring(timeNumbers.length - 2) >= 0 && timeNumbers.substring(timeNumbers.length - 2) <= 59){
+							time = timeNumbers.substring(0, timeNumbers.length - 2) + ":" + timeNumbers.substring(timeNumbers.length - 2) + ampm;
+						}
+						else{
+							editableDiv.innerHTML = backupSurveyTime;
+							return false;
+						}
+					}
+					backupSurveyTime = time;
+					editableDiv.innerHTML = time;
+				}
+				else{
+					if(time.length > 0){
+						queueNotice("alert", "Time must be in the following form: HOUR:MINUTES am/pm");
+					}
+					editableDiv.innerHTML = backupSurveyTime;
+				}
+			}
+
+			function forceDate(editableDiv){
+				var date = editableDiv.innerHTML.trim().replace(/\s\s+/g, ' ');
+				var dateParts = date.split(" ");
+				if(dateParts.length == 3){
+					var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+					if(dateParts[0].length >= 3){
+						for(var i = 0; i < months.length; i++){
+							if(dateParts[0].toLowerCase().substring(0, 3) == months[i].toLowerCase().substring(0, 3)){
+								dateParts[0] = months[i];
+								break;
+							}
+						}
+					}
+					dateParts[1] = Number(dateParts[1].replace(/\D/g, ""));
+					dateParts[2] = Number(dateParts[2].replace(/\D/g, ""));
+					var msDate = Date.parse(dateParts.join(" "));
+					if(!isNaN(msDate)){
+						date = new Date();
+						date.setTime(msDate);
+						if(dateParts[0] == months[date.getMonth()] && dateParts[1] == date.getDate() && dateParts[2] == date.getFullYear()){
+							var now = new Date();
+							if(date > now){
+								queueNotice("alert", "Dates cannot be in the future.");
+								editableDiv.innerHTML = backupSurveyDate;
+								return false;
+							}
+							var fullOrdinal = getOrdinal(dateParts[1]);
+							var newDateString = dateParts[0] + " " + dateParts[1] + fullOrdinal.substring(fullOrdinal.length - 2) + ", " + dateParts[2];
+							editableDiv.innerHTML = newDateString;
+							backupSurveyDate = newDateString;
+							return true;
+						}
+					}
+				}
+				editableDiv.innerHTML = backupSurveyDate;
+			}
+
+			function forceRange(editableDiv, min, max){
+				var currentVal = Number(editableDiv.innerHTML);
+				editableDiv.innerHTML = Math.min(max, Math.max(min, currentVal));
+			}
+
+			function forceLeadingZero(number){
+				//for any number less than 100, return the number with a leading 0 if necessary
+				var decimal = (Number(number)/100).toFixed(2).toString();
+				return decimal.substring(decimal.length - 2, decimal.length);
+			}
+
+			function databaseDate(readableDate){
+				var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+				var date = readableDate.trim().replace(/\s\s+/g, ' ');
+				var dateParts = date.split(" ");
+				var month = months.indexOf(dateParts[0]) + 1;
+				return dateParts[2] + "-" + forceLeadingZero(month) + "-" + forceLeadingZero(Number(dateParts[1].replace(/\D/g, "")));
+			}
+
+			function databaseTime(twelveHourTime){
+				var time = twelveHourTime.replace(/ /g, "").toLowerCase();
+				var colonIndex = time.indexOf(":");
+				var hours = Number(time.substring(0, colonIndex));
+				var minutes = time.substring(colonIndex + 1, colonIndex + 3);
+				var ampm = time.substring(colonIndex + 3, colonIndex + 5);
+				if(ampm == "pm" && hours < 12){hours += 12;}
+				else if(ampm == "am" && hours == 12){hours = 0;}
+				return forceLeadingZero(hours) + ":" + minutes + ":00";
+			}
+
+			var savingSurvey = false;
+			function requestSiteValidation(surveyID){
+				var editablePlantCodeDiv = $("#" + surveyID + " .siteInfo .editable").eq(0)[0];
+				setLoadingButton($("#saveSurveyButton")[0], "Save changes", true);
+				savingSurvey = true;
+				var populatingPlantCheck = setInterval(function(){
+					if(!populatingPlant){
+						clearInterval(populatingPlantCheck);
+						if(editablePlantCodeDiv.id == editablePlantCodeDiv.innerHTML){
+							//submit
+							saveSurvey(surveyID);
+						}
+						else if($("#" + surveyID + " .plantCodeData").eq(0)[0].innerHTML.length == 0){
+							//survey location doesnt exist
+							queueNotice("error", "Enter a valid branch survey code.");
+							savingSurvey = false;
+							setLoadingButton($("#saveSurveyButton")[0], "Save changes", false);
+						}
+						else{
+							//ask for site password
+							$.get("../php/validateUserPlant.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + editablePlantCodeDiv.innerHTML + "&password=", function(data){
+								if(data.indexOf("true|") == 0){
+									//submit
+									saveSurvey(surveyID);
+								}
+								else{
+									promptConfirm("Enter site password to save:<div><input type=\"password\" style=\"width:100%;border:1px solid #ccc;border-bottom:2px solid #ccc;border-radius:5px;padding:10px;font-size:17px;margin-top:10px;\" id=\"sitePassword\"/></div>", "Never mind.", "CONTINUE!", function(){setLoadingButton($("#saveSurveyButton")[0], "Save changes", false);savingSurvey = false;}, function(){
+										var sitePassword = $("#sitePassword")[0].value;
+										$.get("../php/validateUserPlant.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + editablePlantCodeDiv.innerHTML + "&password=" + encodeURIComponent(sitePassword), function(data){
+											//success
+											if(data.indexOf("true|") == 0){
+												//submit
+												saveSurvey(surveyID);
+											}
+											else{
+												setLoadingButton($("#saveSurveyButton")[0], "Save changes", false);
+												savingSurvey = false;
+												var requestSiteValidationError = data.replace("false|", "");
+												queueNotice("error", requestSiteValidationError);
+												if(requestSiteValidationError == "Your log in dissolved. Maybe you logged in on another device."){
+													logOut();
+												}
+											}
+										})
+										.fail(function(){
+											//error
+											queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+											setLoadingButton($("#saveSurveyButton")[0], "Save changes", false);
+											savingSurvey = false;
+										});
+									});
+								}
+							})
+							.fail(function(){
+								//error
+								queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+								setLoadingButton($("#saveSurveyButton")[0], "Save changes", false);
+								savingSurvey = false;
+							});
+						}
+					}
+				}, 100);
+			}
+
+			function saveSurvey(id){
+				var code = $("#" + id + " .siteInfo .editable").eq(0)[0].innerHTML;
+				var date = databaseDate($("h3:first-of-type").eq(0)[0].innerHTML);
+				var time = databaseTime($("#" + id + " .time .editable").eq(0)[0].innerHTML);
+				var observationMethod = $("#" + id + " .surveyInfo .selected").eq(0)[0].innerHTML.substring(0, 1).toUpperCase() + $("#" + id + " .surveyInfo .selected").eq(0)[0].innerHTML.substring(1).toLowerCase();
+				var numberOfLeaves = Number($("#" + id + " .surveyInfoIcon .editable").eq(0)[0].innerHTML);
+				var wetLeaves = $("#" + id + " .surveyInfo .selected").eq(1)[0].innerHTML.toLowerCase().indexOf("wet") > -1;
+				var averageLeafLength = Number($("#" + id + " .surveyInfoIcon .editable").eq(1)[0].innerHTML);
+				var herbivoryScore = $("#" + id + " .surveyInfo .selected").eq(2)[0].innerHTML.replace(/\D/g, "").replace("1125", "333").replace("25", "4444").replace("610", "22").replace("15", "1").length;
+				var siteNotes = $("#" + id + " .surveyInfo .editable").eq(2)[0].innerHTML.trim();
+				if(siteNotes == "[notes]"){
+					siteNotes = "";
+				}
+
+				var arthropodData = [];
+				var arthropodSightings = $("#" + id + " .arthropodSighting");
+				for(var i = 0; i < arthropodSightings.length; i++){
+					var arthropodSightingID = Number(arthropodSightings[i].id);
+					var quantity = Number(arthropodSightings.eq(i).find(".editable").eq(0)[0].innerHTML);
+					var length = Number(arthropodSightings.eq(i).find(".editable").eq(1)[0].innerHTML);
+					var originalGroup = singular(arthropodSightings.eq(i).find(".selected").eq(0)[0].innerHTML.replace("bees/wasps/sawflies", "bee").replace("flies", "fly").replace("bee/wasp/sawfly", "bee")).replace("daddylongleg", "daddylonglegs").replace("moth", "moths").replace("truebug", "truebugs");
+					var hairy = false;
+					var leafRoll = false;
+					var silkTent = false;
+					var originalSawfly = false;
+					var originalBeetleLarva = false;
+					if(originalGroup == "caterpillar"){
+						hairy = arthropodSightings.eq(i).find(".toggleable").eq(0).hasClass("true");
+						leafRoll = arthropodSightings.eq(i).find(".toggleable").eq(1).hasClass("true");
+						silkTent = arthropodSightings.eq(i).find(".toggleable").eq(2).hasClass("true");
+					}
+					if(originalGroup == "bee"){
+						originalSawfly = arthropodSightings.eq(i).find(".toggleable").eq(3).hasClass("true");
+					}
+					if(originalGroup == "beetle"){
+						originalBeetleLarva = arthropodSightings.eq(i).find(".toggleable").eq(4).hasClass("true");
+					}
+					var notes = arthropodSightings.eq(i).find(".editable").eq(2)[0].innerHTML.trim();
+					if(notes == "[notes]"){
+						notes = "";
+					}
+					var photoURL = "";
+					if(arthropodSightings.eq(i).find("a").length > 0){
+						photoURL = arthropodSightings.eq(i).find("a").eq(0)[0].id;
+					}
+					//qualifiers
+					if(quantity > 0 && length > 0){
+						arthropodData[arthropodData.length] = [arthropodSightingID, originalGroup, length, quantity, notes, hairy, leafRoll, silkTent, originalSawfly, originalBeetleLarva, photoURL];
+					}
+				}
+				console.log([code, date, time, observationMethod, numberOfLeaves, wetLeaves, averageLeafLength, herbivoryScore, siteNotes, arthropodData]);
+
+				var formData = new FormData();
+				formData.append("plantCode", code);
+				if($("#sitePassword").length > 0){
+					formData.append("sitePassword", $("#sitePassword").value);
+				}
+				else{
+					formData.append("sitePassword", "");
+				}
+				formData.append("surveyID", id);
+				formData.append("date", date);
+				formData.append("time", time);
+				formData.append("siteNotes", siteNotes);
+				formData.append("wetLeaves", wetLeaves);
+				formData.append("arthropodData", JSON.stringify(arthropodData));
+				formData.append("numberOfLeaves", numberOfLeaves);
+				formData.append("averageLeafLength", averageLeafLength);
+				formData.append("herbivoryScore", herbivoryScore);
+				formData.append("observationMethod", observationMethod);
+				//formData.append("plantSpecies", plantSpecies);
+				formData.append("email", window.localStorage.getItem("email"));
+				formData.append("salt", window.localStorage.getItem("salt"));
+
+
+				setLoadingButton($("#saveSurveyButton"), "Save changes", true);
+				$.ajax({
+					url : "../php/editSurvey.php",
+					type : 'POST',
+					data : formData,
+					processData: false,  // tell jQuery not to process the data
+					contentType: false,  // tell jQuery not to set contentType
+					success : function(data) {
+						if(data.indexOf("true|") == 0){
+							queueNotice("confirmation", "Changes saved!");
+							closeHeight($('#editExtras'));
+							$('.loading').fadeIn(0);
+							$('#surveys').fadeOut(0);
+							reloadPage();
+						}
+						else{
+							var saveSurveyError = data.replace("false|", "");
+							queueNotice("error", saveSurveyError);
+							if(saveSurveyError == "Your log in dissolved. Maybe you logged in on another device."){
+								logOut();
+							}
+						}
+					},
+					complete: function() {
+						setLoadingButton($("#saveSurveyButton"), "Save changes", false);
+						savingSurvey = false;
+					}
+				});
+			}
+
+			function dateDrop(dateCategory){
+				var wantToShow = $("#" + dateCategory + "Filter")[0].clientHeight == 0;
+				$("#dateFilter .option").stop().animate({maxHeight:"0px"});
+				if(wantToShow){
+					$("#" + dateCategory + "Filter .option").stop().animate({maxHeight:"250px"});
+				}
+			}
+
+			function showDateLabel(dateCategory, option){
+				$("#" + dateCategory + "Label").text($(option).find(".text").eq(0).text().replace("January", "Jan.").replace("February", "Feb.").replace("August", "Aug.").replace("September", "Sept.").replace("October", "Oct.").replace("November", "Nov.").replace("December", "Dec."));
+			}
+
+			function clearDateFilter(){
+				$("#monthFilter .selected")[0].className = $("#monthFilter .selected")[0].className.replace("selected", "").trim();
+				$("#dayFilter .selected")[0].className = $("#dayFilter .selected")[0].className.replace("selected", "").trim();
+				$("#yearFilter .selected")[0].className = $("#yearFilter .selected")[0].className.replace("selected", "").trim();
+
+				$("#monthFilter .option").eq(0)[0].className = $("#monthFilter .option").eq(0)[0].className + " selected";
+				$("#dayFilter .option").eq(0)[0].className = $("#dayFilter .option").eq(0)[0].className + " selected";
+				$("#yearFilter .option").eq(0)[0].className = $("#yearFilter .option").eq(0)[0].className + " selected";
+
+				$("#monthLabel").text("Month");
+				$("#dayLabel").text("Day");
+				$("#yearLabel").text("Year");
+
+				scrollToElement($("#iconBar"));
+
+				$("#dateFilter .option").stop().animate({maxHeight:"0px"});
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			function toggleMaxHeight(elements){
+				//switch the max height of all elements specified as "elements" between 0px and 250px
+				elements = $(elements);
+				for(var i = 0; i < elements.length; i++){
+					if(elements.eq(i)[0].style.maxHeight != "250px"){
+						elements.eq(i).stop().animate({maxHeight:"250px"});
+					}
+					else{
+						elements.eq(i).stop().animate({maxHeight:"0px"});
+					}
+				}
+			}
+
+			var selectToggling = false;
+			function autoOpenSelect(selectElement){
+				if(!selectToggling){
+					selectToggling = true;
+					if(getSelectValue(selectElement) == ""){
+						if($(selectElement)[0].className.indexOf("active") > -1){
+							var activeClassName = $(selectElement)[0].className.substring($(selectElement)[0].className.indexOf("active"));
+							if(activeClassName.indexOf(" ") > -1){
+								activeClassName = activeClassName.substring(0, activeClassName.indexOf(" "));
+							}
+							$(selectElement)[0].className = $(selectElement)[0].className.replace(activeClassName, "").trim();
+						}
+						$(selectElement)[0].className = $(selectElement)[0].className + " active" + (getYPosition(selectElement) - 100);
+						elements = $(selectElement).find(".option").animate({maxHeight:"250px"}, "swing", function(){selectToggling = false;});
+					}
+				}
+			}
+
+			function selectOption(optionElement, letSelectedCollapse){
+				letSelectedCollapse = letSelectedCollapse || false;
+				if(!selectToggling){
+					selectToggling = true;
+					//select an option in a custiom .select or open the custom .select
+					if(optionElement.parentNode.className.indexOf("active") > -1){
+						var preScrollTop = Number(optionElement.parentNode.className.replace(/\D/g, ""));
+						optionElement.parentNode.className = optionElement.parentNode.className.replace("active" + preScrollTop, "").trim();
+						$('html, body').animate({ scrollTop: preScrollTop }, 400);
+					}
+					else{
+						optionElement.parentNode.className = optionElement.parentNode.className + " active" + $(document).scrollTop();
+					}
+
+					toggleMaxHeight($(optionElement.parentNode).find(".option"));
+					var selectedElement = $(optionElement.parentNode).find(".selected").eq(0)[0];
+					selectedElement.className = selectedElement.className.replace("selected", "").trim();
+					optionElement.className = optionElement.className + " selected";
+					if(letSelectedCollapse){selectToggling = false;}
+					else{
+						$(optionElement).stop().animate({maxHeight:"250px"}, "swing", function(){selectToggling = false;});
+					}
+				}
+			}
+
+			function setSelectValue(selectElement, val){
+				//set the value of a custom .select and show the selected option
+				selectElement = $(selectElement)[0];
+				var options = selectElement.getElementsByClassName("option");
+				for(var i = 0; i < options.length; i++){
+					options[i].className = "option";
+					options[i].style.maxHeight = "0px";
+					options[i].style.overflow = "hidden";
+					if(options[i].getElementsByClassName("value")[0].innerHTML == val){
+						options[i].className = "option selected";
+						options[i].style.maxHeight = "250px";
+						options[i].style.overflow = "hidden";
+					}
+				}
+			}
+
+			function getSelectValue(selectElement){
+				//return the value of a custom .select
+				if($(selectElement).find(".selected .value").length < 1){
+					return "";
+				}
+				return $(selectElement).find(".selected .value")[0].innerHTML;
+			}
+
+			function getSelectText(selectElement){
+				//return the show text of a custom .select
+				return $(selectElement).find(".selected .text")[0].innerHTML;
+			}
+
+			function getSelectTextByValue(selectElement, val){
+				//given the value of a custom .select, return that values corresponding text
+				selectElement = $(selectElement)[0];
+				var options = selectElement.getElementsByClassName("option");
+				for(var i = 0; i < options.length; i++){
+					if($(options[i]).find(".value").eq(0)[0].innerHTML == val){
+						return $(options[i]).find(".text").eq(0)[0].innerHTML;
+					}
+				}
+			}
+
+			function getSelectValueByText(selectElement, txt){
+				//given the value of a custom .select, return that values corresponding text
+				selectElement = $(selectElement)[0];
+				var options = selectElement.getElementsByClassName("option");
+				for(var i = 0; i < options.length; i++){
+					if($(options[i]).find(".text").eq(0)[0].innerHTML == txt){
+						return $(options[i]).find(".value").eq(0)[0].innerHTML;
+					}
+				}
+			}
+
+			function getSelectImageByText(selectElement, txt){
+				//given the value of a custom .select, return that values corresponding text
+				selectElement = $(selectElement)[0];
+				var options = selectElement.getElementsByClassName("option");
+				for(var i = 0; i < options.length; i++){
+					if($(options[i]).find(".text").eq(0)[0].innerHTML == txt){
+						bgimg = $(options[i]).find(".image").eq(0)[0].style.backgroundImage;
+						return bgimg.substring(bgimg.indexOf("(") + 1, bgimg.lastIndexOf(")")).replace(/"/g, "").replace(/'/g, "");
+						//TODO: remove this line. "
+					}
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div id="managerRequest">
+			<div id="managerRequestMessage"></div>
+			<div id="managerRequestButtons">
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('deny');">Deny</div>
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('approve');">Accept</div>
+			</div>
+		</div>
+		<div id="error" onclick="hideNotice();"></div>
+		<div id="confirmation" onclick="hideNotice();"></div>
+		<div id="alert" onclick="hideNotice();"></div>
+		<div id="promptInteractionBlock"></div>
+		<div id="noticeInteractionBlock" onclick="hideNotice();"></div>
+		<div id="confirm">
+			<div></div>
+			<div>
+				<button>OK</button>
+				<button>Cancel</button>
+				<div class="clearBoth"></div>
+			</div>
+		</div>
+
+		<div id="splash">
+			<div id="splashImage"></div>
+			<div id="splashOverlay">
+				<div id="splashIntroText">Welcome to</div>
+				<div id="splashMainText">Caterpillars Count!</div>
+				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">Manage my surveys</button>
+			</div>
+		</div>
+		<header>
+			<h1><a href="../">Caterpillars Count!</a></h1>
+			<div id="hamburger" onclick="toggleNav();">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div id="navKnockDown" class="clearBoth"></div>
+			<nav class="loadingNav">
+				<ul>
+					<li onclick="accessSubMenu(this);">
+						<span>Participate</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../getStarted">Get Started</a></li>
+							<li><a href="../conductASurvey">Conduct a Survey</a></li>
+							<li><a href="../submitObservations">Submit Observations</a></li>
+							<li><a href="../hostASurveySite">Host a Survey Site</a></li>
+							<li><a href="../resources">Resources</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Explore</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
+							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="../dataDownload">Data Download</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Learn</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../identificationSkills">Identification Skills</a></li>
+							<li><a href="../virtualSurvey">Virtual Survey Game</a></li>
+							<li><a href="../forEducators">For Educators</a></li>
+						</ul>
+					</li>
+					<li onclick="window.location = '../news';">
+						<span>News</span>
+					</li>
+					<li onclick="window.location = '../faq';">
+						<span>FAQ</span>
+					</li>
+					<li onclick="window.location = '../signIn';">
+						<span>Sign In</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../createNewSite">Create New Site</a></li>
+							<li><a href="../manageMySites">Manage My Sites</a></li>
+							<li><a href="../manageMySites">Manage My Surveys</a></li>
+							<li><a href="../settings">Settings</a></li>
+							<li><a href="" onclick="logOut();">Sign Out</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="navBack" onclick="resetMenu(false);">&#10094;</div>
+		</header>
+		<main>
+			<div class="panel" style="padding:0px;">
+				<div id="iconBar">
+					<div>
+						<img src="../images/filterIcon.png" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));"/>
+						<img src="../images/delete.png" id="batchDeleteIcon" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
+						<div class="iconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
+							<img src="../images/filterIconWhite.png"/>
+							<div>Filter surveys</div>
+						</div>
+						<div class="iconButton" id="batchDeleteIconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
+							<img src="../images/deleteWhite.png"/>
+							<div>Batch delete</div>
+						</div>
+						<div class="clearBoth"></div>
+					</div>
+				</div>
+				<div id="batchDeleteDropdown">
+					<div>
+						<!--Batch delete is now active. <span onclick="selectAll();" class="pointer underline">Select all</span>, <span onclick="deselectAll();" class="pointer underline">deselect all</span>, or manually select the surveys you'd like to delete.-->
+						Select the surveys you'd like to delete before clicking the button below. Checkboxes are located on the top right corner of each survey on this page.
+						<button onclick="batchDelete();" id="batchDeleteButton">Batch Delete 0 Surveys</button>
+						<span class="underline pointer" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();">Cancel</span>
+					</div>
+				</div>
+				<div id="filtersDropdown">
+					<div id="filters">
+						<div class="filter">
+							<div class="inputTitle">User:</div>
+							<input type="text" id="userSearch" placeholder="John Smith" autocomplete="off"/>
+						</div>
+						<div class="filter">
+							<div class="inputTitle">Arthropod:</div>
+							<div class="select" id="arthropodSearch">
+								<div class="option selected" onclick="selectOption(this);">	<div class="value"></div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">aphid</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/aphid.png');"></div>		<div class="text">Aphids and Psyllids</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">bee</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/bee.png');"></div>			<div class="text">Bees, Wasps, Sawflies</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">beetle</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/beetle.png');"></div>		<div class="text">Beetles</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">caterpillar</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/caterpillar.png');"></div>		<div class="text">Caterpillars</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">daddylonglegs</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/daddylonglegs.png');"></div>	<div class="text">Daddy longlegs</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">fly</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/fly.png');"></div>			<div class="text">Flies</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">grasshopper</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/grasshopper.png');"></div>		<div class="text">Grasshoppers, Crickets</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">leafhopper</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/leafhopper.png');"></div>		<div class="text">Leaf Hoppers and Cicadas</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">moths</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/moths.png');"></div>		<div class="text">Moths, Butterflies</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">spider</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/spider.png');"></div>		<div class="text">Spiders</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">truebugs</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/truebugs.png');"></div>		<div class="text">True Bugs</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">other</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/other.png');"></div>		<div class="text">Other</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
+							</div>
+						</div>
+						<div class="filter">
+							<div id="locationFilters" style="max-height:999999px;">
+								<div id="siteCircleFilter">
+									<div class="inputTitle">Site:</div>
+									<div id="siteSearch"></div>
+									<div id="circleSearchDiv">
+										<div class="inputTitle">Circle:</div>
+										<input type="number" id="circleSearch" placeholder="circle search" oninput="this.value=this.value.replace(/\D/g, '');"/>
+									</div>
+									<div class="toggleLink underline pointer" onclick="showSurveyLocationCodeFilter();">Filter by specific branch survey code instead</div>
+								</div>
+								<div id="surveylocationCodeFilter">
+									<div class="inputTitle">Branch survey code:</div>
+									<input type="text" id="codeSearch" oninput="this.value = this.value.toUpperCase().replace(/ /g, '');"/>
+									<div class="toggleLink underline pointer" onclick="showSiteCircleFilter();">Filter by site/circle instead</div>
+								</div>
+							</div>
+						</div>
+						<div class="filter">
+							<div class="inputTitle">Date:</div>
+							<div id="dateFilter">
+								<div>
+									<div id="monthLabel" onclick="dateDrop('month');">Month</div>
+									<div id="dayLabel" onclick="dateDrop('day');">Day</div>
+									<div id="yearLabel" onclick="dateDrop('year');">Year</div>
+								</div>
+								<div class="clearBoth"></div>
+								<div class="select" id="monthFilter">
+									<div class="option selected" onclick="selectOption(this);showDateLabel('month', this);">	<div class="value">__</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">Month</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">01</div>		<div class="shown"><div class="image"></div>			<div class="text">January</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">02</div>		<div class="shown"><div class="image"></div>			<div class="text">February</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">03</div>		<div class="shown"><div class="image"></div>			<div class="text">March</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">04</div>		<div class="shown"><div class="image"></div>			<div class="text">April</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">05</div>		<div class="shown"><div class="image"></div>			<div class="text">May</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">06</div>		<div class="shown"><div class="image"></div>			<div class="text">June</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">07</div>		<div class="shown"><div class="image"></div>			<div class="text">July</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">08</div>		<div class="shown"><div class="image"></div>			<div class="text">August</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">09</div>		<div class="shown"><div class="image"></div>			<div class="text">September</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">10</div>		<div class="shown"><div class="image"></div>			<div class="text">October</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">11</div>		<div class="shown"><div class="image"></div>			<div class="text">November</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('month', this);">		<div class="value">12</div>		<div class="shown"><div class="image"></div>			<div class="text">December</div></div></div>
+								</div>
+								<div class="select" id="dayFilter">
+									<div class="option selected" onclick="selectOption(this);showDateLabel('day', this);">	<div class="value">__</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">Day</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">01</div>		<div class="shown"><div class="image"></div>			<div class="text">1st</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">02</div>		<div class="shown"><div class="image"></div>			<div class="text">2nd</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">03</div>		<div class="shown"><div class="image"></div>			<div class="text">3rd</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">04</div>		<div class="shown"><div class="image"></div>			<div class="text">4th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">05</div>		<div class="shown"><div class="image"></div>			<div class="text">5th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">06</div>		<div class="shown"><div class="image"></div>			<div class="text">6th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">07</div>		<div class="shown"><div class="image"></div>			<div class="text">7th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">08</div>		<div class="shown"><div class="image"></div>			<div class="text">8th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">09</div>		<div class="shown"><div class="image"></div>			<div class="text">9th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">10</div>		<div class="shown"><div class="image"></div>			<div class="text">10th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">11</div>		<div class="shown"><div class="image"></div>			<div class="text">11th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">12</div>		<div class="shown"><div class="image"></div>			<div class="text">12th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">13</div>		<div class="shown"><div class="image"></div>			<div class="text">13th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">14</div>		<div class="shown"><div class="image"></div>			<div class="text">14th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">15</div>		<div class="shown"><div class="image"></div>			<div class="text">15th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">16</div>		<div class="shown"><div class="image"></div>			<div class="text">16th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">17</div>		<div class="shown"><div class="image"></div>			<div class="text">17th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">18</div>		<div class="shown"><div class="image"></div>			<div class="text">18th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">19</div>		<div class="shown"><div class="image"></div>			<div class="text">19th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">20</div>		<div class="shown"><div class="image"></div>			<div class="text">20th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">21</div>		<div class="shown"><div class="image"></div>			<div class="text">21st</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">22</div>		<div class="shown"><div class="image"></div>			<div class="text">22nd</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">23</div>		<div class="shown"><div class="image"></div>			<div class="text">23rd</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">24</div>		<div class="shown"><div class="image"></div>			<div class="text">24th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">25</div>		<div class="shown"><div class="image"></div>			<div class="text">25th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">26</div>		<div class="shown"><div class="image"></div>			<div class="text">26th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">27</div>		<div class="shown"><div class="image"></div>			<div class="text">27th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">28</div>		<div class="shown"><div class="image"></div>			<div class="text">28th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">29</div>		<div class="shown"><div class="image"></div>			<div class="text">29th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">30</div>		<div class="shown"><div class="image"></div>			<div class="text">30th</div></div></div>
+									<div class="option" onclick="selectOption(this, true);showDateLabel('day', this);">		<div class="value">31</div>		<div class="shown"><div class="image"></div>			<div class="text">31st</div></div></div>
+								</div>
+								<div class="select" id="yearFilter"></div>
+							</div>
+							<div class="toggleLink underline pointer" onclick="clearDateFilter();">Clear date</div>
+						</div>
+					</div>
+					<button onclick="filter();">Apply Filters</button>
+				</div>
+			</div>
+			<div class="panel" style="display:none;"></div>
+			<div class="panel">
+				<h2>Manage My Surveys</h2>
+				<div class="tagline">...all the surveys you've personally submitted, plus all the surveys submitted at any sites you may manage</div>
+				<div class="content">
+					<div id="sciStarterNotice">If you use <a href="../SciStarter">SciStarter</a>, you can track your participation there too!</div>
+					<div id="surveys"></div>
+					<div class="loading"><img src="../images/rolling.svg"/></div>
+					<div id="editExtras">
+						<button id="saveSurveyButton">Save Changes</button>
+						<div style="text-align:center;margin-bottom:20px;"><span class="underline pointer" style="color:#ccc;font-size:16px;font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;" onclick="$('.loading').fadeIn(0);$('#surveys').fadeOut(0);closeHeight($('#editExtras'));reloadPage();">Cancel</span></div>
+					</div>
+					<div id="pageNav">
+						<div class="autoPage" onclick="loadFirstPage();">&lt;&lt;</div>
+						<div class="autoPage" onclick="loadPreviousPage();">&lt;</div>
+						<div id="pageNumbers"></div>
+						<div class="autoPage" onclick="loadNextPage();">&gt;</div>
+						<div class="autoPage" onclick="loadLastPage();">&gt;&gt;</div>
+						<div class="clearBoth"></div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<footer>
+			<div>Part of the <a href="http://pheno-mismatch.org" target="_blank">Pheno Mismatch</a> project funded by the National Science Foundation</div>
+
+			<div><img src="../images/unc.png"/></div><div>
+				<a target="_blank" href="https://www.facebook.com/Caterpillars-Count-1854259101283140/"><img src="../images/facebook.png" alt="facebook"/></a><a target="_blank" href="https://twitter.com/CaterpillarsCt"><img src="../images/twitter.png" alt="twitter"/></a>
+			</div>
+
+			<div>Contact us: <a href="mailto:caterpillarscount@gmail.com">caterpillarscount@gmail.com</a></div>
+
+			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
+		</footer>
+	</body>
+</html>
