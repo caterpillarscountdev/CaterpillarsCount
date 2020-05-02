@@ -200,6 +200,24 @@
 				color:#000;
 				text-transform:none;
 			}
+			
+			.addPhotoButton{
+				position:relative;
+				overflow:hidden;
+				border:1px solid #555;
+				padding:5px;
+				border-radius:5px;
+				display:inline-block;
+				cursor:pointer;
+			}
+			
+			.addPhotoButton input{
+				position:absolute;
+				top:0px;
+				left:0px;
+				width:100%;
+				height:100%;
+			}
 
 			#surveys .survey .editable, #surveys .survey .toggleable{
 				display:inline-block;
@@ -1068,6 +1086,11 @@
 									htmlToAdd +=			"<div>";
 									if(surveys[i]["arthropodSightings"][j]["photoURL"].length > 0){
 										htmlToAdd +=			"<a href=\"../images/arthropods/" + surveys[i]["arthropodSightings"][j]["photoURL"] + "\" target=\"_blank\">";
+									}
+									else{
+										htmlToAdd +=			"<div>";
+										htmlToAdd +=				"<div class=\"addPhotoButton\"><input type=\"file\" onchange=\"if(this.files.length == 1){if(jQuery.isFunction(showUploadedImageFromFile)){showUploadedImageFromFile(this.files[0]);}}else if(this.files.length > 1){queueNotice('error', 'You may only upload one picture per arthropod sighting.');}\"/>Add photo</div>";
+										htmlToAdd +=			"</div>";
 									}
 									htmlToAdd +=				"<div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 1000);\">" + surveys[i]["arthropodSightings"][j]["quantity"] + "</div> <div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 300);\">" + surveys[i]["arthropodSightings"][j]["length"] + "</div>mm ";
 									if(surveys[i]["arthropodSightings"][j]["quantity"] == 1){
