@@ -201,6 +201,10 @@
 				text-transform:none;
 			}
 			
+			main .panel .addPhotoSection{
+				display:none;
+			}
+			
 			main .panel .addPhotoButton{
 				position:relative;
 				overflow:hidden;
@@ -1261,7 +1265,7 @@
 										htmlToAdd +=		"<div class=\"italic notes\" style=\"display:none;\">*<div class=\"editable\">[notes]</div></div>";
 									}
 									if(surveys[i]["arthropodSightings"][j]["photoURL"].length == 0){
-										htmlToAdd +=			"<div>";
+										htmlToAdd +=			"<div class=\"addPhotoSection\">";
 										htmlToAdd +=				"<div class=\"photoPreview\"></div>";
 										htmlToAdd +=				"<div class=\"addPhotoButton\"><input type=\"file\" onchange=\"if(this.files.length == 1){if(jQuery.isFunction(showUploadedImageFromFile)){showUploadedImageFromFile(this.files[0], $(this).parent().parent().find('.photoPreview')[0]);}}else if(this.files.length > 1){queueNotice('error', 'You may only upload one picture per arthropod sighting.');}\"/><span class=\"addText\">Add</span><span class=\"changeText\">Change</span> photo</div>";
 										htmlToAdd +=				"<div class=\"removePhotoLink\" onclick=\"removeUploadedFile($(this).parent().find('.photoPreview')[0]);\">Remove photo</div>";
@@ -1646,11 +1650,19 @@
 				htmlToAdd += 				"<div><div class=\"toggleable false beetleOption\">In larva form</div></div>";
 				htmlToAdd +=			"</div>";
 				htmlToAdd +=			"<div class=\"italic notes\">*<div class=\"editable\">[notes]</div></div>";
+				htmlToAdd +=			"<div class=\"addPhotoSection\">";
+				htmlToAdd +=				"<div class=\"photoPreview\"></div>";
+				htmlToAdd +=				"<div class=\"addPhotoButton\"><input type=\"file\" onchange=\"if(this.files.length == 1){if(jQuery.isFunction(showUploadedImageFromFile)){showUploadedImageFromFile(this.files[0], $(this).parent().parent().find('.photoPreview')[0]);}}else if(this.files.length > 1){queueNotice('error', 'You may only upload one picture per arthropod sighting.');}\"/><span class=\"addText\">Add</span><span class=\"changeText\">Change</span> photo</div>";
+				htmlToAdd +=				"<div class=\"removePhotoLink\" onclick=\"removeUploadedFile($(this).parent().find('.photoPreview')[0]);\">Remove photo</div>";
+				htmlToAdd +=			"</div>";
 				htmlToAdd +=		"</div>";
 				htmlToAdd += 		"<div class=\"deleteArthropodSighting\"></div>";
 				htmlToAdd +=	"</div>";
 
 				$("#" + id + " .arthropodSightingsInfo").eq(0).append(htmlToAdd);
+				
+				//addPhotoSection
+				$("#" + arthropodSightingID + " .addPhotoSection").css({display:"block"});
 
 				//editable basics
 				$("#" + arthropodSightingID + " .editable").css({display:"inline-block"});
@@ -1768,7 +1780,10 @@
 				$("#" + id + " .arthropodSightingsDropdownButtonDiv")[0].innerHTML = "ADD ARTHROPOD SIGHTING";
 				$("#" + id + " .arthropodSightingsDropdownButtonDiv")[0].onclick = function(){addArthropodToSurvey(id);};
 				$("#" + id + " .arthropodSightingsInfo").eq(0).stop().animate({maxHeight:"99999999px"}, 259999);
-
+				
+				//show addPhotoSection
+				$("#" + id + " .addPhotoSection").css({display:"block"});
+				
 				//smallselect basics
 				$(".selected").css({cursor:"pointer"});
 
