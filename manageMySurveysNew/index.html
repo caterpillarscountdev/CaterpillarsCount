@@ -201,10 +201,6 @@
 				text-transform:none;
 			}
 			
-			main .panel .addPhotoButton .changeText{
-				display:none;
-			}
-			
 			main .panel .addPhotoButton{
 				position:relative;
 				overflow:hidden;
@@ -215,6 +211,11 @@
 				display:inline-block;
 				cursor:pointer;
 				margin-top:3px;
+				text-align:center;
+			}
+			
+			main .panel .addPhotoButton .changeText{
+				display:none;
 			}
 			
 			main .panel .addPhotoButton input{
@@ -228,12 +229,27 @@
 				cursor:pointer;
 			}
 			
+			main .panel .removePhotoLink{
+				display:none;
+				margin-top:3px;
+				font-size:14px;
+				color:#0072c9;
+				padding:5px;
+				cursor:pointer;
+			}
+			
 			main .panel .activePreview{
 				width:100px;
+				margin-top:3px;
+				text-align:center;
 			}
 			
 			main .panel .activePreview .photoPreview{
 				border-radius:5px 5px 0px 0px;
+				height:80px;
+				background-size:cover;
+				background-position:center;
+				background-repeat:no-repeat;
 			}
 			
 			main .panel .activePreview .addPhotoButton{
@@ -243,12 +259,16 @@
 				border-radius:0px 0px 5px 5px;
 			}
 			
-			main .panel .addPhotoButton .changeText{
+			main .panel .activePreview .addPhotoButton .changeText{
 				display:inline;
 			}
 			
-			main .panel .addPhotoButton .addText{
+			main .panel .activePreview .addPhotoButton .addText{
 				display:none;
+			}
+			
+			main .panel .activePreview .removePhotoLink{
+				display:inline-block;
 			}
 
 			#surveys .survey .editable, #surveys .survey .toggleable{
@@ -1240,6 +1260,7 @@
 										htmlToAdd +=			"<div>";
 										htmlToAdd +=				"<div class=\"photoPreview\"></div>";
 										htmlToAdd +=				"<div class=\"addPhotoButton\"><input type=\"file\" onchange=\"if(this.files.length == 1){if(jQuery.isFunction(showUploadedImageFromFile)){showUploadedImageFromFile(this.files[0], $(this).parent().parent().find('.photoPreview')[0]);}}else if(this.files.length > 1){queueNotice('error', 'You may only upload one picture per arthropod sighting.');}\"/><span class=\"addText\">Add</span><span class=\"changeText\">Change</span> photo</div>";
+										htmlToAdd +=				"<div class=\"removePhotoLink\" onclick=\"removeUploadedFile($(this).parent().find('.photoPreview')[0]);\"></div>";
 										htmlToAdd +=			"</div>";
 									}
 									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != surveys[i]["arthropodSightings"][j]["updatedGroup"] || surveys[i]["arthropodSightings"][j]["originalSawfly"] != surveys[i]["arthropodSightings"][j]["updatedSawfly"] || surveys[i]["arthropodSightings"][j]["originalBeetleLarva"] != surveys[i]["arthropodSightings"][j]["updatedBeetleLarva"]){
