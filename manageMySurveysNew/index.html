@@ -231,7 +231,6 @@
 			
 			main .panel .removePhotoLink{
 				display:none;
-				margin-top:3px;
 				font-size:14px;
 				color:#0072c9;
 				padding:5px;
@@ -1260,7 +1259,7 @@
 										htmlToAdd +=			"<div>";
 										htmlToAdd +=				"<div class=\"photoPreview\"></div>";
 										htmlToAdd +=				"<div class=\"addPhotoButton\"><input type=\"file\" onchange=\"if(this.files.length == 1){if(jQuery.isFunction(showUploadedImageFromFile)){showUploadedImageFromFile(this.files[0], $(this).parent().parent().find('.photoPreview')[0]);}}else if(this.files.length > 1){queueNotice('error', 'You may only upload one picture per arthropod sighting.');}\"/><span class=\"addText\">Add</span><span class=\"changeText\">Change</span> photo</div>";
-										htmlToAdd +=				"<div class=\"removePhotoLink\" onclick=\"removeUploadedFile($(this).parent().find('.photoPreview')[0]);\"></div>";
+										htmlToAdd +=				"<div class=\"removePhotoLink\" onclick=\"removeUploadedFile($(this).parent().find('.photoPreview')[0]);\">Remove</div>";
 										htmlToAdd +=			"</div>";
 									}
 									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != surveys[i]["arthropodSightings"][j]["updatedGroup"] || surveys[i]["arthropodSightings"][j]["originalSawfly"] != surveys[i]["arthropodSightings"][j]["updatedSawfly"] || surveys[i]["arthropodSightings"][j]["originalBeetleLarva"] != surveys[i]["arthropodSightings"][j]["updatedBeetleLarva"]){
@@ -2406,7 +2405,7 @@
 				}
 			}
 			
-			function removeUploadedFile(){
+			function removeUploadedFile(photoPreviewDiv){
 				$(photoPreviewDiv)[0].style.backgroundImage = "url('#')";
 				$(photoPreviewDiv).parent().removeClass("activePreview");
 			}
