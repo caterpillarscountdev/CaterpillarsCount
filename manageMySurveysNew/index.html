@@ -2160,36 +2160,72 @@
 				//formData.append("plantSpecies", plantSpecies);
 				formData.append("email", window.localStorage.getItem("email"));
 				formData.append("salt", window.localStorage.getItem("salt"));
-
-
+				
 				setLoadingButton($("#saveSurveyButton"), "Save changes", true);
-				$.ajax({
-					url : "../php/editSurvey.php",
-					type : 'POST',
-					data : formData,
-					processData: false,  // tell jQuery not to process the data
-					contentType: false,  // tell jQuery not to set contentType
-					success : function(data) {
-						if(data.indexOf("true|") == 0){
-							queueNotice("confirmation", "Changes saved!");
-							closeHeight($('#editExtras'));
-							$('.loading').fadeIn(0);
-							$('#surveys').fadeOut(0);
-							reloadPage();
+				
+				var arthropodBlobs = [];
+				for(var i = 0; i < arthropodSightings.length; i++){
+					if(arthropodSightings.eq(i).find(".activePreview").length > 0){
+						numberOfPhotosUploaded++;
+						
+						var thisBase64 = arthropodSightings.eq(i).find(".photoPreview")[0].style.backgroundImage.replace("url(\"", "").replace("url('", "").replace("url(", "").trim();
+						thisBase64 = thisBase64.substring(0, thisBase64.length - 1);
+						if(thisBase64.charAt(thisBase64.length - 1) == "\"" || thisBase64.charAt(thisBase64.length - 1) == "'"){
+							thisBase64 = thisBase64.substring(0, thisBase64.length - 1);
 						}
-						else{
-							var saveSurveyError = data.replace("false|", "");
-							queueNotice("error", saveSurveyError);
-							if(saveSurveyError == "Your log in dissolved. Maybe you logged in on another device."){
-								logOut();
+						compressBase64Index(arthropodBlobs, i, 1750, 70, true, thisBase64);
+					}
+					else{
+						arthropodBlobs[i] = null;
+					}
+				}
+				
+				//check arthropod blobs for completeness and loop:
+				var savedCheck = setInterval(function(){
+					var allImageDataLoaded = true;
+					for(var i  = 0; i < arthropodSightings.length; i++){
+						if(typeof arthropodBlobs[i] == 'undefined'){
+							allImageDataLoaded = false;
+							break;
+						}
+					}
+					if(allImageDataLoaded){
+						clearInterval(savedCheck);
+						for(var i  = 0; i < arthropodData.length; i++){
+							if(arthropodBlobs[i] !== null){
+								formData.append(('file' + i), arthropodBlobs[i]);
 							}
 						}
-					},
-					complete: function() {
-						setLoadingButton($("#saveSurveyButton"), "Save changes", false);
-						savingSurvey = false;
+console.log(arthropodBlobs);
+						$.ajax({
+							url : "../php/editSurvey.php",
+							type : 'POST',
+							data : formData,
+							processData: false,  // tell jQuery not to process the data
+							contentType: false,  // tell jQuery not to set contentType
+							success : function(data) {
+								if(data.indexOf("true|") == 0){
+									queueNotice("confirmation", "Changes saved!");
+									closeHeight($('#editExtras'));
+									$('.loading').fadeIn(0);
+									$('#surveys').fadeOut(0);
+									reloadPage();
+								}
+								else{
+									var saveSurveyError = data.replace("false|", "");
+									queueNotice("error", saveSurveyError);
+									if(saveSurveyError == "Your log in dissolved. Maybe you logged in on another device."){
+										logOut();
+									}
+								}
+							},
+							complete: function() {
+								setLoadingButton($("#saveSurveyButton"), "Save changes", false);
+								savingSurvey = false;
+							}
+						});
 					}
-				});
+				}, 100);
 			}
 
 			function dateDrop(dateCategory){
