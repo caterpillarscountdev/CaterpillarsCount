@@ -201,6 +201,10 @@
 				text-transform:none;
 			}
 			
+			main .panel .addPhotoButton .changeText{
+				display:none;
+			}
+			
 			main .panel .addPhotoButton{
 				position:relative;
 				overflow:hidden;
@@ -222,6 +226,29 @@
 				margin:0px;
 				opacity:0;
 				cursor:pointer;
+			}
+			
+			main .panel .activePreview{
+				width:100px;
+			}
+			
+			main .panel .activePreview .photoPreview{
+				border-radius:5px 5px 0px 0px;
+			}
+			
+			main .panel .activePreview .addPhotoButton{
+				width:100%;
+				box-sizing:border-box;
+				margin-top:0px;
+				border-radius:0px 0px 5px 5px;
+			}
+			
+			main .panel .addPhotoButton .changeText{
+				display:inline;
+			}
+			
+			main .panel .addPhotoButton .addText{
+				display:none;
 			}
 
 			#surveys .survey .editable, #surveys .survey .toggleable{
@@ -1212,7 +1239,7 @@
 									if(surveys[i]["arthropodSightings"][j]["photoURL"].length == 0){
 										htmlToAdd +=			"<div>";
 										htmlToAdd +=				"<div class=\"photoPreview\"></div>";
-										htmlToAdd +=				"<div class=\"addPhotoButton\"><input type=\"file\" onchange=\"if(this.files.length == 1){if(jQuery.isFunction(showUploadedImageFromFile)){showUploadedImageFromFile(this.files[0], $(this).parent().parent().find('.photoPreview')[0]);}}else if(this.files.length > 1){queueNotice('error', 'You may only upload one picture per arthropod sighting.');}\"/>Add photo</div>";
+										htmlToAdd +=				"<div class=\"addPhotoButton\"><input type=\"file\" onchange=\"if(this.files.length == 1){if(jQuery.isFunction(showUploadedImageFromFile)){showUploadedImageFromFile(this.files[0], $(this).parent().parent().find('.photoPreview')[0]);}}else if(this.files.length > 1){queueNotice('error', 'You may only upload one picture per arthropod sighting.');}\"/><span class=\"addText\">Add</span><span class=\"changeText\">Change</span> photo</div>";
 										htmlToAdd +=			"</div>";
 									}
 									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != surveys[i]["arthropodSightings"][j]["updatedGroup"] || surveys[i]["arthropodSightings"][j]["originalSawfly"] != surveys[i]["arthropodSightings"][j]["updatedSawfly"] || surveys[i]["arthropodSightings"][j]["originalBeetleLarva"] != surveys[i]["arthropodSightings"][j]["updatedBeetleLarva"]){
@@ -2325,8 +2352,8 @@
 					//base64 provided
 					//SHOW IMAGE PREVIEW
 					$(photoPreviewDiv)[0].style.backgroundImage = "url('" + base64OrURI + "')";
-					$(photoPreviewDiv)[0].style.height = "80px";
-					//$(photoPreviewDiv).parent().find(".fileInputRemoveLink")[0].style.display = "block";
+					$(photoPreviewDiv).parent().addClass("activePreview");
+					
 				}
 				else{
 					//URI provided
@@ -2338,8 +2365,7 @@
 							$(photoPreviewDiv)[0].style.backgroundImage = "url('data:" + data[0][0] + ";base64," + data[0][1] + "')";
 							if($(photoPreviewDiv)[0].style.backgroundImage.length > 22){
 								//FINALIZE IMAGE PREVIEW STYLING
-								$(photoPreviewDiv)[0].style.height = "80px";
-								//$(photoPreviewDiv).parent().find(".fileInputRemoveLink")[0].style.display = "block";
+								$(photoPreviewDiv).parent().addClass("activePreview");
 								$("#clearInteractionBlock")[0].style.display = "none";
 							}
 							else{
@@ -2347,8 +2373,7 @@
 									$("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage = "url('data:" + data[0][0] + ";base64," + data[0][1] + "')";
 									if($("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage.length > 22){
 										//FINALIZE IMAGE PREVIEW STYLING
-										$(photoPreviewDiv)[0].style.height = "80px";
-										//$(photoPreviewDiv).parent().find(".fileInputRemoveLink")[0].style.display = "block";
+										$(photoPreviewDiv).parent().addClass("activePreview");
 										$("#clearInteractionBlock")[0].style.display = "none";
 										clearInterval(backgroundImageSetCheck);
 									}
@@ -2362,8 +2387,7 @@
 			
 			function removeUploadedFile(){
 				$(photoPreviewDiv)[0].style.backgroundImage = "url('#')";
-				$(photoPreviewDiv)[0].style.height = "0px";
-				//$(photoPreviewDiv).parent().find(".fileInputRemoveLink")[0].style.display = "none";
+				$(photoPreviewDiv).parent().removeClass("activePreview");
 			}
 			
 			function b64toBlob(b64Data, contentType, sliceSize) {
