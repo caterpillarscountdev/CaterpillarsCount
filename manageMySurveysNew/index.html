@@ -204,13 +204,13 @@
 			main .panel .addPhotoButton{
 				position:relative;
 				overflow:hidden;
-				background:#555;
-				color:#fff;
+				background:rgba(0,0,0,0.1);
 				padding:3px 5px;
 				border-radius:5px;
 				display:inline-block;
 				cursor:pointer;
 				margin-top:3px;
+				margin-bottom:2px;
 				text-align:center;
 			}
 			
@@ -231,16 +231,21 @@
 			
 			main .panel .removePhotoLink{
 				display:none;
-				font-size:14px;
-				color:#0072c9;
+				font-size:12px;
+				color:#fff;
 				padding:5px;
 				cursor:pointer;
+				position:absolute;
+				top:0px;
+				right:0px;
+				background:rgba(0,0,0,0.5);
+				border-radius:0px 5px 0px 5px;
 			}
 			
 			main .panel .activePreview{
-				width:100px;
+				width:150px;
 				margin-top:3px;
-				text-align:center;
+				position:relative;
 			}
 			
 			main .panel .activePreview .photoPreview{
@@ -1259,7 +1264,7 @@
 										htmlToAdd +=			"<div>";
 										htmlToAdd +=				"<div class=\"photoPreview\"></div>";
 										htmlToAdd +=				"<div class=\"addPhotoButton\"><input type=\"file\" onchange=\"if(this.files.length == 1){if(jQuery.isFunction(showUploadedImageFromFile)){showUploadedImageFromFile(this.files[0], $(this).parent().parent().find('.photoPreview')[0]);}}else if(this.files.length > 1){queueNotice('error', 'You may only upload one picture per arthropod sighting.');}\"/><span class=\"addText\">Add</span><span class=\"changeText\">Change</span> photo</div>";
-										htmlToAdd +=				"<div class=\"removePhotoLink\" onclick=\"removeUploadedFile($(this).parent().find('.photoPreview')[0]);\">Remove</div>";
+										htmlToAdd +=				"<div class=\"removePhotoLink\" onclick=\"removeUploadedFile($(this).parent().find('.photoPreview')[0]);\">Remove photo</div>";
 										htmlToAdd +=			"</div>";
 									}
 									if(surveys[i]["arthropodSightings"][j]["originalGroup"] != surveys[i]["arthropodSightings"][j]["updatedGroup"] || surveys[i]["arthropodSightings"][j]["originalSawfly"] != surveys[i]["arthropodSightings"][j]["updatedSawfly"] || surveys[i]["arthropodSightings"][j]["originalBeetleLarva"] != surveys[i]["arthropodSightings"][j]["updatedBeetleLarva"]){
@@ -2408,6 +2413,7 @@
 			function removeUploadedFile(photoPreviewDiv){
 				$(photoPreviewDiv)[0].style.backgroundImage = "url('#')";
 				$(photoPreviewDiv).parent().removeClass("activePreview");
+				$(photoPreviewDiv).parent().find("input")[0].outerHTML = $(photoPreviewDiv).parent().find("input")[0].outerHTML;
 			}
 			
 			function b64toBlob(b64Data, contentType, sliceSize) {
