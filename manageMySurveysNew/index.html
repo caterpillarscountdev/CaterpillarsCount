@@ -2181,8 +2181,6 @@
 				var arthropodBlobs = [];
 				for(var i = 0; i < arthropodSightings.length; i++){
 					if(arthropodSightings.eq(i).find(".activePreview").length > 0){
-						numberOfPhotosUploaded++;
-						
 						var thisBase64 = arthropodSightings.eq(i).find(".photoPreview")[0].style.backgroundImage.replace("url(\"", "").replace("url('", "").replace("url(", "").trim();
 						thisBase64 = thisBase64.substring(0, thisBase64.length - 1);
 						if(thisBase64.charAt(thisBase64.length - 1) == "\"" || thisBase64.charAt(thisBase64.length - 1) == "'"){
