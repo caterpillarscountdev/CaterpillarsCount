@@ -91,9 +91,12 @@
 				//update arthropod sightings
 				$arthropodSightings = $survey->getArthropodSightings();
 				$failures = "";
+				$existingArthropodSightingIDs = array();
 				for($i = 0; $i < count($arthropodSightings); $i++){
 					for($j = 0; $j < count($arthropodData); $j++){
 						if(strval($arthropodSightings[$i]->getID()) == strval($arthropodData[$j][0])){
+							$existingArthropodSightingIDs[] = strval($arthropodData[$j][0]);
+							
 							$updateResult = $arthropodSightings[$i]->setAllEditables($arthropodData[$j][1], $arthropodData[$j][2], $arthropodData[$j][3], $arthropodData[$j][4], $arthropodData[$j][5], $arthropodData[$j][6], $arthropodData[$j][7], $arthropodData[$j][8], $arthropodData[$j][9]);
 							if($updateResult === false){
 								$failures .= "Could not locate " . $arthropodData[$j][1] . " sighting record. ";
@@ -104,11 +107,25 @@
 							else{
 								//if we successfully set all editables
 								//add a photo to the arthropod sighting if it exists
-								$attachResult = attachPhotoToArthropodSighting($_FILES['file' . $i], $arthropodSightings[$i]);
+								$attachResult = attachPhotoToArthropodSighting($_FILES['file' . $j], $arthropodSightings[$i]);
 								if($attachResult != "File not uploaded. " && $attachResult !== true){
 									$failures .= "Photo #" . $j . ": " . strval($attachResult);
 								}
 							}
+						}
+					}
+				}
+				for($i = 0; $i < count($arthropodData); $i++){
+					if(!in_array(strval($arthropodData[$i][0]), $existingArthropodSightingIDs)){
+						$newArthropodSighting = $survey->addArthropodSighting($arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6], $arthropodData[$i][7], $arthropodData[$i][8], $arthropodData[$i][9]);
+						if(is_object($newArthropodSighting) && get_class($newArthropodSighting) == "ArthropodSighting"){
+							$attachResult = attachPhotoToArthropodSighting($_FILES['file' . $i], $newArthropodSighting);
+							if($attachResult != "File not uploaded. " && $attachResult !== true){
+								$failures .= "Photo #" . $i . ": " . strval($attachResult);
+							}
+						}
+						else{
+							$failures .= "Could not add arthropod sighting #$i. ";
 						}
 					}
 				}
