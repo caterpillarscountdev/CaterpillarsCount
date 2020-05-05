@@ -115,6 +115,13 @@
 						}
 					}
 				}
+				for($i = 0; $i < count($arthropodSightings); $i++){
+					if(!in_array(strval($arthropodSightings[$i]->getID()), $existingArthropodSightingIDs)){
+						if(!$arthropodSightings[$i]->permanentDelete()){
+							$failures .= "Could not delete arthropod sighting #" . $i . ". ";
+						}
+					}
+				}
 				for($i = 0; $i < count($arthropodData); $i++){
 					if(!in_array(strval($arthropodData[$i][0]), $existingArthropodSightingIDs)){
 						$newArthropodSighting = $survey->addArthropodSighting($arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6], $arthropodData[$i][7], $arthropodData[$i][8], $arthropodData[$i][9]);
