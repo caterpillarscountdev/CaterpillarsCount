@@ -84,10 +84,10 @@
 			
 			#unverifiedAccountsX{
 				position:absolute;
-				top:20px;
+				top:13px;
 				right:10px;
 				font-size:20px;
-				curor:pointer;
+				cursor:pointer;
 				padding:0px 10px;
 			}
 			
@@ -133,7 +133,7 @@
 								var htmlToAdd = "<div id=\"unverifiedAccountsX\" onclick=\"toggleUnverifiedAccountsDiv()\">&times;</div>";
 								htmlToAdd += "<div>Unverified accounts:</div>";
 								for(var i = 0; i < unverifiedEmails.length; i++){
-									htmlToAdd += "<div>" + unverifiedEmails[i] + " (resend verification email | <span class=\"underline pointer highlighted\" onclick=\"ignoreUnverifiedEmail('" + unverifiedEmails[i] + "', this.parentNode);\">ignore</span>)</div>";
+									htmlToAdd += "<div>" + unverifiedEmails[i] + " (<span class=\"underline pointer highlighted\" onclick=\"resendVerificationEmail('" + unverifiedEmails[i] + "');\">resend verification email</span> | <span class=\"underline pointer highlighted\" onclick=\"ignoreUnverifiedEmail('" + unverifiedEmails[i] + "', this.parentNode);\">ignore</span>)</div>";
 								}
 								$("#unverifiedAccounts")[0].innerHTML = htmlToAdd;
 							}
@@ -143,6 +143,30 @@
 					xhttp.open("GET", "../php/getUnverifiedEmails.php?unverifiedEmails=" + encodeURIComponent(unverifiedEmails), true);
 					xhttp.send();
 				}
+			}
+			
+			var resendingVerificationEmailStack = [];
+			function resendVerificationEmail(unverifiedEmail){
+				if(resendingVerificationEmailStack.indexOf(unverifiedEmail) > -1){
+					return false;
+				}
+				
+				$.get("../php/resendVerificationEmail.php?email=" + encodeURIComponent(unverifiedEmail), function(data){
+					if(data.indexOf("true|") == 0){
+						queueNotice("confirmation", "We sent a new verification email to " + unverifiedEmail + ". Check your email to verify your account. Check spam if needed!");
+					}
+					else{
+						queueNotice("error", data.replace("false|", ""));
+					}
+				})
+				.fail(function(){
+					queueNotice("error", "We could not resend the verification email for " + unverifiedEmail + ". Please try again. If this problem continues, try creating a new account, either with the same or a new email address.");
+				})
+				.always(function(){
+					if(resendingVerificationEmailStack.indexOf(unverifiedEmail) > -1){
+						resendingVerificationEmailStack.splice(resendingVerificationEmailStack.indexOf(unverifiedEmail), 1);
+					}
+				});
 			}
 			
 			function ignoreUnverifiedEmail(unverifiedEmail, unverifiedEmailDiv){
@@ -164,7 +188,7 @@
 					$("#unverifiedAccounts")[0].style.display= "none";
 				}
 				else{
-					$("#unverifiedAccounts")[0].style.display= "block";
+					$("#unverifiedAccounts").stop().fadeIn(200);
 				}
 			}
 
