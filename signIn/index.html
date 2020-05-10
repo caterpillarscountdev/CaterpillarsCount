@@ -94,6 +94,7 @@
 								//show icon and resend buttons in hidden panel
 								$("#unverifiedEmailIcon")[0].style.display = "inline-block";
 							}
+							window.localStorage.setItem("unverifiedEmails", JSON.stringify(unverifiedEmails));
 						}
 					};
 					xhttp.open("GET", "../php/getUnverifiedEmails.php?unverifiedEmails=" + encodeURIComponent(unverifiedEmails), true);
@@ -261,7 +262,7 @@
 						<h2>Sign In</h2>
 					</div>
 					<div class="cell">
-						<img src="../images/unverifiedEmailIconSmall.png" alt="Unverified email icon" id="unverifiedEmailIcon"/>
+						<img src="../images/unverifiedEmailIconSmall.png" alt="Unverified email icon" id="unverifiedEmailIcon" title=""/>
 					</div>
 				</div>
 				<div class="content">
