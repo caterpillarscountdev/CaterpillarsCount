@@ -153,7 +153,7 @@
 				
 				$.get("../php/resendVerificationEmail.php?email=" + encodeURIComponent(unverifiedEmail), function(data){
 					if(data.indexOf("true|") == 0){
-						queueNotice("confirmation", "We sent a new verification email to " + unverifiedEmail + ". Check your email to verify your account. Check spam if needed!");
+						queueNotice("confirmation", "We sent a new verification email to " + unverifiedEmail + ". Check your email to verify your account. Make sure to use the most recent verification email we've sent you, and check spam if needed!");
 					}
 					else{
 						queueNotice("error", data.replace("false|", ""));
