@@ -83,12 +83,12 @@
 			});
 			
 			function showResendVerificationEmailStuff(){
-				var unverifiedEmails = JSON.parse(window.localStorage.getItem("unverifiedEmails") || "[]");
+				var unverifiedEmails = window.localStorage.getItem("unverifiedEmails") || "[]";
 				
 				if(unverifiedEmails.length > 0){
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function() {
-						if (this.readyState == 4 && this.status == 200) {
+						if (this.readyState == 4 && this.status == 200) {console.log(this.responseText);
 							var unverifiedEmails = JSON.parse(this.responseText);
 							if(unverifiedEmails.length > 0){
 								//show icon and resend buttons in hidden panel
@@ -96,7 +96,7 @@
 							}
 						}
 					};
-					xhttp.open("GET", "../php/getUnverifiedEmails.php?unverifiedEmails=" + encodeURIComponent(JSON.stringify(unverifiedEmails)), true);
+					xhttp.open("GET", "../php/getUnverifiedEmails.php?unverifiedEmails=" + encodeURIComponent(unverifiedEmails), true);
 					xhttp.send();
 				}
 			}
