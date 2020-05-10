@@ -57,6 +57,7 @@
 				margin-left:20px;
 				height:21px;
 				display:none;
+				cursor:pointer;
 			}
 			
 			.table{
@@ -65,6 +66,16 @@
 			
 			.cell{
 				display:table-cell;
+			}
+			
+			#unverifiedAccounts{
+				background:#eee;
+				color:#777;
+				display:none;
+			}
+			
+			#unverifiedAccounts>div:first-of-type{
+				padding-bottom:10px;
 			}
 		</style>
 		<script>
@@ -93,12 +104,27 @@
 							if(unverifiedEmails.length > 0){
 								//show icon and resend buttons in hidden panel
 								$("#unverifiedEmailIcon")[0].style.display = "inline-block";
+								$("#unverifiedEmailIcon")[0].title = unverifiedEmails.length + " of your accounts " + (unverifiedEmails.length == 1 ? "is" : "are") + " unverified.";
+								var htmlToAdd = "<div>Unverified accounts:</div>";
+								for(var i = 0; i < unverifiedEmails.length; i++){
+									htmlToAdd += "<div>" + unverifiedEmails[i] + " (resend verification email | ignore)</div>";
+								}
+								$("#unverifiedAccounts")[0].innerHTML = htmlToAdd;
 							}
 							window.localStorage.setItem("unverifiedEmails", JSON.stringify(unverifiedEmails));
 						}
 					};
 					xhttp.open("GET", "../php/getUnverifiedEmails.php?unverifiedEmails=" + encodeURIComponent(unverifiedEmails), true);
 					xhttp.send();
+				}
+			}
+			
+			function toggleUnverifiedAccountsDiv(){
+				if($("#unverifiedAccounts")[0].style.display == "block"){
+					$("#unverifiedAccounts").stop().fadeOut();
+				}
+				else{
+					$("#unverifiedAccounts").stop().fadeIn();
 				}
 			}
 
@@ -262,9 +288,10 @@
 						<h2>Sign In</h2>
 					</div>
 					<div class="cell">
-						<img src="../images/unverifiedEmailIconSmall.png" alt="Unverified email icon" id="unverifiedEmailIcon" title=""/>
+						<img src="../images/unverifiedEmailIconSmall.png" alt="Unverified email icon" id="unverifiedEmailIcon" onclick="toggleUnverifiedAccountsDiv();"/>
 					</div>
 				</div>
+				<div id="unverifiedAccounts"></div>
 				<div class="content">
 					<div id="logIn">
 						<input type="text" placeholder="email" id="logInEmail" autocapitalize="off"/>
