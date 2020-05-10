@@ -531,7 +531,7 @@ class User
 	public static function sendEmailVerificationCodeToEmail($email){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		
-		$email = validEmailFormat($dbconn, $email);
+		$email = self::validEmailFormat($dbconn, $email);
 		
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `User` WHERE `Email`='$email' LIMIT 1");
 		
