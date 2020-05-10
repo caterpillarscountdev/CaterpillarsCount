@@ -78,29 +78,28 @@
 				padding:20px;
 				box-sizing:border-box;
 				font-family:'Roboto Slab', serif;
+				position:relative;
 				display:none;
 			}
 			
-			#unverifiedAccountsXContainer{
-				text-align:right;
-			}
-			
 			#unverifiedAccountsX{
-				display:inline-block;
+				position:absolute;
+				top:20px;
+				right:10px;
 				font-size:20px;
 				curor:pointer;
-				padding:0px 5px;
+				padding:0px 10px;
 			}
 			
 			#unverifiedAccounts>div{
 				padding-bottom:5px;
 			}
 			
-			#unverifiedAccounts>div:first-of-type{
+			#unverifiedAccounts>div:nth-of-type(2){
 				padding-bottom:10px;
 			}
 			
-			#unverifiedAccounts>div:last-of-type{
+			#unverifiedAccounts>div:first-of-type, #unverifiedAccounts>div:last-of-type{
 				padding-bottom:0px;
 			}
 		</style>
@@ -131,7 +130,7 @@
 								//show icon and resend buttons in hidden panel
 								$("#unverifiedEmailIcon")[0].style.display = "inline-block";
 								$("#unverifiedEmailIcon")[0].title = unverifiedEmails.length + " of your accounts " + (unverifiedEmails.length == 1 ? "is" : "are") + " unverified.";
-								var htmlToAdd = "<div id=\"unverifiedAccountsXContainer\"><div id=\"unverifiedAccountsX\" onclick=\"toggleUnverifiedAccountsDiv()\">&times;</div></div>";
+								var htmlToAdd = "<div id=\"unverifiedAccountsX\" onclick=\"toggleUnverifiedAccountsDiv()\">&times;</div>";
 								htmlToAdd += "<div>Unverified accounts:</div>";
 								for(var i = 0; i < unverifiedEmails.length; i++){
 									htmlToAdd += "<div>" + unverifiedEmails[i] + " (resend verification email | <span class=\"underline pointer highlighted\" onclick=\"ignoreUnverifiedEmail('" + unverifiedEmails[i] + "', this.parentNode);\">ignore</span>)</div>";
@@ -147,7 +146,7 @@
 			}
 			
 			function ignoreUnverifiedEmail(unverifiedEmail, unverifiedEmailDiv){
-				var unverifiedEmails = window.localStorage.getItem("unverifiedEmails") || "[]";
+				var unverifiedEmails = JSON.parse(window.localStorage.getItem("unverifiedEmails") || "[]");
 				if(unverifiedEmails.indexOf(unverifiedEmail) > -1){
 					unverifiedEmails.splice(unverifiedEmails.indexOf(unverifiedEmail), 1);
 					window.localStorage.setItem("unverifiedEmails", JSON.stringify(unverifiedEmails));
@@ -162,10 +161,10 @@
 			
 			function toggleUnverifiedAccountsDiv(){
 				if($("#unverifiedAccounts")[0].style.display == "block"){
-					$("#unverifiedAccounts").stop().fadeOut();
+					$("#unverifiedAccounts")[0].style.display= "none";
 				}
 				else{
-					$("#unverifiedAccounts").stop().fadeIn();
+					$("#unverifiedAccounts")[0].style.display= "block";
 				}
 			}
 
