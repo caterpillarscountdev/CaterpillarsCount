@@ -81,8 +81,27 @@
 				display:none;
 			}
 			
+			#unverifiedAccountsXContainer{
+				text-align:right;
+			}
+			
+			#unverifiedAccountsX{
+				display:inline-block;
+				font-size:20px;
+				curor:pointer;
+				padding:0px 5px;
+			}
+			
+			#unverifiedAccounts>div{
+				padding-bottom:5px;
+			}
+			
 			#unverifiedAccounts>div:first-of-type{
 				padding-bottom:10px;
+			}
+			
+			#unverifiedAccounts>div:last-of-type{
+				padding-bottom:0px;
 			}
 		</style>
 		<script>
@@ -112,7 +131,8 @@
 								//show icon and resend buttons in hidden panel
 								$("#unverifiedEmailIcon")[0].style.display = "inline-block";
 								$("#unverifiedEmailIcon")[0].title = unverifiedEmails.length + " of your accounts " + (unverifiedEmails.length == 1 ? "is" : "are") + " unverified.";
-								var htmlToAdd = "<div>Unverified accounts:</div>";
+								var htmlToAdd = "<div id=\"unverifiedAccountsXContainer\"><div id=\"unverifiedAccountsX\" onclick=\"toggleUnverifiedAccountsDiv()\">&times;</div></div>";
+								htmlToAdd += "<div>Unverified accounts:</div>";
 								for(var i = 0; i < unverifiedEmails.length; i++){
 									htmlToAdd += "<div>" + unverifiedEmails[i] + " (resend verification email | <span class=\"underline pointer highlighted\" onclick=\"ignoreUnverifiedEmail('" + unverifiedEmails[i] + "', this.parentNode);\">ignore</span>)</div>";
 								}
