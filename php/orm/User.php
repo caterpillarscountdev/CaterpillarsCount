@@ -528,7 +528,7 @@ class User
 		return true;
 	}
 	
-	public function sendEmailVerificationCodeToEmail($email){
+	public static function sendEmailVerificationCodeToEmail($email){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		
 		$email = validEmailFormat($dbconn, $email);
