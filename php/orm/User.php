@@ -547,7 +547,7 @@ class User
 			return false;
 		}
 		
-		return sendEmailVerificationCodeToUser(mysqli_fetch_assoc($query)["ID"]);
+		return self::sendEmailVerificationCodeToUser(mysqli_fetch_assoc($query)["ID"]);
 	}
 
 	public function verifyEmail($verificationCode){
