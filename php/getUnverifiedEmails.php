@@ -1,4 +1,6 @@
 <?php
+  require_once('orm/User.php');
+  
   $unverifiedEmails = json_decode($_GET["unverifiedEmails"]);
   
   $actuallyUnverifiedEmails = array();
