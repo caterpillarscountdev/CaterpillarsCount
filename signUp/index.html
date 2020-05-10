@@ -112,7 +112,7 @@
 								var unverifiedEmails = JSON.parse(window.localStorage.getItem("unverifiedEmails") || "[]");
 								if(unverifiedEmails.indexOf(signUpEmail) == -1){
 									unverifiedEmails[unverifiedEmails.length] = signUpEmail;
-									window.localStorage.setItem("unverifiedEmails", unverifiedEmails);
+									window.localStorage.setItem("unverifiedEmails", JSON.stringify(unverifiedEmails));
 								}
 
 								$("#noticeInteractionBlock").click(function(){
