@@ -114,7 +114,7 @@
 								$("#unverifiedEmailIcon")[0].title = unverifiedEmails.length + " of your accounts " + (unverifiedEmails.length == 1 ? "is" : "are") + " unverified.";
 								var htmlToAdd = "<div>Unverified accounts:</div>";
 								for(var i = 0; i < unverifiedEmails.length; i++){
-									htmlToAdd += "<div>" + unverifiedEmails[i] + " (resend verification email | ignore)</div>";
+									htmlToAdd += "<div>" + unverifiedEmails[i] + " (resend verification email | <span class=\"underline pointer highlighted\" onclick=\"ignoreUnverifiedEmail('" + unverifiedEmails[i] + "', this.parentNode);\">ignore</span>)</div>";
 								}
 								$("#unverifiedAccounts")[0].innerHTML = htmlToAdd;
 							}
@@ -123,6 +123,20 @@
 					};
 					xhttp.open("GET", "../php/getUnverifiedEmails.php?unverifiedEmails=" + encodeURIComponent(unverifiedEmails), true);
 					xhttp.send();
+				}
+			}
+			
+			function ignoreUnverifiedEmail(unverifiedEmail, unverifiedEmailDiv){
+				var unverifiedEmails = window.localStorage.getItem("unverifiedEmails") || "[]";
+				if(unverifiedEmails.indexOf(unverifiedEmail) > -1){
+					unverifiedEmails.splice(unverifiedEmails.indexOf(unverifiedEmail), 1);
+					window.localStorage.setItem("unverifiedEmails", JSON.stringify(unverifiedEmails));
+				}
+				$(unverifiedEmailDiv)[0].outerHTML = "";
+				
+				if(unverifiedEmails.length == 0){
+					$("#unverifiedEmailIcon")[0].style.display = "none";
+					$("#unverifiedAccounts")[0].style.display = "none";
 				}
 			}
 			
