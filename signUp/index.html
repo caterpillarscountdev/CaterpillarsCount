@@ -72,7 +72,8 @@
 					if($("#signUpLastName")[0].value.trim() == ""){
 					   	errors += "Enter your last name. ";
 					}
-					if(!validEmail($("#signUpEmail")[0].value)){
+					var signUpEmail = $("#signUpEmail")[0].value;
+					if(!validEmail(signUpEmail)){
 					   	errors += "Invalid email. ";
 					}
 					if($("#signUpPassword")[0].value.length < 8 || $("#signUpPassword")[0].value.length != $("#signUpPassword")[0].value.replace(/ /g, "").length){
@@ -107,6 +108,12 @@
 								$("#signUpPassword")[0].value = "";
 								$("#signUpConfirmPassword")[0].value = "";
 								uncheckCheckbox($("#13Checkbox"));
+								
+								var unverifiedEmails = JSON.parse(window.localStorage.getItem("unverifiedEmails") || "[]");
+								if(unverifiedEmails.indexOf(signUpEmail) == -1){
+									unverifiedEmails[unverifiedEmails.length] = signUpEmail;
+									window.localStorage.setItem("unverifiedEmails", unverifiedEmails);
+								}
 
 								$("#noticeInteractionBlock").click(function(){
 									window.location = ("../signIn" + loggedInPage);
@@ -120,7 +127,7 @@
 							}
 						}
 					};
-					xhttp.open("GET", "../php/signUp.php?firstName=" + encodeURIComponent($("#signUpFirstName")[0].value.trim()) + "&lastName=" + encodeURIComponent($("#signUpLastName")[0].value.trim()) + "&email=" + encodeURIComponent($("#signUpEmail")[0].value) + "&password=" + encodeURIComponent($("#signUpPassword")[0].value), true);
+					xhttp.open("GET", "../php/signUp.php?firstName=" + encodeURIComponent($("#signUpFirstName")[0].value.trim()) + "&lastName=" + encodeURIComponent($("#signUpLastName")[0].value.trim()) + "&email=" + encodeURIComponent(signUpEmail) + "&password=" + encodeURIComponent($("#signUpPassword")[0].value), true);
 					xhttp.send();
 				}
 			}
