@@ -39,6 +39,33 @@
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=1"></script>
+		<style>
+			#headingTable{
+				margin:auto;
+			}
+			
+			#headingTable .cell{
+				vertical-align:middle;
+			}
+			
+			#headingTable h2{
+				display:inline-block;
+				white-space:nowrap;
+			}
+			
+			#headingTable img{
+				margin-left:20px;
+				height:21px;
+			}
+			
+			.table{
+				display:table;
+			}
+			
+			.cell{
+				display:table-cell;
+			}
+		</style>
 		<script>
 			$(document).ready(function(){
 				tryAutoLogIn();
@@ -50,7 +77,28 @@
 					$(".link").eq(0).find("a").eq(0)[0].href = ("../signUp" + loggedInPage);
 					$(".link").eq(1).find("a").eq(0)[0].href = ("../recover" + loggedInPage);
 				}
+				
+				showResendVerificationEmailStuff();
 			});
+			
+			function showResendVerificationEmailStuff(){
+				var unverifiedEmails = JSON.parse(window.localStorage.getItem("unverifiedEmails") || "[]");
+				
+				if(unverifiedEmails.length > 0){
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+						if (this.readyState == 4 && this.status == 200) {
+							var unverifiedEmails = JSON.parse(this.responseText);
+							if(unverifiedEmails.length > 0){
+								//show icon and resend buttons in hidden panel
+								$("#unverifiedEmailIcon")[0].style.display = "inline-block";
+							}
+						}
+					};
+					xhttp.open("GET", "../php/getUnverifiedEmails.php?unverifiedEmails=" + encodeURIComponent(JSON.stringify(unverifiedEmails)), true);
+					xhttp.send();
+				}
+			}
 
 			var tryingAutoLogIn = false;
 			function tryAutoLogIn(){
@@ -207,7 +255,14 @@
 		</header>
 		<main>
 			<div class="panel">
-				<h2>Sign In</h2>
+				<div id="headingTable" class="table">
+					<div class="cell">
+						<h2>Sign In</h2>
+					</div>
+					<div class="cell">
+						<img src="../images/unverifiedEmailIconSmall.png" alt="Unverified email icon" id="unverifiedEmailIcon"/>
+					</div>
+				</div>
 				<div class="content">
 					<div id="logIn">
 						<input type="text" placeholder="email" id="logInEmail" autocapitalize="off"/>
