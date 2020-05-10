@@ -527,6 +527,28 @@ class User
 		mysqli_close($dbconn);
 		return true;
 	}
+	
+	public function sendEmailVerificationCodeToEmail($email){
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		
+		$email = validEmailFormat($dbconn, $email);
+		
+		$query = mysqli_query($dbconn, "SELECT `ID` FROM `User` WHERE `Email`='$email' LIMIT 1");
+		
+		if(mysqli_num_rows($query) > 0){
+			mysqli_close($dbconn);
+			return false;
+		}
+		
+		$query = mysqli_query($dbconn, "SELECT `ID` FROM `User` WHERE `DesiredEmail`='$email' LIMIT 1");
+		mysqli_close($dbconn);
+		
+		if(mysqli_num_rows($query) == 0){
+			return false;
+		}
+		
+		return sendEmailVerificationCodeToUser(mysqli_fetch_assoc($query)["ID"]);
+	}
 
 	public function verifyEmail($verificationCode){
 		$dbconn = (new Keychain)->getDatabaseConnection();
