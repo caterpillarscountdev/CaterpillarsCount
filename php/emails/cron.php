@@ -359,12 +359,6 @@
 						}
 						$newExpertIdentification = $row["NewExpertIdentification"];
 						$iNaturalistObservationID = $row["INaturalistID"];
-						$numberOfChanges++;
-
-						if($firstNewExpertIdentification == ""){
-							$firstNewExpertIdentification = $newExpertIdentification;
-							$firstNewExpertIdentificationPhotoURL = "https://caterpillarscount.unc.edu/images/arthropods/" . $row["PhotoURL"];
-						}
 
 						$arthropodNameTranslations = array( 
 							"daddylonglegs" => "daddylongleg", 
@@ -383,25 +377,34 @@
 						}
 
 						$newExpertIdentificationN = in_array(strtolower(substr($newExpertIdentificationSingular, 0, 1)), array("a", "e", "i", "o", "u")) ? "n" : "";
-
-						$changeLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\"><a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/observations/" . $iNaturalistObservationID . "\" target=\"_blank\"><span style=\"color: #6faf6d;\">This " . $previousExpertIdentificationSingular . " observation</span></a> is actually a" . $newExpertIdentificationN . " " . $newExpertIdentificationSingular . ".</span></li>";
-
-						if(in_array($previousExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
-							if(!in_array($previousExpertIdentification, $normalArthropodsInvolved)){
-								$normalArthropodsInvolved[] = $previousExpertIdentification;
+						
+						if($previousExpertIdentificationSingular != $newExpertIdentificationSingular){
+							if($firstNewExpertIdentification == ""){
+								$firstNewExpertIdentification = $newExpertIdentification;
+								$firstNewExpertIdentificationPhotoURL = "https://caterpillarscount.unc.edu/images/arthropods/" . $row["PhotoURL"];
 							}
-						}
-						else if(!in_array($previousExpertIdentification, $abnormalArthropodsInvolved)){
-							$abnormalArthropodsInvolved[] = $previousExpertIdentification;
-						}
-
-						if(in_array($newExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
-							if(!in_array($newExpertIdentification, $normalArthropodsInvolved)){
-								$normalArthropodsInvolved[] = $newExpertIdentification;
+							
+							$changeLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\"><a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/observations/" . $iNaturalistObservationID . "\" target=\"_blank\"><span style=\"color: #6faf6d;\">This " . $previousExpertIdentificationSingular . " observation</span></a> is actually a" . $newExpertIdentificationN . " " . $newExpertIdentificationSingular . ".</span></li>";
+							
+							$numberOfChanges++;
+							
+							if(in_array($previousExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
+								if(!in_array($previousExpertIdentification, $normalArthropodsInvolved)){
+									$normalArthropodsInvolved[] = $previousExpertIdentification;
+								}
 							}
-						}
-						else if(!in_array($newExpertIdentification, $abnormalArthropodsInvolved)){
-							$abnormalArthropodsInvolved[] = $newExpertIdentification;
+							else if(!in_array($previousExpertIdentification, $abnormalArthropodsInvolved)){
+								$abnormalArthropodsInvolved[] = $previousExpertIdentification;
+							}
+							
+							if(in_array($newExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
+								if(!in_array($newExpertIdentification, $normalArthropodsInvolved)){
+									$normalArthropodsInvolved[] = $newExpertIdentification;
+								}
+							}
+							else if(!in_array($newExpertIdentification, $abnormalArthropodsInvolved)){
+								$abnormalArthropodsInvolved[] = $newExpertIdentification;
+							}
 						}
 					}
 					$processedTemporaryExpertIdentificationChangeLogIDs[] = $row["ID"];
