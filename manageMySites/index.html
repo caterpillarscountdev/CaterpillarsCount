@@ -837,7 +837,7 @@
 						if(url.indexOf("http") != 0){
 							url = "http://" + url;
 						}
-						htmlToAdd += 	"<div class=\"cell\"><a href=\"" + url + "\" target=\"_blank\" class=\"highlighted\">" + siteData[i]["name"] + "</a></div>";
+						htmlToAdd += 	"<div class=\"cell\"><a href=\"https://caterpillarscount.unc.edu/mapsAndGraphs/#selectedPhenology" + siteData[i]["siteID"] + "\" target=\"_blank\" class=\"highlighted\">" + siteData[i]["name"] + "</a></div>";
 					}
 					htmlToAdd += 	"<div class=\"cell\"><span class=\"highlighted pointer underline\" onclick=\"emailAuthorities('" + siteData[i]["siteID"] + "');\">" + authorityNames.join(", ") + "</span></div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["plantCount"] + "</div>";
