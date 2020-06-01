@@ -309,14 +309,14 @@
 		global $MAX_EMAIL_SENDS;
 		global $baseFileName;
 		
-		//Haven't already finished ExpertIdentification emails before this month based on cache.
+		//Haven't already finished ExpertIdentification emails before this week based on cache.
 		
-		if($emailsSent < $MAX_EMAIL_SENDS && intval(date("d")) > 1){
+		if($emailsSent < $MAX_EMAIL_SENDS && intval(date("N")) > 1){//"N" refers to the day of the week, with Monday being 1 and Sunday being 7
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$query = mysqli_query($dbconn, "SELECT `Iteration` FROM `CronJobStatus` WHERE `Name`='iNaturalistIdentificationFetch';");
 			if(intval(mysqli_fetch_assoc($query)["Iteration"]) == 0){
 				//finished grabbing ExpertIdentifications from iNaturalist
-				$query = mysqli_query($dbconn, "SELECT TemporaryExpertIdentificationChangeLog.*, `User`.ID AS UserID, `User`.`Hidden`, `User`.FirstName, `User`.Email, ArthropodSighting.INaturalistID, ArthropodSighting.OriginalGroup, ArthropodSighting.PhotoURL, `User`.`INaturalistObserverID` FROM `TemporaryExpertIdentificationChangeLog` JOIN ArthropodSighting ON TemporaryExpertIdentificationChangeLog.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID WHERE (MONTH(Timestamp)<>MONTH(NOW()) OR YEAR(Timestamp)<>YEAR(NOW())) AND `User`.`Hidden`='0' ORDER BY User.ID, ArthropodSightingFK, Timestamp DESC");
+				$query = mysqli_query($dbconn, "SELECT TemporaryExpertIdentificationChangeLog.*, `User`.ID AS UserID, `User`.`Hidden`, `User`.FirstName, `User`.Email, ArthropodSighting.INaturalistID, ArthropodSighting.OriginalGroup, ArthropodSighting.PhotoURL, `User`.`INaturalistObserverID` FROM `TemporaryExpertIdentificationChangeLog` JOIN ArthropodSighting ON TemporaryExpertIdentificationChangeLog.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID WHERE `Timestamp`<'" . date("Y-m-d", strtotime('Monday this week')) . " 00:00:00' AND `User`.`Hidden`='0' ORDER BY User.ID, ArthropodSightingFK, Timestamp DESC");
 				$userID = -1;
 				$userEmail = "";
 				$userFirstName = "iNaturalist results are in";
@@ -452,7 +452,7 @@
 				}
 				else{
 					mysqli_close($dbconn);
-					save($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", date('n'));
+					save($baseFileName . "finishedExpertIdentificationEmailsBeforeWeeksMonday", intval(date("d", strtotime('Monday this week'))));
 				}
 			}
    		}
@@ -537,8 +537,8 @@
 	}
 
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
-	$finishedExpertIdentificationEmailsBeforeMonth = getSave($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", 31 * 24 * 60 * 60);
-	if($finishedExpertIdentificationEmailsBeforeMonth === null || intval($finishedExpertIdentificationEmailsBeforeMonth) !== intval(date('n'))){
+	$finishedExpertIdentificationEmailsBeforeWeeksMonday = getSave($baseFileName . "finishedExpertIdentificationEmailsBeforeWeeksMonday", 7 * 24 * 60 * 60);
+	if($finishedExpertIdentificationEmailsBeforeWeeksMonday === null || intval($finishedExpertIdentificationEmailsBeforeWeeksMonday) !== intval(date("d", strtotime('Monday this week')))){
 		sendExpertIdentifications();
 	}
 ?>
