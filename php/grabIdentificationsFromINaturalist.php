@@ -29,7 +29,7 @@
 		mysqli_close($dbconn);
 		die("Already processing.");
 	}
-	if($lastCalledDateTime->getTimestamp() >= strtotime('Monday this week 00:00:00')) && $iteration == 0){
+	if($lastCalledDateTime->getTimestamp() >= strtotime('Monday this week 00:00:00') && $iteration == 0){
 		save($baseFileName . "finishedWeeksMonday", intval(date("d", strtotime('Monday this week'))));
 		mysqli_close($dbconn);
 		die("Already finished this week based on CronJobStatus table.");
