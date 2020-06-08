@@ -114,8 +114,6 @@
 		$photoAddResponse = curl_exec($ch);
 		curl_close ($ch);
 		
-		//mark as larva if $beetleLarva
-		
 		if($photoAddResponse !== "Just making sure that the exec is complete."){
 			//LINK OBSERVATION TO CATERPILLARS COUNT PROJECT
 			$ch = curl_init("http://www.inaturalist.org/project_observations");
