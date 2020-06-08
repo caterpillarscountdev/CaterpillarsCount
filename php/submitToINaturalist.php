@@ -15,7 +15,7 @@
 		return $param;
 	}
 	
-	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
+	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
 		curl_setopt($ch, CURLOPT_POST, 1);
@@ -78,6 +78,9 @@
 			$url .= $observationFieldIDString . "[" . count($params) . "][observation_field_id]=3441" . $observationFieldIDString . "[" . count($params) . "][value]=adult";
 			$url .= $observationFieldIDString . "[" . (count($params) + 1) . "][observation_field_id]=325" . $observationFieldIDString . "[" . (count($params) + 1) . "][value]=adult";
 		}
+		if($order == "beetle" && $beetleLarva){
+			$url .= $observationFieldIDString . "[" . count($params) . "][observation_field_id]=325" . $observationFieldIDString . "[" . count($params) . "][value]=larva";
+		}
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, "access_token=" . $token);
@@ -110,6 +113,8 @@
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$photoAddResponse = curl_exec($ch);
 		curl_close ($ch);
+		
+		//mark as larva if $beetleLarva
 		
 		if($photoAddResponse !== "Just making sure that the exec is complete."){
 			//LINK OBSERVATION TO CATERPILLARS COUNT PROJECT
