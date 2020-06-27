@@ -4,22 +4,22 @@
 	
 	//Check if we need to run a fetch
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
-	$savedFinishedMonth = getSave($baseFileName . "finishedMonth", 31 * 24 * 60 * 60);
-	if($savedFinishedMonth !== null && intval($savedFinishedMonth) == intval(date('n'))){
-		die("Already finished this month based on cache.");
+	$savedFinishedWeeksMonday = getSave($baseFileName . "finishedWeeksMonday", 7 * 24 * 60 * 60);
+	if($savedFinishedWeeksMonday !== null && intval($savedFinishedWeeksMonday) == intval(date("d", strtotime('Monday this week')))){
+		die("Already finished this week based on cache.");
 	}
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	if ($dbconn->connect_error) {
    		die("Connection failed: " . $dbconn->connect_error);
 	}
-	$query = mysqli_query($dbconn, "SELECT MONTH(UTCLastCalled) AS `Month`, `Processing`, `Iteration`, `UTCLastCalled` FROM `CronJobStatus` WHERE `Name`='iNaturalistIdentificationFetch'");
+	$query = mysqli_query($dbconn, "SELECT `Processing`, `Iteration`, `UTCLastCalled` FROM `CronJobStatus` WHERE `Name`='iNaturalistIdentificationFetch'");
 	if(mysqli_num_rows($query) == 0){
 		mysqli_close($dbconn);
 		die("\"iNaturalistIdentificationFetch\" not in CronJobStatus table.");
 	}
 	$cronJobStatusRow = mysqli_fetch_assoc($query);
-	$month = intval($cronJobStatusRow["Month"]);
+	$lastCalledDateTime = new DateTime($cronJobStatusRow["UTCLastCalled"]);
 	$processing = filter_var($cronJobStatusRow["Processing"], FILTER_VALIDATE_BOOLEAN);
 	$iteration = intval($cronJobStatusRow["Iteration"]);
 	if($processing){
@@ -29,10 +29,10 @@
 		mysqli_close($dbconn);
 		die("Already processing.");
 	}
-	if($month == intval(date('n')) && $iteration == 0){
-		save($baseFileName . "finishedMonth", date('n'));
+	if($lastCalledDateTime->getTimestamp() >= strtotime('Monday this week 00:00:00') && $iteration == 0){
+		save($baseFileName . "finishedWeeksMonday", intval(date("d", strtotime('Monday this week'))));
 		mysqli_close($dbconn);
-		die("Already finished this month based on CronJobStatus table.");
+		die("Already finished this week based on CronJobStatus table.");
 	}
 	
 	//If so, mark as processing
@@ -373,12 +373,12 @@
 	
 	//Mark the progress in the database
 	if(count($data["results"]) == 0){
-		//Finished for the month
+		//Finished for the week
 		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `Iteration`='0', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistIdentificationFetch'");
-		save($baseFileName . "finishedMonth", date('n'));
+		save($baseFileName . "finishedWeeksMonday", intval(date("d", strtotime('Monday this week'))));
 	}
 	else{
-		//Finished with this run, but needs more iterations this month still
+		//Finished with this run, but needs more iterations this week still
 		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `Iteration`='$iteration', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistIdentificationFetch'");
 	}
 	
