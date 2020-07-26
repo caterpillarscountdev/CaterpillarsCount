@@ -1522,7 +1522,7 @@
 				var endRankings = "";
 				var rank = 1;
 				for(var i = 0; i < rankings.length; i++){
-					var unsubstantiatedCaterpillarStat = ((sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10) || (sortingMetric == "CaterpillarsThisYear" && Number(rankings[i]["TotalThisYear"]) < 10));
+					var unsubstantiatedCaterpillarStat = ((sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10) || (sortingMetric == "CaterpillarsThisYear" && Number(rankings[i]["Year"]) < 10));
 					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This user has submitted fewer than 10 surveys" + (sortingMetric == "CaterpillarsThisYear" ? " this year" : "") + " and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
 					tempHtmlToAdd +=			"<td><div>" + (unsubstantiatedCaterpillarStat ? "&ndash;" : rank++) + "</div></td>";
 					tempHtmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\">" + rankings[i]["Name"] + "</div></td>";
