@@ -1512,7 +1512,7 @@
 					htmlToAdd += 				" style=\"text-decoration:underline;\"";
 				}
 				htmlToAdd += 					">Millennium</th>";
-				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('CaterpillarsThisYear', true);\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
+				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Caterpillars" + (siteUserCaterpillarsTimespan == "year" ? "ThisYear" : "") + "', true);\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
 				if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 					htmlToAdd += 				"text-decoration:underline;";
 				}
@@ -2073,7 +2073,7 @@
 					htmlToAdd += 				" style=\"text-decoration:underline;\"";
 				}
 				htmlToAdd += 					">Millennium</th>";
-				htmlToAdd += 					"<th onclick=\"populateLeaderboard('CaterpillarsThisYear');\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
+				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Caterpillars" + (caterpillarTimespanIsYear ? "ThisYear" : "") + "');\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
 				if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 					htmlToAdd += 				"text-decoration:underline;";
 				}
