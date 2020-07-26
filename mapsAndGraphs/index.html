@@ -636,6 +636,18 @@
 			.smallSelect .options>div:hover{
 				background:#ebfeff;
 			}
+			
+			.bottomTooltip .smallSelect{
+				color:#666;
+			}
+			
+			.bottomTooltip .smallSelect .selected{
+				background:rgba(255,255,255,0.3);
+				color:#fff;
+			}
+			
+			.bottomTooltip
+			
 			.xAxisLabel{
 				text-align:center;
 				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
@@ -1370,7 +1382,7 @@
 							data = data.replace("true|", "");
 							console.log("Loaded site user leaderbard.");
 							siteUserRankings = JSON.parse(data);
-							populateSiteUserLeaderboard("Caterpillars", false);
+							populateSiteUserLeaderboard("CaterpillarsThisYear", false);
 						}
 						else{
 							$("#siteUserLeaderboard")[0].innerHTML = "";
@@ -1403,7 +1415,15 @@
 					$("#showMoreSiteUserRankings").fadeOut(200);
 				}
 			}
+			var siteUserCaterpillarsTimespan = "year";
 			function populateSiteUserLeaderboard(sortingMetric, keepCurrentNumberShown){
+				if(sortingMetric == "Caterpillars"){
+					siteUserCaterpillarsTimespan = "millennium";
+				}
+				else if(sortingMetric == "CaterpillarsThisYear"){
+					siteUserCaterpillarsTimespan = "year";
+				}
+				
 				var rankings = siteUserRankings.sort(function(a, b){
 					var aVal = a[sortingMetric];
 					var bVal = b[sortingMetric];
@@ -1416,7 +1436,7 @@
 						if(bVal == "(anonymous user)") return -1;
 					}
 					else{
-						if(sortingMetric == "Caterpillars"){
+						if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 							aVal = aVal.replace("%", '');
 							bVal = bVal.replace("%", '');
 						}
@@ -1425,6 +1445,12 @@
 					}
 					if(aVal < bVal) return -1 * order;
 					if(aVal > bVal) return 1 * order;
+					if(sortingMetric != "CaterpillarsThisYear"){
+						aVal = Number(a["CaterpillarsThisYear"].replace("%", ''));
+						bVal = Number(b["CaterpillarsThisYear"].replace("%", ''));
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
 					if(sortingMetric != "Caterpillars"){
 						aVal = Number(a["Caterpillars"].replace("%", ''));
 						bVal = Number(b["Caterpillars"].replace("%", ''));
@@ -1486,25 +1512,25 @@
 					htmlToAdd += 				" style=\"text-decoration:underline;\"";
 				}
 				htmlToAdd += 					">Millennium</th>";
-				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Caterpillars', true);\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
-				if(sortingMetric == "Caterpillars"){
+				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Caterpillars" + (siteUserCaterpillarsTimespan == "year" ? "ThisYear" : "") + "', true);\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
+				if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 					htmlToAdd += 				"text-decoration:underline;";
 				}
-				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></th>";
+				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (siteUserCaterpillarsTimespan == "year" ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateSiteUserLeaderboard('CaterpillarsThisYear', true);\">year</div><div onclick=\"smallSelectOption(this);populateSiteUserLeaderboard('Caterpillars', true);\">millennium</div></div></div></div></th>";
 				htmlToAdd += 				"</tr>";
 				htmlToAdd += 			"</thead>";
 				var endRankings = "";
 				var rank = 1;
 				for(var i = 0; i < rankings.length; i++){
-					var unsubstantiatedCaterpillarStat = (sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10);
-					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This user has submitted fewer than 10 surveys and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
+					var unsubstantiatedCaterpillarStat = ((sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10) || (sortingMetric == "CaterpillarsThisYear" && Number(rankings[i]["Year"]) < 10));
+					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This user has submitted fewer than 10 surveys" + (sortingMetric == "CaterpillarsThisYear" ? " this year" : "") + " and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
 					tempHtmlToAdd +=			"<td><div>" + (unsubstantiatedCaterpillarStat ? "&ndash;" : rank++) + "</div></td>";
 					tempHtmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\">" + rankings[i]["Name"] + "</div></td>";
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Week"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisWeek"] + "</div></div></td>";
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
-					tempHtmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></div></td>";
+					tempHtmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars" + (siteUserCaterpillarsTimespan == "year" ? "ThisYear" : "")] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (siteUserCaterpillarsTimespan == "year" ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateSiteUserLeaderboard('CaterpillarsThisYear', true);\">year</div><div onclick=\"smallSelectOption(this);populateSiteUserLeaderboard('Caterpillars', true);\">millennium</div></div></div></div></div></td>";
 					tempHtmlToAdd += 		"</tr>";
 					if(unsubstantiatedCaterpillarStat){
 						endRankings += tempHtmlToAdd;
@@ -1890,7 +1916,7 @@
 					//success
 					console.log("Site ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					siteRankings = JSON.parse(data);
-					lastSiteSortingMetric = "Caterpillars";
+					lastSiteSortingMetric = "CaterpillarsThisYear";
 					if(++loadedRankingsDataCount == 2){
 						populateLeaderboard(lastSiteSortingMetric);
 					}
@@ -1909,7 +1935,7 @@
 						console.log("User ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 						data = data.replace("true|", "");
 						userRankings = JSON.parse(data);
-						lastUserSortingMetric = "Caterpillars";
+						lastUserSortingMetric = "CaterpillarsThisYear";
 						if(++loadedRankingsDataCount == 2){
 							populateLeaderboard(lastSiteSortingMetric);
 						}
@@ -1928,17 +1954,37 @@
 					//complete
 				});
 			}
+			
+			var siteCaterpillarsTimespan = "year";
+			var userCaterpillarsTimespan = "year";
 			function populateLeaderboard(sortingMetric){
 				if(loadedRankingsDataCount < 2){return false;}
 				var rankings = [];
 				if(shownRankings == "Site"){
 					rankings = siteRankings;
 					lastSiteSortingMetric = sortingMetric;
+					
+					if(sortingMetric == "Caterpillars"){
+						siteCaterpillarsTimespan = "millennium";
+					}
+					else if(sortingMetric == "CaterpillarsThisYear"){
+						siteCaterpillarsTimespan = "year";
+					}
 				}
 				else{
 					rankings = userRankings;
 					lastUserSortingMetric = sortingMetric;
+					
+					if(sortingMetric == "Caterpillars"){
+						userCaterpillarsTimespan = "millennium";
+					}
+					else if(sortingMetric == "CaterpillarsThisYear"){
+						userCaterpillarsTimespan = "year";
+					}
 				}
+				
+				var caterpillarTimespanIsYear = (shownRankings == "Site" && siteCaterpillarsTimespan == "year") || (shownRankings == "User" && userCaterpillarsTimespan == "year");
+				
 				rankings = rankings.sort(function(a, b){
 					var aVal = a[sortingMetric];
 					var bVal = b[sortingMetric];
@@ -1951,7 +1997,7 @@
 						if(bVal == "(anonymous user)") return -1;
 					}
 					else{
-						if(sortingMetric == "Caterpillars"){
+						if(sortingMetric == "CaterpillarsThisYear" || sortingMetric == "Caterpillars"){
 							aVal = aVal.replace("%", '');
 							bVal = bVal.replace("%", '');
 						}
@@ -1960,6 +2006,12 @@
 					}
 					if(aVal < bVal) return -1 * order;
 					if(aVal > bVal) return 1 * order;
+					if(sortingMetric != "CaterpillarsThisYear"){
+						aVal = Number(a["CaterpillarsThisYear"].replace("%", ''));
+						bVal = Number(b["CaterpillarsThisYear"].replace("%", ''));
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
 					if(sortingMetric != "Caterpillars"){
 						aVal = Number(a["Caterpillars"].replace("%", ''));
 						bVal = Number(b["Caterpillars"].replace("%", ''));
@@ -2021,35 +2073,45 @@
 					htmlToAdd += 				" style=\"text-decoration:underline;\"";
 				}
 				htmlToAdd += 					">Millennium</th>";
-				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Caterpillars');\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
-				if(sortingMetric == "Caterpillars"){
+				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Caterpillars" + (caterpillarTimespanIsYear ? "ThisYear" : "") + "');\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
+				if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 					htmlToAdd += 				"text-decoration:underline;";
 				}
-				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></th>";
+				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (caterpillarTimespanIsYear ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateLeaderboard('CaterpillarsThisYear');\">year</div><div onclick=\"smallSelectOption(this);populateLeaderboard('Caterpillars');\">millennium</div></div></div></div></th>";
 				htmlToAdd += 				"</tr>";
 				htmlToAdd += 			"</thead>";
+				
+				var endRankings = "";
 				for(var i = 0; i < rankings.length; i++){
-					htmlToAdd += 		"<tr>";
-					htmlToAdd +=			"<td><div>" + (i + 1) + "</div></td>";
-					htmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\"";
+					var unsubstantiatedCaterpillarStat = ((sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10) || (sortingMetric == "CaterpillarsThisYear" && Number(rankings[i]["Year"]) < 10));
+					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This " + shownRankings.toLowerCase() + " has submitted fewer than 10 surveys" + (sortingMetric == "CaterpillarsThisYear" ? " this year" : "") + " and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
+					tempHtmlToAdd +=			"<td><div>" + (unsubstantiatedCaterpillarStat ? "&ndash;" : (i + 1)) + "</div></td>";
+					tempHtmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\"";
 					if(shownRankings == "Site"){
-					   htmlToAdd += 		" onclick=\"markerClick(markers['" + rankings[i]["ID"] + "'])\" class=\"pointer underline\"";
+					   tempHtmlToAdd += 		" onclick=\"markerClick(markers['" + rankings[i]["ID"] + "'])\" class=\"pointer underline\"";
 					}
-					htmlToAdd += 			">" + rankings[i]["Name"] + "</div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Week"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisWeek"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></div></td>";
-					htmlToAdd += 		"</tr>";
+					tempHtmlToAdd += 			">" + rankings[i]["Name"] + "</div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Week"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisWeek"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars" + (caterpillarTimespanIsYear ? "ThisYear" : "")] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (caterpillarTimespanIsYear ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateLeaderboard('CaterpillarsThisYear');\">year</div><div onclick=\"smallSelectOption(this);populateLeaderboard('Caterpillars');\">millennium</div></div></div></div></div></td>";
+					tempHtmlToAdd += 		"</tr>";
+					if(unsubstantiatedCaterpillarStat){
+						endRankings += tempHtmlToAdd;
+					}
+					else{
+						htmlToAdd += tempHtmlToAdd;
+					}
 				}
+				htmlToAdd += endRankings;
 				htmlToAdd += 		"</table>";
 				$("#rankings")[0].innerHTML = htmlToAdd;
 				if(shownRankings == "User"){
-					$("#globalLeaderboardNotice")[0].innerHTML = "Users with fewer than 10 surveys are not included on this leaderboard. If you would like to hide your name from leaderboards like this one, please visit your <a href=\"../settings\" class=\"highlighted\">Settings</a> page and click on the \"Privacy\" section.";
+					$("#globalLeaderboardNotice")[0].innerHTML = "Users with fewer than 10 surveys are not included on this leaderboard. % Caterpillars only displayed for users who have submitted at least 10 surveys during the specified timespan. If you would like to hide your name from leaderboards like this one, please visit your <a href=\"../settings\" class=\"highlighted\">Settings</a> page and click on the \"Privacy\" section.";
 				}
 				else{
-					$("#globalLeaderboardNotice")[0].innerHTML = "Sites with fewer than 10 surveys are not included on this leaderboard.";
+					$("#globalLeaderboardNotice")[0].innerHTML = "Sites with fewer than 10 surveys are not included on this leaderboard. % Caterpillars only displayed for sites that have submitted at least 10 surveys during the specified timespan.";
 				}
 				$("#showMoreRankings").stop().fadeIn(0);
 				resizeSuperHeader();
@@ -3536,7 +3598,7 @@
 						<div id="siteStats"></div>
 
 						<h3>User Leaderboard</h3>
-						<p style="font-size:10px;text-align:left;margin:-15px 0px 20px 0px;">% Caterpillars only displayed for users who have submitted at least 10 surveys. If you would like to hide your name from leaderboards like these, please visit your <a href="../settings" style="color:#999;">Settings</a> page and click on the "Privacy" section.</p>
+						<p style="font-size:10px;text-align:left;margin:-15px 0px 20px 0px;">% Caterpillars only displayed for users who have submitted at least 10 surveys during the specified timespan. If you would like to hide your name from leaderboards like these, please visit your <a href="../settings" style="color:#999;">Settings</a> page and click on the "Privacy" section.</p>
 						<div id="siteUserSuperHeader">
 							<div>Surveys this...</div>
 						</div>
