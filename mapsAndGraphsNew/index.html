@@ -1370,7 +1370,7 @@
 							data = data.replace("true|", "");
 							console.log("Loaded site user leaderbard.");
 							siteUserRankings = JSON.parse(data);
-							populateSiteUserLeaderboard("Caterpillars", false);
+							populateSiteUserLeaderboard("CaterpillarsThisYear", false);
 						}
 						else{
 							$("#siteUserLeaderboard")[0].innerHTML = "";
@@ -1416,7 +1416,7 @@
 						if(bVal == "(anonymous user)") return -1;
 					}
 					else{
-						if(sortingMetric == "Caterpillars"){
+						if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 							aVal = aVal.replace("%", '');
 							bVal = bVal.replace("%", '');
 						}
@@ -1425,7 +1425,13 @@
 					}
 					if(aVal < bVal) return -1 * order;
 					if(aVal > bVal) return 1 * order;
-					if(sortingMetric != "Caterpillars"){
+					if(sortingMetric != "CaterpillarsThisYear"){
+						aVal = Number(a["CaterpillarsThisYear"].replace("%", ''));
+						bVal = Number(b["CaterpillarsThisYear"].replace("%", ''));
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
+					if(sortingMetric != "Caterpillars){
 						aVal = Number(a["Caterpillars"].replace("%", ''));
 						bVal = Number(b["Caterpillars"].replace("%", ''));
 						if(aVal < bVal) return 1;
@@ -1486,17 +1492,17 @@
 					htmlToAdd += 				" style=\"text-decoration:underline;\"";
 				}
 				htmlToAdd += 					">Millennium</th>";
-				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Caterpillars', true);\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
-				if(sortingMetric == "Caterpillars"){
+				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('CaterpillarsThisYear', true);\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
+				if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 					htmlToAdd += 				"text-decoration:underline;";
 				}
-				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></th>";
+				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">year</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);\">year</div><div onclick=\"smallSelectOption(this);\">millennium</div></div></div></div></th>";
 				htmlToAdd += 				"</tr>";
 				htmlToAdd += 			"</thead>";
 				var endRankings = "";
 				var rank = 1;
 				for(var i = 0; i < rankings.length; i++){
-					var unsubstantiatedCaterpillarStat = (sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10);
+					var unsubstantiatedCaterpillarStat = ((sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10) || (sortingMetric == "CaterpillarsThisYear" && Number(rankings[i]["TotalThisYear"]) < 10));
 					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This user has submitted fewer than 10 surveys and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
 					tempHtmlToAdd +=			"<td><div>" + (unsubstantiatedCaterpillarStat ? "&ndash;" : rank++) + "</div></td>";
 					tempHtmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\">" + rankings[i]["Name"] + "</div></td>";
@@ -1504,7 +1510,7 @@
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
-					tempHtmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></div></td>";
+					tempHtmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["CaterpillarsThisYear"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">year</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);\">year</div><div onclick=\"smallSelectOption(this);\">millennium</div></div></div></div></div></td>";
 					tempHtmlToAdd += 		"</tr>";
 					if(unsubstantiatedCaterpillarStat){
 						endRankings += tempHtmlToAdd;
@@ -1890,7 +1896,7 @@
 					//success
 					console.log("Site ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					siteRankings = JSON.parse(data);
-					lastSiteSortingMetric = "Caterpillars";
+					lastSiteSortingMetric = "CaterpillarsThisYear";
 					if(++loadedRankingsDataCount == 2){
 						populateLeaderboard(lastSiteSortingMetric);
 					}
@@ -1909,7 +1915,7 @@
 						console.log("User ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 						data = data.replace("true|", "");
 						userRankings = JSON.parse(data);
-						lastUserSortingMetric = "Caterpillars";
+						lastUserSortingMetric = "CaterpillarsThisYear";
 						if(++loadedRankingsDataCount == 2){
 							populateLeaderboard(lastSiteSortingMetric);
 						}
@@ -1951,7 +1957,7 @@
 						if(bVal == "(anonymous user)") return -1;
 					}
 					else{
-						if(sortingMetric == "Caterpillars"){
+						if(sortingMetric == "CaterpillarsThisYear" || sortingMetric == "Caterpillars"){
 							aVal = aVal.replace("%", '');
 							bVal = bVal.replace("%", '');
 						}
@@ -1960,6 +1966,12 @@
 					}
 					if(aVal < bVal) return -1 * order;
 					if(aVal > bVal) return 1 * order;
+					if(sortingMetric != "CaterpillarsThisYear"){
+						aVal = Number(a["CaterpillarsThisYear"].replace("%", ''));
+						bVal = Number(b["CaterpillarsThisYear"].replace("%", ''));
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
 					if(sortingMetric != "Caterpillars"){
 						aVal = Number(a["Caterpillars"].replace("%", ''));
 						bVal = Number(b["Caterpillars"].replace("%", ''));
@@ -2021,11 +2033,11 @@
 					htmlToAdd += 				" style=\"text-decoration:underline;\"";
 				}
 				htmlToAdd += 					">Millennium</th>";
-				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Caterpillars');\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
-				if(sortingMetric == "Caterpillars"){
+				htmlToAdd += 					"<th onclick=\"populateLeaderboard('CaterpillarsThisYear');\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
+				if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 					htmlToAdd += 				"text-decoration:underline;";
 				}
-				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></th>";
+				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars <div class=\"smallSelect\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">year</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);\">year</div><div onclick=\"smallSelectOption(this);\">millennium</div></div></div></div></th>";
 				htmlToAdd += 				"</tr>";
 				htmlToAdd += 			"</thead>";
 				for(var i = 0; i < rankings.length; i++){
@@ -2040,7 +2052,7 @@
 					htmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
 					htmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
 					htmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></div></td>";
+					htmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["CaterpillarsThisYear"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars <div class=\"smallSelect\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">year</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);\">year</div><div onclick=\"smallSelectOption(this);\">millennium</div></div></div></div></div></td>";
 					htmlToAdd += 		"</tr>";
 				}
 				htmlToAdd += 		"</table>";
