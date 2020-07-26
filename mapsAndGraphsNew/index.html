@@ -636,6 +636,12 @@
 			.smallSelect .options>div:hover{
 				background:#ebfeff;
 			}
+			
+			th .smallSelect .selected{
+				background:#fff;
+				color:#666;
+			}
+			
 			.xAxisLabel{
 				text-align:center;
 				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
@@ -1496,7 +1502,7 @@
 				if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 					htmlToAdd += 				"text-decoration:underline;";
 				}
-				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect\" onclick=\"event.stopPropagation();\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">year</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);\">year</div><div onclick=\"smallSelectOption(this);\">millennium</div></div></div></div></th>";
+				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">year</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);\">year</div><div onclick=\"smallSelectOption(this);\">millennium</div></div></div></div></th>";
 				htmlToAdd += 				"</tr>";
 				htmlToAdd += 			"</thead>";
 				var endRankings = "";
@@ -2037,7 +2043,7 @@
 				if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 					htmlToAdd += 				"text-decoration:underline;";
 				}
-				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars <div class=\"smallSelect\" onclick=\"event.stopPropagation();\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">year</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);\">year</div><div onclick=\"smallSelectOption(this);\">millennium</div></div></div></div></th>";
+				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars <div class=\"smallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">year</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);\">year</div><div onclick=\"smallSelectOption(this);\">millennium</div></div></div></div></th>";
 				htmlToAdd += 				"</tr>";
 				htmlToAdd += 			"</thead>";
 				for(var i = 0; i < rankings.length; i++){
@@ -2052,7 +2058,7 @@
 					htmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
 					htmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
 					htmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["CaterpillarsThisYear"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars <div class=\"smallSelect\" onclick=\"event.stopPropagation();\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">year</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);\">year</div><div onclick=\"smallSelectOption(this);\">millennium</div></div></div></div></div></td>";
+					htmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["CaterpillarsThisYear"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars <div class=\"smallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">year</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);\">year</div><div onclick=\"smallSelectOption(this);\">millennium</div></div></div></div></div></td>";
 					htmlToAdd += 		"</tr>";
 				}
 				htmlToAdd += 		"</table>";
