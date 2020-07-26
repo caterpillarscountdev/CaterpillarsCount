@@ -2080,28 +2080,38 @@
 				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (caterpillarTimespanIsYear ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateLeaderboard('CaterpillarsThisYear');\">year</div><div onclick=\"smallSelectOption(this);populateLeaderboard('Caterpillars');\">millennium</div></div></div></div></th>";
 				htmlToAdd += 				"</tr>";
 				htmlToAdd += 			"</thead>";
+				
+				var endRankings = "";
 				for(var i = 0; i < rankings.length; i++){
-					htmlToAdd += 		"<tr>";
-					htmlToAdd +=			"<td><div>" + (i + 1) + "</div></td>";
-					htmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\"";
+					var unsubstantiatedCaterpillarStat = ((sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10) || (sortingMetric == "CaterpillarsThisYear" && Number(rankings[i]["Year"]) < 10));
+					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This " + shownRankings.toLowerCase() + " has submitted fewer than 10 surveys" + (sortingMetric == "CaterpillarsThisYear" ? " this year" : "") + " and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
+					tempHtmlToAdd +=			"<td><div>" + (unsubstantiatedCaterpillarStat ? "&ndash;" : (i + 1)) + "</div></td>";
+					tempHtmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\"";
 					if(shownRankings == "Site"){
-					   htmlToAdd += 		" onclick=\"markerClick(markers['" + rankings[i]["ID"] + "'])\" class=\"pointer underline\"";
+					   tempHtmlToAdd += 		" onclick=\"markerClick(markers['" + rankings[i]["ID"] + "'])\" class=\"pointer underline\"";
 					}
-					htmlToAdd += 			">" + rankings[i]["Name"] + "</div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Week"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisWeek"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars" + (caterpillarTimespanIsYear ? "ThisYear" : "")] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (caterpillarTimespanIsYear ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateLeaderboard('CaterpillarsThisYear');\">year</div><div onclick=\"smallSelectOption(this);populateLeaderboard('Caterpillars');\">millennium</div></div></div></div></div></td>";
-					htmlToAdd += 		"</tr>";
+					tempHtmlToAdd += 			">" + rankings[i]["Name"] + "</div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Week"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisWeek"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars" + (caterpillarTimespanIsYear ? "ThisYear" : "")] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (caterpillarTimespanIsYear ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateLeaderboard('CaterpillarsThisYear');\">year</div><div onclick=\"smallSelectOption(this);populateLeaderboard('Caterpillars');\">millennium</div></div></div></div></div></td>";
+					tempHtmlToAdd += 		"</tr>";
+					if(unsubstantiatedCaterpillarStat){
+						endRankings += tempHtmlToAdd;
+					}
+					else{
+						htmlToAdd += tempHtmlToAdd;
+					}
 				}
+				htmlToAdd += endRankings;
 				htmlToAdd += 		"</table>";
 				$("#rankings")[0].innerHTML = htmlToAdd;
 				if(shownRankings == "User"){
-					$("#globalLeaderboardNotice")[0].innerHTML = "Users with fewer than 10 surveys are not included on this leaderboard. If you would like to hide your name from leaderboards like this one, please visit your <a href=\"../settings\" class=\"highlighted\">Settings</a> page and click on the \"Privacy\" section.";
+					$("#globalLeaderboardNotice")[0].innerHTML = "Users with fewer than 10 surveys are not included on this leaderboard. % Caterpillars only displayed for users who have submitted at least 10 surveys during the specified timespan. If you would like to hide your name from leaderboards like this one, please visit your <a href=\"../settings\" class=\"highlighted\">Settings</a> page and click on the \"Privacy\" section.";
 				}
 				else{
-					$("#globalLeaderboardNotice")[0].innerHTML = "Sites with fewer than 10 surveys are not included on this leaderboard.";
+					$("#globalLeaderboardNotice")[0].innerHTML = "Sites with fewer than 10 surveys are not included on this leaderboard. % Caterpillars only displayed for sites that have submitted at least 10 surveys during the specified timespan.";
 				}
 				$("#showMoreRankings").stop().fadeIn(0);
 				resizeSuperHeader();
@@ -3588,7 +3598,7 @@
 						<div id="siteStats"></div>
 
 						<h3>User Leaderboard</h3>
-						<p style="font-size:10px;text-align:left;margin:-15px 0px 20px 0px;">% Caterpillars only displayed for users who have submitted at least 10 surveys. If you would like to hide your name from leaderboards like these, please visit your <a href="../settings" style="color:#999;">Settings</a> page and click on the "Privacy" section.</p>
+						<p style="font-size:10px;text-align:left;margin:-15px 0px 20px 0px;">% Caterpillars only displayed for users who have submitted at least 10 surveys during the specified timespan. If you would like to hide your name from leaderboards like these, please visit your <a href="../settings" style="color:#999;">Settings</a> page and click on the "Privacy" section.</p>
 						<div id="siteUserSuperHeader">
 							<div>Surveys this...</div>
 						</div>
