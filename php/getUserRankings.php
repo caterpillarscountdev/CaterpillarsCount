@@ -50,6 +50,7 @@
 				"UniqueDatesThisYear" => 0,
 				"Total" => $total,
 				"TotalUniqueDates" => intval($row["TotalUniqueDates"]),
+				"CaterpillarsThisYear" => "0%",
 				"Caterpillars" => "0%",
 			);
 		}
@@ -73,6 +74,12 @@
 	$query = mysqli_query($dbconn, "SELECT Survey.UserFKOfObserver, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE UserFKOfObserver IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND Plant.SiteFK" . $siteRestriction . " AND ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Survey.UserFKOfObserver");
 	while($row = mysqli_fetch_assoc($query)){
 		$rankingsArray[strval($row["UserFKOfObserver"])]["Caterpillars"] = round(((floatval($row["Caterpillars"]) / floatval($rankingsArray[strval($row["UserFKOfObserver"])]["Total"])) * 100), 2) . "%";
+	}
+	mysqli_close($dbconn);
+
+	$query = mysqli_query($dbconn, "SELECT Survey.UserFKOfObserver, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE UserFKOfObserver IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND YEAR(Survey.LocalDate)=YEAR(CURDATE()) AND Plant.SiteFK" . $siteRestriction . " AND ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Survey.UserFKOfObserver");
+	while($row = mysqli_fetch_assoc($query)){
+		$rankingsArray[strval($row["UserFKOfObserver"])]["CaterpillarsThisYear"] = round(((floatval($row["Caterpillars"]) / floatval($rankingsArray[strval($row["UserFKOfObserver"])]["Total"])) * 100), 2) . "%";
 	}
 	mysqli_close($dbconn);
 	
