@@ -616,8 +616,8 @@ class Survey
 	
 
 //FUNCTIONS
-	public function addArthropodSighting($originalGroup, $length, $quantity, $notes, $pupae, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva){
-		return ArthropodSighting::create($this, $originalGroup, $length, $quantity, $notes, $pupae, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva);
+	public function addArthropodSighting($originalGroup, $length, $quantity, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva){
+		return ArthropodSighting::create($this, $originalGroup, $length, $quantity, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva);
 	}
 }		
 ?>
