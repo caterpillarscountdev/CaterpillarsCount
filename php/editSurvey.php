@@ -97,7 +97,7 @@
 						if(strval($arthropodSightings[$i]->getID()) == strval($arthropodData[$j][0])){
 							$existingArthropodSightingIDs[] = strval($arthropodData[$j][0]);
 							
-							$updateResult = $arthropodSightings[$i]->setAllEditables($arthropodData[$j][1], $arthropodData[$j][2], $arthropodData[$j][3], $arthropodData[$j][4], $arthropodData[$j][5], $arthropodData[$j][6], $arthropodData[$j][7], $arthropodData[$j][8], $arthropodData[$j][9]);
+							$updateResult = $arthropodSightings[$i]->setAllEditables($arthropodData[$j][1], $arthropodData[$j][2], $arthropodData[$j][3], $arthropodData[$j][4], $arthropodData[$j][5], $arthropodData[$j][6], $arthropodData[$j][7], $arthropodData[$j][8], $arthropodData[$j][9], $arthropodData[$j][10]);
 							if($updateResult === false){
 								$failures .= "Could not locate " . $arthropodData[$j][1] . " sighting record. ";
 							}
@@ -124,7 +124,7 @@
 				}
 				for($i = 0; $i < count($arthropodData); $i++){
 					if(!in_array(strval($arthropodData[$i][0]), $existingArthropodSightingIDs)){
-						$newArthropodSighting = $survey->addArthropodSighting($arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6], $arthropodData[$i][7], $arthropodData[$i][8], $arthropodData[$i][9]);
+						$newArthropodSighting = $survey->addArthropodSighting($arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6], $arthropodData[$i][7], $arthropodData[$i][8], $arthropodData[$i][9], $arthropodData[$i][10]);
 						if(is_object($newArthropodSighting) && get_class($newArthropodSighting) == "ArthropodSighting"){
 							$attachResult = attachPhotoToArthropodSighting($_FILES['file' . $i], $newArthropodSighting);
 							if($attachResult != "File not uploaded. " && $attachResult !== true){
