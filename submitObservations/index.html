@@ -375,6 +375,11 @@
 										<div class="observationFieldTitle">The caterpillars are:</div>
 										<table id="caterpillarOptionsTable" class="checkboxTable">
 											<tr onclick="toggleCheckbox($(this).find('.checkbox'));">
+												<td><div class="checkbox" id="pupaCheckbox"></div></td>
+												<td>pupae</td>
+												<td onclick="event.stopPropagation();queueNotice('alert', 'A pupa looks something like this:<br/><br/><img src=\'../images/submitObservationsPupa.jpg\'/>');"><img src="../images/question.png"/></td>
+											<tr>
+											<tr onclick="toggleCheckbox($(this).find('.checkbox'));">
 												<td><div class="checkbox" id="hairyCheckbox"></div></td>
 												<td>hairy/spiny</td>
 												<td onclick="event.stopPropagation();queueNotice('alert', 'hairy/spiny caterpillars look something like this:<br/><br/><img src=\'../images/submitObservationsHairy.jpg\'/>');"><img src="../images/question.png"/></td>
