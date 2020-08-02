@@ -1501,6 +1501,7 @@
 				//clear input values
 				setSelectValue($("#orderType")[0], "");
 				uncheckCheckbox($("#pupaCheckbox"));
+				$(".pupaDependentCheckbox").stop().fadeTo(200, 1);
 				uncheckCheckbox($("#hairyCheckbox"));
 				uncheckCheckbox($("#leafRollCheckbox"));
 				uncheckCheckbox($("#silkTentCheckbox"));
@@ -1575,8 +1576,14 @@
 			function populateArthropodGroup(i){
 				setSelectValue($("#orderType"), arthropodData[i][0]);
 				
-				if(arthropodData[i][4]){checkCheckbox($("#pupaCheckbox"));}
-				else{uncheckCheckbox($("#pupaCheckbox"));}
+				if(arthropodData[i][4]){
+					checkCheckbox($("#pupaCheckbox"));
+					$(".pupaDependentCheckbox").stop().fadeOut(200, 0.5);
+				}
+				else{
+					uncheckCheckbox($("#pupaCheckbox"));
+					$(".pupaDependentCheckbox").stop().fadeIn(200, 1);
+				}
 				
 				if(arthropodData[i][5]){checkCheckbox($("#hairyCheckbox"));}
 				else{uncheckCheckbox($("#hairyCheckbox"));}
