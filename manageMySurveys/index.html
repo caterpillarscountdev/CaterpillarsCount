@@ -1207,6 +1207,13 @@
 										htmlToAdd +=		" style=\"display:none;\"";
 									}
 									htmlToAdd +=			">";
+									if(surveys[i]["arthropodSightings"][j]["pupa"]){
+								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption\">In pupa stage</div></div>";
+									}
+									else{
+								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption\">In pupa stage</div></div>";
+									}
+									
 									if(surveys[i]["arthropodSightings"][j]["hairy"]){
 								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption\">With hairy/spiny characteristics</div></div>";
 									}
@@ -1638,6 +1645,7 @@
 				htmlToAdd += 				"</div>";
 				htmlToAdd +=			"</div>";
 				htmlToAdd +=			"<div class=\"caterpillarOptions\" style=\"display:none;\">";
+				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In pupa stage</div></div>";
 				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">With hairy/spiny characteristics</div></div>";
 				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In a leaf roll</div></div>";
 				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In a silk tent</div></div>";
@@ -2122,21 +2130,23 @@
 					var quantity = Number(arthropodSightings.eq(i).find(".editable")[0].innerHTML);
 					var length = Number(arthropodSightings.eq(i).find(".editable").eq(1)[0].innerHTML);
 					var originalGroup = singular(arthropodSightings.eq(i).find(".selected")[0].innerHTML.replace("bees/wasps/sawflies", "bee").replace("flies", "fly").replace("bee/wasp/sawfly", "bee")).replace("daddylongleg", "daddylonglegs").replace("moth", "moths").replace("truebug", "truebugs");
+					var pupa = false;
 					var hairy = false;
 					var leafRoll = false;
 					var silkTent = false;
 					var originalSawfly = false;
 					var originalBeetleLarva = false;
 					if(originalGroup == "caterpillar"){
-						hairy = arthropodSightings.eq(i).find(".toggleable").eq(0).hasClass("true");
-						leafRoll = arthropodSightings.eq(i).find(".toggleable").eq(1).hasClass("true");
-						silkTent = arthropodSightings.eq(i).find(".toggleable").eq(2).hasClass("true");
+						pupa = arthropodSightings.eq(i).find(".toggleable").eq(0).hasClass("true");
+						hairy = arthropodSightings.eq(i).find(".toggleable").eq(1).hasClass("true");
+						leafRoll = arthropodSightings.eq(i).find(".toggleable").eq(2).hasClass("true");
+						silkTent = arthropodSightings.eq(i).find(".toggleable").eq(3).hasClass("true");
 					}
 					if(originalGroup == "bee"){
-						originalSawfly = arthropodSightings.eq(i).find(".toggleable").eq(3).hasClass("true");
+						originalSawfly = arthropodSightings.eq(i).find(".toggleable").eq(4).hasClass("true");
 					}
 					if(originalGroup == "beetle"){
-						originalBeetleLarva = arthropodSightings.eq(i).find(".toggleable").eq(4).hasClass("true");
+						originalBeetleLarva = arthropodSightings.eq(i).find(".toggleable").eq(5).hasClass("true");
 					}
 					var notes = arthropodSightings.eq(i).find(".editable").eq(2)[0].innerHTML.trim();
 					if(notes == "[notes]"){
@@ -2148,7 +2158,7 @@
 					}
 					//qualifiers
 					if(quantity > 0 && length > 0){
-						arthropodData[arthropodData.length] = [arthropodSightingID, originalGroup, length, quantity, notes, hairy, leafRoll, silkTent, originalSawfly, originalBeetleLarva, photoURL];
+						arthropodData[arthropodData.length] = [arthropodSightingID, originalGroup, length, quantity, notes, pupa, hairy, leafRoll, silkTent, originalSawfly, originalBeetleLarva, photoURL];
 					}
 				}
 				
