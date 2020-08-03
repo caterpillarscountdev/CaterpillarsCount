@@ -1208,31 +1208,31 @@
 									}
 									htmlToAdd +=			">";
 									if(surveys[i]["arthropodSightings"][j]["pupa"]){
-								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption\">In pupa stage</div></div>";
+								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption pupaCaterpillarOption\">In pupa stage</div></div>";
 									}
 									else{
-								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption\">In pupa stage</div></div>";
+								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption pupaCaterpillarOption\">In pupa stage</div></div>";
 									}
 									
 									if(surveys[i]["arthropodSightings"][j]["hairy"]){
-								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption\">With hairy/spiny characteristics</div></div>";
+								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption pupaDependent\">With hairy/spiny characteristics</div></div>";
 									}
 									else{
-								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption\">With hairy/spiny characteristics</div></div>";
+								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption pupaDependent\">With hairy/spiny characteristics</div></div>";
 									}
 
 									if(surveys[i]["arthropodSightings"][j]["rolled"]){
-								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption\">In a leaf roll</div></div>";
+								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption pupaDependent\">In a leaf roll</div></div>";
 									}
 									else{
-								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption\">In a leaf roll</div></div>";
+								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption pupaDependent\">In a leaf roll</div></div>";
 									}
 
 									if(surveys[i]["arthropodSightings"][j]["tented"]){
-								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption\">In a silk tent</div></div>";
+								   		htmlToAdd += 			"<div><div class=\"toggleable true caterpillarOption pupaDependent\">In a silk tent</div></div>";
 									}
 									else{
-								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption\">In a silk tent</div></div>";
+								   		htmlToAdd += 			"<div><div class=\"toggleable false caterpillarOption pupaDependent\">In a silk tent</div></div>";
 									}
 									htmlToAdd +=			"</div>";
 									htmlToAdd +=			"<div class=\"beeOptions\"";
@@ -1645,10 +1645,10 @@
 				htmlToAdd += 				"</div>";
 				htmlToAdd +=			"</div>";
 				htmlToAdd +=			"<div class=\"caterpillarOptions\" style=\"display:none;\">";
-				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In pupa stage</div></div>";
-				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">With hairy/spiny characteristics</div></div>";
-				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In a leaf roll</div></div>";
-				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption\">In a silk tent</div></div>";
+				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption pupaCaterpillarOption\">In pupa stage</div></div>";
+				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption pupaDependent\">With hairy/spiny characteristics</div></div>";
+				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption pupaDependent\">In a leaf roll</div></div>";
+				htmlToAdd += 				"<div><div class=\"toggleable false caterpillarOption pupaDependent\">In a silk tent</div></div>";
 				htmlToAdd +=			"</div>";
 				htmlToAdd +=			"<div class=\"beeOptions\" style=\"display:none;\">";
 				htmlToAdd += 				"<div><div class=\"toggleable false beeOption\">These are sawfly larvae</div></div>";
@@ -1830,6 +1830,15 @@
 				$("#" + id + " .caterpillarOption").off("click");
 				$("#" + id + " .caterpillarOption").click(function(){
 					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+					
+					if($(this).hasClass("pupaCaterpillarOption")){
+						if($(this).hasClass("true")){
+							$(".pupaDependent").css({display:"none"});
+						}
+						else{
+							$(".pupaDependent").css({display:"inline-block"});
+						}
+					}
 				});
 				
 				//bee options
