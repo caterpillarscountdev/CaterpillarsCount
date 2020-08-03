@@ -1578,11 +1578,11 @@
 				
 				if(arthropodData[i][4]){
 					checkCheckbox($("#pupaCheckbox"));
-					$(".pupaDependentCheckbox").stop().fadeOut(200, 0.5);
+					$(".pupaDependentCheckbox").stop().fadeTo(200, 0.5);
 				}
 				else{
 					uncheckCheckbox($("#pupaCheckbox"));
-					$(".pupaDependentCheckbox").stop().fadeIn(200, 1);
+					$(".pupaDependentCheckbox").stop().fadeTo(200, 1);
 				}
 				
 				if(arthropodData[i][5]){checkCheckbox($("#hairyCheckbox"));}
