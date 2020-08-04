@@ -1668,17 +1668,17 @@
 					}
 					else if(arthropodData[i][0] == "bee"){
 						if(arthropodData[i][8]){
-							titlePrefix += "Larva-stage, ";
+							titlePrefix += "Larva-Stage, ";
 						}
 					}
 					else if(arthropodData[i][0] == "beetle"){
 						if(arthropodData[i][9]){
-							titlePrefix += "Larva-stage, ";
+							titlePrefix += "Larva-Stage, ";
 						}
 					}
 					else if(arthropodData[i][0] == "moths"){
 						if(arthropodData[i][4]){
-							titlePrefix += "Pupa-stage, ";
+							titlePrefix += "Pupa-Stage, ";
 						}
 					}
 					titlePrefix = titlePrefix.substring(0, titlePrefix.lastIndexOf(", "));
