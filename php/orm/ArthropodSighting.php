@@ -39,9 +39,9 @@ class ArthropodSighting
 		$quantity = self::validQuantity($dbconn, $quantity);
 		$notes = self::validNotes($dbconn, $notes);
 		$pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN);
-		$hairy = !$pupa && filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
-		$rolled = !$pupa && filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
-		$tented = !$pupa && filter_var($tented, FILTER_VALIDATE_BOOLEAN);
+		$hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
+		$rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
+		$tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
 		$originalSawfly = filter_var($originalSawfly, FILTER_VALIDATE_BOOLEAN);
 		$originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
 		
@@ -282,9 +282,9 @@ class ArthropodSighting
 			$quantity = self::validQuantity($dbconn, $quantity);
 			$notes = self::validNotes($dbconn, $notes);
 			$pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN);
-			$hairy = !$pupa && filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
-			$rolled = !$pupa && filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
-			$tented = !$pupa && filter_var($tented, FILTER_VALIDATE_BOOLEAN);
+			$hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
+			$rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
+			$tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
 			$originalSawfly = filter_var($originalSawfly, FILTER_VALIDATE_BOOLEAN);
 			$originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
 			
