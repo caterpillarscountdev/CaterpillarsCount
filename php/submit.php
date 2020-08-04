@@ -88,8 +88,10 @@
 						array_splice($arthropodData[$i], 4, 0, array(false));
 					}
 					
-					if($arthropodData[$i][0] != "caterpillar"){
+					if($arthropodData[$i][0] != "moths"){
 						$arthropodData[$i][4] = false;
+					}
+					if($arthropodData[$i][0] != "caterpillar"){
 						$arthropodData[$i][5] = false;
 						$arthropodData[$i][6] = false;
 						$arthropodData[$i][7] = false;
