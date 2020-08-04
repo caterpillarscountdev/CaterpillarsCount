@@ -1501,13 +1501,13 @@
 				//clear input values
 				setSelectValue($("#orderType")[0], "");
 				uncheckCheckbox($("#pupaCheckbox"));
-				$(".pupaDependentCheckbox").stop().fadeTo(200, 1);
 				uncheckCheckbox($("#hairyCheckbox"));
 				uncheckCheckbox($("#leafRollCheckbox"));
 				uncheckCheckbox($("#silkTentCheckbox"));
 				uncheckCheckbox($("#sawflyCheckbox"));
 				uncheckCheckbox($("#beetleLarvaCheckbox"));
 				$("#caterpillarOptionsGroup")[0].style.display = "none";
+				$("#butterflyOptionsGroup")[0].style.display = "none";
 				$("#beeOptionsGroup")[0].style.display = "none";
 				$("#beetleOptionsGroup")[0].style.display = "none";
 				$("#orderLength")[0].value = $("#orderLength")[0].defaultValue;
@@ -1576,14 +1576,8 @@
 			function populateArthropodGroup(i){
 				setSelectValue($("#orderType"), arthropodData[i][0]);
 				
-				if(arthropodData[i][4]){
-					checkCheckbox($("#pupaCheckbox"));
-					$(".pupaDependentCheckbox").stop().fadeTo(200, 0.5);
-				}
-				else{
-					uncheckCheckbox($("#pupaCheckbox"));
-					$(".pupaDependentCheckbox").stop().fadeTo(200, 1);
-				}
+				if(arthropodData[i][4]){checkCheckbox($("#pupaCheckbox"));}
+				else{uncheckCheckbox($("#pupaCheckbox"));}
 				
 				if(arthropodData[i][5]){checkCheckbox($("#hairyCheckbox"));}
 				else{uncheckCheckbox($("#hairyCheckbox"));}
@@ -1602,6 +1596,9 @@
 				
 				if(arthropodData[i][0] == "caterpillar"){$("#caterpillarOptionsGroup")[0].style.display = "block";}
 				else{$("#caterpillarOptionsGroup")[0].style.display = "none";}
+				
+				if(arthropodData[i][0] == "moths"){$("#butterflyOptionsGroup")[0].style.display = "block";}
+				else{$("#butterflyOptionsGroup")[0].style.display = "none";}
 				
 				if(arthropodData[i][0] == "bee"){$("#beeOptionsGroup")[0].style.display = "block";}
 				else{$("#beeOptionsGroup")[0].style.display = "none";}
@@ -1659,9 +1656,6 @@
 					var img = getSelectImageByText($("#orderType"), txt);
 					var titlePrefix = "";
 					if(arthropodData[i][0] == "caterpillar"){
-						if(arthropodData[i][4]){
-							titlePrefix += "Pupa-stage, ";
-						}
 						if(arthropodData[i][5]){
 							titlePrefix += "Hairy, ";
 						}
@@ -1671,8 +1665,23 @@
 						if(arthropodData[i][7]){
 							titlePrefix += "Tented, ";
 						}
-						titlePrefix = titlePrefix.substring(0, titlePrefix.lastIndexOf(", "));
 					}
+					else if(arthropodData[i][0] == "bee"){
+						if(arthropodData[i][8]){
+							titlePrefix += "Larva-stage, ";
+						}
+					}
+					else if(arthropodData[i][0] == "beetle"){
+						if(arthropodData[i][9]){
+							titlePrefix += "Larva-stage, ";
+						}
+					}
+					else if(arthropodData[i][0] == "moths"){
+						if(arthropodData[i][4]){
+							titlePrefix += "Pupa-stage, ";
+						}
+					}
+					titlePrefix = titlePrefix.substring(0, titlePrefix.lastIndexOf(", "));
 					
 					htmlToAdd += "<div class='orderTableHolder'>";
 					htmlToAdd += 	"<div class='deleteButtonOverlay' id='deleteButtonOverlay" + i + "'>";
