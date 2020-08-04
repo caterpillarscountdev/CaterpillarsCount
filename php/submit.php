@@ -83,7 +83,7 @@
 				$arthropodSightingFailures = "";
 				for($i = 0; $i < count($arthropodData); $i++){
 					//if the user is submitting from an outdated app that doesn't include the pupa checkbox
-					if(count($arthropodData[$i] == 10)){
+					if(count($arthropodData[$i]) == 10){
 						//set pupa to false by default
 						array_splice($arthropodData[$i], 4, 0, array(false));
 					}
