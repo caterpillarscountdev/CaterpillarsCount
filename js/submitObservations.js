@@ -1359,7 +1359,7 @@
 							formData.append("submittedThroughApp", false);
 							formData.append("email", window.localStorage.getItem("email"));
 							formData.append("salt", window.localStorage.getItem("salt"));
-							console.log(temporaryArthropodData);
+							
 							$.ajax({
 								url : "https://caterpillarscount.unc.edu/php/submit.php",
 								type : 'POST',
