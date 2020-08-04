@@ -308,7 +308,18 @@ class ArthropodSighting
 				return $failures;
 			}
 			
-			mysqli_query($dbconn, "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Pupa`='$pupa', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `OriginalBeetleLarva`='$originalBeetleLarva' WHERE ID='" . $this->id . "'");
+			$updatedGroup = $originalGroup;
+			$updatedSawfly = $originalSawfly;
+			$updatedBeetleLarva = $originalBeetleLarva;
+			$query = mysqli_query($dbconn, "SELECT `StandardGroup`, `SawflyUpdated`, `BeetleLarvaUpdated` FROM `ExpertIdentification` WHERE `ArthropodSightingFK`='" . $this->id . "'");
+			if(mysqli_num_rows($query) > 0){
+				$row = mysqli_fetch_assoc($query);
+				$updatedGroup = $row["StandardGroup"];
+				$updatedSawfly = $row["SawflyUpdated"];
+				$updatedBeetleLarva = $row["BeetleLarvaUpdated"];
+			}
+			
+			mysqli_query($dbconn, "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `UpdatedGroup`='$updatedGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Pupa`='$pupa', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `UpdatedSawfly`='$updatedSawfly', `OriginalBeetleLarva`='$originalBeetleLarva', `UpdatedBeetleLarva`='$updatedBeetleLarva' WHERE ID='" . $this->id . "'");
 			mysqli_close($dbconn);
 
 			$this->originalGroup = $originalGroup;
