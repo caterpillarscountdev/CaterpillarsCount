@@ -687,7 +687,7 @@ class Site
 			return false;
 		}
 		
-		$imgurl = "http://maps.googleapis.com/maps/api/staticmap?center=" . $latitude . "," . $longitude . "&zoom=" . $zoom . "&size=99x99&maptype=roadmap&sensor=false&style=element:labels|visibility:off&style=element:geometry.stroke|visibility:off&style=feature:landscape|element:geometry|saturation:-100&style=feature:water|saturation:-100|invert_lightness:true";
+		$imgurl = "http://maps.googleapis.com/maps/api/staticmap?center=" . $latitude . "," . $longitude . "&zoom=" . $zoom . "&size=99x99&maptype=roadmap&sensor=false&style=element:labels|visibility:off&style=element:geometry.stroke|visibility:off&style=feature:landscape|element:geometry|saturation:-100&style=feature:water|saturation:-100|invert_lightness:true&key=AIzaSyC66haLntB413i6pkgSCXl3wpbrS4SPEx4";
 		$pathname = "images/map/lastCall.png";
 		copy($imgurl, $pathname);
 		return (imagecolorat(imagecreatefrompng($pathname) , 50, 50) > 7);
