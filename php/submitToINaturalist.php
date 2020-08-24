@@ -30,10 +30,13 @@
 		$plant = Plant::findByCode($plantCode);
 		$site = $plant->getSite();
 		
-		$other = $arthropodNotes;
-		if(trim($other) == ""){
-			$other = "Arthropoda";
+		if(trim($surveyNotes) !== "" && trim($arthropodNotes) !== ""){
+			$surveyNotes = trim($surveyNotes) . " | " . trim($arthropodNotes);
 		}
+		else if(trim($surveyNotes) == ""){
+			$surveyNotes = trim($arthropodNotes);
+		}
+		
 		$newOrders = array(
 			"ant" => "Ants",
 			"aphid" => "Sternorrhyncha",
@@ -47,7 +50,7 @@
 			"moths" => "Lepidoptera",
 			"spider" => "Spiders",
 			"truebugs" => "True bugs",
-			"other" => $other,
+			"other" => "Arthropoda",
 			"unidentified" => "Arthropoda"
 		);
 		$newOrder = $order;
