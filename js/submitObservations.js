@@ -74,7 +74,7 @@
 					//CURRENT
 					//[plantCode, sitePassword, dateAndTime, observationMethod, siteNotes, wetLeaves, arthropodDataCopy, plantSpecies, numberOfLeaves, averageLeafLength, herbivoryScore]
 					//dateAndTime: [date, time]
-					//arthropodData: [[orderType, orderLength, orderQuantity, orderNotes, hairy, leafRoll, silkTent, fileInput]]
+					//arthropodData: [[orderType, orderLength, orderQuantity, orderNotes, pupa, hairy, leafRoll, silkTent, sawfly, beetle larva, fileInput]]
 					var plantCode = pendingSurvey[0];
 					var sitePassword = pendingSurvey[1];
 					if($("#retryPlantCredentials")[0].style.display == "block"){
@@ -93,12 +93,12 @@
 	//alert("set vars");
 					var formData = new FormData();
 					for(var i = 0; i < arthropodDataCopy.length; i++){
-						var imgData = arthropodDataCopy[i][9];
+						var imgData = arthropodDataCopy[i][10];
 						if(imgData != ""){
 							var b64Data = imgData[1];
 							var contentType = imgData[0];
 							formData.append(('file' + i), b64toBlob(b64Data, contentType));
-							arthropodDataCopy[i][9] = "";
+							arthropodDataCopy[i][10] = "";
 						}
 					}
 	//alert("converted base64 to blobs");
@@ -1189,7 +1189,7 @@
 				var dateAndTime = formatDateAndTimeForDatabase($("#date")[0].value, $("#time")[0].value, false);
 				var siteNotes = $("#siteNotes")[0].value.trim();
 				var wetLeaves = checkboxIsChecked($("#wetLeavesCheckbox")).toString();
-				//arthropodData: [[orderType, orderLength, orderQuantity, orderNotes, hairy, leafRoll, silkTent, fileInput]]
+				//arthropodData: [[orderType, orderLength, orderQuantity, orderNotes, pupa, hairy, leafRoll, silkTent, sawfly, beetle larva, fileInput]]
 				var plantSpecies = $("#plantSpecies")[0].value.trim();
 				var numberOfLeaves = $("#numberOfLeaves")[0].value.trim();
 				var averageLeafLength = $("#averageLeafLength")[0].value.trim();
@@ -1226,8 +1226,8 @@
 					var arthropodDataCopy = [];
 					for(var i  = 0; i < arthropodData.length; i++){
 						arthropodDataCopy[i] = arthropodData[i].slice();
-						if(arthropodDataCopy[i][9].length > 0){
-							compressBase64Index(arthropodDataCopy[i], 9, 500, 24, false);
+						if(arthropodDataCopy[i][10].length > 0){
+							compressBase64Index(arthropodDataCopy[i], 10, 500, 24, false);
 						}
 					}
 		//alert("copied data");
@@ -1235,10 +1235,10 @@
 					var savedCheck = setInterval(function(){
 						var allImageDataLoaded = true;
 						for(var i  = 0; i < arthropodDataCopy.length; i++){
-		//alert("arthropodDataCopy[i][9] != '': " + (arthropodDataCopy[i][9] != "").toString());
-		//alert("arthropodDataCopy[i][9].constructor !== Array: " + (arthropodDataCopy[i][9].constructor !== Array).toString());
-		//alert("image" + i + " still processing: " + (arthropodDataCopy[i][9] != "" && arthropodDataCopy[i][9].constructor !== Array).toString());
-							if(arthropodDataCopy[i][9] != "" && arthropodDataCopy[i][9].constructor !== Array){
+		//alert("arthropodDataCopy[i][10] != '': " + (arthropodDataCopy[i][10] != "").toString());
+		//alert("arthropodDataCopy[i][10].constructor !== Array: " + (arthropodDataCopy[i][10].constructor !== Array).toString());
+		//alert("image" + i + " still processing: " + (arthropodDataCopy[i][10] != "" && arthropodDataCopy[i][10].constructor !== Array).toString());
+							if(arthropodDataCopy[i][10] != "" && arthropodDataCopy[i][10].constructor !== Array){
 								allImageDataLoaded = false;
 								break;
 							}
@@ -1277,7 +1277,7 @@
 									//submit without photos
 									var arthropodSightings = existingPendingSurveys[existingPendingSurveys.length][6];
 									for(var i = 0; i < arthropodSightings.length; i++){
-										arthropodSightings[9] = "";
+										arthropodSightings[10] = "";
 									}
 									window.localStorage.setItem("pendingSurveys", JSON.stringify(existingPendingSurveys));
 									queueNotice("alert", "Wow, you've sure submitted a lot of data offline! We just can't quite fit it all in your offline survey box! We had to throw out your arthropod photos for this survey to make everything fit, but don't worry- everything else on this survey is safe. We automatically clear your box out every time you log in with an internet connection, so it's a good idea to do that regularly. You should use this device to log in to " + pendingSurveyEmails + " WITH AN INTERNET CONNECTION for at least one minute soon so we can automatically clear your box out behind the scenes for you. Otherwise, this will happen again.");
@@ -1311,9 +1311,9 @@
 					var arthropodBlobs = [];
 					var numberOfPhotosUploaded = 0;
 					for(var i = 0; i < arthropodData.length; i++){
-						if(arthropodData[i][9].length > 0){
+						if(arthropodData[i][10].length > 0){
 							numberOfPhotosUploaded++;
-							compressBase64Index(arthropodBlobs, i, 1750, 70, true, arthropodData[i][9]);
+							compressBase64Index(arthropodBlobs, i, 1750, 70, true, arthropodData[i][10]);
 						}
 						else{
 							arthropodBlobs[i] = null;
@@ -1340,7 +1340,7 @@
 							var temporaryArthropodData = [];
 							for(var i = 0; i < arthropodData.length; i++){
 								temporaryArthropodData[i] = arthropodData[i].slice();
-								temporaryArthropodData[i].splice(9, 1);
+								temporaryArthropodData[i].splice(10, 1);
 							}
 							
 							formData.append("plantCode", plantCode);
@@ -1359,7 +1359,7 @@
 							formData.append("submittedThroughApp", false);
 							formData.append("email", window.localStorage.getItem("email"));
 							formData.append("salt", window.localStorage.getItem("salt"));
-												
+							
 							$.ajax({
 								url : "https://caterpillarscount.unc.edu/php/submit.php",
 								type : 'POST',
@@ -1459,6 +1459,7 @@
 					}
 					
 					//save data
+					var pupa = checkboxIsChecked($("#pupaCheckbox"));
 					var hairy = checkboxIsChecked($("#hairyCheckbox"));
 					var leafRoll = checkboxIsChecked($("#leafRollCheckbox"));
 					var silkTent = checkboxIsChecked($("#silkTentCheckbox"));
@@ -1468,14 +1469,14 @@
 					if($("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.indexOf("#") == -1){
 						base64 = $("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.replace("url(", "").replace(/'/g, "").replace(/"/g, "").replace(")", "");
 					}
-					arthropodData[currentlyShownIndex] = [orderType, orderLength, orderQuantity, orderNotes, hairy, leafRoll, silkTent, sawfly, beetleLarva, base64];
+					arthropodData[currentlyShownIndex] = [orderType, orderLength, orderQuantity, orderNotes, pupa, hairy, leafRoll, silkTent, sawfly, beetleLarva, base64];
 					updateArthropodCards();
 					return true;
 				}
 			}
             
 			function deleteArthropodData(i){
-				arthropodData[i][9].outerHTML = "";
+				arthropodData[i][10].outerHTML = "";
 				arthropodData.splice(i, 1);
 				updateArthropodCards();
 				
@@ -1499,12 +1500,14 @@
 			function hideArthropodFormDiv(){
 				//clear input values
 				setSelectValue($("#orderType")[0], "");
+				uncheckCheckbox($("#pupaCheckbox"));
 				uncheckCheckbox($("#hairyCheckbox"));
 				uncheckCheckbox($("#leafRollCheckbox"));
 				uncheckCheckbox($("#silkTentCheckbox"));
 				uncheckCheckbox($("#sawflyCheckbox"));
 				uncheckCheckbox($("#beetleLarvaCheckbox"));
 				$("#caterpillarOptionsGroup")[0].style.display = "none";
+				$("#butterflyOptionsGroup")[0].style.display = "none";
 				$("#beeOptionsGroup")[0].style.display = "none";
 				$("#beetleOptionsGroup")[0].style.display = "none";
 				$("#orderLength")[0].value = $("#orderLength")[0].defaultValue;
@@ -1527,7 +1530,7 @@
 			
 			function tryToPopulateArthropodGroup(i){
 				//continue without saving? prompt
-				//orderType, orderLength, orderQuantity, orderNotes, hairy, leafRoll, silkTent, fileInput
+				//orderType, orderLength, orderQuantity, orderNotes, pupa, hairy, leafRoll, silkTent, sawfly, beetle larva, fileInput
 				var oldDataIsShown = (currentlyShownIndex > -1 && currentlyShownIndex < arthropodData.length);
 				var oldDataHasChanged = false;
 				if(oldDataIsShown){
@@ -1535,12 +1538,13 @@
 					$("#orderLength")[0].value != arthropodData[currentlyShownIndex][1] || 
 					$("#orderQuantity")[0].value != arthropodData[currentlyShownIndex][2] || 
 					$("#orderNotes")[0].value != arthropodData[currentlyShownIndex][3] || 
-					checkboxIsChecked($("#hairyCheckbox")[0]) != arthropodData[currentlyShownIndex][4] || 
-					checkboxIsChecked($("#leafRollCheckbox")[0]) != arthropodData[currentlyShownIndex][5] || 
-					checkboxIsChecked($("#silkTentCheckbox")[0]) != arthropodData[currentlyShownIndex][6] ||
-					checkboxIsChecked($("#sawflyCheckbox")[0]) != arthropodData[currentlyShownIndex][7] ||
-					checkboxIsChecked($("#beetleLarvaCheckbox")[0]) != arthropodData[currentlyShownIndex][8] ||
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.indexOf(arthropodData[currentlyShownIndex][9]) == -1);
+					checkboxIsChecked($("#pupaCheckbox")[0]) != arthropodData[currentlyShownIndex][4] || 
+					checkboxIsChecked($("#hairyCheckbox")[0]) != arthropodData[currentlyShownIndex][5] || 
+					checkboxIsChecked($("#leafRollCheckbox")[0]) != arthropodData[currentlyShownIndex][6] || 
+					checkboxIsChecked($("#silkTentCheckbox")[0]) != arthropodData[currentlyShownIndex][7] ||
+					checkboxIsChecked($("#sawflyCheckbox")[0]) != arthropodData[currentlyShownIndex][8] ||
+					checkboxIsChecked($("#beetleLarvaCheckbox")[0]) != arthropodData[currentlyShownIndex][9] ||
+					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.indexOf(arthropodData[currentlyShownIndex][10]) == -1);
 				}
 				
 				var newDataIsShown = (currentlyShownIndex == arthropodData.length);
@@ -1550,6 +1554,7 @@
 					$("#orderLength")[0].value != $("#orderLength")[0].defaultValue || 
 					$("#orderQuantity")[0].value != $("#orderQuantity")[0].defaultValue || 
 					$("#orderNotes")[0].value != "" || 
+					checkboxIsChecked($("#pupaCheckbox")[0]) || 
 					checkboxIsChecked($("#hairyCheckbox")[0]) || 
 					checkboxIsChecked($("#leafRollCheckbox")[0]) || 
 					checkboxIsChecked($("#silkTentCheckbox")[0]) ||
@@ -1571,23 +1576,29 @@
 			function populateArthropodGroup(i){
 				setSelectValue($("#orderType"), arthropodData[i][0]);
 				
-				if(arthropodData[i][4]){checkCheckbox($("#hairyCheckbox"));}
+				if(arthropodData[i][4]){checkCheckbox($("#pupaCheckbox"));}
+				else{uncheckCheckbox($("#pupaCheckbox"));}
+				
+				if(arthropodData[i][5]){checkCheckbox($("#hairyCheckbox"));}
 				else{uncheckCheckbox($("#hairyCheckbox"));}
 				
-				if(arthropodData[i][5]){checkCheckbox($("#leafRollCheckbox"));}
+				if(arthropodData[i][6]){checkCheckbox($("#leafRollCheckbox"));}
 				else{uncheckCheckbox($("#leafRollCheckbox"));}
 				
-				if(arthropodData[i][6]){checkCheckbox($("#silkTentCheckbox"));}
+				if(arthropodData[i][7]){checkCheckbox($("#silkTentCheckbox"));}
 				else{uncheckCheckbox($("#silkTentCheckbox"));}
 				
-				if(arthropodData[i][7]){checkCheckbox($("#sawflyCheckbox"));}
+				if(arthropodData[i][8]){checkCheckbox($("#sawflyCheckbox"));}
 				else{uncheckCheckbox($("#sawflyCheckbox"));}
 				
-				if(arthropodData[i][8]){checkCheckbox($("#beetleLarvaCheckbox"));}
+				if(arthropodData[i][9]){checkCheckbox($("#beetleLarvaCheckbox"));}
 				else{uncheckCheckbox($("#beetleLarvaCheckbox"));}
 				
 				if(arthropodData[i][0] == "caterpillar"){$("#caterpillarOptionsGroup")[0].style.display = "block";}
 				else{$("#caterpillarOptionsGroup")[0].style.display = "none";}
+				
+				if(arthropodData[i][0] == "moths"){$("#butterflyOptionsGroup")[0].style.display = "block";}
+				else{$("#butterflyOptionsGroup")[0].style.display = "none";}
 				
 				if(arthropodData[i][0] == "bee"){$("#beeOptionsGroup")[0].style.display = "block";}
 				else{$("#beeOptionsGroup")[0].style.display = "none";}
@@ -1598,9 +1609,9 @@
 				$("#orderLength")[0].value = arthropodData[i][1];
 				$("#orderQuantity")[0].value = arthropodData[i][2];
 				
-				if(arthropodData[i][9] != ""){
+				if(arthropodData[i][10] != ""){
 					$("#arthropodFileInputHolder .snapIcon").eq(0)[0].src = "../images/inputCheckIcon.png";
-					showUploadedImage(arthropodData[i][9]);
+					showUploadedImage(arthropodData[i][10]);
 					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.height = "80px";
 					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.margin = "-20px -20px 16px -20px";
 					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.padding = "0px 20px";
@@ -1645,17 +1656,32 @@
 					var img = getSelectImageByText($("#orderType"), txt);
 					var titlePrefix = "";
 					if(arthropodData[i][0] == "caterpillar"){
-						if(arthropodData[i][4]){
+						if(arthropodData[i][5]){
 							titlePrefix += "Hairy, ";
 						}
-						if(arthropodData[i][5]){
+						if(arthropodData[i][6]){
 							titlePrefix += "Rolled, ";
 						}
-						if(arthropodData[i][6]){
+						if(arthropodData[i][7]){
 							titlePrefix += "Tented, ";
 						}
-						titlePrefix = titlePrefix.substring(0, titlePrefix.lastIndexOf(", "));
 					}
+					else if(arthropodData[i][0] == "bee"){
+						if(arthropodData[i][8]){
+							titlePrefix += "Larva-Stage, ";
+						}
+					}
+					else if(arthropodData[i][0] == "beetle"){
+						if(arthropodData[i][9]){
+							titlePrefix += "Larva-Stage, ";
+						}
+					}
+					else if(arthropodData[i][0] == "moths"){
+						if(arthropodData[i][4]){
+							titlePrefix += "Pupa-Stage, ";
+						}
+					}
+					titlePrefix = titlePrefix.substring(0, titlePrefix.lastIndexOf(", "));
 					
 					htmlToAdd += "<div class='orderTableHolder'>";
 					htmlToAdd += 	"<div class='deleteButtonOverlay' id='deleteButtonOverlay" + i + "'>";
@@ -1683,15 +1709,15 @@
 				document.getElementById("arthropodCards").innerHTML = htmlToAdd;
 				
 				for(var i = 0; i < arthropodData.length; i++){
-					if(arthropodData[i][9] != ""){
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage = "url('" + arthropodData[i][9] + "')";
+					if(arthropodData[i][10] != ""){
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage = "url('" + arthropodData[i][10] + "')";
 						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundSize = "cover";
 						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.padding = "5px";
 						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.margin = "-5px -10px -5px -5px";
 						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.borderRadius = "4px";
 						if($("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage.length <= 22){
 							var cardPhotoCheck = setInterval(function(){
-								$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage = "url('" + arthropodData[i][9] + "')";
+								$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage = "url('" + arthropodData[i][10] + "')";
 								if($("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage.length > 22){
 									clearInterval(cardPhotoCheck);
 								}

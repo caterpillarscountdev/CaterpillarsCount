@@ -14,6 +14,7 @@ class ArthropodSighting
 	private $quantity;
 	private $photoURL;
 	private $notes;
+	private $pupa;
 	private $hairy;
 	private $rolled;
 	private $tented;
@@ -26,7 +27,7 @@ class ArthropodSighting
 	private $deleted;
 
 //FACTORY
-	public static function create($survey, $originalGroup, $length, $quantity, $notes, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva) {
+	public static function create($survey, $originalGroup, $length, $quantity, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		if(!$dbconn){
 			return "Cannot connect to server.";
@@ -37,6 +38,7 @@ class ArthropodSighting
 		$length = self::validLength($dbconn, $length);
 		$quantity = self::validQuantity($dbconn, $quantity);
 		$notes = self::validNotes($dbconn, $notes);
+		$pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN);
 		$hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
 		$rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
 		$tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
@@ -67,13 +69,13 @@ class ArthropodSighting
 			return $failures;
 		}
 		
-		mysqli_query($dbconn, "INSERT INTO ArthropodSighting (`SurveyFK`, `OriginalGroup`, `UpdatedGroup`, `Length`, `Quantity`, `PhotoURL`, `Notes`, `Hairy`, `Rolled`, `Tented`, `OriginalSawfly`, `UpdatedSawfly`, `OriginalBeetleLarva`, `UpdatedBeetleLarva`) VALUES ('" . $survey->getID() . "', '$originalGroup', '$originalGroup', '$length', '$quantity', '', '$notes', '$hairy', '$rolled', '$tented', '$originalSawfly', '$originalSawfly', '$originalBeetleLarva', '$originalBeetleLarva')");
+		mysqli_query($dbconn, "INSERT INTO ArthropodSighting (`SurveyFK`, `OriginalGroup`, `UpdatedGroup`, `Length`, `Quantity`, `PhotoURL`, `Notes`, `Pupa`, `Hairy`, `Rolled`, `Tented`, `OriginalSawfly`, `UpdatedSawfly`, `OriginalBeetleLarva`, `UpdatedBeetleLarva`) VALUES ('" . $survey->getID() . "', '$originalGroup', '$originalGroup', '$length', '$quantity', '', '$notes', '$pupa', '$hairy', '$rolled', '$tented', '$originalSawfly', '$originalSawfly', '$originalBeetleLarva', '$originalBeetleLarva')");
 		$id = intval(mysqli_insert_id($dbconn));
 		mysqli_close($dbconn);
 		
-		return new ArthropodSighting($id, $survey, $originalGroup, $originalGroup, $length, $quantity, "", $notes, $hairy, $rolled, $tented, $originalSawfly, $originalSawfly, $originalBeetleLarva, $originalBeetleLarva, "");
+		return new ArthropodSighting($id, $survey, $originalGroup, $originalGroup, $length, $quantity, "", $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalSawfly, $originalBeetleLarva, $originalBeetleLarva, "");
 	}
-	private function __construct($id, $survey, $originalGroup, $updatedGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $originalSawfly, $updatedSawfly, $originalBeetleLarva, $updatedBeetleLarva, $iNaturalistID){
+	private function __construct($id, $survey, $originalGroup, $updatedGroup, $length, $quantity, $photoURL, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $updatedSawfly, $originalBeetleLarva, $updatedBeetleLarva, $iNaturalistID){
 		$this->id = intval($id);
 		$this->survey = $survey;
 		$this->originalGroup = $originalGroup;
@@ -82,6 +84,7 @@ class ArthropodSighting
 		$this->quantity = intval($quantity);
 		$this->photoURL = $photoURL;
 		$this->notes = $notes;
+		$this->pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN);
 		$this->hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
 		$this->rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
 		$this->tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
@@ -114,6 +117,7 @@ class ArthropodSighting
 		$quantity = $arthropodSightingRow["Quantity"];
 		$photoURL = $arthropodSightingRow["PhotoURL"];
 		$notes = $arthropodSightingRow["Notes"];
+		$pupa = $arthropodSightingRow["Pupa"];
 		$hairy = $arthropodSightingRow["Hairy"];
 		$rolled = $arthropodSightingRow["Rolled"];
 		$tented = $arthropodSightingRow["Tented"];
@@ -123,7 +127,7 @@ class ArthropodSighting
 		$updatedBeetleLarva = $arthropodSightingRow["UpdatedBeetleLarva"];
 		$iNaturalistID = $arthropodSightingRow["INaturalistID"];
 		
-		return new ArthropodSighting($id, $survey, $originalGroup, $updatedGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $originalSawfly, $updatedSawfly, $originalBeetleLarva, $updatedBeetleLarva, $iNaturalistID);
+		return new ArthropodSighting($id, $survey, $originalGroup, $updatedGroup, $length, $quantity, $photoURL, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $updatedSawfly, $originalBeetleLarva, $updatedBeetleLarva, $iNaturalistID);
 	}
 	
 	public static function findArthropodSightingsBySurvey($survey){
@@ -141,6 +145,7 @@ class ArthropodSighting
 			$quantity = $arthropodSightingRow["Quantity"];
 			$photoURL = $arthropodSightingRow["PhotoURL"];
 			$notes = $arthropodSightingRow["Notes"];
+			$pupa = $arthropodSightingRow["Pupa"];
 			$hairy = $arthropodSightingRow["Hairy"];
 			$rolled = $arthropodSightingRow["Rolled"];
 			$tented = $arthropodSightingRow["Tented"];
@@ -150,7 +155,7 @@ class ArthropodSighting
 			$updatedBeetleLarva = $arthropodSightingRow["UpdatedBeetleLarva"];
 			$iNaturalistID = $arthropodSightingRow["INaturalistID"];
 
-			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $originalGroup, $updatedGroup, $length, $quantity, $photoURL, $notes, $hairy, $rolled, $tented, $originalSawfly, $updatedSawfly, $originalBeetleLarva, $updatedBeetleLarva, $iNaturalistID);
+			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $originalGroup, $updatedGroup, $length, $quantity, $photoURL, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $updatedSawfly, $originalBeetleLarva, $updatedBeetleLarva, $iNaturalistID);
 		}
 		return $arthropodSightingsArray;
 	}
@@ -194,6 +199,11 @@ class ArthropodSighting
 	public function getNotes() {
 		if($this->deleted){return null;}
 		return $this->notes;
+	}
+	
+	public function getPupa() {
+		if($this->deleted){return null;}
+		return filter_var($this->pupa, FILTER_VALIDATE_BOOLEAN);
 	}
 	
 	public function getHairy() {
@@ -262,7 +272,7 @@ class ArthropodSighting
 		return false;
 	}
 	
-	public function setAllEditables($originalGroup, $length, $quantity, $notes, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva){
+	public function setAllEditables($originalGroup, $length, $quantity, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva){
 		if(!$this->deleted)
 		{
 			$dbconn = (new Keychain)->getDatabaseConnection();
@@ -271,6 +281,7 @@ class ArthropodSighting
 			$length = self::validLength($dbconn, $length);
 			$quantity = self::validQuantity($dbconn, $quantity);
 			$notes = self::validNotes($dbconn, $notes);
+			$pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN);
 			$hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
 			$rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
 			$tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
@@ -297,13 +308,25 @@ class ArthropodSighting
 				return $failures;
 			}
 			
-			mysqli_query($dbconn, "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `OriginalBeetleLarva`='$originalBeetleLarva' WHERE ID='" . $this->id . "'");
+			$updatedGroup = $originalGroup;
+			$updatedSawfly = $originalSawfly;
+			$updatedBeetleLarva = $originalBeetleLarva;
+			$query = mysqli_query($dbconn, "SELECT `StandardGroup`, `SawflyUpdated`, `BeetleLarvaUpdated` FROM `ExpertIdentification` WHERE `ArthropodSightingFK`='" . $this->id . "'");
+			if(mysqli_num_rows($query) > 0){
+				$row = mysqli_fetch_assoc($query);
+				$updatedGroup = $row["StandardGroup"];
+				$updatedSawfly = $row["SawflyUpdated"];
+				$updatedBeetleLarva = $row["BeetleLarvaUpdated"];
+			}
+			
+			mysqli_query($dbconn, "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `UpdatedGroup`='$updatedGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Pupa`='$pupa', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `UpdatedSawfly`='$updatedSawfly', `OriginalBeetleLarva`='$originalBeetleLarva', `UpdatedBeetleLarva`='$updatedBeetleLarva' WHERE ID='" . $this->id . "'");
 			mysqli_close($dbconn);
 
 			$this->originalGroup = $originalGroup;
 			$this->length = $length;
 			$this->quantity = $quantity;
 			$this->notes = $notes;
+			$this->pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN);
 			$this->hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
 			$this->rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
 			$this->tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);

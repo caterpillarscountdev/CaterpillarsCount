@@ -27,7 +27,12 @@
 		"ArthropodNotes", 
 		"IsCaterpillarAndIsHairy", 
 		"IsCaterpillarAndIsInLeafRoll", 
-		"IsCaterpillarAndIsInSilkTent");
+		"IsCaterpillarAndIsInSilkTent", 
+		"IsButterflyOrMothAndIsPupa", 
+		"OriginalIsBeetleLarva", 
+		"UpdatedIsBeetleLarva", 
+		"OriginalIsSawflyLarva", 
+		"UpdatedIsSawflyLarva");
 	
 	function redirect($url){
 		$string = '<script type="text/javascript">';
@@ -42,14 +47,14 @@
 		$tableArray = array();
 
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT Survey.ID, Survey.LocalDate, SUBSTR(Survey.LocalTime, 1, 5) AS `LocalTime`, Plant.Code AS SurveyLocationCode, Plant.Circle, Plant.Orientation, Survey.PlantSpecies AS PlantSpeciesMarkedByObserver, Plant.Species AS OfficialPlantSpecies, Site.Name AS SiteName, Site.Description AS SiteDescription, Site.Latitude, Site.Longitude, Site.Region, ArthropodSighting.OriginalGroup AS OriginalArthropodGroup, ArthropodSighting.UpdatedGroup AS UpdatedArthropodGroup, ArthropodSighting.Length AS ArthropodLength, ArthropodSighting.Quantity AS ArthropodQuantity, IF(ArthropodSighting.PhotoURL='','',CONCAT('https://caterpillarscount.unc.edu/images/arthropods/', ArthropodSighting.PhotoURL)) AS ArthropodPhotoURL, ArthropodSighting.Notes AS ArthropodNotes, ArthropodSighting.Hairy AS IsCaterpillarAndIsHairy, ArthropodSighting.Rolled AS IsCaterpillarAndIsInLeafRoll, ArthropodSighting.Tented AS IsCaterpillarAndIsInSilkTent, Survey.ObservationMethod, Survey.Notes AS SurveyNotes, Survey.WetLeaves, Survey.NumberOfLeaves, Survey.AverageLeafLength, Survey.HerbivoryScore FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK=Site.ID WHERE Site.ID<>'2' AND Plant.SiteFK LIKE '$siteID' AND YEAR(Survey.LocalDate)>='$yearStart' AND YEAR(Survey.LocalDate)<='$yearEnd' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' ORDER BY Survey.LocalDate DESC, Survey.LocalTime DESC");
+		$query = mysqli_query($dbconn, "SELECT Survey.ID, Survey.LocalDate, SUBSTR(Survey.LocalTime, 1, 5) AS `LocalTime`, Plant.Code AS SurveyLocationCode, Plant.Circle, Plant.Orientation, Survey.PlantSpecies AS PlantSpeciesMarkedByObserver, Plant.Species AS OfficialPlantSpecies, Site.Name AS SiteName, Site.Description AS SiteDescription, Site.Latitude, Site.Longitude, Site.Region, ArthropodSighting.OriginalGroup AS OriginalArthropodGroup, ArthropodSighting.UpdatedGroup AS UpdatedArthropodGroup, ArthropodSighting.Length AS ArthropodLength, ArthropodSighting.Quantity AS ArthropodQuantity, IF(ArthropodSighting.PhotoURL='','',CONCAT('https://caterpillarscount.unc.edu/images/arthropods/', ArthropodSighting.PhotoURL)) AS ArthropodPhotoURL, ArthropodSighting.Notes AS ArthropodNotes, ArthropodSighting.Hairy AS IsCaterpillarAndIsHairy, ArthropodSighting.Rolled AS IsCaterpillarAndIsInLeafRoll, ArthropodSighting.Tented AS IsCaterpillarAndIsInSilkTent, ArthropodSighting.Pupa AS IsButterflyOrMothAndIsPupa, ArthropodSighting.OriginalBeetleLarva AS OriginalIsBeetleLarva, ArthropodSighting.UpdatedBeetleLarva AS UpdatedIsBeetleLarva, ArthropodSighting.OriginalSawfly AS OriginalIsSawflyLarva, ArthropodSighting.UpdatedSawfly AS UpdatedIsSawflyLarva, Survey.ObservationMethod, Survey.Notes AS SurveyNotes, Survey.WetLeaves, Survey.NumberOfLeaves, Survey.AverageLeafLength, Survey.HerbivoryScore FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK=Site.ID WHERE Site.ID<>'2' AND Plant.SiteFK LIKE '$siteID' AND YEAR(Survey.LocalDate)>='$yearStart' AND YEAR(Survey.LocalDate)<='$yearEnd' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' ORDER BY Survey.LocalDate DESC, Survey.LocalTime DESC");
 		
 		//ROWS
 		$surveyIDsWithSightings = array();
 		while ($row = mysqli_fetch_assoc($query)){
 			$rowArray = array();
 			for($i = 0; $i < count($colHeaders); $i++){
-				$rowArray[] = $row[$colHeaders[$i]];
+				$rowArray[] = ($row[$colHeaders[$i]] == "bee" && ($colHeaders[$i] == "OriginalArthropodGroup" || $colHeaders[$i] == "UpdatedArthropodGroup")) ? "bee/wasp/sawfly" : $row[$colHeaders[$i]];
 			}
 			$tableArray[] = $rowArray;
 			$surveyIDsWithSightings[] = $row["ID"];
@@ -87,12 +92,58 @@
 		return $bTime - $aTime;
 	}
 
+	function generateRandomString($length) {
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+		return $randomString;
+	}
+	
+	function zipAndDownload($pathnames){
+		$zip = new ZipArchive();
+		$zipPathname = "CaterpillarsCountData_timestamp-" . time() . "_uniqueid-" . generateRandomString(5) . ".zip";
+		
+		if($zip->open($zipPathname, ZipArchive::CREATE) === true){
+			for($i = 0; $i < count($pathnames); $i++){
+				$zip->addFile($pathnames[$i]);
+			}
+			
+			$zip->close();
+		}
+		
+		if(file_exists($zipPathname)){
+			header('Content-Type: application/zip');
+			header('Content-Disposition: attachment; filename="'.basename($zipPathname).'"');
+			header('Content-Length: ' . filesize($zipPathname));
+			//header("Pragma: no-cache");
+			//header("Expires: 0"); 
+			
+			flush();
+			readfile($zipPathname);
+			unlink($zipPathname);
+		}
+	}
+
 	if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['download'])){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		
 		$siteID = $_POST["siteID"];
+    $siteName = "All sites.";
 		if($siteID != "%"){
 			$siteID = intval($siteID);
+      
+      $siteName = "";
+      $query = mysqli_query($dbconn, "SELECT `Name` FROM `Site` WHERE `ID`='$siteID'");
+      while ($row = mysqli_fetch_assoc($query)){
+        $siteName .= $row["Name"] . ". ";
+      }
+      $siteName = trim($siteName);
+      if($siteName == ""){
+        $siteName = "[Site Name].";
+      }
 		}
 		$yearStart = intval($_POST["yearStart"]);
 		$yearEnd = intval($_POST["yearEnd"]);
@@ -104,17 +155,37 @@
 		array_unshift($tableArray, $colHeaders);
 		ob_end_clean();
 		
-		$filename = "CaterpillarsCountDataAtTimestamp_" . time() . ".csv";
-		$fp = fopen($filename, 'w');
+		
+		$csvFilename = "CaterpillarsCountData";
+		while(file_exists($csvFilename . ".csv")){
+			$csvFilename .= "-" . generateRandomString(5);
+		}
+		$csvFilename .= ".csv";
+		
+		$fp = fopen($csvFilename, 'w');
 		foreach ($tableArray as $line) fputcsv($fp, $line);
-
+    fclose($fp);
+    
+	$txtFilename = "metadata";
+	while(file_exists($txtFilename . ".txt")){
+		$txtFilename .= "-" . generateRandomString(5);
+	}
+	$txtFilename .= ".txt";
+	
+    $metadataFile = fopen($txtFilename, "w");
+    fwrite($metadataFile, "The columns in the included spreadsheet are as follows:\n\nSiteName: Name of the Caterpillars Count! site\nSiteDescription: Description of the Caterpillars Count! site\nLatitude: Latitude of the Caterpillars Count! site\nLongitude: Longitude of the Caterpillars Count! site\nRegion: State or Province of the Caterpillars Count! site\nLocalDate: Date of the observation\nLocalTime: Time of the observation\nSurveyLocationCode: Unique 3-letter code specifying a particular survey branch\nCircle: Circle number of the survey branch\nOrientation: A-E, identifying one of the 5 survey branches within the specified circle\nPlantSpeciesMarkedByObserver: Plant species of the survey branch as entered by the local site coordinator\nOfficialPlantSpecies: Standardized plant species name as specified by a site administrator\nObservationMethod: Survey method, either \"Visual\" or \"Beat Sheet\"\nSurveyNotes: Any notes applicable to the survey branch as a whole\nWetLeaves: Were the leaves wet at the time of the survey; 0 = no, 1 = yes\nNumberOfLeaves: Number of leaves examined on the survey branch; for Visual surveys this is 50, but it may be variable for Beat Sheet surveys\nAverageLeafLength: Average length of the leaf (or leaflet) blade not counting the petiole, in cm\nHerbivoryScore: Categorical herbivory score for the set of leaves examined; 0 = None, 1 = Trace (<5%), 2 = Light (5-10%), 3 = Moderate (10-25%), 4 = Heavy (>25%)\nOriginalArthropodGroup: Originally reported arthropod group\nUpdatedArthropodGroup: Arthropod group that includes any corrected id's based on iNaturalist user feedback\nArthropodLength: Length of the observed arthropod from the tip of the head to the tip of the abdomen, in mm (doesn't include antennae or legs)\nArthropodQuantity: Number of arthropods of a given group and length observed\nArthropodPhotoURL: For observations with photos, a link to the observation on iNaturalist\nArthropodNotes: Any notes applicable to the arthropod observed\nIsCaterpillarAndIsHairy: If the observed arthropod is a caterpillar that is significantly hairy or spiny, 1, otherwise 0\nIsCaterpillarAndIsInLeafRoll: If the observed arthropod is a caterpillar that is inside a rolled or folded leaf, 1, otherwise 0\nIsCaterpillarAndIsInSilkTent: If the observed arthropod is a caterpillar that is inside a silk tent, 1, otherwise 0\nIsButterflyOrMothAndIsPupa: If the observed arthropod is a butterfly or moth and is in the pupa stage, 1, otherwise 0\nOriginalIsBeetleLarva: If the observed arthropod is a beetle larva, 1, otherwise 0 (as specified by the original observer)\nUpdatedIsBeetleLarva: If the observed arthropod is a beetle larva, 1, otherwise 0 (includes any corrected id's based on iNaturalist user feedback)\nOriginalIsSawflyLarva: If the observed arthropod is a sawfly larva, 1, otherwise 0 (as specified by the original observer)\nUpdatedIsSawflyLarva: If the observed arthropod is a sawfly larva, 1, otherwise 0 (includes any corrected id's based on iNaturalist user feedback)\n\n\nRecommended citation:\n\nCaterpillars Count! " . date("Y") . ". Foliage Arthropod Data. Data type: Raw Data. 01/01/" . $yearStart . "-12/31/" . $yearEnd . " for Site: " . $siteName . " Chapel Hill, North Carolina, USA. Data set accessed " . date("m/d/Y") . " at https://caterpillarscount.unc.edu.");
+    fclose($metadataFile);
+		
+		zipAndDownload(array($csvFilename, $txtFilename));
+		
+		/*
 		header('Content-Type: application/octet-stream');
 		header("Content-Transfer-Encoding: Binary"); 
-		header("Content-disposition: attachment; filename=\"" . basename($filename) . "\"");
-
-		readfile($filename);
-		//note that each line in this data pertains to a specific arthropod sighting, so surveys which contained no arthropod sightings are excluded from this data.
-		unlink($filename);
+		header("Content-disposition: attachment; filename=\"" . basename($csvFilename) . "\"");
+		readfile($csvFilename);
+		*/
+		
+		unlink($csvFilename);
 		exit();
 	}
 ?>
@@ -160,7 +231,9 @@
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
+		<link href="../css/checkbox.css?v=1" rel="stylesheet">
 		<script src="../js/template.js?v=1"></script>
+		<script src="../js/checkbox.js?v=1"></script>
 		<style>
 			.loadingDiv{
 				background:#e6e6e6;
@@ -521,6 +594,11 @@
 			}
 			
 			function download(){
+				if(!checkboxIsChecked($("#acknowledgmentCheckbox"))){
+					queueNotice("error", "Use the checkbox to verify that you have read and acknowledged the Caterpillars Count! data use and attribution policies before downloading.");
+					return false;
+				}
+				
 				var downloadedFile = "Dynamically Generated CSV";
 				var downloadFilters = "Site: " + getSelectValue($("#siteSelect")).replace("%", "All") + ", YearStart: " + yearStart + ", YearEnd: " + yearEnd + ", Arthropod: " + getSelectValue($("#arthropodSelect")).replace("%", "All");
 				var page = window.location.toString().replace("http://", "").replace("https://", "");
@@ -667,8 +745,16 @@
 						<div class="option" onclick="selectOption(this);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
 					</div>
 					
+					<h3>Policies:</h3>
+					<table class="checkboxTable">
+						<tr onclick="toggleCheckbox($(this).find('.checkbox'));">
+							<td><div class="checkbox" id="acknowledgmentCheckbox"></div></td>
+							<td>I have read and acknowledged the Caterpillars Count! <a href="../dataUsePolicy" target="_blank">data use</a> and <a href="../dataAttributionPolicy" target="_blank">attribution</a> policies.</td>
+						<tr>
+					</table>
+					
 					<button id="shownDownloadButton" onclick="download();">Download</button>
-					<p id="disclaimer">Data submitted by Caterpillars Count! participants are provided "as is", and no warranty, express or implied, is made regarding their accuracy, completeness, or reliability. These data are licensed under a <a href="https://creativecommons.org/publicdomain/zero/1.0/legalcode" target="_blank">Creative Commons CCZero 1.0 License</a>.</p>
+					<!--<p id="disclaimer">Data submitted by Caterpillars Count! participants are provided "as is", and no warranty, express or implied, is made regarding their accuracy, completeness, or reliability. These data are licensed under a <a href="https://creativecommons.org/publicdomain/zero/1.0/legalcode" target="_blank">Creative Commons CCZero 1.0 License</a>.</p>-->
 
 					<form action="" method="post" style="display:none;">
 						<input type="text" name="siteID" id="siteID"/>

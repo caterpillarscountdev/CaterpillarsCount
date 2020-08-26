@@ -309,14 +309,14 @@
 		global $MAX_EMAIL_SENDS;
 		global $baseFileName;
 		
-		//Haven't already finished ExpertIdentification emails before this month based on cache.
+		//Haven't already finished ExpertIdentification emails before this week based on cache.
 		
-		if($emailsSent < $MAX_EMAIL_SENDS && intval(date("d")) > 1){
+		if($emailsSent < $MAX_EMAIL_SENDS && intval(date("N")) > 1){//"N" refers to the day of the week, with Monday being 1 and Sunday being 7
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$query = mysqli_query($dbconn, "SELECT `Iteration` FROM `CronJobStatus` WHERE `Name`='iNaturalistIdentificationFetch';");
 			if(intval(mysqli_fetch_assoc($query)["Iteration"]) == 0){
 				//finished grabbing ExpertIdentifications from iNaturalist
-				$query = mysqli_query($dbconn, "SELECT TemporaryExpertIdentificationChangeLog.*, `User`.ID AS UserID, `User`.`Hidden`, `User`.FirstName, `User`.Email, ArthropodSighting.INaturalistID, ArthropodSighting.OriginalGroup, ArthropodSighting.PhotoURL, `User`.`INaturalistObserverID` FROM `TemporaryExpertIdentificationChangeLog` JOIN ArthropodSighting ON TemporaryExpertIdentificationChangeLog.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID WHERE (MONTH(Timestamp)<>MONTH(NOW()) OR YEAR(Timestamp)<>YEAR(NOW())) AND `User`.`Hidden`='0' ORDER BY User.ID, ArthropodSightingFK, Timestamp DESC");
+				$query = mysqli_query($dbconn, "SELECT TemporaryExpertIdentificationChangeLog.*, `User`.ID AS UserID, `User`.`Hidden`, `User`.FirstName, `User`.Email, ArthropodSighting.INaturalistID, ArthropodSighting.OriginalGroup, ArthropodSighting.PhotoURL, `User`.`INaturalistObserverID` FROM `TemporaryExpertIdentificationChangeLog` JOIN ArthropodSighting ON TemporaryExpertIdentificationChangeLog.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID WHERE `Timestamp`<'" . date("Y-m-d", strtotime('Monday this week')) . " 00:00:00' AND `User`.`Hidden`='0' ORDER BY User.ID, ArthropodSightingFK, Timestamp DESC");
 				$userID = -1;
 				$userEmail = "";
 				$userFirstName = "iNaturalist results are in";
@@ -349,7 +349,7 @@
 							$supportingTotal = intval(mysqli_fetch_assoc($innerQuery)["SupportingTotal"]);
 							$innerQuery = mysqli_query($dbconn, "SELECT COUNT(*) AS ExpertTotal FROM `ExpertIdentification` JOIN ArthropodSighting ON ExpertIdentification.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver='$userID';");
 							$expertTotal = intval(mysqli_fetch_assoc($innerQuery)["ExpertTotal"]);
-							$percentSuppporting = $total == 0 ? 0 : round(($supportingTotal / $expertTotal) * 100, 2);
+							$percentSuppporting = $expertTotal == 0 ? 0 : round(($supportingTotal / $expertTotal) * 100, 2);
 						}
 
 						$originalGroup = $row["OriginalGroup"];
@@ -359,12 +359,6 @@
 						}
 						$newExpertIdentification = $row["NewExpertIdentification"];
 						$iNaturalistObservationID = $row["INaturalistID"];
-						$numberOfChanges++;
-
-						if($firstNewExpertIdentification == ""){
-							$firstNewExpertIdentification = $newExpertIdentification;
-							$firstNewExpertIdentificationPhotoURL = "https://caterpillarscount.unc.edu/images/arthropods/" . $row["PhotoURL"];
-						}
 
 						$arthropodNameTranslations = array( 
 							"daddylonglegs" => "daddylongleg", 
@@ -383,25 +377,34 @@
 						}
 
 						$newExpertIdentificationN = in_array(strtolower(substr($newExpertIdentificationSingular, 0, 1)), array("a", "e", "i", "o", "u")) ? "n" : "";
-
-						$changeLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\"><a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/observations/" . $iNaturalistObservationID . "\" target=\"_blank\"><span style=\"color: #6faf6d;\">This " . $previousExpertIdentificationSingular . " observation</span></a> is actually a" . $newExpertIdentificationN . " " . $newExpertIdentificationSingular . ".</span></li>";
-
-						if(in_array($previousExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
-							if(!in_array($previousExpertIdentification, $normalArthropodsInvolved)){
-								$normalArthropodsInvolved[] = $previousExpertIdentification;
+						
+						if(($previousExpertIdentification == "other" && in_array($newExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))) || ($previousExpertIdentificationSingular != "other" && $previousExpertIdentificationSingular != $newExpertIdentificationSingular)){
+							if($firstNewExpertIdentification == ""){
+								$firstNewExpertIdentification = $newExpertIdentification;
+								$firstNewExpertIdentificationPhotoURL = "https://caterpillarscount.unc.edu/images/arthropods/" . $row["PhotoURL"];
 							}
-						}
-						else if(!in_array($previousExpertIdentification, $abnormalArthropodsInvolved)){
-							$abnormalArthropodsInvolved[] = $previousExpertIdentification;
-						}
-
-						if(in_array($newExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
-							if(!in_array($newExpertIdentification, $normalArthropodsInvolved)){
-								$normalArthropodsInvolved[] = $newExpertIdentification;
+							
+							$changeLIs .= "<li style=\"color: #555555;\"><span style=\"font-size: 16px;\"><a style=\"color:#6faf6d; font-weight: normal; text-decoration: underline;\" href=\"https://www.inaturalist.org/observations/" . $iNaturalistObservationID . "\" target=\"_blank\"><span style=\"color: #6faf6d;\">This " . $previousExpertIdentificationSingular . " observation</span></a> is actually a" . $newExpertIdentificationN . " " . $newExpertIdentificationSingular . ".</span></li>";
+							
+							$numberOfChanges++;
+							
+							if(in_array($previousExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
+								if(!in_array($previousExpertIdentification, $normalArthropodsInvolved)){
+									$normalArthropodsInvolved[] = $previousExpertIdentification;
+								}
 							}
-						}
-						else if(!in_array($newExpertIdentification, $abnormalArthropodsInvolved)){
-							$abnormalArthropodsInvolved[] = $newExpertIdentification;
+							else if(!in_array($previousExpertIdentification, $abnormalArthropodsInvolved)){
+								$abnormalArthropodsInvolved[] = $previousExpertIdentification;
+							}
+							
+							if(in_array($newExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))){
+								if(!in_array($newExpertIdentification, $normalArthropodsInvolved)){
+									$normalArthropodsInvolved[] = $newExpertIdentification;
+								}
+							}
+							else if(!in_array($newExpertIdentification, $abnormalArthropodsInvolved)){
+								$abnormalArthropodsInvolved[] = $newExpertIdentification;
+							}
 						}
 					}
 					$processedTemporaryExpertIdentificationChangeLogIDs[] = $row["ID"];
@@ -449,7 +452,7 @@
 				}
 				else{
 					mysqli_close($dbconn);
-					save($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", date('n'));
+					save($baseFileName . "finishedExpertIdentificationEmailsBeforeWeeksMonday", intval(date("d", strtotime('Monday this week'))));
 				}
 			}
    		}
@@ -534,8 +537,8 @@
 	}
 
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
-	$finishedExpertIdentificationEmailsBeforeMonth = getSave($baseFileName . "finishedExpertIdentificationEmailsBeforeMonth", 31 * 24 * 60 * 60);
-	if($finishedExpertIdentificationEmailsBeforeMonth === null || intval($finishedExpertIdentificationEmailsBeforeMonth) !== intval(date('n'))){
+	$finishedExpertIdentificationEmailsBeforeWeeksMonday = getSave($baseFileName . "finishedExpertIdentificationEmailsBeforeWeeksMonday", 7 * 24 * 60 * 60);
+	if($finishedExpertIdentificationEmailsBeforeWeeksMonday === null || intval($finishedExpertIdentificationEmailsBeforeWeeksMonday) !== intval(date("d", strtotime('Monday this week')))){
 		sendExpertIdentifications();
 	}
 ?>

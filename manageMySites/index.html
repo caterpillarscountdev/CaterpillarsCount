@@ -829,16 +829,17 @@
 					}
 					
 					htmlToAdd += "<div class=\"table\" id=\"site" + siteData[i]["siteID"] + "\">";
-					var url = siteData[i]["url"].trim();
-					if(url == ""){
-						htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["name"] + "</div>";
-					}
-					else{
-						if(url.indexOf("http") != 0){
-							url = "http://" + url;
-						}
-						htmlToAdd += 	"<div class=\"cell\"><a href=\"" + url + "\" target=\"_blank\" class=\"highlighted\">" + siteData[i]["name"] + "</a></div>";
-					}
+					//NOT NEEDED BECAUSE WE LINK TO THE MAPS & GRPAHS PAGE NOW
+					//var url = siteData[i]["url"].trim();
+					//if(url == ""){
+					//	htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["name"] + "</div>";
+					//}
+					//else{
+						//if(url.indexOf("http") != 0){
+						//	url = "http://" + url;
+						//}
+						htmlToAdd += 	"<div class=\"cell\"><a href=\"../mapsAndGraphs/#selectedPhenology" + siteData[i]["siteID"] + "\" class=\"highlighted\">" + siteData[i]["name"] + "</a></div>";
+					//}
 					htmlToAdd += 	"<div class=\"cell\"><span class=\"highlighted pointer underline\" onclick=\"emailAuthorities('" + siteData[i]["siteID"] + "');\">" + authorityNames.join(", ") + "</span></div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["plantCount"] + "</div>";
 					htmlToAdd += 	"<div class=\"cell\">" + siteData[i]["observerCount"] + "</div>";

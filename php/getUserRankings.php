@@ -50,6 +50,7 @@
 				"UniqueDatesThisYear" => 0,
 				"Total" => $total,
 				"TotalUniqueDates" => intval($row["TotalUniqueDates"]),
+				"CaterpillarsThisYear" => "0%",
 				"Caterpillars" => "0%",
 			);
 		}
@@ -68,6 +69,11 @@
 	$query = mysqli_query($dbconn, "SELECT UserFKOfObserver, COUNT(DISTINCT LocalDate) AS UniqueDatesThisYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE UserFKOfObserver IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND Plant.SiteFK" . $siteRestriction . " AND Survey.LocalDate >= STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01 00:00:00'), '%Y-%m-%d %T') GROUP BY UserFKOfObserver");
 	while($row = mysqli_fetch_assoc($query)){
 		$rankingsArray[strval($row["UserFKOfObserver"])]["UniqueDatesThisYear"] = intval($row["UniqueDatesThisYear"]);
+	}
+
+	$query = mysqli_query($dbconn, "SELECT Survey.UserFKOfObserver, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE UserFKOfObserver IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND YEAR(Survey.LocalDate)=YEAR(CURDATE()) AND Plant.SiteFK" . $siteRestriction . " AND ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Survey.UserFKOfObserver");
+	while($row = mysqli_fetch_assoc($query)){
+		$rankingsArray[strval($row["UserFKOfObserver"])]["CaterpillarsThisYear"] = round(((floatval($row["Caterpillars"]) / floatval($rankingsArray[strval($row["UserFKOfObserver"])]["Year"])) * 100), 2) . "%";
 	}
 
 	$query = mysqli_query($dbconn, "SELECT Survey.UserFKOfObserver, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE UserFKOfObserver IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND Plant.SiteFK" . $siteRestriction . " AND ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Survey.UserFKOfObserver");
@@ -95,6 +101,7 @@
 					"UniqueDatesThisYear" => 0,
 					"Total" => 0,
 					"TotalUniqueDates" => 0,
+					"CaterpillarsThisYear" => "0%",
 					"Caterpillars" => "0%",
 				);
 			}

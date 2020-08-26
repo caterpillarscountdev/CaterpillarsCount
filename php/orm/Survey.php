@@ -93,6 +93,10 @@ class Survey
 		$id = intval(mysqli_insert_id($dbconn));
 		mysqli_close($dbconn);
 		
+		if($plant->getSite()->getDateEstablished() == "0000-00-00"){
+			$plant->getSite()->setDateEstablished($localDate);
+		}
+		
 		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $submittedThroughApp);
 	}
 	private function __construct($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $submittedThroughApp) {
@@ -612,8 +616,8 @@ class Survey
 	
 
 //FUNCTIONS
-	public function addArthropodSighting($originalGroup, $length, $quantity, $notes, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva){
-		return ArthropodSighting::create($this, $originalGroup, $length, $quantity, $notes, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva);
+	public function addArthropodSighting($originalGroup, $length, $quantity, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva){
+		return ArthropodSighting::create($this, $originalGroup, $length, $quantity, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva);
 	}
 }		
 ?>

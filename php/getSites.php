@@ -42,7 +42,7 @@
 	}
 	$sitesArray = array();
 	$siteIDs = array();
-	$query = mysqli_query($dbconn, "SELECT `ID`, `Name`, `Latitude`, `Longitude`, `Description` FROM `Site`");
+	$query = mysqli_query($dbconn, "SELECT `ID`, `Name`, `Latitude`, `Longitude`, `Description`, `DateEstablished` FROM `Site`");
 	while($row = mysqli_fetch_assoc($query)){
 		$siteIDs[] = strval($row["ID"]);
 		$sitesArray[strval($row["ID"])] = array(
@@ -50,6 +50,7 @@
 			"Name" => $row["Name"],
 			"Coordinates" => $row["Latitude"] . "," . $row["Longitude"],
 			"Description" => $row["Description"],
+			"DateEstablished" => $row["DateEstablished"],
 		);
 	}
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Plant.ID=Survey.PlantFK GROUP BY Plant.SiteFK");

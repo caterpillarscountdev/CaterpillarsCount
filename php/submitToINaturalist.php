@@ -15,7 +15,7 @@
 		return $param;
 	}
 	
-	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
+	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
 		curl_setopt($ch, CURLOPT_POST, 1);
@@ -30,10 +30,13 @@
 		$plant = Plant::findByCode($plantCode);
 		$site = $plant->getSite();
 		
-		$other = $arthropodNotes;
-		if(trim($other) == ""){
-			$other = "Arthropoda";
+		if(trim($surveyNotes) !== "" && trim($arthropodNotes) !== ""){
+			$surveyNotes = trim($surveyNotes) . " | " . trim($arthropodNotes);
 		}
+		else if(trim($surveyNotes) == ""){
+			$surveyNotes = trim($arthropodNotes);
+		}
+		
 		$newOrders = array(
 			"ant" => "Ants",
 			"aphid" => "Sternorrhyncha",
@@ -47,7 +50,7 @@
 			"moths" => "Lepidoptera",
 			"spider" => "Spiders",
 			"truebugs" => "True bugs",
-			"other" => $other,
+			"other" => "Arthropoda",
 			"unidentified" => "Arthropoda"
 		);
 		$newOrder = $order;
@@ -77,6 +80,9 @@
 		if($order == "moths"){
 			$url .= $observationFieldIDString . "[" . count($params) . "][observation_field_id]=3441" . $observationFieldIDString . "[" . count($params) . "][value]=adult";
 			$url .= $observationFieldIDString . "[" . (count($params) + 1) . "][observation_field_id]=325" . $observationFieldIDString . "[" . (count($params) + 1) . "][value]=adult";
+		}
+		if($order == "beetle" && $beetleLarva){
+			$url .= $observationFieldIDString . "[" . count($params) . "][observation_field_id]=325" . $observationFieldIDString . "[" . count($params) . "][value]=larva";
 		}
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_POST, 1);
@@ -138,7 +144,9 @@
 
 					if($caterpillarsOfEasternNALinkResponse !== "Just making sure that the exec is complete."){
 						//Mark this ArthropodSighting as completed
-						mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
+						if(is_string($observation["id"]) && $observation["id"] != ""){
+							mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0', INaturalistID='" . $observation["id"] . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
+						}
 						
 						//Mark that we're finished submitting to iNaturalist
 						$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");
@@ -146,7 +154,9 @@
 				}
 				else{
 					//Mark this ArthropodSighting as completed and save the INaturalistID to our database
-					mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0', INaturalistID='" . $observation["id"] . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
+					if(is_string($observation["id"]) && $observation["id"] != ""){
+						mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0', INaturalistID='" . $observation["id"] . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
+					}
 					
 					//Mark that we're finished submitting to iNaturalist
 					$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");

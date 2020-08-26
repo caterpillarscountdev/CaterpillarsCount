@@ -10,7 +10,7 @@
 		</script>
 		<!-- End of Google Analytics -->
 
-		<title>Sign Up | Caterpillars Count!</title>
+		<title>Data Use Policy | Caterpillars Count!</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../images/favicon/apple-touch-icon-114x114.png" />
@@ -38,99 +38,35 @@
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
-		<link href="../css/checkbox.css?v=1" rel="stylesheet">
 		<script src="../js/template.js?v=1"></script>
-		<script src="../js/checkbox.js?v=1"></script>
+		<style>
+			.cellDiv .circleImage{
+				display:none;
+			}
+			
+			ol li a{
+				word-break:break-all;
+			}
+			
+			@media only screen and (max-width: 900px){
+				.cellDiv{
+					display:block;
+				}
+				
+				.cellDiv:first-of-type{
+					width:100%;
+				}
+				
+				.cellDiv .circleImage{
+					display:block;
+					margin: 20px auto;
+				}
+			}
+		</style>
 		<script>
-			var loggedInPage = "";
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-
-				if(window.location.toString().indexOf("?p=") > -1){
-					loggedInPage = "/index.html" + window.location.toString().substring(window.location.toString().indexOf("?p="));
-					$(".link").eq(0).find("a").eq(0)[0].href = ("../signIn" + loggedInPage);
-				}
 			});
-
-			function validEmail(email){
-				var atIndex = email.lastIndexOf("@");
-				if(atIndex > 0){
-					var afterAt = email.substring(atIndex + 1);
-					var dotIndex = afterAt.indexOf(".");
-					return (dotIndex > 0 && afterAt.substring(dotIndex + 1).length > 0);
-				}
-				return false;
-			}
-
-			var signingUp = false;
-			function signUp(){
-				if(!signingUp){
-					var errors = "";
-					if($("#signUpFirstName")[0].value.trim() == ""){
-					   	errors += "Enter your first name. ";
-					}
-					if($("#signUpLastName")[0].value.trim() == ""){
-					   	errors += "Enter your last name. ";
-					}
-					var signUpEmail = $("#signUpEmail")[0].value;
-					if(!validEmail(signUpEmail)){
-					   	errors += "Invalid email. ";
-					}
-					if($("#signUpPassword")[0].value.length < 8 || $("#signUpPassword")[0].value.length != $("#signUpPassword")[0].value.replace(/ /g, "").length){
-						errors += "Password must be at least 8 characters with no spaces. ";
-					}
-					if($("#signUpPassword")[0].value != $("#signUpConfirmPassword")[0].value){
-						errors += "Passwords must match.";
-					}
-
-					if(errors.length > 0){
-						queueNotice("error", errors);
-						return false;
-					}
-
-					if(!checkboxIsChecked($("#13Checkbox"))){
-						queueNotice("error", "You did not verify that you are at least 13 years of age. If you are under the age of 13, you must have your parent, guardian or teacher register for you.");
-						return false;
-					}
-
-					signingUp = true;
-					setLoadingButton($("#signUpButton")[0], "Sign up!", true);
-					var xhttp = new XMLHttpRequest();
-					xhttp.onreadystatechange = function() {
-						if (this.readyState == 4 && this.status == 200) {
-							signingUp = false;
-							setLoadingButton($("#signUpButton")[0], "Sign up!", false);
-							if(this.responseText == "success"){
-								queueNotice("confirmation", "Check your email to verify your account. Check spam if needed!");
-								$("#signUpFirstName")[0].value = "";
-								$("#signUpLastName")[0].value = "";
-								$("#signUpEmail")[0].value = "";
-								$("#signUpPassword")[0].value = "";
-								$("#signUpConfirmPassword")[0].value = "";
-								uncheckCheckbox($("#13Checkbox"));
-								
-								var unverifiedEmails = JSON.parse(window.localStorage.getItem("unverifiedEmails") || "[]");
-								if(unverifiedEmails.indexOf(signUpEmail) == -1){
-									unverifiedEmails[unverifiedEmails.length] = signUpEmail;
-									window.localStorage.setItem("unverifiedEmails", JSON.stringify(unverifiedEmails));
-								}
-
-								$("#noticeInteractionBlock").click(function(){
-									window.location = ("../signIn" + loggedInPage);
-								});
-								$("#confirmation").click(function(){
-									window.location = ("../signIn" + loggedInPage);
-								});
-							}
-							else{
-								queueNotice("error", this.responseText);
-							}
-						}
-					};
-					xhttp.open("GET", "../php/signUp.php?firstName=" + encodeURIComponent($("#signUpFirstName")[0].value.trim()) + "&lastName=" + encodeURIComponent($("#signUpLastName")[0].value.trim()) + "&email=" + encodeURIComponent(signUpEmail) + "&password=" + encodeURIComponent($("#signUpPassword")[0].value), true);
-					xhttp.send();
-				}
-			}
 		</script>
 	</head>
 	<body>
@@ -160,7 +96,7 @@
 			<div id="splashOverlay">
 				<div id="splashIntroText">Welcome to</div>
 				<div id="splashMainText">Caterpillars Count!</div>
-				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">Explore maps & graphs</button>
+				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">View Privacy Policy</button>
 			</div>
 		</div>
 		<header>
@@ -225,25 +161,26 @@
 		</header>
 		<main>
 			<div class="panel">
-				<h2>Create New Account</h2>
-				<div id="signUp">
-					<input type="text" placeholder="first name" id="signUpFirstName"/>
-					<input type="text" placeholder="last name" id="signUpLastName"/>
-					<input type="text" placeholder="email" id="signUpEmail" autocapitalize="off"/>
-					<input type="password" placeholder="password" id="signUpPassword"/>
-					<input type="password" placeholder="confirm password" id="signUpConfirmPassword"/>
-					<table class="checkboxTable">
-						<tr onclick="toggleCheckbox($(this).find('.checkbox'));">
-							<td><div class="checkbox" id="13Checkbox"></div></td>
-							<td>I am at least 13 years of age.</td>
-							<td onclick="event.stopPropagation();queueNotice('alert', 'If you are under the age of 13, you must have your parent, guardian or teacher register for you.');"><img src="../images/question.png"/></td>
-						<tr>
-					</table>
-					<button onclick="signUp();" id="signUpButton">Create New Account!</button>
-					<div class="links">
-						<div class="link"><a href="../signIn">Sign In</a></div>
+				<h2>Data Use Policy</h2>
+				<div class="tagline">Caterpillars Count! requires all users, referred to as "Users," who have access to Caterpillars Count! data via the Website to abide by the following terms of this Caterpillars Count! Data Use Policy.</div>
+				<div class="content">
+					<div>
+						<div class="imageTextTable tableDiv">
+							<div class="cellDiv">
+								<div class="circleImage" style="background-image:url('../images/examineDocument.png');"></div>
+							</div>
+							<div class="cellDiv scrollAnimationElement fadeInOnScroll">
+								<ol>
+									<li>Data accessible via the Caterpillars Count! Data Download page and Maps and Graphs page are openly and universally available to all users, under a Creative Commons Zero (CC0) license, enabling users to share and adapt the data for any purpose. Full terms of the Creative Commons – Attribution license are at: <a href="https://creativecommons.org/publicdomain/zero/1.0/legalcode" target="_blank">https://creativecommons.org/publicdomain/zero/1.0/legalcode</a></li>
+									<li>Caterpillars Count! is not responsible for data content or the use of the data.</li>
+									<li>Neither Caterpillars Count! nor its employees or contractors is liable or responsible for the content of data, or for any loss, damage, claim, cost, or expense, however it may arise, from an inability to use the Caterpillars Count! Database and Site.</li>
+									<li>Caterpillars Count! disclaims all liability for and makes no warranties, expressed or implied, with respect to these products and their manufacturers, including without limitation, any implied warranties or merchantability or fitness for a particular purpose.</li>
+                  							<li>While substantial efforts are made to ensure the accuracy of Caterpillars Count! data and documentation contained in a data set, complete accuracy of data and metadata cannot be guaranteed. All Caterpillars Count! data and metadata are made available "as is." Users of Caterpillars Count! data hold all parties involved in the production and distribution of a data set harmless for damages resulting from its use or interpretation.</li>
+								</ol>
+							</div>
+						</div>
 					</div>
-				</div>
+        			</div>
 			</div>
 		</main>
 		<footer>

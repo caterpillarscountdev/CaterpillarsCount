@@ -13,7 +13,7 @@
  	$readableArthropods = array(
  		"ant" => "Ants",
  		"aphid" => "Aphids and Psyllids",
- 		"bee" => "Bees and Wasps",
+ 		"bee" => "Bees, Wasps, Sawflies",
  		"beetle" => "Beetles",
  		"caterpillar" => "Caterpillars",
  		"daddylonglegs" => "Daddy Longlegs",

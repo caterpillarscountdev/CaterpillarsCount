@@ -41,6 +41,7 @@
 				"UniqueDatesThisYear" => 0,
 				"Total" => $total,
 				"TotalUniqueDates" => intval($row["TotalUniqueDates"]),
+				"CaterpillarsThisYear" => "0%",
 				"Caterpillars" => "0%",
 			);
 		}
@@ -59,6 +60,11 @@
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT LocalDate) AS UniqueDatesThisYear FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND Plant.SiteFK<>2 AND Survey.LocalDate >= STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01 00:00:00'), '%Y-%m-%d %T') GROUP BY Plant.SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
 		$rankingsArray[strval($row["SiteFK"])]["UniqueDatesThisYear"] = intval($row["UniqueDatesThisYear"]);
+	}
+
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND YEAR(Survey.LocalDate)=YEAR(CURDATE()) AND Plant.SiteFK<>2 AND ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Plant.SiteFK");
+	while($row = mysqli_fetch_assoc($query)){
+		$rankingsArray[strval($row["SiteFK"])]["CaterpillarsThisYear"] = round(((floatval($row["Caterpillars"]) / floatval($rankingsArray[strval($row["SiteFK"])]["Year"])) * 100), 2) . "%";
 	}
 
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND Plant.SiteFK<>2 AND ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Plant.SiteFK");
@@ -86,6 +92,7 @@
 					"UniqueDatesThisYear" => 0,
 					"Total" => 0,
 					"TotalUniqueDates" => 0,
+					"CaterpillarsThisYear" => "0%",
 					"Caterpillars" => "0%",
 				);
 			}

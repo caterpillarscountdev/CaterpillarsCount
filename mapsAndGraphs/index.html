@@ -35,11 +35,13 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 		<script src="https://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3VugOTqs_94H5B51-xVyxBGHqx4uqxTA"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC66haLntB413i6pkgSCXl3wpbrS4SPEx4"></script>
 		<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<script src="../js/libraries/jszip.min.js"></script>
+		<script src="../js/libraries/FileSaver.js"></script>
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=2"></script>
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
@@ -634,6 +636,18 @@
 			.smallSelect .options>div:hover{
 				background:#ebfeff;
 			}
+			
+			.bottomTooltip .smallSelect{
+				color:#666;
+			}
+			
+			.bottomTooltip .smallSelect .selected{
+				background:rgba(255,255,255,0.3);
+				color:#fff;
+			}
+			
+			.bottomTooltip
+			
 			.xAxisLabel{
 				text-align:center;
 				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
@@ -1368,7 +1382,7 @@
 							data = data.replace("true|", "");
 							console.log("Loaded site user leaderbard.");
 							siteUserRankings = JSON.parse(data);
-							populateSiteUserLeaderboard("Caterpillars", false);
+							populateSiteUserLeaderboard("CaterpillarsThisYear", false);
 						}
 						else{
 							$("#siteUserLeaderboard")[0].innerHTML = "";
@@ -1401,7 +1415,15 @@
 					$("#showMoreSiteUserRankings").fadeOut(200);
 				}
 			}
+			var siteUserCaterpillarsTimespan = "year";
 			function populateSiteUserLeaderboard(sortingMetric, keepCurrentNumberShown){
+				if(sortingMetric == "Caterpillars"){
+					siteUserCaterpillarsTimespan = "millennium";
+				}
+				else if(sortingMetric == "CaterpillarsThisYear"){
+					siteUserCaterpillarsTimespan = "year";
+				}
+				
 				var rankings = siteUserRankings.sort(function(a, b){
 					var aVal = a[sortingMetric];
 					var bVal = b[sortingMetric];
@@ -1414,7 +1436,7 @@
 						if(bVal == "(anonymous user)") return -1;
 					}
 					else{
-						if(sortingMetric == "Caterpillars"){
+						if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 							aVal = aVal.replace("%", '');
 							bVal = bVal.replace("%", '');
 						}
@@ -1423,6 +1445,12 @@
 					}
 					if(aVal < bVal) return -1 * order;
 					if(aVal > bVal) return 1 * order;
+					if(sortingMetric != "CaterpillarsThisYear"){
+						aVal = Number(a["CaterpillarsThisYear"].replace("%", ''));
+						bVal = Number(b["CaterpillarsThisYear"].replace("%", ''));
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
 					if(sortingMetric != "Caterpillars"){
 						aVal = Number(a["Caterpillars"].replace("%", ''));
 						bVal = Number(b["Caterpillars"].replace("%", ''));
@@ -1484,25 +1512,25 @@
 					htmlToAdd += 				" style=\"text-decoration:underline;\"";
 				}
 				htmlToAdd += 					">Millennium</th>";
-				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Caterpillars', true);\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
-				if(sortingMetric == "Caterpillars"){
+				htmlToAdd += 					"<th onclick=\"populateSiteUserLeaderboard('Caterpillars" + (siteUserCaterpillarsTimespan == "year" ? "ThisYear" : "") + "', true);\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
+				if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 					htmlToAdd += 				"text-decoration:underline;";
 				}
-				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></th>";
+				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (siteUserCaterpillarsTimespan == "year" ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateSiteUserLeaderboard('CaterpillarsThisYear', true);\">year</div><div onclick=\"smallSelectOption(this);populateSiteUserLeaderboard('Caterpillars', true);\">millennium</div></div></div></div></th>";
 				htmlToAdd += 				"</tr>";
 				htmlToAdd += 			"</thead>";
 				var endRankings = "";
 				var rank = 1;
 				for(var i = 0; i < rankings.length; i++){
-					var unsubstantiatedCaterpillarStat = (sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10);
-					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This user has submitted fewer than 10 surveys and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
+					var unsubstantiatedCaterpillarStat = ((sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10) || (sortingMetric == "CaterpillarsThisYear" && Number(rankings[i]["Year"]) < 10));
+					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This user has submitted fewer than 10 surveys at this site" + (sortingMetric == "CaterpillarsThisYear" ? " this year" : "") + " and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
 					tempHtmlToAdd +=			"<td><div>" + (unsubstantiatedCaterpillarStat ? "&ndash;" : rank++) + "</div></td>";
 					tempHtmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\">" + rankings[i]["Name"] + "</div></td>";
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Week"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisWeek"] + "</div></div></td>";
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
 					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
-					tempHtmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></div></td>";
+					tempHtmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars" + (siteUserCaterpillarsTimespan == "year" ? "ThisYear" : "")] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (siteUserCaterpillarsTimespan == "year" ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateSiteUserLeaderboard('CaterpillarsThisYear', true);\">year</div><div onclick=\"smallSelectOption(this);populateSiteUserLeaderboard('Caterpillars', true);\">millennium</div></div></div></div></div></td>";
 					tempHtmlToAdd += 		"</tr>";
 					if(unsubstantiatedCaterpillarStat){
 						endRankings += tempHtmlToAdd;
@@ -1824,6 +1852,7 @@
 							siteInformation: {
 								ID: sites[i]["ID"],
 								Name: sites[i]["Name"],
+								DateEstablished: sites[i]["DateEstablished"],
 								Description: sites[i]["Description"],
 								UserCount: sites[i]["UserCount"],
 								ArthropodGroupCount: sites[i]["ArthropodGroupCount"],
@@ -1887,7 +1916,7 @@
 					//success
 					console.log("Site ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					siteRankings = JSON.parse(data);
-					lastSiteSortingMetric = "Caterpillars";
+					lastSiteSortingMetric = "CaterpillarsThisYear";
 					if(++loadedRankingsDataCount == 2){
 						populateLeaderboard(lastSiteSortingMetric);
 					}
@@ -1906,7 +1935,7 @@
 						console.log("User ranking data loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 						data = data.replace("true|", "");
 						userRankings = JSON.parse(data);
-						lastUserSortingMetric = "Caterpillars";
+						lastUserSortingMetric = "CaterpillarsThisYear";
 						if(++loadedRankingsDataCount == 2){
 							populateLeaderboard(lastSiteSortingMetric);
 						}
@@ -1925,17 +1954,37 @@
 					//complete
 				});
 			}
+			
+			var siteCaterpillarsTimespan = "year";
+			var userCaterpillarsTimespan = "year";
 			function populateLeaderboard(sortingMetric){
 				if(loadedRankingsDataCount < 2){return false;}
 				var rankings = [];
 				if(shownRankings == "Site"){
 					rankings = siteRankings;
 					lastSiteSortingMetric = sortingMetric;
+					
+					if(sortingMetric == "Caterpillars"){
+						siteCaterpillarsTimespan = "millennium";
+					}
+					else if(sortingMetric == "CaterpillarsThisYear"){
+						siteCaterpillarsTimespan = "year";
+					}
 				}
 				else{
 					rankings = userRankings;
 					lastUserSortingMetric = sortingMetric;
+					
+					if(sortingMetric == "Caterpillars"){
+						userCaterpillarsTimespan = "millennium";
+					}
+					else if(sortingMetric == "CaterpillarsThisYear"){
+						userCaterpillarsTimespan = "year";
+					}
 				}
+				
+				var caterpillarTimespanIsYear = (shownRankings == "Site" && siteCaterpillarsTimespan == "year") || (shownRankings == "User" && userCaterpillarsTimespan == "year");
+				
 				rankings = rankings.sort(function(a, b){
 					var aVal = a[sortingMetric];
 					var bVal = b[sortingMetric];
@@ -1948,7 +1997,7 @@
 						if(bVal == "(anonymous user)") return -1;
 					}
 					else{
-						if(sortingMetric == "Caterpillars"){
+						if(sortingMetric == "CaterpillarsThisYear" || sortingMetric == "Caterpillars"){
 							aVal = aVal.replace("%", '');
 							bVal = bVal.replace("%", '');
 						}
@@ -1957,6 +2006,12 @@
 					}
 					if(aVal < bVal) return -1 * order;
 					if(aVal > bVal) return 1 * order;
+					if(sortingMetric != "CaterpillarsThisYear"){
+						aVal = Number(a["CaterpillarsThisYear"].replace("%", ''));
+						bVal = Number(b["CaterpillarsThisYear"].replace("%", ''));
+						if(aVal < bVal) return 1;
+						if(aVal > bVal) return -1;
+					}
 					if(sortingMetric != "Caterpillars"){
 						aVal = Number(a["Caterpillars"].replace("%", ''));
 						bVal = Number(b["Caterpillars"].replace("%", ''));
@@ -2018,35 +2073,45 @@
 					htmlToAdd += 				" style=\"text-decoration:underline;\"";
 				}
 				htmlToAdd += 					">Millennium</th>";
-				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Caterpillars');\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
-				if(sortingMetric == "Caterpillars"){
+				htmlToAdd += 					"<th onclick=\"populateLeaderboard('Caterpillars" + (caterpillarTimespanIsYear ? "ThisYear" : "") + "');\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;";
+				if(sortingMetric == "Caterpillars" || sortingMetric == "CaterpillarsThisYear"){
 					htmlToAdd += 				"text-decoration:underline;";
 				}
-				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></th>";
+				htmlToAdd += 					"\">Caterpillars<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (caterpillarTimespanIsYear ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateLeaderboard('CaterpillarsThisYear');\">year</div><div onclick=\"smallSelectOption(this);populateLeaderboard('Caterpillars');\">millennium</div></div></div></div></th>";
 				htmlToAdd += 				"</tr>";
 				htmlToAdd += 			"</thead>";
+				
+				var endRankings = "";
 				for(var i = 0; i < rankings.length; i++){
-					htmlToAdd += 		"<tr>";
-					htmlToAdd +=			"<td><div>" + (i + 1) + "</div></td>";
-					htmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\"";
+					var unsubstantiatedCaterpillarStat = ((sortingMetric == "Caterpillars" && Number(rankings[i]["Total"]) < 10) || (sortingMetric == "CaterpillarsThisYear" && Number(rankings[i]["Year"]) < 10));
+					var tempHtmlToAdd = 		"<tr" + (unsubstantiatedCaterpillarStat ? " style=\"opacity:.5\" title=\"This " + shownRankings.toLowerCase() + " has submitted fewer than 10 surveys" + (sortingMetric == "CaterpillarsThisYear" ? " this year" : "") + " and therefore cannot be considered for the top of a Caterpillar Proportion leaderboard.\"" : "") + ">";
+					tempHtmlToAdd +=			"<td><div>" + (unsubstantiatedCaterpillarStat ? "&ndash;" : (i + 1)) + "</div></td>";
+					tempHtmlToAdd += 			"<td><div id=\"" + rankings[i]["ID"] + "\"";
 					if(shownRankings == "Site"){
-					   htmlToAdd += 		" onclick=\"markerClick(markers['" + rankings[i]["ID"] + "'])\" class=\"pointer underline\"";
+					   tempHtmlToAdd += 		" onclick=\"markerClick(markers['" + rankings[i]["ID"] + "'])\" class=\"pointer underline\"";
 					}
-					htmlToAdd += 			">" + rankings[i]["Name"] + "</div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Week"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisWeek"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
-					htmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars"] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars</div></div></td>";
-					htmlToAdd += 		"</tr>";
+					tempHtmlToAdd += 			">" + rankings[i]["Name"] + "</div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Week"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisWeek"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Month"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisMonth"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Year"] + "<div class='underText'>" + rankings[i]["UniqueDatesThisYear"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div>" + rankings[i]["Total"] + "<div class='underText'>" + rankings[i]["TotalUniqueDates"] + "</div></div></td>";
+					tempHtmlToAdd += 			"<td><div style=\"position:relative;\" onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\">" + rankings[i]["Caterpillars" + (caterpillarTimespanIsYear ? "ThisYear" : "")] + "<div class=\"bottomToolTip\"><div class=\"arrow\"></div>Proportion of surveys that have caterpillars this <div class=\"smallSelect caterpillarsTimeSpanSmallSelect\" onclick=\"event.stopPropagation();$('.smallSelect .options').fadeOut(0);\"><div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + (caterpillarTimespanIsYear ? "year" : "millennium") + "</div><div class=\"options\" style=\"min-width: 120px; display: none;\"><div onclick=\"smallSelectOption(this);populateLeaderboard('CaterpillarsThisYear');\">year</div><div onclick=\"smallSelectOption(this);populateLeaderboard('Caterpillars');\">millennium</div></div></div></div></div></td>";
+					tempHtmlToAdd += 		"</tr>";
+					if(unsubstantiatedCaterpillarStat){
+						endRankings += tempHtmlToAdd;
+					}
+					else{
+						htmlToAdd += tempHtmlToAdd;
+					}
 				}
+				htmlToAdd += endRankings;
 				htmlToAdd += 		"</table>";
 				$("#rankings")[0].innerHTML = htmlToAdd;
 				if(shownRankings == "User"){
-					$("#globalLeaderboardNotice")[0].innerHTML = "Users with fewer than 10 surveys are not included on this leaderboard. If you would like to hide your name from leaderboards like this one, please visit your <a href=\"../settings\" class=\"highlighted\">Settings</a> page and click on the \"Privacy\" section.";
+					$("#globalLeaderboardNotice")[0].innerHTML = "Users with fewer than 10 surveys are not included on this leaderboard. % Caterpillars only displayed for users who have submitted at least 10 surveys during the specified timespan. If you would like to hide your name from leaderboards like this one, please visit your <a href=\"../settings\" class=\"highlighted\">Settings</a> page and click on the \"Privacy\" section.";
 				}
 				else{
-					$("#globalLeaderboardNotice")[0].innerHTML = "Sites with fewer than 10 surveys are not included on this leaderboard.";
+					$("#globalLeaderboardNotice")[0].innerHTML = "Sites with fewer than 10 surveys are not included on this leaderboard. % Caterpillars only displayed for sites that have submitted at least 10 surveys during the specified timespan.";
 				}
 				$("#showMoreRankings").stop().fadeIn(0);
 				resizeSuperHeader();
@@ -2383,7 +2448,7 @@
 									"<div onclick=\"smallSelectOption(this);\">All arthropods</div>" +
 									"<div onclick=\"smallSelectOption(this);\">Ants</div>" +
 									"<div onclick=\"smallSelectOption(this);\">Aphids and psyllids</div>" +
-									"<div onclick=\"smallSelectOption(this);\">Bees and wasps</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Bees, wasps, sawflies</div>" +
 									"<div onclick=\"smallSelectOption(this);\">Beetles</div>" +
 									"<div onclick=\"smallSelectOption(this);\">Caterpillars</div>" +
 									"<div onclick=\"smallSelectOption(this);\">Daddy longlegs</div>" +
@@ -2424,7 +2489,7 @@
 				//get options
 				var optionsString = $(labelDiv).find(".description").eq(0)[0].innerHTML;
 				var arthropod = optionsString;
-				var arthropods = ["All arthropods", "Ants", "Aphids and psyllids", "Bees and wasps", "Beetles", "Caterpillars", "Daddy longlegs", "Flies", "Grasshoppers and crickets", "Leaf hoppers and cicadas", "Moths and butterflies", "Spiders", "True bugs", "Other arthropods", "Unidentified arthropods"];
+				var arthropods = ["All arthropods", "Ants", "Aphids and psyllids", "Bees, wasps, sawflies", "Beetles", "Caterpillars", "Daddy longlegs", "Flies", "Grasshoppers and crickets", "Leaf hoppers and cicadas", "Moths and butterflies", "Spiders", "True bugs", "Other arthropods", "Unidentified arthropods"];
 				for(var i = 0; i < arthropods.length; i++){
 					if(arthropod.indexOf(arthropods[i]) == 0){
 						arthropod = arthropods[i];
@@ -2456,7 +2521,7 @@
 			function addNewSet(labelDiv){
 				var options = $(labelDiv).find(".smallSelect .selected");
 				var arthropod = options.eq(0)[0].innerHTML;
-				var readableAndUnreadableArthropods = [["All arthropods", "%"], ["Ants", "ant"], ["Aphids and psyllids", "aphid"], ["Bees and wasps", "bee"], ["Beetles", "beetle"], ["Caterpillars", "caterpillar"], ["Daddy longlegs", "daddylonglegs"], ["Flies", "fly"], ["Grasshoppers and crickets", "grasshopper"], ["Leaf hoppers and cicadas", "leafhopper"], ["Moths and butterflies", "moths"], ["Spiders", "spider"], ["True bugs", "truebugs"], ["Other arthropods", "other"], ["Unidentified arthropods", "unidentified"]];
+				var readableAndUnreadableArthropods = [["All arthropods", "%"], ["Ants", "ant"], ["Aphids and psyllids", "aphid"], ["Bees, wasps, sawflies", "bee"], ["Beetles", "beetle"], ["Caterpillars", "caterpillar"], ["Daddy longlegs", "daddylonglegs"], ["Flies", "fly"], ["Grasshoppers and crickets", "grasshopper"], ["Leaf hoppers and cicadas", "leafhopper"], ["Moths and butterflies", "moths"], ["Spiders", "spider"], ["True bugs", "truebugs"], ["Other arthropods", "other"], ["Unidentified arthropods", "unidentified"]];
 				for(var i = 0; i < readableAndUnreadableArthropods.length; i++){
 					if(readableAndUnreadableArthropods[i][0] == arthropod){
 						arthropod = readableAndUnreadableArthropods[i][1];
@@ -2775,7 +2840,7 @@
 				}, 100);
 			}
 			function populateCompositionChart(xAxis, yAxis, data){
-				var readableArthropods = ["Ants", "Aphids and Psyllids", "Bees and Wasps", "Beetles", "Caterpillars", "Daddy Longlegs", "Flies", "Grasshoppers and Crickets", "Leaf Hoppers and Cicadas", "Butterflies and Moths", "Spiders", "True Bugs", "Other", "Unidentified"];
+				var readableArthropods = ["Ants", "Aphids and Psyllids", "Bees, Wasps, Sawflies", "Beetles", "Caterpillars", "Daddy Longlegs", "Flies", "Grasshoppers and Crickets", "Leaf Hoppers and Cicadas", "Butterflies and Moths", "Spiders", "True Bugs", "Other", "Unidentified"];
 				var barTitles = [];
 				var datasets = {};
 				for(var barTitle in data){
@@ -2928,7 +2993,7 @@
 			//END OF COMPOSITION CHART STUFF
 			function downloadMapData(){
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)")];
-				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+				var csvString = headers.join(",") + "\r\n";
 				for (var siteID in markers) {
 					if (markers.hasOwnProperty(siteID)) {
 						var marker = markers[siteID];
@@ -2939,10 +3004,43 @@
 						csvString += row.join(",") + "\r\n";
 					}
 				}
+				
+				var headerDescriptions = {
+					"site": "Name of the Caterpillars Count! site",
+					"description": "Description of the Caterpillars Count! site",
+					"latitude": "Latitude of the Caterpillars Count! site",
+					"longitude": "Longitude of the Caterpillars Count! site",
+					"included observation methods": "Observation methods included in the mapping calculations (\"Visual\", \"Beat Sheet\", or \"All\"). Beat sheet surveys are collected by shaking a branch over a \"beat sheet\" and counting the arthropods that fall off the branch. Visual surveys are simply visual observations of arthropods on 50 leaves.",
+					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
+					"minimum arthropod length (mm)": "The minimum length for arthropods to be included in the mapping calculations.",
+					"plant species": "The specific plant species included in the mapping calculations. \"All\"  means no particular plant species was specified, so all were included.",
+					"surveys with wet leaves are included": "Data includes surveys where the leaves were wet at the time of the survey; FALSE = no, TRUE = yes",
+					"earliest allowed month": "The earliest month included in the mapping calculations; 1 - 12, with 1 denoting January and 12 denoting December.",
+					"latest allowed month": "The latest month included in the mapping calculations; 1 - 12, with 1 denoting January and 12 denoting December.",
+					"earliest allowed year": "The earliest year included in the mapping calculations",
+					"latest allowed year": "The latest year included in the mapping calculations",
+					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified in \"Arthropod Group\". Need not sum to 100 across arthropod groups.",
+					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for the arthropod type specified in \"Arthropod Group\".",
+					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group (found in the \"Arthropod Group\" field) divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
+				};
+				
+				var metadataText = "";
+				for(var i = 0; i < headers.length; i++){
+					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
+				}
+				
 				var date = new Date();
-				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCountMapData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
-				var links = $("#downloadLinks a");
-				links.eq(links.length - 1)[0].click();
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Map Data. " + ("0" + mapFilters.monthStart).slice(-2) + "/01/" + mapFilters.yearStart + "-" + ("0" + mapFilters.monthEnd).slice(-2) + "/" + getMonthLength(mapFilters.monthEnd, mapFilters.yearEnd) + "/" + mapFilters.yearEnd + " for Site: All sites. Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
+				
+				var zip = new JSZip();
+				var folder = zip.folder("Caterpillars Count! map data");
+				folder.file("metadata.txt", metadataText);
+				folder.file("data.csv", csvString);
+				zip.generateAsync({type:"blob"})
+				.then(function(content) {
+					saveAs(content, "CaterpillarsCountMapData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".zip");
+				});
+				
 				//track download
 				var downloadedFile = "Dynamically Generated Map CSV";
 				var downloadFilters = "Comparison Metric: " + mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)") + ", Observation Method: " + mapFilters.observationMethod.replace("%", "All") + ", Arthropod Group: " + mapFilters.arthropodGroup.replace("%", "All") + ", Minimum Length (mm): " + mapFilters.minimumLength + ", Plant Species: " + mapFilters.plantSpecies + ", Wet Leaves: " + mapFilters.wetLeaves.toString() + ", Month Start: " + mapFilters.monthStart + ", Month End: " + mapFilters.monthEnd + ", Year Start: " + mapFilters.yearStart + ", YearEnd: " + mapFilters.yearEnd;
@@ -2963,7 +3061,7 @@
 			}
 			function showMapDownloadButton(){
 				$("#mapDownloadButton")[0].style.cursor = "pointer";
-				$("#mapDownloadButton")[0].onclick = function(){downloadMapData();submitClassificationToSciStarter();};
+				$("#mapDownloadButton")[0].onclick = function(){promptConfirm('To download, read and agree to the Caterpillars Count! <a href="../dataUsePolicy" target="_blank">data use</a> and <a href="../dataAttributionPolicy" target="_blank">attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadMapData();submitClassificationToSciStarter();});};
 				$("#mapDownloadButton").stop().animate({opacity:"1"});
 			}
 			function getJulianDay(year, month, day){
@@ -2981,6 +3079,16 @@
 				}
 				dayCount += day;
 				return dayCount;
+			}
+			function getMonthLength(month, year){
+				year = Number(year);
+				month = Number(month);
+				var isLeapYear = (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
+				var monthCounts = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+				if(isLeapYear){
+					monthCounts[1] += 1;
+				}
+				return monthCounts[month - 1];
 			}
 			var indexedMarkers = {};
 			function findMarkerBySiteName(siteName){
@@ -3001,18 +3109,24 @@
 			function downloadPhenologyData(){
 				var metric = $("#lineGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Date", "Julian Day", metric];
-				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+				var csvString = headers.join(",") + "\r\n";
 				var filtersString = "Y-Axis: " + metric + ", Lines:";
+				
+				var date = new Date();
+				var earliestEstablishedYear = date.getFullYear();
+				var mostRecentlySurveyedYear = 0;
+				var untouchedSiteNames = ["No sites"];
+				var siteNames = [];
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					//nodata
 				}
 				else{
 					var datasets = lineConfig.data.datasets;
-					var siteNames = [];
+					untouchedSiteNames = [];
 					for(var i = 0; i < datasets.length; i++){
 						var optionsString = datasets[i].label;
 						var arthropod = optionsString;
-						var arthropods = ["All arthropods", "Ants", "Aphids and psyllids", "Bees and wasps", "Beetles", "Caterpillars", "Daddy longlegs", "Flies", "Grasshoppers and crickets", "Leaf hoppers and cicadas", "Moths and butterflies", "Spiders", "True bugs", "Other arthropods", "Unidentified arthropods"];
+						var arthropods = ["All arthropods", "Ants", "Aphids and psyllids", "Bees, wasps, sawflies", "Beetles", "Caterpillars", "Daddy longlegs", "Flies", "Grasshoppers and crickets", "Leaf hoppers and cicadas", "Moths and butterflies", "Spiders", "True bugs", "Other arthropods", "Unidentified arthropods"];
 						for(var j = 0; j < arthropods.length; j++){
 							if(arthropod.indexOf(arthropods[j]) == 0){
 								arthropod = arthropods[j];
@@ -3022,6 +3136,9 @@
 						var siteName = optionsString.substring(0, optionsString.lastIndexOf(" in")).replace(arthropod + " at ", "");
 						if(siteNames.indexOf(siteName.replace(/[\W_]+/g," ")) == -1){
 							siteNames[siteNames.length] = siteName.replace(/[\W_]+/g," ");
+						}
+						if(untouchedSiteNames.indexOf(siteName) == -1){
+						   untouchedSiteNames[untouchedSiteNames.length] = siteName;
 						}
 						var year = Number(optionsString.substring(optionsString.lastIndexOf(" in")).replace(/\D/g, ""));
 						var marker = findMarkerBySiteName(siteName);
@@ -3034,12 +3151,68 @@
 							csvString += row.join(",") + "\r\n";
 						}
 						filtersString += " " + arthropod + " at " + siteName + " in " + year + ";";
+						
+						if(year < Number(earliestEstablishedYear)){
+							earliestEstablishedYear = year;
+						}
+						
+						if(year > Number(mostRecentlySurveyedYear)){
+							mostRecentlySurveyedYear = year;
+						}
 					}
 				}
-				var date = new Date();
-				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCountPhenologyData-" + siteNames.join("-") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
-				var links = $("#downloadLinks a");
-				links.eq(links.length - 1)[0].click();
+				
+				if(mostRecentlySurveyedYear == 0){
+					mostRecentlySurveyedYear = earliestEstablishedYear;
+				}
+				
+				var headerDescriptions = {
+					"site": "Name of the Caterpillars Count! site",
+					"description": "Description of the Caterpillars Count! site",
+					"latitude": "Latitude of the Caterpillars Count! site",
+					"longitude": "Longitude of the Caterpillars Count! site",
+					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
+					"date": "The Gregorian calendar date in the form YYYY-MM-DD",
+					"julian day": "The number of days since the beginning of the year, starting with January 1st as 1",
+					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
+					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
+					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
+				};
+				
+				var metadataText = "";
+				for(var i = 0; i < headers.length; i++){
+					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
+				}
+				
+				untouchedSiteNames.sort(function(a, b){
+					if(a.toLowerCase() < b.toLowerCase()) return -1;
+					if(a.toLowerCase() > b.toLowerCase()) return 1;
+					return 0;
+				});
+				if(untouchedSiteNames.length == 0){
+					untouchedSiteNames = ["No sites"];
+				}
+				
+				siteNames.sort(function(a, b){
+					if(a.toLowerCase() < b.toLowerCase()) return -1;
+					if(a.toLowerCase() > b.toLowerCase()) return 1;
+					return 0;
+				});
+				if(siteNames.length == 0){
+					siteNames = ["No sites".replace(/[\W_]+/g," ")];
+				}
+				
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Phenology Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
+				
+				var zip = new JSZip();
+				var folder = zip.folder("Caterpillars Count! " + siteNames.join(" - ") + " phenology data");
+				folder.file("metadata.txt", metadataText);
+				folder.file("data.csv", csvString);
+				zip.generateAsync({type:"blob"})
+				.then(function(content) {
+					saveAs(content, "CaterpillarsCountPhenologyData-" + siteNames.join("-") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".zip");
+				});
+				
 				//track download
 				var downloadedFile = "Dynamically Generated Phenology CSV";
 				var downloadFilters = filtersString;
@@ -3059,6 +3232,7 @@
 				var filtersString = "X-Axis: " + xAxis + ", Y-Axis: " + yAxis;
 				var headers = [];
 				var siteName = "";
+				var siteMarkers = {};
 				if(xAxis == "site"){
 					headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", yAxis];
 					filtersString += ", Sites Included:";
@@ -3071,7 +3245,7 @@
 					headers = ["Site", "Description", "Latitude", "Longitude", "Plant Species", "Arthropod Group", yAxis];
 					siteName = $("#selectedSitePanel h2").eq(0)[0].innerHTML;
 				}
-				var csvString = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+				var csvString = headers.join(",") + "\r\n";
 				for(var i = 0; i < barConfig.data.labels.length; i++){
 					if(xAxis == "site"){
 						siteName = barConfig.data.labels[i];
@@ -3081,6 +3255,7 @@
 						filtersString += " " + siteName;
 					}
 					var marker = findMarkerBySiteName(siteName);
+					siteMarkers[siteName] = marker;
 					for(var j = 0; j < barConfig.data.datasets.length; j++){
 						var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), barConfig.data.datasets[j].label, barConfig.data.datasets[j].data[i]];
 						if(xAxis != "site"){
@@ -3093,9 +3268,65 @@
 					}
 				}
 				var date = new Date();
-				$("#downloadLinks").append("<a href=\"" + encodeURI(csvString) + "\" download=\"CaterpillarsCount" + $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.replace(/ /g, "") + "CompositionData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv\">download csv</a>");
-				var links = $("#downloadLinks a");
-				links.eq(links.length - 1)[0].click();
+				
+				var headerDescriptions = {
+					"site": "Name of the Caterpillars Count! site",
+					"description": "Description of the Caterpillars Count! site",
+					"latitude": "Latitude of the Caterpillars Count! site",
+					"longitude": "Longitude of the Caterpillars Count! site",
+					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
+					"percent of arthropods": "The percentage of all arthropods encountered by number of individuals. Must sum to 100 across arthropod groups.",
+					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
+					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
+					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
+				};
+				
+				var metadataText = "";
+				for(var i = 0; i < headers.length; i++){
+					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
+				}
+				
+				var earliestEstablishedYear = date.getFullYear();
+				var siteNames = [];
+				for(var siteName in siteMarkers){
+					if(Object.prototype.hasOwnProperty.call(siteMarkers, siteName)){
+						siteNames[siteNames.length] = siteName;
+						if("DateEstablished" in siteMarkers[siteName].siteInformation && siteMarkers[siteName].siteInformation.DateEstablished.indexOf("-") > -1){
+							var yearEstablished = Number(siteMarkers[siteName].siteInformation.DateEstablished.split("-")[0]);
+							if(yearEstablished > 0 && yearEstablished < Number(earliestEstablishedYear)){
+								earliestEstablishedYear = yearEstablished;
+							}
+						}
+					}
+				}
+				
+				var mostRecentlySurveyedYear = earliestEstablishedYear;
+				for(var i = 0; i < siteNames.length; i++){
+					if("MostRecentDateTime" in siteMarkers[siteNames[i]].siteInformation && siteMarkers[siteNames[i]].siteInformation.MostRecentDateTime.indexOf("-") > -1){
+						var mostRecentYear = Number(siteMarkers[siteNames[i]].siteInformation.MostRecentDateTime.split("-")[0]);
+						if(mostRecentYear > 0 && mostRecentYear > Number(mostRecentlySurveyedYear)){
+							mostRecentlySurveyedYear = mostRecentYear;
+						}
+					}
+				}
+				
+				siteNames.sort(function(a, b){
+					if(a.toLowerCase() < b.toLowerCase()) return -1;
+					if(a.toLowerCase() > b.toLowerCase()) return 1;
+					return 0;
+				});
+				
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Composition Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (siteNames.length > 1 ? "s" : "") + ": " + siteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
+				
+				var zip = new JSZip();
+				var folder = zip.folder("Caterpillars Count! " + xAxis.toLowerCase() + " composition data");
+				folder.file("metadata.txt", metadataText);
+				folder.file("data.csv", csvString);
+				zip.generateAsync({type:"blob"})
+				.then(function(content) {
+					saveAs(content, "CaterpillarsCount" + xAxis.replace(/ /g, "").charAt(0).toUpperCase() + xAxis.replace(/ /g, "").substring(1) + "CompositionData-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".zip");
+				});
+				
 				//track download
 				var downloadedFile = "Dynamically Generated Composition CSV";
 				var downloadFilters = filtersString;
@@ -3301,7 +3532,7 @@
 								<div class="option" onclick="selectOption(this);">		<div class="value">%</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">All Arthropods</div></div></div>
 								<div class="option" onclick="selectOption(this);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
 								<div class="option" onclick="selectOption(this);">		<div class="value">aphid</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/aphid.png');"></div>		<div class="text">Aphids and Psyllids</div></div></div>
-								<div class="option" onclick="selectOption(this);">		<div class="value">bee</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/bee.png');"></div>			<div class="text">Bees and Wasps</div></div></div>
+								<div class="option" onclick="selectOption(this);">		<div class="value">bee</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/bee.png');"></div>			<div class="text">Bees, Wasps, Sawflies</div></div></div>
 								<div class="option" onclick="selectOption(this);">		<div class="value">beetle</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/beetle.png');"></div>		<div class="text">Beetles</div></div></div>
 								<div class="option selected" onclick="selectOption(this);">		<div class="value">caterpillar</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/caterpillar.png');"></div>		<div class="text">Caterpillars</div></div></div>
 								<div class="option" onclick="selectOption(this);">		<div class="value">daddylonglegs</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/daddylonglegs.png');"></div>	<div class="text">Daddy longlegs</div></div></div>
@@ -3367,7 +3598,7 @@
 						<div id="siteStats"></div>
 
 						<h3>User Leaderboard</h3>
-						<p style="font-size:10px;text-align:left;margin:-15px 0px 20px 0px;">% Caterpillars only displayed for users who have submitted at least 10 surveys. If you would like to hide your name from leaderboards like these, please visit your <a href="../settings" style="color:#999;">Settings</a> page and click on the "Privacy" section.</p>
+						<p style="font-size:10px;text-align:left;margin:-15px 0px 20px 0px;">% Caterpillars only displayed for users who have submitted at least 10 surveys during the specified timespan. If you would like to hide your name from leaderboards like these, please visit your <a href="../settings" style="color:#999;">Settings</a> page and click on the "Privacy" section.</p>
 						<div id="siteUserSuperHeader">
 							<div>Surveys this...</div>
 						</div>
@@ -3382,7 +3613,7 @@
 							<div id="lineGraph">
 								<div class="chartExplanation">Click on the y-axis label to change the phenology metric being plotted. Data points are excluded if fewer than five surveys were conducted at the given site on that day.</div>
 								<div style="height:500px;margin-top:40px;position:relative;">
-									<div class="downloadChartButton" onclick="downloadPhenologyData();">
+									<div class="downloadChartButton" onclick="promptConfirm('To download, read and agree to the Caterpillars Count! <a href=&quot;../dataUsePolicy&quot; target=&quot;_blank&quot;>data use</a> and <a href=&quot;../dataAttributionPolicy&quot; target=&quot;_blank&quot;>attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadPhenologyData();});">
 										<div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
 										<div class="downloadText">Download</div>
 									</div>
@@ -3404,7 +3635,7 @@
 							<div id="barGraph">
 								<div class="chartExplanation">Click on the y-axis label to change the composition metric being plotted. You can get a breakdown of arthropod composition for this site by year or plant species by clicking the "Site" label on the x-axis, or you can add additional sites for comparison by clicking "add".</div>
 								<div style="height:500px;margin-top:40px;position:relative;">
-									<div class="downloadChartButton" onclick="downloadCompositionData();">
+									<div class="downloadChartButton" onclick="promptConfirm('To download, read and agree to the Caterpillars Count! <a href=&quot;../dataUsePolicy&quot; target=&quot;_blank&quot;>data use</a> and <a href=&quot;../dataAttributionPolicy&quot; target=&quot;_blank&quot;>attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadCompositionData();});">
 										<div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
 										<div class="downloadText">Download</div>
 									</div>

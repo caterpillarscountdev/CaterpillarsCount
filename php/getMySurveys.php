@@ -35,6 +35,7 @@
 							"quantity" => $arthropodSightings[$j]->getQuantity(),
 							"photoURL" => $arthropodSightings[$j]->getPhotoURL(),
 							"notes" => $arthropodSightings[$j]->getNotes(),
+							"pupa" => $arthropodSightings[$j]->getPupa(),
 							"hairy" => $arthropodSightings[$j]->getHairy(),
 							"rolled" => $arthropodSightings[$j]->getRolled(),
 							"tented" => $arthropodSightings[$j]->getTented(),
