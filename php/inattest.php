@@ -26,7 +26,7 @@
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$token = json_decode(curl_exec($ch), true)["access_token"];if($echoLevel >= 1) echo $token;
+		$token = json_decode(curl_exec($ch), true)["access_token"];if($echoLevel >= 1) echo json_decode($token);
 		curl_close ($ch);
 		
 		//CREATE OBSERVATION
@@ -94,15 +94,15 @@
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
-		$observation = json_decode(curl_exec($ch), true)[0];if($echoLevel >= 2) echo "<br/>" . $observation;
+		$observation = json_decode(curl_exec($ch), true)[0];if($echoLevel >= 2) echo "<br/>" . json_decode($observation);
 		curl_close ($ch);
 		
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
 		$arthropodPhotoPath = "../images/arthropods/" . $arthropodPhotoURL;
 		if(strpos($arthropodPhotoURL, '/') !== false){
-			$arthropodPhotoPath = "/opt/app-root/src/images/arthropods" . $arthropodPhotoURL;
-		}
+			$arthropodPhotoPath = "../images/arthropods" . $arthropodPhotoURL;
+		}if($echoLevel >= 3) echo "<br/>" . json_decode($arthropodPhotoPath);
 		
 		if(function_exists('curl_file_create')){//PHP 5.5+
 			$cFile = curl_file_create($arthropodPhotoPath);
