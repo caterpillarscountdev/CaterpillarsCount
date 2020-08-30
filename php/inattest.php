@@ -26,7 +26,7 @@
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$token = json_decode(curl_exec($ch), true)["access_token"];if($echoLevel >= 1) echo $token;
+		$token = json_decode(curl_exec($ch), true)["access_token"];if($echoLevel >= 1) var_dump($token);
 		curl_close ($ch);
 		
 		//CREATE OBSERVATION
@@ -94,7 +94,11 @@
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
-		$observation = json_decode(curl_exec($ch), true)[0];if($echoLevel >= 2) echo "<br/>" . $observation;
+		$observation = json_decode(curl_exec($ch), true)[0];
+		if($echoLevel >= 2){
+			echo "<br/>";
+			var_dump($observation);
+		}
 		curl_close ($ch);
 		
 		//ADD PHOTO TO OBSERVATION
@@ -117,7 +121,10 @@
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$photoAddResponse = curl_exec($ch);if($echoLevel >= 3) echo "<br/>" . $photoAddResponse;
+		$photoAddResponse = curl_exec($ch);
+		if($echoLevel >= 3){
+			echo "<br/>" . $photoAddResponse;
+		}
 		curl_close ($ch);
 		
 		if($photoAddResponse !== "Just making sure that the exec is complete."){
