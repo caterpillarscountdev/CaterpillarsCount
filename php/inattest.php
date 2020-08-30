@@ -18,7 +18,7 @@
 	$echoLevel = intval(isset($_GET["e"]) ? $_GET["e"] : 0);
 	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		global $echoLevel;
-		
+		die("here");
 		//GET AUTHORIZATION
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
 		curl_setopt($ch, CURLOPT_POST, 1);
