@@ -94,16 +94,15 @@
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
-		$observation = json_decode(curl_exec($ch), true)[0];if($echoLevel >= 2) echo "<br/>" . $observation["id"];
+		$observation = json_decode(curl_exec($ch), true)[0];if($echoLevel >= 2) echo "<br/>" . $observation;
 		curl_close ($ch);
 		
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
 		$arthropodPhotoPath = "../images/arthropods/" . $arthropodPhotoURL;
 		if(strpos($arthropodPhotoURL, '/') !== false){
-			$arthropodPhotoPath = "../images/arthropods" . $arthropodPhotoURL;
+			$arthropodPhotoPath = "/opt/app-root/src/images/arthropods" . $arthropodPhotoURL;
 		}
-		if($echoLevel >= 3) echo "<br/>" . $arthropodPhotoPath;
 		
 		if(function_exists('curl_file_create')){//PHP 5.5+
 			$cFile = curl_file_create($arthropodPhotoPath);
@@ -126,11 +125,13 @@
 			$ch = curl_init("http://www.inaturalist.org/project_observations");
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, "access_token=" . $token . "&project_observation[observation_id]=" . $observation["id"] . "&project_observation[project_id]=5443");
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);if($echoLevel >= 4) echo "access_token=" . $token . "&project_observation[observ";
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			$caterpillarsCountLinkResponse = curl_exec($ch);if($echoLevel >= 4) echo "<br/>" . $caterpillarsCountLinkResponse;
+			$caterpillarsCountLinkResponse = curl_exec($ch);
+			echo "<br/>access_token=" . $token . "&project_observation[observation_id]=";
+			if($echoLevel >= 4) echo "<br/>" . $caterpillarsCountLinkResponse;
 			curl_close ($ch);
 			
 			if($caterpillarsCountLinkResponse !== "Just making sure that the exec is complete."){
@@ -139,11 +140,13 @@
 					$ch = curl_init("http://www.inaturalist.org/project_observations");
 					curl_setopt($ch, CURLOPT_POST, 1);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, "access_token=" . $token . "&project_observation[observation_id]=" . $observation["id"] . "&project_observation[project_id]=9210");
-					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);if($echoLevel >= 5) echo "access_token=" . $token . "&project_observation[";
+					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 					curl_setopt($ch, CURLOPT_HEADER, 0);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-					$caterpillarsOfEasternNALinkResponse = curl_exec($ch);if($echoLevel >= 5) echo "<br/>" . $caterpillarsOfEasternNALinkResponse;
+					$caterpillarsOfEasternNALinkResponse = curl_exec($ch);
+					echo "<br/>access_token=" . $token . "&project_observation[observation_id]=";
+					if($echoLevel >= 5) echo "<br/>" . $caterpillarsOfEasternNALinkResponse;
 					curl_close ($ch);
 
 					if($caterpillarsOfEasternNALinkResponse !== "Just making sure that the exec is complete."){
