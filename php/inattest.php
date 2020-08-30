@@ -26,7 +26,7 @@
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$token = json_decode(curl_exec($ch), true)["access_token"];if($echoLevel >= 1) echo json_decode($token);
+		$token = json_decode(curl_exec($ch), true)["access_token"];if($echoLevel >= 1) echo $token;
 		curl_close ($ch);
 		
 		//CREATE OBSERVATION
@@ -94,7 +94,7 @@
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
-		$observation = json_decode(curl_exec($ch), true)[0];if($echoLevel >= 2) echo "<br/>" . json_decode($observation);
+		$observation = json_decode(curl_exec($ch), true)[0];if($echoLevel >= 2) echo "<br/>" . $observation["id"];
 		curl_close ($ch);
 		
 		//ADD PHOTO TO OBSERVATION
@@ -102,7 +102,8 @@
 		$arthropodPhotoPath = "../images/arthropods/" . $arthropodPhotoURL;
 		if(strpos($arthropodPhotoURL, '/') !== false){
 			$arthropodPhotoPath = "../images/arthropods" . $arthropodPhotoURL;
-		}if($echoLevel >= 3) echo "<br/>" . json_decode($arthropodPhotoPath);
+		}
+		if($echoLevel >= 3) echo "<br/>" . $arthropodPhotoPath;
 		
 		if(function_exists('curl_file_create')){//PHP 5.5+
 			$cFile = curl_file_create($arthropodPhotoPath);
@@ -125,7 +126,7 @@
 			$ch = curl_init("http://www.inaturalist.org/project_observations");
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, "access_token=" . $token . "&project_observation[observation_id]=" . $observation["id"] . "&project_observation[project_id]=5443");
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);if($echoLevel >= 4) echo "access_token=" . $token . "&project_observation[observ";
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -138,7 +139,7 @@
 					$ch = curl_init("http://www.inaturalist.org/project_observations");
 					curl_setopt($ch, CURLOPT_POST, 1);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, "access_token=" . $token . "&project_observation[observation_id]=" . $observation["id"] . "&project_observation[project_id]=9210");
-					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);if($echoLevel >= 5) echo "access_token=" . $token . "&project_observation[";
 					curl_setopt($ch, CURLOPT_HEADER, 0);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
