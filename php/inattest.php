@@ -130,7 +130,7 @@
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			$caterpillarsCountLinkResponse = curl_exec($ch);
-			echo "<br/>access_token=" . $token . "&project_observation[observation_id]=";
+			//echo "<br/>access_token=" . $token . "&project_observation[observation_id]=";
 			if($echoLevel >= 4) echo "<br/>" . $caterpillarsCountLinkResponse;
 			curl_close ($ch);
 			
@@ -145,7 +145,7 @@
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					$caterpillarsOfEasternNALinkResponse = curl_exec($ch);
-					echo "<br/>access_token=" . $token . "&project_observation[observation_id]=";
+					//echo "<br/>access_token=" . $token . "&project_observation[observation_id]=";
 					if($echoLevel >= 5) echo "<br/>" . $caterpillarsOfEasternNALinkResponse;
 					curl_close ($ch);
 
