@@ -17,6 +17,8 @@
 	}
 	$echoLevel = intval(isset($_GET["e"]) ? $_GET["e"] : 0);
 	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
+		global $echoLevel;
+		
 		//GET AUTHORIZATION
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
 		curl_setopt($ch, CURLOPT_POST, 1);
@@ -92,7 +94,7 @@
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
-		$observation = json_decode(curl_exec($ch), true)[0];if($echoLevel >= 1) echo "<br/>" . $observation;
+		$observation = json_decode(curl_exec($ch), true)[0];if($echoLevel >= 2) echo "<br/>" . $observation;
 		curl_close ($ch);
 		
 		//ADD PHOTO TO OBSERVATION
@@ -115,7 +117,7 @@
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$photoAddResponse = curl_exec($ch);if($echoLevel >= 1) echo "<br/>" . $photoAddResponse;
+		$photoAddResponse = curl_exec($ch);if($echoLevel >= 3) echo "<br/>" . $photoAddResponse;
 		curl_close ($ch);
 		
 		if($photoAddResponse !== "Just making sure that the exec is complete."){
@@ -127,7 +129,7 @@
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			$caterpillarsCountLinkResponse = curl_exec($ch);if($echoLevel >= 1) echo "<br/>" . $caterpillarsCountLinkResponse;
+			$caterpillarsCountLinkResponse = curl_exec($ch);if($echoLevel >= 4) echo "<br/>" . $caterpillarsCountLinkResponse;
 			curl_close ($ch);
 			
 			if($caterpillarsCountLinkResponse !== "Just making sure that the exec is complete."){
@@ -140,7 +142,7 @@
 					curl_setopt($ch, CURLOPT_HEADER, 0);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-					$caterpillarsOfEasternNALinkResponse = curl_exec($ch);if($echoLevel >= 1) echo "<br/>" . $caterpillarsOfEasternNALinkResponse;
+					$caterpillarsOfEasternNALinkResponse = curl_exec($ch);if($echoLevel >= 5) echo "<br/>" . $caterpillarsOfEasternNALinkResponse;
 					curl_close ($ch);
 
 					if($caterpillarsOfEasternNALinkResponse !== "Just making sure that the exec is complete."){
