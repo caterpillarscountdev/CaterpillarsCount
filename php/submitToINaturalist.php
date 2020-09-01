@@ -144,20 +144,27 @@
 
 					if($caterpillarsOfEasternNALinkResponse !== "Just making sure that the exec is complete."){
 						//Mark this ArthropodSighting as completed
-						if(is_string($observation["id"]) && $observation["id"] != ""){
+						if(is_int($observation["id"]) && $observation["id"] > 0){
 							mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0', INaturalistID='" . $observation["id"] . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
 						}
+						
+						//Mark that we're finished submitting to iNaturalist
+						$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");
+					}
+					else{
+						//Mark that we're finished submitting to iNaturalist
+						$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");
 					}
 				}
 				else{
 					//Mark this ArthropodSighting as completed and save the INaturalistID to our database
-					if(is_string($observation["id"]) && $observation["id"] != ""){
+					if(is_int($observation["id"]) && $observation["id"] > 0){
 						mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0', INaturalistID='" . $observation["id"] . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
 					}
+					
+					//Mark that we're finished submitting to iNaturalist
+					$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");
 				}
-				
-				//Mark that we're finished submitting to iNaturalist
-				$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");
 			}
 		}
 	}
