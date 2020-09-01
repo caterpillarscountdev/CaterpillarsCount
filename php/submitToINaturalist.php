@@ -37,6 +37,11 @@
 			$surveyNotes = trim($arthropodNotes);
 		}
 		
+		$other = $arthropodNotes;
+		if(trim($other) == ""){
+			$other = "Arthropoda";	
+		}
+		
 		$newOrders = array(
 			"ant" => "Ants",
 			"aphid" => "Sternorrhyncha",
@@ -50,7 +55,7 @@
 			"moths" => "Lepidoptera",
 			"spider" => "Spiders",
 			"truebugs" => "True bugs",
-			"other" => "Arthropoda",
+			"other" => $other,
 			"unidentified" => "Arthropoda"
 		);
 		$newOrder = $order;
