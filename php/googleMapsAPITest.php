@@ -1,0 +1,4 @@
+<?php
+		$arr = json_decode(file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=38.867053137076,-77.262822964995&key=AIzaSyC66haLntB413i6pkgSCXl3wpbrS4SPEx4"), true);
+  var_dump($arr);
+?>
