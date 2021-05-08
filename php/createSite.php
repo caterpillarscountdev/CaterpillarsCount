@@ -28,7 +28,7 @@
 		//get region from lat/long
 		//Max of 2,500 free requests per day, calculated as the sum of client-side and server-side queries.
 		//Max of 50 requests per second, calculated as the sum of client-side and server-side queries.
-		$KEY = "AIzaSyC66haLntB413i6pkgSCXl3wpbrS4SPEx4";
+		$KEY = getenv("unrestrictedGoogleMapsGeocodeAPIKey");
 		$arr = json_decode(file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $latitude . "," . $longitude . "&key=" . $KEY), true);
 		$country = "";
 		$region = "";
