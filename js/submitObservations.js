@@ -1263,8 +1263,8 @@
 							catch(e){
 								var pendingSurveyEmails = [];
 								for(var i = 0; i < existingPendingSurveys.length; i++){
-									if(pendingSurveyEmails.indexOf(existingPendingSurveys[11]) == -1){
-										pendingSurveyEmails[pendingSurveyEmails.length] = existingPendingSurveys[11];
+									if(pendingSurveyEmails.indexOf(existingPendingSurveys[i][11]) == -1){
+										pendingSurveyEmails[pendingSurveyEmails.length] = existingPendingSurveys[i][11];
 									}
 								}
 								pendingSurveyEmails = pendingSurveyEmails.join(", ");
@@ -1275,9 +1275,9 @@
 								pendingSurveyEmails = pendingSurveyEmails.substring(0, pendingSurveyEmails.lastIndexOf(", ")) + lastDelimiter + pendingSurveyEmails.substring(pendingSurveyEmails.lastIndexOf(", ") + 2);
 								try{
 									//submit without photos
-									var arthropodSightings = existingPendingSurveys[existingPendingSurveys.length][6];
+									var arthropodSightings = existingPendingSurveys[existingPendingSurveys.length - 1][6];
 									for(var i = 0; i < arthropodSightings.length; i++){
-										arthropodSightings[10] = "";
+										arthropodSightings[i][10] = "";
 									}
 									window.localStorage.setItem("pendingSurveys", JSON.stringify(existingPendingSurveys));
 									queueNotice("alert", "Wow, you've sure submitted a lot of data offline! We just can't quite fit it all in your offline survey box! We had to throw out your arthropod photos for this survey to make everything fit, but don't worry- everything else on this survey is safe. We automatically clear your box out every time you log in with an internet connection, so it's a good idea to do that regularly. You should use this device to log in to " + pendingSurveyEmails + " WITH AN INTERNET CONNECTION for at least one minute soon so we can automatically clear your box out behind the scenes for you. Otherwise, this will happen again.");
