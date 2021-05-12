@@ -545,7 +545,7 @@ class Survey
 			$averageLeafLength = self::validAverageLeafLength($dbconn, $averageLeafLength);
 			$herbivoryScore = self::validHerbivoryScore($dbconn, $herbivoryScore);
 			if($numberOfLeaves !== false && $averageLeafLength !== false && $herbivoryScore !== false){
-				mysqli_query($dbconn, "UPDATE Survey SET NumberOfLeaves='-1', AverageLeafLength='-1', HerbivoryScore='-1', AverageNeedleLength='$averageNeedleLength', LinearBranchLength='$linearBranchLength' WHERE ID='" . $this->id . "'");
+				mysqli_query($dbconn, "UPDATE Survey SET NumberOfLeaves='$numberOfLeaves', AverageLeafLength='$averageLeafLength', HerbivoryScore='$herbivoryScore', AverageNeedleLength='-1', LinearBranchLength='-1' WHERE ID='" . $this->id . "'");
 				mysqli_close($dbconn);
 				$this->numberOfLeaves = $numberOfLeaves;
 				$this->averageLeafLength = $averageLeafLength;
