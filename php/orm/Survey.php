@@ -21,17 +21,18 @@ class Survey
 	private $numberOfLeaves;
 	private $averageLeafLength;
 	private $herbivoryScore;
+	private $averageNeedleLength;
+	private $linearBranchLength;
 	private $submittedThroughApp;
 	
 	private $deleted;
 
 //FACTORY
-	public static function create($observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $submittedThroughApp) {
+	public static function create($observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		if(!$dbconn){
 			return "Cannot connect to server.";
 		}
-		
 		
 		$submissionTimestamp = time();
 		$observer = self::validObserver($dbconn, $observer, $plant);
@@ -42,9 +43,12 @@ class Survey
 		$notes = self::validNotes($dbconn, $notes);
 		$wetLeaves = filter_var($wetLeaves, FILTER_VALIDATE_BOOLEAN);
 		$plantSpecies = self::validPlantSpecies($dbconn, $plantSpecies, $plant);
-		$numberOfLeaves = self::validNumberOfLeaves($dbconn, $numberOfLeaves);
-		$averageLeafLength = self::validAverageLeafLength($dbconn, $averageLeafLength);
-		$herbivoryScore = self::validHerbivoryScore($dbconn, $herbivoryScore);
+		$isConifer = (intval($averageNeedleLength) == -1);
+		$numberOfLeaves = $isConifer ? -1 : self::validNumberOfLeaves($dbconn, $numberOfLeaves);
+		$averageLeafLength = $isConifer ? -1 : self::validAverageLeafLength($dbconn, $averageLeafLength);
+		$herbivoryScore = $isConifer ? -1 : self::validHerbivoryScore($dbconn, $herbivoryScore);
+		$averageNeedleLength = $isConifer ? self::validAverageNeedleLength($dbconn, $averageNeedleLength) : -1;
+		$linearBranchLength = $isConifer ? self::validLinearBranchLength($dbconn, $linearBranchLength) : -1;
 		$submittedThroughApp = filter_var($submittedThroughApp, FILTER_VALIDATE_BOOLEAN);
 		
 		
@@ -71,14 +75,20 @@ class Survey
 		if($plantSpecies === false){
 			$failures .= "Invalid plant species. ";
 		}
-		if($numberOfLeaves === false){
+		if(!$isConifer && $numberOfLeaves === false){
 			$failures .= "Number of leaves must be between 1 and 500. ";
 		}
-		if($averageLeafLength === false){
+		if(!$isConifer && $averageLeafLength === false){
 			$failures .= "Average leaf length must be between 1cm and 60cm. ";
 		}
-		if($herbivoryScore === false){
+		if(!$isConifer && $herbivoryScore === false){
 			$failures .= "Select an herbivory score. ";
+		}
+		if($isConifer && $averageNeedleLength === false){
+			$failures .= "Average needle length must be between 1cm and 60cm. ";
+		}
+		if($isConifer && $linearBranchLength === false){
+			$failures .= "Linear branch length must be between 1 and 500. ";
 		}
 		
 		if($failures != ""){
@@ -89,7 +99,7 @@ class Survey
 		if($plant->getSite()->getName() == "Example Site"){
 			$needToSendToSciStarter = 0;
 		}
-		mysqli_query($dbconn, "INSERT INTO Survey (`SubmissionTimestamp`, `UserFKOfObserver`, `PlantFK`, `LocalDate`, `LocalTime`, `ObservationMethod`, `Notes`, `WetLeaves`, `PlantSpecies`, `NumberOfLeaves`, `AverageLeafLength`, `HerbivoryScore`, `SubmittedThroughApp`, `NeedToSendToSciStarter`) VALUES ('" . $submissionTimestamp . "', '" . $observer->getID() . "', '" . $plant->getID() . "', '$localDate', '$localTime', '$observationMethod', '$notes', '$wetLeaves', '$plantSpecies', '$numberOfLeaves', '$averageLeafLength', '$herbivoryScore', '$submittedThroughApp', '$needToSendToSciStarter')");
+		mysqli_query($dbconn, "INSERT INTO Survey (`SubmissionTimestamp`, `UserFKOfObserver`, `PlantFK`, `LocalDate`, `LocalTime`, `ObservationMethod`, `Notes`, `WetLeaves`, `PlantSpecies`, `NumberOfLeaves`, `AverageLeafLength`, `HerbivoryScore`, `AverageNeedleLength`, `LinearBranchLength`, `SubmittedThroughApp`, `NeedToSendToSciStarter`) VALUES ('" . $submissionTimestamp . "', '" . $observer->getID() . "', '" . $plant->getID() . "', '$localDate', '$localTime', '$observationMethod', '$notes', '$wetLeaves', '$plantSpecies', '$numberOfLeaves', '$averageLeafLength', '$herbivoryScore', '$averageNeedleLength', '$linearBranchLength', '$submittedThroughApp', '$needToSendToSciStarter')");
 		$id = intval(mysqli_insert_id($dbconn));
 		mysqli_close($dbconn);
 		
@@ -97,9 +107,9 @@ class Survey
 			$plant->getSite()->setDateEstablished($localDate);
 		}
 		
-		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $submittedThroughApp);
+		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
 	}
-	private function __construct($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $submittedThroughApp) {
+	private function __construct($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp) {
 		$this->id = intval($id);
 		$this->submissionTimestamp = intval($submissionTimestamp);
 		$this->observer = $observer;
@@ -113,6 +123,8 @@ class Survey
 		$this->numberOfLeaves = intval($numberOfLeaves);
 		$this->averageLeafLength = intval($averageLeafLength);
 		$this->herbivoryScore = max(0, intval($herbivoryScore));
+		$this->averageNeedleLength = intval($averageNeedleLength);
+		$this->linearBranchLength = intval($linearBranchLength);
 		$this->submittedThroughApp = $submittedThroughApp;
 		
 		$this->deleted = false;
@@ -143,9 +155,11 @@ class Survey
 		$numberOfLeaves = $surveyRow["NumberOfLeaves"];
 		$averageLeafLength = $surveyRow["AverageLeafLength"];
 		$herbivoryScore = $surveyRow["HerbivoryScore"];
+		$averageNeedleLength = $surveyRow["AverageNeedleLength"];
+		$linearBranchLength = $surveyRow["LinearBranchLength"];
 		$submittedThroughApp = $surveyRow["SubmittedThroughApp"];
 		
-		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $submittedThroughApp);
+		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
 	}
 	
 	public static function findSurveysByUser($user, $filters, $start, $limit) {
@@ -224,9 +238,11 @@ class Survey
 			$numberOfLeaves = $surveyRow["NumberOfLeaves"];
 			$averageLeafLength = $surveyRow["AverageLeafLength"];
 			$herbivoryScore = $surveyRow["HerbivoryScore"];
+			$averageNeedleLength = $surveyRow["AverageNeedleLength"];
+			$linearBranchLength = $surveyRow["LinearBranchLength"];
 			$submittedThroughApp = $surveyRow["SubmittedThroughApp"];
 			
-			$survey = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $submittedThroughApp);
+			$survey = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
 			
 			array_push($surveysArray, $survey);
 		}
@@ -304,9 +320,24 @@ class Survey
 		return $this->herbivoryScore;
 	}
 	
+	public function getAverageNeedleLength() {
+		if($this->deleted){return null;}
+		return intval($this->averageNeedleLength);
+	}
+	
+	public function getLinearBranchLength() {
+		if($this->deleted){return null;}
+		return intval($this->linearBranchLength);
+	}
+	
 	public function getSubmittedThroughApp(){
 		if($this->deleted){return null;}
 		return filter_var($this->submittedThroughApp, FILTER_VALIDATE_BOOLEAN);
+	}
+	
+	public function isConifer(){
+		if($this->deleted){return null;}
+		return intval($this->averageNeedleLength) > -1;
 	}
 	
 //SETTERS
@@ -413,7 +444,7 @@ class Survey
 	}
 	
 	public function setNumberOfLeaves($numberOfLeaves){
-		if(!$this->deleted){
+		if(!$this->deleted && !$this->isConifer()){
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$numberOfLeaves = self::validNumberOfLeaves($dbconn, $numberOfLeaves);
 			if($numberOfLeaves !== false){
@@ -428,7 +459,7 @@ class Survey
 	}
 	
 	public function setAverageLeafLength($averageLeafLength){
-		if(!$this->deleted){
+		if(!$this->deleted && !$this->isConifer()){
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$averageLeafLength = self::validAverageLeafLength($dbconn, $averageLeafLength);
 			if($averageLeafLength !== false){
@@ -443,13 +474,84 @@ class Survey
 	}
 	
 	public function setHerbivoryScore($herbivoryScore){
-		if(!$this->deleted){
+		if(!$this->deleted && !$this->isConifer()){
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$herbivoryScore = self::validHerbivoryScore($dbconn, $herbivoryScore);
 			if($herbivoryScore !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET HerbivoryScore='$herbivoryScore' WHERE ID='" . $this->id . "'");
 				mysqli_close($dbconn);
 				$this->herbivoryScore = $herbivoryScore;
+				return true;
+			}
+			mysqli_close($dbconn);
+		}
+		return false;
+	}
+	
+	public function setAverageNeedleLength($averageNeedleLength){
+		if(!$this->deleted && $this->isConifer()){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			$averageNeedleLength = self::validAverageNeedleLength($dbconn, $averageNeedleLength);
+			if($averageNeedleLength !== false){
+				mysqli_query($dbconn, "UPDATE Survey SET AverageNeedleLength='$averageNeedleLength' WHERE ID='" . $this->id . "'");
+				mysqli_close($dbconn);
+				$this->averageNeedleLength = $averageNeedleLength;
+				return true;
+			}
+			mysqli_close($dbconn);
+		}
+		return false;
+	}
+	
+	public function setLinearBranchLength($linearBranchLength){
+		if(!$this->deleted && $this->isConifer()){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			$linearBranchLength = self::validLinearBranchLength($dbconn, $linearBranchLength);
+			if($linearBranchLength !== false){
+				mysqli_query($dbconn, "UPDATE Survey SET LinearBranchLength='$linearBranchLength' WHERE ID='" . $this->id . "'");
+				mysqli_close($dbconn);
+				$this->linearBranchLength = $linearBranchLength;
+				return true;
+			}
+			mysqli_close($dbconn);
+		}
+		return false;
+	}
+	
+	public function setConifer($averageNeedleLength, $linearBranchLength){
+		if(!$this->deleted){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			$averageNeedleLength = self::validAverageNeedleLength($dbconn, $averageNeedleLength);
+			$linearBranchLength = self::validLinearBranchLength($dbconn, $linearBranchLength);
+			if($averageNeedleLength !== false && $linearBranchLength !== false){
+				mysqli_query($dbconn, "UPDATE Survey SET NumberOfLeaves='-1', AverageLeafLength='-1', HerbivoryScore='-1', AverageNeedleLength='$averageNeedleLength', LinearBranchLength='$linearBranchLength' WHERE ID='" . $this->id . "'");
+				mysqli_close($dbconn);
+				$this->numberOfLeaves = -1;
+				$this->averageLeafLength = -1;
+				$this->herbivoryScore = -1;
+				$this->averageNeedleLength = $averageNeedleLength;
+				$this->linearBranchLength = $linearBranchLength;
+				return true;
+			}
+			mysqli_close($dbconn);
+		}
+		return false;
+	}
+	
+	public function setNonConifer($numberOfLeaves, $averageLeafLength, $herbivoryScore){
+		if(!$this->deleted){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			$numberOfLeaves = self::validNumberOfLeaves($dbconn, $numberOfLeaves);
+			$averageLeafLength = self::validAverageLeafLength($dbconn, $averageLeafLength);
+			$herbivoryScore = self::validHerbivoryScore($dbconn, $herbivoryScore);
+			if($numberOfLeaves !== false && $averageLeafLength !== false && $herbivoryScore !== false){
+				mysqli_query($dbconn, "UPDATE Survey SET NumberOfLeaves='-1', AverageLeafLength='-1', HerbivoryScore='-1', AverageNeedleLength='$averageNeedleLength', LinearBranchLength='$linearBranchLength' WHERE ID='" . $this->id . "'");
+				mysqli_close($dbconn);
+				$this->numberOfLeaves = $numberOfLeaves;
+				$this->averageLeafLength = $averageLeafLength;
+				$this->herbivoryScore = $herbivoryScore;
+				$this->averageNeedleLength = -1;
+				$this->linearBranchLength = -1;
 				return true;
 			}
 			mysqli_close($dbconn);
@@ -594,6 +696,22 @@ class Survey
 		$herbivoryScore = intval(preg_replace("/[^0-9]/", "", $herbivoryScore));
 		if($herbivoryScore >= 0 && $herbivoryScore <= 4){
 			return $herbivoryScore;
+		}
+		return false;
+	}
+	
+	public static function validAverageNeedleLength($dbconn, $averageNeedleLength){
+		$averageNeedleLength = intval($averageNeedleLength);
+		if($averageNeedleLength >= 1 && $averageNeedleLength <= 60){
+			return $averageNeedleLength;
+		}
+		return false;
+	}
+	
+	public static function validLinearBranchLength($dbconn, $linearBranchLength){
+		$linearBranchLength = intval($linearBranchLength);
+		if($linearBranchLength >= 1 && $linearBranchLength <= 500){
+			return $linearBranchLength;
 		}
 		return false;
 	}
