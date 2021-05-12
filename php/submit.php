@@ -18,7 +18,9 @@
 	$plantSpecies = $_POST["plantSpecies"];
 	$numberOfLeaves = $_POST["numberOfLeaves"];		//number
 	$averageLeafLength = $_POST["averageLeafLength"];	//number
-	$herbivoryScore = $_POST["herbivoryScore"];		//String
+	$herbivoryScore = $_POST["herbivoryScore"];
+	$averageNeedleLength = array_key_exists("averageNeedleLength", $_POST) ? $_POST["averageNeedleLength"] : -1;
+	$linearBranchLength = array_key_exists("linearBranchLength", $_POST) ? $_POST["linearBranchLength"] : -1;
 	$submittedThroughApp = $_POST["submittedThroughApp"];
 	
 	function explainError($fileError){
@@ -76,7 +78,7 @@
 		if($site->validateUser($user, $sitePassword)){
 			$user->setObservationMethodPreset($site, $observationMethod);
 			//submit data to database
-			$survey = Survey::create($user, $plant, $date, $time, $observationMethod, $siteNotes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $submittedThroughApp);
+			$survey = Survey::create($user, $plant, $date, $time, $observationMethod, $siteNotes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
 			
 			if(is_object($survey) && get_class($survey) == "Survey"){
 				//$arthropodData = orderType, orderLength, orderQuantity, orderNotes, pupa, hairy, leafRoll, silkTent, sawfly, beetleLarva, fileInput
