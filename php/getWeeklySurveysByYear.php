@@ -42,7 +42,8 @@
 		$lastCall = ($start + $LIMIT) >= intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS Count FROM Site" . $userRestriction))["Count"]);
 
 		$sitesQuery = mysqli_query($dbconn, "SELECT ID FROM Site" . $userRestriction . " LIMIT $start, $LIMIT");
-		if(mysqli_num_rows($sitesQuery) > 0){
+		$numberOfSites = mysqli_num_rows($sitesQuery);
+		if($numberOfSites > 0){
 			while($row = mysqli_fetch_assoc($sitesQuery)){
 				$surveysEachWeek = array();
 				for($i = $startWeek; $i <= $endWeek; $i++){
@@ -53,7 +54,7 @@
 					$siteIDsThisIteration[] = $row["ID"];
 					$data[(string)$row["ID"]] = $surveysEachWeek;
 				}
-				else if(count($sites) == 1){
+				else if($numberOfSites == 1){
 					die("true|" . json_encode(array($data, true)));
 				}
 			}
