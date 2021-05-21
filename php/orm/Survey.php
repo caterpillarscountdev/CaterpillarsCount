@@ -43,7 +43,7 @@ class Survey
 		$notes = self::validNotes($dbconn, $notes);
 		$wetLeaves = filter_var($wetLeaves, FILTER_VALIDATE_BOOLEAN);
 		$plantSpecies = self::validPlantSpecies($dbconn, $plantSpecies, $plant);
-		$isConifer = (intval($averageNeedleLength) == -1);
+		$isConifer = (intval($averageNeedleLength) !== -1);
 		$numberOfLeaves = $isConifer ? -1 : self::validNumberOfLeaves($dbconn, $numberOfLeaves);
 		$averageLeafLength = $isConifer ? -1 : self::validAverageLeafLength($dbconn, $averageLeafLength);
 		$herbivoryScore = $isConifer ? -1 : self::validHerbivoryScore($dbconn, $herbivoryScore);
@@ -88,7 +88,7 @@ class Survey
 			$failures .= "Average needle length must be between 1cm and 60cm. ";
 		}
 		if($isConifer && $linearBranchLength === false){
-			$failures .= "Linear branch length must be between 1 and 500. ";
+			$failures .= "Linear branch length must be between 1cm and 500cm. ";
 		}
 		
 		if($failures != ""){
