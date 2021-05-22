@@ -366,15 +366,15 @@
 					htmlToAdd += 		"<input type=\"text\" id=\"" + plants[j][1] + "\" value=\"" + plants[j][2] + "\"" + noticeBorder + " onfocus=\"this.setSelectionRange(0, 9999);setNoticeExemptingInput(this.parentNode.parentNode.parentNode.parentNode, this);\" onblur=\"if(this.value.trim().toUpperCase() == 'N/A' || this.value.replace(/ /g, '') == ''){this.value = 'N/A';setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else if(inArrayIgnoreCaseAndWhitespace(this.value, plantSpeciesList)){setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else{promptConfirm('&quot;' + this.value + '&quot; is not in our records. Have you searched for other labels? Are you sure this is the correct name and spelling of your tree species?', 'Try again.', 'Continue. I am sure!', function(){document.getElementById('" + plants[j][1] + "').focus();}, function(){setNoticeImage(document.getElementById('" + plants[j][1] + "').parentNode.parentNode.parentNode.parentNode);});}\"/>";
 					htmlToAdd +=		"<table class=\"checkboxTable\">";
 					htmlToAdd +=			"<tr onclick=\"toggleCheckbox($(this).find('.checkbox'));\">";
-					htmlToAdd +=				"<td><div class=\"checkbox\" id=\"checkbox" + plants[j][1] + "\"></div></td>";
+					htmlToAdd +=				"<td><div class=\"checkbox" + (plants[j][3] ? " checked" : "") + "\" id=\"coniferCheckbox" + plants[j][1] + "\"></div></td>";
 					htmlToAdd +=				"<td>This plant is coniferous.</td>";
-					htmlToAdd +=				"<td onclick=\"event.stopPropagation();queueNotice('alert', 'If a tag with the code &quot;" + plants[j][1] + "&quot; is hanging on a tree that is dead or otherwise no longer suitable to collect surveys with, check this checkbox and move that tag to another nearby tree. If the new tree is of a different species than the unsuitable tree, go ahead and change the plant species as well. Make sure to click the &quot;Save All&quot; button at the bottom of the page before exiting the page.');\"><img src=\"../images/question.png\"/></td>";
+					htmlToAdd +=				"<td onclick=\"event.stopPropagation();queueNotice('alert', '');\"><img src=\"../images/question.png\"/></td>";
 					htmlToAdd +=			"<tr>";
 					htmlToAdd +=		"</table>";
           htmlToAdd += 		"<div class=\"editableFieldTitle\">Location change:</div>";
 					htmlToAdd +=		"<table class=\"checkboxTable\">";
 					htmlToAdd +=			"<tr onclick=\"toggleCheckbox($(this).find('.checkbox'));\">";
-					htmlToAdd +=				"<td><div class=\"checkbox\" id=\"checkbox" + plants[j][1] + "\"></div></td>";
+					htmlToAdd +=				"<td><div class=\"checkbox\" id=\"moveCheckbox" + plants[j][1] + "\"></div></td>";
 					htmlToAdd +=				"<td>I am moving this code to identify a more suitable tree.</td>";
 					htmlToAdd +=				"<td onclick=\"event.stopPropagation();queueNotice('alert', 'If a tag with the code &quot;" + plants[j][1] + "&quot; is hanging on a tree that is dead or otherwise no longer suitable to collect surveys with, check this checkbox and move that tag to another nearby tree. If the new tree is of a different species than the unsuitable tree, go ahead and change the plant species as well. Make sure to click the &quot;Save All&quot; button at the bottom of the page before exiting the page.');\"><img src=\"../images/question.png\"/></td>";
 					htmlToAdd +=			"<tr>";
@@ -459,7 +459,7 @@
 				var plantData = [];
 				var inputs = $("input");
 				for(var i = 0; i < inputs.length; i++){
-					plantData[plantData.length] = [inputs.eq(i)[0].id, encodeURIComponent(inputs.eq(i)[0].value.replace(/\s\s+/g, ' ')), checkboxIsChecked($("#checkbox" + inputs.eq(i)[0].id))];
+					plantData[plantData.length] = [inputs.eq(i)[0].id, encodeURIComponent(inputs.eq(i)[0].value.replace(/\s\s+/g, ' ')), checkboxIsChecked($("#moveCheckbox" + inputs.eq(i)[0].id)), , checkboxIsChecked($("#coniferCheckbox" + inputs.eq(i)[0].id))];
 				}
 
 				var formData = new FormData();
