@@ -62,7 +62,9 @@
 						}
 						else{
 							$plant->setSpecies($plantData[$i][1]);
-							$plant->setIsConifer($plantData[$i][3]);
+							if(count($plantData[$i]) > 3){
+								$plant->setIsConifer($plantData[$i][3]);
+							}
 						}
 					}
 					else{die("false|Plant with code \"" . $plantData[$i][0] . "\" could not be found in the \"" . $site->getName() . "\" site.");}
