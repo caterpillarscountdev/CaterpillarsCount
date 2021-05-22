@@ -192,7 +192,7 @@ class Plant
 	
 	public function getIsConifer() {
 		if($this->deleted){return null;}
-		return $this->isConifer;
+		return filter_var($this->isConifer, FILTER_VALIDATE_BOOLEAN);
 	}
 	
 	public function getColor(){
