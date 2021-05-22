@@ -12,6 +12,7 @@ class Plant
 	private $orientation;					//STRING			email that has been signed up for but not necessarilly verified
 	private $code;
 	private $species;
+	private $isConifer;
 	
 	private $deleted;
 
@@ -61,23 +62,21 @@ class Plant
 				}
 			}
 		}
-		
-		mysqli_query($dbconn, "INSERT INTO Plant (`ID`, `SiteFK`, `Circle`, `Orientation`, `Species`) VALUES ('" . $id . "', '" . $site->getID() . "', '$circle', '$orientation', 'N/A')");
-		//NOT NEEDED BECAUSE WE DETERMINE IDs MANUALLY TO FILL IN THE CRACKS OF DELETED CODES: $id = intval(mysqli_insert_id($dbconn));
-		
 		$code = self::IDToCode($id);
-		mysqli_query($dbconn, "UPDATE Plant SET `Code`='$code' WHERE `ID`='$id'");
+		
+		mysqli_query($dbconn, "INSERT INTO Plant (`ID`, `SiteFK`, `Circle`, `Orientation`, `Code`, `Species`, `IsConifer`) VALUES ('$id', '" . $site->getID() . "', '$circle', '$orientation', '$code', 'N/A', '0')");
 		mysqli_close($dbconn);
 		
-		return new Plant($id, $site, $circle, $orientation, $code, "N/A");
+		return new Plant($id, $site, $circle, $orientation, $code, "N/A", false);
 	}
-	private function __construct($id, $site, $circle, $orientation, $code, $species) {
+	private function __construct($id, $site, $circle, $orientation, $code, $species, $isConifer) {
 		$this->id = intval($id);
 		$this->site = $site;
 		$this->circle = $circle;
 		$this->orientation = $orientation;
 		$this->code = $code;
 		$this->species = $species;
+		$this->isConifer = filter_var($isConifer, FILTER_VALIDATE_BOOLEAN);
 		
 		$this->deleted = false;
 	}
@@ -100,8 +99,9 @@ class Plant
 		$orientation = $plantRow["Orientation"];
 		$code = $plantRow["Code"];
 		$species = $plantRow["Species"];
+		$isConifer = $plantRow["IsConifer"];
 		
-		return new Plant($id, $site, $circle, $orientation, $code, $species);
+		return new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer);
 	}
 	
 	public static function findByCode($code) {
@@ -124,8 +124,9 @@ class Plant
 		$circle = $plantRow["Circle"];
 		$orientation = $plantRow["Orientation"];
 		$species = $plantRow["Species"];
+		$isConifer = $plantRow["IsConifer"];
 		
-		return new Plant($id, $site, $circle, $orientation, $code, $species);
+		return new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer);
 	}
 	
 	public static function findBySiteAndPosition($site, $circle, $orientation) {
@@ -156,9 +157,9 @@ class Plant
 			$orientation = $plantRow["Orientation"];
 			$code = $plantRow["Code"];
 			$species = $plantRow["Species"];
-			$plant = new Plant($id, $site, $circle, $orientation, $code, $species);
+			$isConifer = $plantRow["IsConifer"];
 			
-			array_push($plantsArray, $plant);
+			array_push($plantsArray, new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer));
 		}
 		return $plantsArray;
 	}
@@ -187,6 +188,11 @@ class Plant
 	public function getOrientation() {
 		if($this->deleted){return null;}
 		return $this->orientation;
+	}
+	
+	public function getIsConifer() {
+		if($this->deleted){return null;}
+		return $this->isConifer;
 	}
 	
 	public function getColor(){
@@ -261,6 +267,18 @@ class Plant
 				return true;
 			}
 			mysqli_close($dbconn);
+		}
+		return false;
+	}
+	
+	public function setIsConifer($isConifer){
+		if(!$this->deleted){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			$isConifer = filter_var($isConifer, FILTER_VALIDATE_BOOLEAN);
+			mysqli_query($dbconn, "UPDATE Plant SET `IsConifer`='$isConifer' WHERE ID='" . $this->id . "'");
+			mysqli_close($dbconn);
+			$this->isConifer = $isConifer;
+			return true;
 		}
 		return false;
 	}
