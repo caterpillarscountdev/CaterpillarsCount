@@ -43,7 +43,7 @@
 				$plantData[$i][2] = false;
 			}
 			
-			if(count($plantData[$i]) == 4){
+			if(count($plantData[$i]) > 2){
 				if(array_key_exists($plantData[$i][0], $associativePlants)){
 					$plant = $associativePlants[$plantData[$i][0]];
 					if(is_object($plant) && get_class($plant) == "Plant"){
