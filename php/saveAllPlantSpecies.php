@@ -39,7 +39,11 @@
 		}
 		
 		for($i = 0; $i < count($plantData); $i++){
-			if(count($plantData[$i]) == 3){
+			if(count($plantData[$i]) == 2){
+				$plantData[$i][2] = false;
+			}
+			
+			if(count($plantData[$i]) == 4){
 				if(array_key_exists($plantData[$i][0], $associativePlants)){
 					$plant = $associativePlants[$plantData[$i][0]];
 					if(is_object($plant) && get_class($plant) == "Plant"){
@@ -54,27 +58,17 @@
 							$plant->setCode($newPlant->getCode());
 							$newPlant->setCode($code);
 							$newPlant->setSpecies($plantData[$i][1]);
+							$newPlant->setIsConifer(count($plantData[$i]) > 3 ? $plantData[$i][3] : $plant->getIsConifer());
 						}
 						else{
 							$plant->setSpecies($plantData[$i][1]);
+							$plant->setIsConifer($plantData[$i][3]);
 						}
 					}
 					else{die("false|Plant with code \"" . $plantData[$i][0] . "\" could not be found in the \"" . $site->getName() . "\" site.");}
 				}
 				else{die("false|Plant with code \"" . $plantData[$i][0] . "\" could not be found in the \"" . $site->getName() . "\" site.");}
 			}
-			//WILL NOT BE NECESSARY ONCE APP HAS BEEN UPDATED
-			else if(count($plantData[$i]) == 2){
-				if(array_key_exists($plantData[$i][0], $associativePlants)){
-					$plant = $associativePlants[$plantData[$i][0]];
-					if(is_object($plant) && get_class($plant) == "Plant"){
-						$plant->setSpecies($plantData[$i][1]);
-					}
-					else{die("false|Plant with code \"" . $plantData[$i][0] . "\" could not be found in the \"" . $site->getName() . "\" site.");}
-				}
-				else{die("false|Plant with code \"" . $plantData[$i][0] . "\" could not be found in the \"" . $site->getName() . "\" site.");}
-			}
-			//END OF WILL NOT BE NECESSARY ONCE APP HAS BEEN UPDATED
 			else{die("false|Improperly formatted data provided.");}
 		}
 		die("true|");
