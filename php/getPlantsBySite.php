@@ -22,7 +22,7 @@
 		$circles[$i] = array(($i + 1), array());
 	      }
 	      for($i = 0; $i < count($plants); $i++){
-		$circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies());
+		$circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies(), $plants[$i]->getIsConifer());
 	      }
 	      die("true|" . json_encode(array($site->getName() . " (" . $site->getRegion() . ")", $circles)));
 	    }
