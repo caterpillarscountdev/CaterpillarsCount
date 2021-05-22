@@ -1,4 +1,6 @@
 <?php
+	//THIS FILE EXISTS TO SUPPORT OLD VERSIONS OF THE MOBILE APP.
+	//THE NEW FILE IS php/getPlantsDataBySite.php
 	header('Access-Control-Allow-Origin: *');
 	
 	require_once('orm/User.php');
