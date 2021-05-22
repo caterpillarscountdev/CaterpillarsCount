@@ -311,7 +311,7 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/getPlantsBySite.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
+				xhttp.open("GET", "../php/getPlantsDataBySite.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
 				xhttp.send();
 			}
 
