@@ -459,7 +459,7 @@
 				var plantData = [];
 				var inputs = $("input");
 				for(var i = 0; i < inputs.length; i++){
-					plantData[plantData.length] = [inputs.eq(i)[0].id, encodeURIComponent(inputs.eq(i)[0].value.replace(/\s\s+/g, ' ')), checkboxIsChecked($("#moveCheckbox" + inputs.eq(i)[0].id)), , checkboxIsChecked($("#coniferCheckbox" + inputs.eq(i)[0].id))];
+					plantData[plantData.length] = [inputs.eq(i)[0].id, encodeURIComponent(inputs.eq(i)[0].value.replace(/\s\s+/g, ' ')), checkboxIsChecked($("#moveCheckbox" + inputs.eq(i)[0].id)), checkboxIsChecked($("#coniferCheckbox" + inputs.eq(i)[0].id))];
 				}
 
 				var formData = new FormData();
