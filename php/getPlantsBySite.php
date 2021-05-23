@@ -1,6 +1,4 @@
 <?php
-	//THIS FILE EXISTS TO SUPPORT OLD VERSIONS OF THE MOBILE APP.
-	//THE NEW FILE IS php/getPlantsDataBySite.php
 	header('Access-Control-Allow-Origin: *');
 	
 	require_once('orm/User.php');
@@ -9,6 +7,7 @@
 	$email = $_GET["email"];
 	$salt = $_GET["salt"];
 	$siteID = $_GET["siteID"];
+	$appVersion = intval(preg_replace("/[^0-9]/", "", isset($_GET["appVersion"]) ? $_GET["appVersion"] : "0"));
 	
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
@@ -24,9 +23,13 @@
 		$circles[$i] = array(($i + 1), array());
 	      }
 	      for($i = 0; $i < count($plants); $i++){
-		$circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies());
-	      }
-	      die("true|" . json_encode(array($site->getName() . " (" . $site->getRegion() . ")", $circles)));
+		      if($appVersion < 150){
+			      $circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies());
+		      }
+		      else{
+			      $circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies(), $plants[$i]->getIsConifer());
+		      }
+		      die("true|" . json_encode(array($site->getName() . " (" . $site->getRegion() . ")", $circles)));
 	    }
 	    die("false|You do not have access to this site.");
 	}
