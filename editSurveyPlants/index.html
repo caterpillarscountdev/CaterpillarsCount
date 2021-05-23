@@ -382,7 +382,7 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/getPlantsDataBySite.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
+				xhttp.open("GET", "../php/getPlantsBySite.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
 				xhttp.send();
 			}
 
@@ -614,7 +614,7 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/addCircle.php?samplePlantCode=" + encodeURIComponent(samplePlantCode) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
+				xhttp.open("GET", "../php/addCircle.php?samplePlantCode=" + encodeURIComponent(samplePlantCode) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
 				xhttp.send();
 			}
 		</script>
