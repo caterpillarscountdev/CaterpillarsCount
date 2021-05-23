@@ -21,6 +21,7 @@
 			"circle" => $plant->getCircle(),
 			"validated" => $plant->getSite()->getValidationStatus($user),
 			"observationMethod" => $plant->getSite()->getObservationMethodPreset($user),
+			"isConifer" => $plant->getIsConifer(),
 		);
 		die("true|" . json_encode($plantArray));
 	}
