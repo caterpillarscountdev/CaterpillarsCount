@@ -450,7 +450,7 @@
 					htmlToAdd +=					"<td onclick=\"event.stopPropagation();queueNotice('alert', 'Coniferous plants bear cones and have needle-like or scale-like leaves that are typically evergreen.<br/><br/><img src=\\'../images/conifer.jpeg\\'/>');\"><img src=\"../images/question.png\"/></td>";
 					htmlToAdd +=				"<tr>";
 					htmlToAdd +=			"</table>";
-					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + plants[j][1] + "\" class=\"checkboxTableOverlay\"></div>";
+					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + plants[j][1] + "\" class=\"checkboxTableOverlay\" onclick=\"queueNotice('alert', 'We\\'ve recognized this plant species and set its &quot;conifer&quot; checkbox automatically, so it is not editable.');\"></div>";
 					htmlToAdd +=		"</div>";
           				htmlToAdd += 		"<div class=\"editableFieldTitle\">Location change:</div>";
 					htmlToAdd +=		"<table class=\"checkboxTable\">";
