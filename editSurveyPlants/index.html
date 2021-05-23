@@ -447,7 +447,7 @@
 					htmlToAdd +=				"<tr onclick=\"toggleCheckbox($(this).find('.checkbox'));lastManualConiferSettings['" + plants[j][1] + "'] = $(this).has('.checked').length > 0;\">";
 					htmlToAdd +=					"<td><div class=\"checkbox" + (plants[j][3] ? " checked" : "") + "\" id=\"coniferCheckbox" + plants[j][1] + "\"></div></td>";
 					htmlToAdd +=					"<td>This plant is coniferous.</td>";
-					htmlToAdd +=					"<td onclick=\"event.stopPropagation();queueNotice('alert', 'Coniferous plants bear cones and have needle-like or scale-like leaves that are typically evergreen.<br/><br/><img src=\'images/conifer.jpeg\'/>');\"><img src=\"../images/question.png\"/></td>";
+					htmlToAdd +=					"<td onclick=\"event.stopPropagation();queueNotice('alert', 'Coniferous plants bear cones and have needle-like or scale-like leaves that are typically evergreen.<br/><br/><img src=\'../images/conifer.jpeg\'/>');\"><img src=\"../images/question.png\"/></td>";
 					htmlToAdd +=				"<tr>";
 					htmlToAdd +=			"</table>";
 					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + plants[j][1] + "\" class=\"checkboxTableOverlay\"></div>";
