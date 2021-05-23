@@ -248,8 +248,10 @@
 				if (right < 0) {return str.slice(left);}
 				return str.slice(left, right + index);
 			}
-			function attachAutoCompleteToInput(inputElement, sourceList){
-				$(inputElement).autocomplete({
+			function attachAutoCompleteToInput(inputElement, sourceList, bindSetConifer){
+				bindSetConifer = bindSetConifer || false;
+				
+				var autoCompleteOptions = {
 					minLength: 2,
 					source: function(request, response) {
 						var results = $.ui.autocomplete.filter(sourceList, request.term);
@@ -296,7 +298,15 @@
 						}
         					$('#ui-id-' + idNumber).css({left: (left - leftOffset) + "px"});
 					}
-				});
+				};
+				
+				if(bindSetConifer){
+					autoCompleteOptions["close"] = function(event, ui){
+						setConifer(this);
+					}
+				}
+				
+				$(inputElement).autocomplete(autoCompleteOptions);
 			}
 			
 			function isKnownConifer(plantSpeciesName){
@@ -405,7 +415,7 @@
 				$("#addNewCircle")[0].style.display = "block";
 				if(circles.length > 0){
 					$("#saveAllButton")[0].style.display = "block";
-					attachAutoCompleteToInput($("input"), plantSpeciesList);
+					attachAutoCompleteToInput($("input"), plantSpeciesList, true);
 				}
 			}
 
@@ -602,7 +612,7 @@
 						if(this.responseText.indexOf("true|") == "0"){
 							var newPlants = JSON.parse(this.responseText.replace("true|", ""));
 							$("#circles").append(getCircleHTML([($(".circle").length + 1), newPlants]));
-							attachAutoCompleteToInput($(".circle").eq($(".circle").length - 1).find("input"), plantSpeciesList);
+							attachAutoCompleteToInput($(".circle").eq($(".circle").length - 1).find("input"), plantSpeciesList, true);
 						}
 						else{
 							$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 'slow');
