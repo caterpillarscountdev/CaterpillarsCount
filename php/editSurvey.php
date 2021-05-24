@@ -18,6 +18,9 @@
 	$numberOfLeaves = $_POST["numberOfLeaves"];		//number
 	$averageLeafLength = $_POST["averageLeafLength"];	//number
 	$herbivoryScore = $_POST["herbivoryScore"];		//String
+	$averageNeedleLength = $_POST["averageNeedleLength"];
+	$linearBranchLength = $_POST["linearBranchLength"];
+	$isConifer = intval($numberOfLeaves) == -1;
 
 	function explainError($fileError){
 		if($fileError == UPLOAD_ERR_INI_SIZE){return 'The uploaded file exceeds the upload_max_filesize directive in php.ini. ';}
@@ -82,9 +85,15 @@
 				$survey->setNotes($notes);
 				$survey->setWetLeaves($wetLeaves);
 				//$survey->setPlantSpecies($plantSpecies);
-				$survey->setNumberOfLeaves($numberOfLeaves);
-				$survey->setAverageLeafLength($averageLeafLength);
-				$survey->setHerbivoryScore($herbivoryScore);
+				if($isConifer){
+					$survey->setAverageNeedleLength($averageNeedleLength);
+					$survey->setLinearBranchLength($linearBranchLength);
+				}
+				else{
+					$survey->setNumberOfLeaves($numberOfLeaves);
+					$survey->setAverageLeafLength($averageLeafLength);
+					$survey->setHerbivoryScore($herbivoryScore);
+				}
 				$survey->setNotes($siteNotes);
 				$arthropodData = json_decode($_POST["arthropodData"]);		//JSON
 				
