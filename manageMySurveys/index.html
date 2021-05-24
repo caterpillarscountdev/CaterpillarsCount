@@ -1075,48 +1075,85 @@
 								htmlToAdd += 				"</div>";
 								htmlToAdd +=			"</div>";
 								htmlToAdd +=			"<div>";
-								htmlToAdd += 				"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 500);\">" + surveys[i]["numberOfLeaves"] + "</div></div>";
-								htmlToAdd += 				"<div>";
-								htmlToAdd += 					"<div class=\"smallSelect\">";
-								htmlToAdd +=						"<div class=\"selected\">"
-								if(surveys[i]["wetLeaves"]){
-									htmlToAdd +=					"wet"
+								if(Number(surveys[i]["numberOfLeaves"]) == -1){
+									htmlToAdd += 			"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 500);\">" + surveys[i]["linearBranchLength"] + "</div></div>";
+									htmlToAdd += 			"<div>";
+									htmlToAdd += 				"<div class=\"smallSelect\">";
+									htmlToAdd +=					"<div class=\"selected\">"
+									if(surveys[i]["wetLeaves"]){
+										htmlToAdd +=				"wet"
+									}
+									else{
+										htmlToAdd += 				"dry";
+									}
+									htmlToAdd += 					"</div>";
+									htmlToAdd +=					"<div class=\"options\">";
+									htmlToAdd +=						"<div onclick=\"smallSelectOption(this);\">WET</div>";
+									htmlToAdd +=						"<div onclick=\"smallSelectOption(this);\">DRY</div>";
+									htmlToAdd +=					"</div>";
+									htmlToAdd += 				"</div> needles";
+									htmlToAdd += 			"</div>";
+									htmlToAdd +=		"</div>";
+									htmlToAdd +=		"<div>";
+									htmlToAdd += 			"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 60);\">" + surveys[i]["averageNeedleLength"] + "</div>cm</div>";
+									htmlToAdd += 			"<div>needle length</div>";
+									htmlToAdd +=		"</div>";
+									htmlToAdd +=		"<div>";
+									htmlToAdd += 			"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/selectIcons/herbivoryScores/none.png');\"></div>";
+									htmlToAdd += 			"<div>";
+									htmlToAdd += 				"<div class=\"smallSelect\">";
+									htmlToAdd +=					"<div class=\"selected\">" + herbivoryScores[surveys[i]["herbivoryScore"]] + "</div>";
+									htmlToAdd +=					"<div>";
+									htmlToAdd +=						"N/A";
+									htmlToAdd +=					"</div>";
+									htmlToAdd += 				"</div>";
+									htmlToAdd += 			"</div>";
+									htmlToAdd +=		"</div>";
 								}
 								else{
-									htmlToAdd += 					"dry";
+									htmlToAdd += 			"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 500);\">" + surveys[i]["numberOfLeaves"] + "</div></div>";
+									htmlToAdd += 			"<div>";
+									htmlToAdd += 				"<div class=\"smallSelect\">";
+									htmlToAdd +=					"<div class=\"selected\">"
+									if(surveys[i]["wetLeaves"]){
+										htmlToAdd +=				"wet"
+									}
+									else{
+										htmlToAdd += 				"dry";
+									}
+									htmlToAdd += 					"</div>";
+									htmlToAdd +=					"<div class=\"options\">";
+									htmlToAdd +=						"<div onclick=\"smallSelectOption(this);\">WET</div>";
+									htmlToAdd +=						"<div onclick=\"smallSelectOption(this);\">DRY</div>";
+									htmlToAdd +=					"</div>";
+									htmlToAdd += 				"</div>";
+									if(surveys[i]["numberOfLeaves"] == 1){
+										htmlToAdd += 		" leaf</div>";
+									}
+									else{
+										htmlToAdd += 		" leaves</div>";
+									}
+									htmlToAdd +=		"</div>";
+									htmlToAdd +=		"<div>";
+									htmlToAdd += 			"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 60);\">" + surveys[i]["averageLeafLength"] + "</div>cm</div>";
+									htmlToAdd += 			"<div>leaf length</div>";
+									htmlToAdd +=		"</div>";
+									htmlToAdd +=		"<div>";
+									htmlToAdd += 			"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/selectIcons/herbivoryScores/" + ["none", "trace", "light", "moderate", "heavy"][surveys[i]["herbivoryScore"]] + ".png');\"></div>";
+									htmlToAdd += 			"<div>";
+									htmlToAdd += 				"<div class=\"smallSelect\">";
+									htmlToAdd +=					"<div class=\"selected\">" + herbivoryScores[surveys[i]["herbivoryScore"]] + "</div>";
+									htmlToAdd +=					"<div class=\"options\">";
+									htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/none.png')&quot;;\">NONE</div>";
+									htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/trace.png')&quot;;\">TRACE<br/>(1-5%)</div>";
+									htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/light.png')&quot;;\">LIGHT<br/>(6-10%)</div>";
+									htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/moderate.png')&quot;;\">MODERATE<br/>(11-25%)</div>";
+									htmlToAdd +=						"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/heavy.png')&quot;;\">HEAVY<br/>(> 25%)</div>";
+									htmlToAdd +=					"</div>";
+									htmlToAdd += 				"</div>";
+									htmlToAdd += 			"</div>";
+									htmlToAdd +=		"</div>";
 								}
-								htmlToAdd += 						"</div>";
-								htmlToAdd +=						"<div class=\"options\">";
-								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);\">WET</div>";
-								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);\">DRY</div>";
-								htmlToAdd +=						"</div>";
-								htmlToAdd += 					"</div>";
-								if(surveys[i]["numberOfLeaves"] == 1){
-									htmlToAdd += 			" leaf</div>";
-								}
-								else{
-									htmlToAdd += 			" leaves</div>";
-								}
-								htmlToAdd +=			"</div>";
-								htmlToAdd +=			"<div>";
-								htmlToAdd += 				"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 60);\">" + surveys[i]["averageLeafLength"] + "</div>cm</div>";
-								htmlToAdd += 				"<div>leaf length</div>";
-								htmlToAdd +=			"</div>";
-								htmlToAdd +=			"<div>";
-								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/selectIcons/herbivoryScores/" + ["none", "trace", "light", "moderate", "heavy"][surveys[i]["herbivoryScore"]] + ".png');\"></div>";
-								htmlToAdd += 				"<div>";
-								htmlToAdd += 					"<div class=\"smallSelect\">";
-								htmlToAdd +=						"<div class=\"selected\">" + herbivoryScores[surveys[i]["herbivoryScore"]] + "</div>";
-								htmlToAdd +=						"<div class=\"options\">";
-								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/none.png')&quot;;\">NONE</div>";
-								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/trace.png')&quot;;\">TRACE<br/>(1-5%)</div>";
-								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/light.png')&quot;;\">LIGHT<br/>(6-10%)</div>";
-								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/moderate.png')&quot;;\">MODERATE<br/>(11-25%)</div>";
-								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/selectIcons/herbivoryScores/heavy.png')&quot;;\">HEAVY<br/>(> 25%)</div>";
-								htmlToAdd +=						"</div>";
-								htmlToAdd += 					"</div>";
-								htmlToAdd += 				"</div>";
-								htmlToAdd +=			"</div>";
 								htmlToAdd += 		"</div>";
 								htmlToAdd += 		"<div>";
 								if(surveys[i]["notes"].trim().length > 0){
