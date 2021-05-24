@@ -70,6 +70,8 @@
 					"numberOfLeaves" => $surveys[$i]->getNumberOfLeaves(),
 					"averageLeafLength" => $surveys[$i]->getAverageLeafLength(),
 					"herbivoryScore" => $surveys[$i]->getHerbivoryScore(),
+					"averageNeedleLength" => $surveys[$i]->getAverageNeedleLength(),
+					"linearBranchLength" => $surveys[$i]->getLinearBranchLength(),
 					"submittedThroughApp" => $surveys[$i]->getSubmittedThroughApp(),
 					"arthropodSightings" => $arthropodSightingsArray,
 				);
