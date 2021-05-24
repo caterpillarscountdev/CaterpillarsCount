@@ -1077,6 +1077,14 @@
 								htmlToAdd +=			"<div>";
 								if(Number(surveys[i]["numberOfLeaves"]) == -1){
 									htmlToAdd += 			"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 500);\">" + surveys[i]["linearBranchLength"] + "</div></div>";
+									htmlToAdd += 			"<div>linear branch length</div>";
+									htmlToAdd +=		"</div>";
+									htmlToAdd +=		"<div>";
+									htmlToAdd += 			"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 60);\">" + surveys[i]["averageNeedleLength"] + "</div>cm</div>";
+									htmlToAdd += 			"<div>needle length</div>";
+									htmlToAdd +=		"</div>";
+									htmlToAdd +=		"<div>";
+									htmlToAdd += 			"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/selectIcons/herbivoryScores/none.png');opacity:0.5;\"></div>";
 									htmlToAdd += 			"<div>";
 									htmlToAdd += 				"<div class=\"smallSelect\">";
 									htmlToAdd +=					"<div class=\"selected\">"
@@ -1092,16 +1100,6 @@
 									htmlToAdd +=						"<div onclick=\"smallSelectOption(this);\">DRY</div>";
 									htmlToAdd +=					"</div>";
 									htmlToAdd += 				"</div> needles";
-									htmlToAdd += 			"</div>";
-									htmlToAdd +=		"</div>";
-									htmlToAdd +=		"<div>";
-									htmlToAdd += 			"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 60);\">" + surveys[i]["averageNeedleLength"] + "</div>cm</div>";
-									htmlToAdd += 			"<div>needle length</div>";
-									htmlToAdd +=		"</div>";
-									htmlToAdd +=		"<div>";
-									htmlToAdd += 			"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/selectIcons/herbivoryScores/none.png');opacity:0.5;\"></div>";
-									htmlToAdd += 			"<div>";
-									htmlToAdd +=				"N/A";
 									htmlToAdd += 			"</div>";
 									htmlToAdd +=		"</div>";
 								}
