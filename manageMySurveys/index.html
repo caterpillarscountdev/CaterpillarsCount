@@ -1076,15 +1076,15 @@
 								htmlToAdd +=			"</div>";
 								htmlToAdd +=			"<div>";
 								if(Number(surveys[i]["numberOfLeaves"]) == -1){
-									htmlToAdd += 			"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 500);\">" + surveys[i]["linearBranchLength"] + "</div></div>";
-									htmlToAdd += 			"<div>linear branch length</div>";
+									htmlToAdd += 			"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 500);\">" + surveys[i]["linearBranchLength"] + "</div>cm</div>";
+									htmlToAdd += 			"<div>branch length</div>";
 									htmlToAdd +=		"</div>";
 									htmlToAdd +=		"<div>";
 									htmlToAdd += 			"<div class=\"surveyInfoIcon\"><div class=\"editable\" oninput=\"forceNumber(this);\" onblur=\"forceRange(this, 1, 60);\">" + surveys[i]["averageNeedleLength"] + "</div>cm</div>";
 									htmlToAdd += 			"<div>needle length</div>";
 									htmlToAdd +=		"</div>";
 									htmlToAdd +=		"<div>";
-									htmlToAdd += 			"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/selectIcons/herbivoryScores/none.png');opacity:0.5;\"></div>";
+									htmlToAdd += 			"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/needles.png');opacity:0.5;\"></div>";
 									htmlToAdd += 			"<div>";
 									htmlToAdd += 				"<div class=\"smallSelect\">";
 									htmlToAdd +=					"<div class=\"selected\">"
@@ -2162,14 +2162,17 @@
 			}
 
 			function saveSurvey(id){
+				var isConifer = $("#" + id + " .siteInfo")[0].innerHTML.indexOf("needle") > -1;
 				var code = $("#" + id + " .siteInfo .editable")[0].innerHTML;
 				var date = databaseDate($("h3:first-of-type")[0].innerHTML);
 				var time = databaseTime($("#" + id + " .time .editable")[0].innerHTML);
 				var observationMethod = $("#" + id + " .surveyInfo .selected")[0].innerHTML.substring(0, 1).toUpperCase() + $("#" + id + " .surveyInfo .selected")[0].innerHTML.substring(1).toLowerCase();
-				var numberOfLeaves = Number($("#" + id + " .surveyInfoIcon .editable")[0].innerHTML);
+				var numberOfLeaves = isConifer ? -1 : Number($("#" + id + " .surveyInfoIcon .editable")[0].innerHTML);
 				var wetLeaves = $("#" + id + " .surveyInfo .selected").eq(1)[0].innerHTML.toLowerCase().indexOf("wet") > -1;
-				var averageLeafLength = Number($("#" + id + " .surveyInfoIcon .editable").eq(1)[0].innerHTML);
-				var herbivoryScore = $("#" + id + " .surveyInfo .selected").eq(2)[0].innerHTML.replace(/\D/g, "").replace("1125", "333").replace("25", "4444").replace("610", "22").replace("15", "1").length;
+				var averageLeafLength = isConifer ? -1 : Number($("#" + id + " .surveyInfoIcon .editable")[1].innerHTML);
+				var herbivoryScore = isConifer ? -1 : $("#" + id + " .surveyInfo .selected").eq(2)[0].innerHTML.replace(/\D/g, "").replace("1125", "333").replace("25", "4444").replace("610", "22").replace("15", "1").length;
+				var averageNeedleLength = isConifer ? Number($("#" + id + " .surveyInfoIcon .editable")[1].innerHTML) : -1;
+				var linearBranchLength = isConifer ? Number($("#" + id + " .surveyInfoIcon .editable")[0].innerHTML) : -1;
 				var siteNotes = $("#" + id + " .surveyInfo .editable").eq(2)[0].innerHTML.trim();
 				if(siteNotes == "[notes]"){
 					siteNotes = "";
@@ -2234,6 +2237,8 @@
 				formData.append("averageLeafLength", averageLeafLength);
 				formData.append("herbivoryScore", herbivoryScore);
 				formData.append("observationMethod", observationMethod);
+				formData.append("averageNeedleLength", averageNeedleLength);
+				formData.append("linearBranchLength", linearBranchLength);
 				//formData.append("plantSpecies", plantSpecies);
 				formData.append("email", window.localStorage.getItem("email"));
 				formData.append("salt", window.localStorage.getItem("salt"));
