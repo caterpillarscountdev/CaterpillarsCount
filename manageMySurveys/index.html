@@ -2162,7 +2162,7 @@
 			}
 
 			function saveSurvey(id){
-				var isConifer = $("#" + id + " .siteInfo")[0].innerHTML.indexOf("needle") > -1;
+				var isConifer = $("#" + id + " .surveyInfo")[0].innerHTML.indexOf("needle") > -1;
 				var code = $("#" + id + " .siteInfo .editable")[0].innerHTML;
 				var date = databaseDate($("h3:first-of-type")[0].innerHTML);
 				var time = databaseTime($("#" + id + " .time .editable")[0].innerHTML);
