@@ -621,7 +621,7 @@ class Site
 	
 	public static function validDate($dbconn, $date){
 		$dateParts = explode("-", trim($date));
-		if(count($dateParts != 3)){
+		if(count($dateParts) != 3){
 			return false;
 		}
 		
