@@ -771,7 +771,7 @@ class Site
 			}
 			
 			$managerRequest = ManagerRequest::findByManagerAndSite($user, $this);
-			if(get_class($managerRequest) == "ManagerRequest"){
+			if($managerRequest !== null && get_class($managerRequest) == "ManagerRequest"){
 				return $managerRequest->getHasCompleteAuthority();
 			}
 		}
