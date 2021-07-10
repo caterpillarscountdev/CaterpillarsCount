@@ -317,8 +317,8 @@
 									<table class="checkboxTable">
 										<tr onclick="toggleCheckbox($(this).find('.checkbox'));">
 											<td><div class="checkbox" id="wetLeavesCheckbox"></div></td>
-											<td>wet leaves</td>
-											<td onclick="event.stopPropagation();queueNotice('alert', 'Are the leaves on the plant you\'re surveying wet from dew or rain?');"><img src="../images/question.png"/></td>
+											<td>wet <span id="leavesText">leaves</span></td>
+											<td onclick="event.stopPropagation();queueNotice('alert', 'Are the ' + ($('#coniferInputs')[0].style.display == 'block' ? 'needles' : 'leaves') + ' on the plant you\'re surveying wet from dew or rain?');"><img src="../images/question.png"/></td>
 										<tr>
 									</table>
 								</div>
@@ -491,25 +491,41 @@
 									<input type="text" id="plantSpecies" placeholder="" oninput="setCustomPlantSpeciesConfirmed(false);" onclick="if(this.readOnly){this.blur();queueNotice('alert', 'The creator of this site has locked in this plant\'s species, so there\'s no need for you to worry about it.');}" onblur="if($('.ui-autocomplete').has(currentElement).length > 0){this.value = $(currentElement).text();this.focus();}else if(!this.readOnly && this.value.replace(/ /g, '') != '' && !inArrayIgnoreCaseAndWhitespace(this.value, plantSpeciesList) && !customPlantSpeciesConfirmed){promptConfirm('&quot;' + this.value + '&quot; is not a species name in our database. Are you sure this is the correct name and spelling of your tree species?', 'Try again.', 'Continue. I am sure!', function(){document.getElementById('plantSpecies').focus();document.getElementById('plantSpecies').select();}, function(){setCustomPlantSpeciesConfirmed(true);});setTimeout(function(){for(var i = 1; i < $('#plant input').length; i++){$('#plant input').eq(i).blur();}},1);}"/>
 								</div>
 
-								<div>
-								<div class="half group">
-									<div class="observationFieldTitle">Number of leaves:</div>
-									<div class="countInput" onclick="if(autocompleteIsActive){return false;}if($('#numberOfLeaves')[0].readOnly){$('#numberOfLeaves')[0].blur();queueNotice('alert', 'Visual observation method requires a count of exactly 50 leaves.');}">
-										<input type="number" id="numberOfLeaves" placeholder="1 - 500" pattern="\d*"  onclick="if(!this.readOnly){this.select();}" oninput="this.value = this.value.replace(/\D/g, '');" onblur="enforceRange(this, 1, 500, 1);"/>
-										<div class="countAttachment">
-											<div onclick="if(autocompleteIsActive){return false;}if(!$(this.parentNode.parentNode).find('input').eq(0)[0].readOnly){incrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 500, 1);}"></div>
-											<div onclick="if(autocompleteIsActive){return false;}if(!$(this.parentNode.parentNode).find('input').eq(0)[0].readOnly){decrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 500, 1);}"></div>
+								<div id="leafInputs">
+									<div class="half group">
+										<div class="observationFieldTitle">Average leaf length:</div>
+										<input type="number" id="averageLeafLength" placeholder="1cm - 60cm" onclick="this.select();"  pattern="\d*" onblur="enforceRange(this, 1, 60, 1); if(Number(this.value) >= 30){promptConfirm('That\'s a big leaf! Leaf lengths are measured in centimeters. Are you sure the average leaf length for this survey is ' + this.value + ' cm?', 'Whoops!', 'Yes, I am sure!', function(){$('#averageLeafLength')[0].focus();$('#averageLeafLength')[0].select();}, function(){});}"/>
+									</div>
+									
+									<div class="half group">
+										<div class="observationFieldTitle">Number of leaves:</div>
+										<div class="countInput" onclick="if(autocompleteIsActive){return false;}if($('#numberOfLeaves')[0].readOnly){$('#numberOfLeaves')[0].blur();queueNotice('alert', 'Visual observation method requires a count of exactly 50 leaves.');}">
+											<input type="number" id="numberOfLeaves" placeholder="1 - 500" pattern="\d*"  onclick="if(!this.readOnly){this.select();}" onblur="enforceRange(this, 1, 500, 1);"/>
+											<div class="countAttachment">
+												<div onclick="if(autocompleteIsActive){return false;}if(!$(this.parentNode.parentNode).find('input').eq(0)[0].readOnly){incrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 500, 1);}"></div>
+												<div onclick="if(autocompleteIsActive){return false;}if(!$(this.parentNode.parentNode).find('input').eq(0)[0].readOnly){decrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 500, 1);}"></div>
+											</div>
 										</div>
 									</div>
 								</div>
-
-								<div class="half group">
-									<div class="observationFieldTitle">Average leaf length:</div>
-									<input type="number" id="averageLeafLength" placeholder="1cm - 60cm" onclick="this.select();"  pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');" onblur="enforceRange(this, 1, 60, 1); if(Number(this.value) >= 30){promptConfirm('That\'s a big leaf! Leaf lengths are measured in centimeters. Are you sure the average leaf length for this survey is ' + this.value + ' cm?', 'Whoops!', 'Yes, I am sure!', function(){$('#averageLeafLength')[0].focus();$('#averageLeafLength')[0].select();}, function(){});}"/>
+								<div id="coniferInputs">
+									<div class="half group">
+										<div class="observationFieldTitle">Average needle length:</div>
+										<input type="number" id="averageNeedleLength" placeholder="1cm - 60cm" onclick="this.select();"  pattern="\d*" onblur="enforceRange(this, 1, 60, 1); if(Number(this.value) >= 30){promptConfirm('That\'s a big needle! Needle lengths are measured in centimeters. Are you sure the average needle length for this survey is ' + this.value + ' cm?', 'Whoops!', 'Yes, I am sure!', function(){$('#averageNeedleLength')[0].focus();$('#averageNeedleLength')[0].select();}, function(){});}"/>
+									</div>
+									
+									<div class="half group">
+										<table class="observationFieldTitleTable">
+											<tr>
+												<td class="observationFieldTitle">Linear branch length:</td>
+												<td onclick="event.stopPropagation();queueNotice('alert', '&quot;Linear branch length&quot; is a rough sum of the branch lengths you\'ve observed for this survey. This is meant to be an estimate; do NOT agonize over this.<br/><br/><img src=\'../images/linerBranchLengthExplanation.gif\' style=\'max-height:250px;\'/>');"><img src="../images/question.png"/></td>
+											</tr>
+										</table>
+										<input type="number" id="linearBranchLength" placeholder="1cm - 500cm" onclick="this.select();"  pattern="\d*" onblur="enforceRange(this, 1, 500, 1);"/>
+									</div>
 								</div>
-								</div>
 
-								<div class="group">
+								<div class="group" id="herbivoryGroup">
 									<div class="observationFieldTitle">Herbivory score:</div>
 									<div class="select" id="herbivoryScore">
 										<div class="option selected" onclick="if(autocompleteIsActive){return false;}selectOption(this);">	<div class="value"></div>			<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
