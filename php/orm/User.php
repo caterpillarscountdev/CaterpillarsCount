@@ -461,7 +461,7 @@ class User
 		$email = filter_var(rawurldecode($email), FILTER_SANITIZE_EMAIL);
 
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false && mysqli_num_rows(mysqli_query($dbconn, "SELECT `ID` FROM `User` WHERE `Email`='" . $email . "' LIMIT 1")) == 0) {
-			return mysqli_real_escape_string($dbconn, htmlentities($email));
+			return strtolower(mysqli_real_escape_string($dbconn, htmlentities($email)));
 		}
 		return false;
 	}
@@ -470,7 +470,7 @@ class User
 		$email = filter_var(rawurldecode($email), FILTER_SANITIZE_EMAIL);
 
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-			return mysqli_real_escape_string($dbconn, htmlentities($email));
+			return strtolower(mysqli_real_escape_string($dbconn, htmlentities($email)));
 		}
 		return false;
 	}

@@ -7,6 +7,8 @@
 			var currentElement = null;
 			var autocompleteIsActive = false;
 			$(document).ready(function(){
+				var lastPlantSpecies = "";
+				
 				for(var i = 0; i < $(".noautocomplete").length; i++){
 					$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
 				}
@@ -90,6 +92,8 @@
 					var numberOfLeaves = pendingSurvey[8];
 					var averageLeafLength = pendingSurvey[9];
 					var herbivoryScore = pendingSurvey[10];
+					var averageNeedleLength = pendingSurvey.length > 12 ? pendingSurvey[12] : "-1";
+					var linearBranchLength = pendingSurvey.length > 13 ? pendingSurvey[13] : "-1";
 	//alert("set vars");
 					var formData = new FormData();
 					for(var i = 0; i < arthropodDataCopy.length; i++){
@@ -113,6 +117,8 @@
 					formData.append("numberOfLeaves", numberOfLeaves);
 					formData.append("averageLeafLength", averageLeafLength);
 					formData.append("herbivoryScore", herbivoryScore);
+					formData.append("averageNeedleLength", averageNeedleLength);
+					formData.append("linearBranchLength", linearBranchLength);
 					formData.append("observationMethod", observationMethod);
 					formData.append("plantSpecies", plantSpecies);
 					formData.append("submittedThroughApp", false);
@@ -295,7 +301,7 @@
 				//show a regular alert message
 				$("#retrySurveyLocationCode")[0].value = message.substring(0, message.indexOf("|")).toUpperCase();
 				$("#retrySitePassword")[0].value = "";
-				$("#retryPlantCredentials .message").eq(0)[0].innerHTML = message.substring(message.indexOf("|") + 1);
+				$("#retryPlantCredentials .message")[0].innerHTML = message.substring(message.indexOf("|") + 1);
 				$("#retryPlantCredentials").stop().fadeIn();
 				$("#noticeInteractionBlock").stop().fadeIn();
 				
@@ -550,7 +556,8 @@
 				$(buttonElement).stop().animate({backgroundColor:"#333", color:"#fff"}, 200);
 			}
 			
-			var plantSpeciesList = ["Pacific silver fir", "Abies amabilis", "Balsam fir", "Abies balsamea", "Bristlecone fir", "Abies bracteata", "White fir", "Abies concolor", "Fraser fir", "Abies fraseri", "Grand fir", "Abies grandis", "Subalpine fir", "Abies lasiocarpa", "California red fir", "Abies magnifica", "Noble fir", "Abies procera", "Fir spp.", "Abies spp.", "Sweet acacia", "Acacia farnesiana", "Catclaw acacia", "Acacia greggii", "Acacia spp.", "Acacia spp.", "Florida maple", "Acer barbatum", "Trident maple", "Acer buergerianum", "Hedge maple", "Acer campestre", "Horned maple", "Acer diabolicum", "Southern sugar maple", "Acer floridanum", "Amur maple", "Acer ginnala", "Rocky Mountain maple", "Acer glabrum", "Bigtooth maple", "Acer grandidentatum", "Chalk maple", "Acer leucoderme", "Bigleaf maple", "Acer macrophyllum", "Boxelder", "Acer negundo", "Black maple", "Acer nigrum", "Japanese maple", "Acer palmatum", "Striped maple", "Acer pensylvanicum", "Norway maple", "Acer platanoides", "Red maple", "Acer rubrum", "Silver maple", "Acer saccharinum", "Sugar maple", "Acer saccharum", "Mountain maple", "Acer spicatum", "Maple spp.", "Acer spp.", "Freeman maple", "Acer X freemanii", "Everglades palm", "Acoelorraphe wrightii", "California buckeye", "Aesculus californica", "Yellow buckeye", "Aesculus flava", "Ohio buckeye", "Aesculus glabra", "Horse chestnut", "Aesculus hippocastanum", "Bottlebrush buckeye", "Aesculus parviflora", "Red buckeye", "Aesculus pavia", "Buckeye spp.", "Aesculus spp.", "Painted buckeye", "Aesculus sylvatica", "Ailanthus", "Ailanthus altissima", "Mimosa", "Albizia julibrissin", "European alder", "Alnus glutinosa", "Speckled alder", "Alnus incana", "Arizona alder", "Alnus oblongifolia", "White alder", "Alnus rhombifolia", "Red alder", "Alnus rubra", "Hazel alder", "Alnus serrulata", "Alder spp.", "Alnus spp.", "Common serviceberry", "Amelanchier arborea", "Roundleaf serviceberry", "Amelanchier sanguinea", "Serviceberry spp.", "Amelanchier spp.", "Sea torchwood", "Amyris elemifera", "Pond-apple", "Annona glabra", "Arizona madrone", "Arbutus arizonica", "Pacific madrone", "Arbutus menziesii", "Madrone spp.", "Arbutus spp.", "Texas madrone", "Arbutus xalapensis", "Dwarf pawpaw", "Asimina pygmea", "Pawpaw", "Asimina triloba", "Black-mangrove", "Avicennia germinans", "Eastern baccharis", "Baccharis halimifolia", "Yellow birch", "Betula alleghaniensis", "Sweet birch", "Betula lenta", "River birch", "Betula nigra", "Water birch", "Betula occidentalis", "Paper birch", "Betula papyrifera", "Gray birch", "Betula populifolia", "Birch spp.", "Betula spp.", "Virginia roundleaf birch", "Betula uber", "Northwestern paper birch", "Betula x utahensis", "Gumbo limbo", "Bursera simaruba", "American beautyberry", "Callicarpa americana", "Alaska cedar", "Callitropsis nootkatensis", "Incense-cedar", "Calocedrus decurrens", "Camellia spp.", "Camellia spp.", "American hornbeam", "Carpinus caroliniana", "Mockernut hickory", "Carya alba", "Water hickory", "Carya aquatica", "Southern shagbark hickory", "Carya carolinae-septentrionalis", "Bitternut hickory", "Carya cordiformis", "Scrub hickory", "Carya floridana", "Pignut hickory", "Carya glabra", "Pecan", "Carya illinoinensis", "Shellbark hickory", "Carya laciniosa", "Nutmeg hickory", "Carya myristiciformis", "Red hickory", "Carya ovalis", "Shagbark hickory", "Carya ovata", "Sand hickory", "Carya pallida", "Hickory spp.", "Carya spp.", "Black hickory", "Carya texana", "Mockernut hickory", "Carya tomentosa", "American chestnut", "Castanea dentata", "Chinese chestnut", "Castanea mollissima", "Allegheny chinquapin", "Castanea pumila", "Chestnut spp.", "Castanea spp.", "Gray sheoak", "Casuarina glauca", "Belah", "Casuarina lepidophloia", "Sheoak spp.", "Casuarina spp.", "Southern catalpa", "Catalpa bignonioides", "Northern catalpa", "Catalpa speciosa", "Catalpa spp.", "Catalpa spp.", "Sugarberry", "Celtis laevigata", "Hackberry", "Celtis occidentalis", "Hackberry spp.", "Celtis spp.", "Eastern redbud", "Cercis canadensis", "Curlleaf mountain-mahogany", "Cercocarpus ledifolius", "Port-Orford-cedar", "Chamaecyparis lawsoniana", "White-cedar spp.", "Chamaecyparis spp.", "Atlantic white-cedar", "Chamaecyparis thyoides", "Fragrant wintersweet", "Chimonanthus praecox", "Fringetree", "Chionanthus virginicus", "Giant chinkapin", "Chrysolepis chrysophylla", "Camphortree", "Cinnamomum camphora", "Spiny fiddlewood", "Citharexylum spinosum", "Citrus spp.", "Citrus spp.", "Kentucky yellowwood", "Cladrastis kentukea", "Tietongue", "Coccoloba diversifolia", "Florida silver palm", "Coccothrinax argentata", "Coconut palm", "Cocos nucifera", "Soldierwood", "Colubrina elliptica", "Bluewood", "Condalia hookeri", "Buttonwood-mangrove", "Conocarpus erectus", "Anacahuita", "Cordia boissieri", "Largeleaf geigertree", "Cordia sebestena", "Alternate-leaf dogwood", "Cornus alternifolia", "Flowering dogwood", "Cornus florida", "Stiff dogwood", "Cornus foemina", "Kousa dogwood", "Cornus kousa", "Big-leaf dogwood", "Cornus macrophylla", "Cornelian-cherry dogwood", "Cornus mas", "Pacific dogwood", "Cornus nuttallii", "Redosier dogwood", "Cornus sericea", "Dogwood spp.", "Cornus spp.", "American hazelnut", "Corylus americana", "Beaked hazel", "Corylus cornuta", "Hazelnut", "Corylus spp.", "Smoketree", "Cotinus obovatus", "Brainerd's hawthorn", "Crataegus brainerdii", "Pear hawthorn", "Crataegus calpodendron", "Fireberry hawthorn", "Crataegus chrysocarpa", "Cockspur hawthorn", "Crataegus crus-galli", "Broadleaf hawthorn", "Crataegus dilatata", "Fanleaf hawthorn", "Crataegus flabellata", "Downy hawthorn", "Crataegus mollis", "Oneseed hawthorn", "Crataegus monogyna", "Scarlet hawthorn", "Crataegus pedicellata", "Washington hawthorn", "Crataegus phaenopyrum", "Hawthorn spp.", "Crataegus spp.", "Fleshy hawthorn", "Crataegus succulenta", "Dwarf hawthorn", "Crataegus uniflora", "Carrotwood", "Cupaniopsis anacardioides", "Arizona cypress", "Cupressus arizonica", "Modoc cypress", "Cupressus bakeri", "Tecate cypress", "Cupressus guadalupensis", "MacNab's cypress", "Cupressus macnabiana", "Monterey cypress", "Cupressus macrocarpa", "Sargent's cypress", "Cupressus sargentii", "Cypress spp.", "Cupressus spp.", "Persimmon spp.", "Diospyros spp.", "Texas persimmon", "Diospyros texana", "Common persimmon", "Diospyros virginiana", "Blackbead ebony", "Ebenopsis ebano", "Anacua knockaway", "Ehretia anacua", "Russian olive", "Elaeagnus angustifolia", "Autumn olive", "Elaeagnus umbellata", "River redgum", "Eucalyptus camaldulensis", "Tasmanian bluegum", "Eucalyptus globulus", "Grand eucalyptus", "Eucalyptus grandis", "Swampmahogany", "Eucalyptus robusta", "Eucalyptus spp.", "Eucalyptus spp.", "Red stopper", "Eugenia rhombea", "European spindletree", "Euonymus europaeus", "Hamilton's spindletree", "Euonymus hamiltonianus", "Butterbough", "Exothea paniculata", "American beech", "Fagus grandifolia", "Beech spp.", "Fagus spp.", "European beech", "Fagus sylvatica", "Florida strangler fig", "Ficus aurea", "Wild banyantree", "Ficus citrifolia", "Forsythia spp.", "Forsythia spp.", "White ash", "Fraxinus americana", "Berlandier ash", "Fraxinus berlandieriana", "Carolina ash", "Fraxinus caroliniana", "Oregon ash", "Fraxinus latifolia", "Black ash", "Fraxinus nigra", "Green ash", "Fraxinus pennsylvanica", "Pumpkin ash", "Fraxinus profunda", "Blue ash", "Fraxinus quadrangulata", "Ash spp.", "Fraxinus spp.", "Texas ash", "Fraxinus texensis", "Velvet ash", "Fraxinus velutina", "Black huckleberry", "Gaylussacia baccata", "Huckleberry spp.", "Gaylussacia spp.", "Ginkgo", "Ginkgo biloba", "Waterlocust", "Gleditsia aquatica", "Honeylocust spp.", "Gleditsia spp.", "Honeylocust", "Gleditsia triacanthos", "Loblolly-bay", "Gordonia lasianthus", "Beeftree", "Guapira discolor", "Kentucky coffeetree", "Gymnocladus dioicus", "Carolina silverbell", "Halesia carolina", "Two-wing silverbell", "Halesia diptera", "Little silverbell", "Halesia parviflora", "Silverbell spp.", "Halesia spp.", "American witch-hazel", "Hamamelis virginiana", "Rose of sharon", "Hibiscus syriacus", "Manchineel", "Hippomane mancinella", "Oakleaf hydrangea", "Hydrangea quercifolia", "Hydrangea spp.", "Hydrangea spp.", "Possumhaw", "Ilex decidua", "Mountain holly", "Ilex montana", "American holly", "Ilex opaca", "Winterberry", "Ilex verticillata", "Yaupon", "Ilex vomitoria", "Southern California black walnut", "Juglans californica", "Butternut", "Juglans cinerea", "Northern California black walnut", "Juglans hindsii", "Arizona walnut", "Juglans major", "Texas walnut", "Juglans microcarpa", "Black walnut", "Juglans nigra", "Walnut spp.", "Juglans spp.", "Ashe juniper", "Juniperus ashei", "California juniper", "Juniperus californica", "Redberry juniper", "Juniperus coahuilensis", "Alligator juniper", "Juniperus deppeana", "Drooping juniper", "Juniperus flaccida", "Oneseed juniper", "Juniperus monosperma", "Western juniper", "Juniperus occidentalis", "Utah juniper", "Juniperus osteosperma", "Pinchot juniper", "Juniperus pinchotii", "Rocky Mountain juniper", "Juniperus scopulorum", "Redcedar/juniper spp.", "Juniperus spp.", "Eastern redcedar", "Juniperus virginiana", "Mountain laurel", "Kalmia latifolia", "Castor aralia", "Kalopanax septemlobus", "Golden rain tree", "Koelreuteria elegans", "Crepe myrtle spp.", "Lagerstroemia spp.", "White-mangrove", "Laguncularia racemosa", "Tamarack", "Larix laricina", "Subalpine larch", "Larix lyallii", "Western larch", "Larix occidentalis", "Larch spp.", "Larix spp.", "Great leucaene", "Leucaena pulverulenta", "Japanese privet", "Ligustrum japonicum", "Privet spp.", "Ligustrum spp.", "Northern spicebush", "Lindera benzoin", "Sweetgum", "Liquidambar styraciflua", "Tuliptree", "Liriodendron tulipifera", "Tanoak", "Lithocarpus densiflorus", "Japanese honeysuckle", "Lonicera japonica", "Honeysuckle spp.", "Lonicera spp.", "Tatarian honeysuckle", "Lonicera tatarica", "False tamarind", "Lysiloma latisiliquum", "Osage orange", "Maclura pomifera", "Cucumbertree", "Magnolia acuminata", "Fraser magnolia", "Magnolia fraseri", "Southern magnolia", "Magnolia grandiflora", "Loebner magnolia", "Magnolia kobus x stellata", "Bigleaf magnolia", "Magnolia macrophylla", "Pyramid magnolia", "Magnolia pyramidata", "Magnolia spp.", "Magnolia spp.", "Umbrella magnolia", "Magnolia tripetala", "Sweetbay", "Magnolia virginiana", "Cucumber magnolia", "Magulia acuminata", "Southern crab apple", "Malus angustifolia", "Siberian crabapple", "Malus baccata", "Sweet crab apple", "Malus coronaria", "Oregon crab apple", "Malus fusca", "Prairie crab apple", "Malus ioensis", "Sargent's apple", "Malus sargentii", "Apple spp.", "Malus spp.", "Mango", "Mangifera indica", "Melaleuca", "Melaleuca quinquenervia", "Chinaberry", "Melia azedarach", "Florida poisontree", "Metopium toxiferum", "Southern bayberry", "Morella caroliniensis", "Wax myrtle", "Morella cerifera", "White mulberry", "Morus alba", "Texas mulberry", "Morus microphylla", "Black mulberry", "Morus nigra", "Red mulberry", "Morus rubra", "Mulberry spp.", "Morus spp.", "Water tupelo", "Nyssa aquatica", "Swamp tupelo", "Nyssa biflora", "Ogeechee tupelo", "Nyssa ogeche", "Tupelo spp.", "Nyssa spp.", "Blackgum", "Nyssa sylvatica", "Desert ironwood", "Olneya tesota", "Eastern hophornbeam", "Ostrya virginiana", "Sourwood", "Oxydendrum arboreum", "Persian ironwood", "Parrotia persica", "Paulownia empress-tree", "Paulownia tomentosa", "Avocado", "Persea americana", "Redbay", "Persea borbonia", "Bay spp.", "Persea spp.", "Norway spruce", "Picea abies", "Brewer spruce", "Picea breweriana", "Engelmann spruce", "Picea engelmannii", "White spruce", "Picea glauca", "Black spruce", "Picea mariana", "Blue spruce", "Picea pungens", "Red spruce", "Picea rubens", "Sitka spruce", "Picea sitchensis", "Spruce spp.", "Picea spp.", "Whitebark pine", "Pinus albicaulis", "Bristlecone pine", "Pinus aristata", "Arizona pine", "Pinus arizonica", "Knobcone pine", "Pinus attenuata", "Foxtail pine", "Pinus balfouriana", "Jack pine", "Pinus banksiana", "Mexican pinyon pine", "Pinus cembroides", "Sand pine", "Pinus clausa", "Lodgepole pine", "Pinus contorta", "Coulter pine", "Pinus coulteri", "Border pinyon", "Pinus discolor", "Shortleaf pine", "Pinus echinata", "Common pinyon", "Pinus edulis", "Slash pine", "Pinus elliottii", "Apache pine", "Pinus engelmannii", "Limber pine", "Pinus flexilis", "Spruce pine", "Pinus glabra", "Jeffrey pine", "Pinus jeffreyi", "Sugar pine", "Pinus lambertiana", "Chihuahua pine", "Pinus leiophylla", "Great Basin bristlecone pine", "Pinus longaeva", "Singleleaf pinyon", "Pinus monophylla", "Western white pine", "Pinus monticola", "Bishop pine", "Pinus muricata", "Austrian pine", "Pinus nigra", "Longleaf pine", "Pinus palustris", "Ponderosa pine", "Pinus ponderosa", "Table Mountain pine", "Pinus pungens", "Parry pinyon pine", "Pinus quadrifolia", "Monterey pine", "Pinus radiata", "Papershell pinyon pine", "Pinus remota", "Red pine", "Pinus resinosa", "Pitch pine", "Pinus rigida", "California foothill pine", "Pinus sabiniana", "Pond pine", "Pinus serotina", "Pine spp.", "Pinus spp.", "Southwestern white pine", "Pinus strobiformis", "Eastern white pine", "Pinus strobus", "Scotch pine", "Pinus sylvestris", "Loblolly pine", "Pinus taeda", "Torrey pine", "Pinus torreyana", "Virginia pine", "Pinus virginiana", "Washoe pine", "Pinus washoensis", "Fishpoison tree", "Piscidia piscipula", "Water-elm planertree", "Planera aquatica", "American sycamore", "Platanus occidentalis", "California sycamore", "Platanus racemosa", "Sycamore spp.", "Platanus spp.", "Arizona sycamore", "Platanus wrightii", "Silver poplar", "Populus alba", "Narrowleaf cottonwood", "Populus angustifolia", "Balsam poplar", "Populus balsamifera", "Eastern cottonwood", "Populus deltoides", "Fremont cottonwood", "Populus fremontii", "Bigtooth aspen", "Populus grandidentata", "Swamp cottonwood", "Populus heterophylla", "Lombardy poplar", "Populus nigra", "Cottonwood and poplar spp.", "Populus spp.", "Quaking aspen", "Populus tremuloides", "Honey mesquite", "Prosopis glandulosa", "Screwbean mesquite", "Prosopis pubescens", "Mesquite spp.", "Prosopis spp.", "Velvet mesquite", "Prosopis velutina", "Allegheny plum", "Prunus alleghaniensis", "American plum", "Prunus americana", "Chickasaw plum", "Prunus angustifolia", "Sweet cherry", "Prunus avium", "Sour cherry", "Prunus cerasus", "European plum", "Prunus domestica", "Bitter cherry", "Prunus emarginata", "Mahaleb cherry", "Prunus mahaleb", "Beach plum", "Prunus maritima", "Japanese apricot", "Prunus mume", "Canada plum", "Prunus nigra", "Pin cherry", "Prunus pensylvanica", "Peach", "Prunus persica", "Black cherry", "Prunus serotina", "Cherry and plum spp.", "Prunus spp.", "Weeping cherry", "Prunus subhirtella", "Chokecherry", "Prunus virginiana", "Chinese quince", "Pseudocydonia sinensis", "Bigcone Douglas-fir", "Pseudotsuga macrocarpa", "Douglas-fir", "Pseudotsuga menziesii", "Douglas-fir spp.", "Pseudotsuga spp.", "Buffalo nut", "Pyrularia pubera", "Pear spp.", "Pyrus spp.", "California live oak", "Quercus agrifolia", "White oak", "Quercus alba", "Arizona white oak", "Quercus arizonica", "Scrub oak", "Quercus berberidifolia", "Swamp white oak", "Quercus bicolor", "Buckley oak", "Quercus buckleyi", "Canyon live oak", "Quercus chrysolepis", "Scarlet oak", "Quercus coccinea", "Blue oak", "Quercus douglasii", "Northern pin oak", "Quercus ellipsoidalis", "Emory oak", "Quercus emoryi", "Engelmann oak", "Quercus engelmannii", "Southern red oak", "Quercus falcata", "Gambel oak", "Quercus gambelii", "Oregon white oak", "Quercus garryana", "Chisos oak", "Quercus graciliformis", "Graves oak", "Quercus gravesii", "Gray oak", "Quercus grisea", "Silverleaf oak", "Quercus hypoleucoides", "Scrub oak", "Quercus ilicifolia", "Shingle oak", "Quercus imbricaria", "Bluejack oak", "Quercus incana", "California black oak", "Quercus kelloggii", "Lacey oak", "Quercus laceyi", "Turkey oak", "Quercus laevis", "Laurel oak", "Quercus laurifolia", "California white oak", "Quercus lobata", "Overcup oak", "Quercus lyrata", "Bur oak", "Quercus macrocarpa", "Sand post oak", "Quercus margarettiae", "Blackjack oak", "Quercus marilandica", "Swamp chestnut oak", "Quercus michauxii", "Dwarf live oak", "Quercus minima", "Chestnut oak", "Quercus montana", "Chinkapin oak", "Quercus muehlenbergii", "Chinese evergreen oak", "Quercus myrsinifolia", "Water oak", "Quercus nigra", "Mexican blue oak", "Quercus oblongifolia", "Oglethorpe oak", "Quercus oglethorpensis", "Cherrybark oak", "Quercus pagoda", "Pin oak", "Quercus palustris", "Willow oak", "Quercus phellos", "Mexican white oak", "Quercus polymorpha", "Dwarf chinkapin oak", "Quercus prinoides", "Northern red oak", "Quercus rubra", "Netleaf oak", "Quercus rugosa", "Shumard oak", "Quercus shumardii", "Delta post oak", "Quercus similis", "Bastard oak", "Quercus sinuata", "Oak spp.", "Quercus spp.", "Post oak", "Quercus stellata", "Texas red oak", "Quercus texana", "Black oak", "Quercus velutina", "Live oak", "Quercus virginiana", "Interior live oak", "Quercus wislizeni", "Common buckthorn", "Rhamnus cathartica", "Buckthorn", "Rhamnus spp.", "American mangrove", "Rhizophora mangle", "Coastal azalea", "Rhododendron atlanticum", "Florida azalea", "Rhododendron austrinum", "Piedmont azalea", "Rhododendron canescens", "Catawba rhododendron", "Rhododendron catawbiense", "Great rhododendron", "Rhododendron maximum", "Plumleaf azalea", "Rhododendron prunifolium", "Rhododendron spp.", "Rhododendron spp.", "Smooth sumac", "Rhus glabra", "Sumac spp.", "Rhus spp.", "New Mexico locust", "Robinia neomexicana", "Black locust", "Robinia pseudoacacia", "Royal palm spp.", "Roystonea spp.", "Mexican palmetto", "Sabal mexicana", "Cabbage palmetto", "Sabal palmetto", "White willow", "Salix alba", "Peachleaf willow", "Salix amygdaloides", "Bebb willow", "Salix bebbiana", "Bonpland willow", "Salix bonplandiana", "Coastal plain willow", "Salix caroliniana", "Black willow", "Salix nigra", "Balsam willow", "Salix pyrifolia", "Scouler's willow", "Salix scouleriana", "Weeping willow", "Salix sepulcralis", "Willow spp.", "Salix spp.", "Red elderberry", "Sambucus racemosa", "Elderberry", "Sambucus spp.", "Western soapberry", "Sapindus saponaria", "Sassafras", "Sassafras albidum", "Octopus tree", "Schefflera actinophylla", "Redwood", "Sequoia sempervirens", "Giant sequoia", "Sequoiadendron giganteum", "False mastic", "Sideroxylon foetidissimum", "Chittamwood", "Sideroxylon lanuginosum", "White bully", "Sideroxylon salicifolium", "Paradisetree", "Simarouba glauca", "Texas sophora", "Sophora affinis", "American mountain-ash", "Sorbus americana", "European mountain-ash", "Sorbus aucuparia", "Northern mountain-ash", "Sorbus decora", "Mountain-ash spp.", "Sorbus spp.", "American bladdernut", "Staphylea trifolia", "Upright stewartia", "Stewartia rostrata", "Japanese snowbell", "Styrax japonicus", "West Indian mahogany", "Swietenia mahagoni", "Common sweetleaf", "Symplocos tinctoria", "Lilac spp.", "Syringa spp.", "Java plum", "Syzygium cumini", "Tamarind", "Tamarindus indica", "Saltcedar", "Tamarix spp.", "Pond cypress", "Taxodium ascendens", "Bald cypress", "Taxodium distichum", "Montezuma baldcypress", "Taxodium mucronatum", "Bald cypress spp.", "Taxodium spp.", "Pacific yew", "Taxus brevifolia", "Florida yew", "Taxus floridana", "Yew spp.", "Taxus spp.", "Key thatch palm", "Thrinax morrisii", "Florida thatch palm", "Thrinax radiata", "Northern white-cedar", "Thuja occidentalis", "Western redcedar", "Thuja plicata", "Thuja spp.", "Thuja spp.", "American basswood", "Tilia americana", "Littleleaf linden", "Tilia cordata", "Basswood spp.", "Tilia spp.", "Common linden", "Tilia X europaea", "California nutmeg", "Torreya californica", "Torreya spp.", "Torreya spp.", "Florida nutmeg", "Torreya taxifolia", "Chinese tallowtree", "Triadica sebifera", "Eastern hemlock", "Tsuga canadensis", "Carolina hemlock", "Tsuga caroliniana", "Western hemlock", "Tsuga heterophylla", "Mountain hemlock", "Tsuga mertensiana", "Hemlock spp.", "Tsuga spp.", "Winged elm", "Ulmus alata", "American elm", "Ulmus americana", "Cedar elm", "Ulmus crassifolia", "Russian elm", "Ulmus laevis", "Siberian elm", "Ulmus pumila", "Slippery elm", "Ulmus rubra", "September elm", "Ulmus serotina", "Elm spp.", "Ulmus spp.", "Rock elm", "Ulmus thomasii", "California-laurel", "Umbellularia californica", "New Jersey blueberry", "Vaccinium caesariense", "Highbush blueberry", "Vaccinium corymbosum", "Blueberry spp.", "Vaccinium spp.", "Deerberry", "Vaccinium stamineum", "Tungoil tree", "Vernicia fordii", "Mapleleaf viburnum", "Viburnum acerifolium", "Arrowwood", "Viburnum dentatum", "Linden arrowwood", "Viburnum dilatatum", "Nannyberry", "Viburnum lentago", "Possumhaw viburnum", "Viburnum nudum", "Japanese snowball", "Viburnum plicatum", "Blackhaw", "Viburnum prunifolium", "Rusty viburnum", "Viburnum rufidulum", "American cranberrybush", "Viburnum trilobum", "Joshua tree", "Yucca brevifolia"];
+			var plantSpeciesList = ["Acacia spp.", "Maple spp.", "Acer spp.", "Buckeye spp.", "Aesculus spp.", "Ailanthus spp.", "Alder spp.", "Alnus spp.", "Madrone spp.", "Arbutus spp.", "Birch spp.", "Betula spp.", "Boxwood spp.", "Buxus spp.", "Sweetshrub spp.", "Calycanthus spp.", "Camellia spp.", "Hornbeam spp.", "Carpinus spp.", "Hickory spp.", "Carya spp.", "Chestnut spp.", "Castanea spp.", "Sheoak spp.", "Casuarina spp.", "Catalpa spp.", "Hackberry spp.", "Celtis spp.", "Fringetree spp.", "Chionanthus spp.", "Citrus spp.", "Cleyera spp.", "Dogwood spp.", "Cornus spp.", "Hazelnut spp.", "Corylus spp.", "Hawthorn spp.", "Crataegus spp.", "Bush honeysuckle spp.", "Diervilla spp.", "Persimmon spp.", "Diospyros spp.", "Eucalyptus spp.", "Beech spp.", "Fagus spp.", "Fig spp.", "Ficus spp.", "Forsythia spp.", "Ash spp.", "Fraxinus spp.", "Gardenia spp.", "Huckleberry spp.", "Gaylussacia spp.", "Locust spp.", "Gleditsia spp.", "Silverbell spp.", "Halesia spp.", "Hydrangea spp.", "Walnut spp.", "Juglans spp.", "Privet spp.", "Ligustrum spp.", "Spicebush spp.", "Lindera spp.", "Honeysuckle spp.", "Lonicera spp.", "Magnolia spp.", "Apple spp.", "Malus spp.", "Mulberry spp.", "Morus spp.", "Tupelo spp.", "Nyssa spp.", "Tupelo spp.", "Nyssa spp.", "Hophornbeam spp.", "Ostrya spp.", "Bay spp.", "Persea spp.", "Sycamore spp.", "Platanus spp.", "Sycamore spp.", "Platanus spp.", "NA spp.", "Podocarpus spp.", "Cottonwood and poplar spp.", "Populus spp.", "Mesquite spp.", "Prosopis spp.", "Cherry spp.", "Prunus spp.", "Cherry and plum spp.", "Prunus spp.", "Pear spp.", "Pyrus spp.", "Oak spp.", "Quercus spp.", "Buckthorn spp.", "Rhamnus spp.", "Azalea, rhododendron spp.", "Rhododendron spp.", "Sumac spp.", "Rhus spp.", "Rose spp.", "Rosa spp.", "Royal palm spp.", "Roystonea spp.", "Brambles spp.", "Rubus spp.", "Willow spp.", "Salix spp.", "Elderberry spp.", "Sambucus spp.", "Sassafras spp.", "Mountain-ash spp.", "Sorbus spp.", "Stewartia spp.", "Lilac spp.", "Syringa spp.", "Saltcedar spp.", "Tamarix spp.", "Basswood spp.", "Tilia spp.", "Torreya spp.", "Elm spp.", "Ulmus spp.", "Blueberry spp.", "Vaccinium spp.", "Viburnum spp.", "Wisteria spp.", "Sweet acacia", "Acacia farnesiana", "Catclaw acacia", "Acacia greggii", "Trident maple", "Acer buergerianum", "Hedge maple", "Acer campestre", "Horned maple", "Acer diabolicum", "Florida maple", "Acer floridanum", "Amur maple", "Acer ginnala", "Rocky mountain maple", "Acer glabrum", "Bigtooth maple", "Acer grandidentatum", "Chalk maple", "Acer leucoderme", "Bigleaf maple", "Acer macrophyllum", "Boxelder", "Acer negundo", "Black maple", "Acer nigrum", "Japanese maple", "Acer palmatum", "Striped maple", "Acer pensylvanicum", "Norway maple", "Acer platanoides", "Red maple", "Acer rubrum", "Silver maple", "Acer saccharinum", "Sugar maple", "Acer saccharum", "Mountain maple", "Acer spicatum", "Freeman maple", "Acer X freemanii", "Everglades palm", "Acoelorraphe wrightii", "California buckeye", "Aesculus californica", "Yellow buckeye", "Aesculus flava", "Ohio buckeye", "Aesculus glabra", "Horse chestnut", "Aesculus hippocastanum", "Bottlebrush buckeye", "Aesculus parviflora", "Red buckeye", "Aesculus pavia", "Painted buckeye", "Aesculus sylvatica", "Aesculus flava", "Tree of heaven", "Ailanthus altissima", "Mimosa", "Albizia julibrissin", "European alder", "Alnus glutinosa", "Arizona alder", "Alnus oblongifolia", "White alder", "Alnus rhombifolia", "Red alder", "Alnus rubra", "Hazel alder", "Alnus serrulata", "Grey alder", "Alnus incana", "Serviceberry", "Amelanchier", "Common serviceberry", "Amelanchier arborea", "Allegheny serviceberry", "Amelanchier laevis", "Roundleaf serviceberry", "Amelanchier sanguinea", "Sea torchwood", "Amyris elemifera", "Pond-apple", "Annona glabra", "Arizona madrone", "Arbutus arizonica", "Pacific madrone", "Arbutus menziesii", "Texas madrone", "Arbutus xalapensis", "Dwarf pawpaw", "Asimina pygmea", "Pawpaw", "Asimina triloba", "Black-mangrove", "Avicennia germinans", "Eastern baccharis", "Baccharis halimifolia", "Yellow birch", "Betula alleghaniensis", "Sweet birch", "Betula lenta", "White birch", "Betula minor", "River birch", "Betula nigra", "Water birch", "Betula occidentalis", "Paper birch", "Betula papyrifera", "Gray birch", "Betula populifolia", "Virginia roundleaf birch", "Betula uber", "Northwestern paper birch", "Betula x utahensis", "Gumbo limbo", "Bursera simaruba", "American beautyberry", "Callicarpa americana", "Incense-cedar", "Calocedrus decurrens", "Eastern sweetshrub", "Calycanthus floridus", "American hornbeam", "Carpinus caroliniana", "Mockernut hickory", "Carya alba", "Water hickory", "Carya aquatica", "Southern shagbark hickory", "Carya carolinae-septentrionalis", "Bitternut hickory", "Carya cordiformis", "Scrub hickory", "Carya floridana", "Pignut hickory", "Carya glabra", "Pecan", "Carya illinoinensis", "Shellbark hickory", "Carya laciniosa", "Nutmeg hickory", "Carya myristiciformis", "Red hickory", "Carya ovalis", "Shagbark hickory", "Carya ovata", "Sand hickory", "Carya pallida", "Black hickory", "Carya texana", "Carya tomentosa", "American chestnut", "Castanea dentata", "Chinese chestnut", "Castanea mollissima", "Chinquapin", "Castanea pumila", "Gray sheoak", "Casuarina glauca", "Belah", "Casuarina lepidophloia", "Southern catalpa", "Catalpa bignonioides", "Northern catalpa", "Catalpa speciosa", "Oriental bittersweet", "Celastrus orbiculatus", "Sugarberry", "Celtis laevigata", "Western hackberry", "Celtis occidentalis", "Common buttonbush", "Cephalanthus occidentalis", "Eastern redbud", "Cercis canadensis", "Curlleaf mountain-mahogany", "Cercocarpus ledifolius", "Chinese quince", "Chaenomeles sinensis", "Fragrant wintersweet", "Chimonanthus praecox", "Giant chinkapin", "Chrysolepis chrysophylla", "Camphortree", "Cinnamomum camphora", "Florida fiddlewood", "Citharexylum fruticosum", "Kentucky yellowwood", "Cladrastis kentukea", "Tietongue", "Coccoloba diversifolia", "Florida silver palm", "Coccothrinax argentata", "Coconut palm", "Cocos nucifera", "Soldierwood", "Colubrina elliptica", "Bluewood", "Condalia hookeri", "Buttonwood-mangrove", "Conocarpus erectus", "Anacahuita", "Cordia boissieri", "Largeleaf geigertree", "Cordia sebestena", "Alternate-leaf dogwood", "Cornus alternifolia", "Silky dogwood", "Cornus amomum", "Roughleaf dogwood", "Cornus drummondii", "Flowering dogwood", "Cornus florida", "Stiff dogwood", "Cornus foemina", "Kousa dogwood", "Cornus kousa", "Big-leaf dogwood", "Cornus macrophylla", "Cornelian cherry", "Cornus mas", "Pacific dogwood", "Cornus nuttallii", "Redosier dogwood", "Cornus sericea", "Grey dogwood", "Cornus racemosa", "American hazelnut", "Corylus americana", "Beaked hazel", "Corylus cornuta", "Smoketree", "Cotinus obovatus", "Brainerd's hawthorn", "Crataegus brainerdii", "Pear hawthorn", "Crataegus calpodendron", "Fireberry hawthorn", "Crataegus chrysocarpa", "Cockspur hawthorn", "Crataegus crus-galli", "Broadleaf hawthorn", "Crataegus dilatata", "Fanleaf hawthorn", "Crataegus flabellata", "Downy hawthorn", "Crataegus mollis", "Oneseed hawthorn", "Crataegus monogyna", "Scarlet hawthorn", "Crataegus pedicellata", "Washington hawthorn", "Crataegus phaenopyrum", "Fleshy hawthorn", "Crataegus succulenta", "Dwarf hawthorn", "Crataegus uniflora", "Crataegus coccinioides", "Carrotwood", "Cupaniopsis anacardioides", "Swamp titi", "Cyrilla racemiflora", "Texas persimmon", "Diospyros texana", "Common persimmon", "Diospyros virginiana", "Blackbead ebony", "Ebenopsis ebano", "Oriental paperbush", "Edgeworthia chrysantha", "Anacua knockaway", "Ehretia anacua", "Russian olive", "Elaeagnus angustifolia", "Autumn olive", "Elaeagnus umbellata", "River redgum", "Eucalyptus camaldulensis", "Tasmanian bluegum", "Eucalyptus globulus", "Grand eucalyptus", "Eucalyptus grandis", "Swampmahogany", "Eucalyptus robusta", "Red stopper", "Eugenia rhombea", "Burningbush", "Euonymus alatus", "European spindletree", "Euonymus europaeus", "Yeddo euonymous", "Euonymus hamiltonianus", "Butterbough", "Exothea paniculata", "American beech", "Fagus grandifolia", "European beech", "Fagus sylvatica", "Japanese knotweed", "Fallopia japonica", "Speckled japanese aralla", "Fatsia japonica", "Florida strangler fig", "Ficus aurea", "Wild banyantree", "Ficus citrifolia", "Florida swampprivet", "Forestiera segregata", "White ash", "Fraxinus americana", "Berlandier ash", "Fraxinus berlandieriana", "Carolina ash", "Fraxinus caroliniana", "Oregon ash", "Fraxinus latifolia", "Black ash", "Fraxinus nigra", "Green ash", "Fraxinus pennsylvanica", "Pumpkin ash", "Fraxinus profunda", "Blue ash", "Fraxinus quadrangulata", "Texas ash", "Fraxinus texensis", "Velvet ash", "Fraxinus velutina", "Black huckleberry", "Gaylussacia baccata", "Ginkgo", "Ginkgo biloba", "Waterlocust", "Gleditsia aquatica", "Honeylocust", "Gleditsia triacanthos", "Loblolly-bay", "Gordonia lasianthus", "Beeftree", "Guapira discolor", "Kentucky coffeetree", "Gymnocladus dioicus", "Carolina silverbell", "Halesia carolina", "Two-wing silverbell", "Halesia diptera", "Little silverbell", "Halesia parviflora", "Witch-hazel", "Hamamelis virginiana", "Ozark witch hazel", "Hamamelis vernalis", "Rose of sharon", "Hibiscus syriacus", "Manchineel", "Hippomane mancinella", "Raisin", "Hovenia dulcis", "Oakleaf hydrangea", "Hydrangea quercifolia", "Possumhaw", "Ilex decidua", "Inkberry", "Ilex glabra", "Mountain holly", "Ilex montana", "Catberry", "Ilex mucronata", "American holly", "Ilex opaca", "Winterberry", "Ilex verticillata", "Yaupon", "Ilex vomitoria", "Virginia sweetspire", "Itea virginica", "Southern california black walnut", "Juglans californica", "Butternut", "Juglans cinerea", "Northern california black walnut", "Juglans hindsii", "Arizona walnut", "Juglans major", "Texas walnut", "Juglans microcarpa", "Black walnut", "Juglans nigra", "Mountain laurel", "Kalmia latifolia", "Castor aralia", "Kalopanax septemlobus", "Flamegold", "Koelreuteria elegans", "Golden rain tree", "Koelreuteria paniculata", "Crapemyrtle", "Lagerstroemia indica", "White-mangrove", "Laguncularia racemosa", "Great leucaene", "Leucaena pulverulenta", "Coastal doghobble", "Leucothoe axillaris", "Japanese privet", "Ligustrum japonicum", "Waxyleaf privet", "Ligustrum quihoui", "Northern spicebush", "Lindera benzoin", "Sweetgum", "Liquidambar styraciflua", "Tuliptree", "Liriodendron tulipifera", "Tanoak", "Lithocarpus densiflorus", "Pink honeysuckle", "Lonicera hispidula", "Japanese honeysuckle", "Lonicera japonica", "Amur honeysuckle", "Lonicera maackii", "Tatarian honeysuckle", "Lonicera tatarica", "False tamarind", "Lysiloma latisiliquum", "Amur maackia", "Maackia amurensis", "Osage-orange", "Maclura pomifera", "Cucumbertree", "Magnolia acuminata", "Fraser's magnolia", "Magnolia fraseri", "Southern magnolia", "Magnolia grandiflora", "Bigleaf magnolia", "Magnolia macrophylla", "Pyramid magnolia", "Magnolia pyramidata", "Umbrella magnolia", "Magnolia tripetala", "Sweetbay", "Magnolia virginiana", "Loebner magnolia", "Magnolia X loebneri", "Southern crab apple", "Malus angustifolia", "Siberian crab apple", "Malus baccata", "Sweet crab apple", "Malus coronaria", "Oregon crab apple", "Malus fusca", "Prairie crab apple", "Malus ioensis", "Toringa crab apple", "Malus sieboldii", "Mango", "Mangifera indica", "Melaleuca", "Melaleuca quinquenervia", "Chinaberry", "Melia azedarach", "Florida poisontree", "Metopium toxiferum", "Southern bayberry", "Morella caroliniensis", "Wax myrtle", "Morella cerifera", "Red bay", "Morella rubra", "White mulberry", "Morus alba", "Texas mulberry", "Morus microphylla", "Black mulberry", "Morus nigra", "Red mulberry", "Morus rubra", "Heavenly bamboo", "Nandina domestica", "Water tupelo", "Nyssa aquatica", "Swamp tupelo", "Nyssa biflora", "Ogeechee tupelo", "Nyssa ogeche", "Blackgum", "Nyssa sylvatica", "Desert ironwood", "Olneya tesota", "Eastern hophornbeam", "Ostrya virginiana", "Sourwood", "Oxydendrum arboreum", "Persian ironwood", "Parrotia persica", "Paulownia  empress-tree", "Paulownia tomentosa", "Avocado", "Persea americana", "Redbay", "Persea borbonia", "Common ninebark", "Physocarpus opulifolius", "Fishpoison tree", "Piscidia piscipula", "Water-elm  planertree", "Planera aquatica", "American sycamore", "Platanus occidentalis", "California sycamore", "Platanus racemosa", "Arizona sycamore", "Platanus wrightii", "Silver poplar", "Populus alba", "Narrowleaf cottonwood", "Populus angustifolia", "Balsam poplar", "Populus balsamifera", "Eastern cottonwood", "Populus deltoides", "Fremont cottonwood", "Populus fremontii", "Bigtooth aspen", "Populus grandidentata", "Swamp cottonwood", "Populus heterophylla", "Lombardy poplar", "Populus nigra", "Quaking aspen", "Populus tremuloides", "Honey mesquite", "Prosopis glandulosa", "Screwbean mesquite", "Prosopis pubescens", "Velvet mesquite", "Prosopis velutina", "Allegheny plum", "Prunus alleghaniensis", "American plum", "Prunus americana", "Chickasaw plum", "Prunus angustifolia", "Sweet cherry", "Prunus avium", "Sour cherry", "Prunus cerasus", "European plum", "Prunus domestica", "Bitter cherry", "Prunus emarginata", "Cherry laurel", "Prunus laurocerasus", "Mahaleb cherry", "Prunus mahaleb", "Beach plum", "Prunus maritima", "Japanese apricot", "Prunus mume", "Canada plum", "Prunus nigra", "Pin cherry", "Prunus pensylvanica", "Peach", "Prunus persica", "Black cherry", "Prunus serotina", "Chokecherry", "Prunus virginiana", "Kwanzan cherry", "Prunus serrulata", "Weeping cherry", "Prunus subhirtella", "Wafer ash", "Ptelea trifoliata", "Buffalo nut", "Pyrularia pubera", "Callery pear", "Pyrus calleryana", "California live oak", "Quercus agrifolia", "White oak", "Quercus alba", "Arizona white oak", "Quercus arizonica", "Swamp white oak", "Quercus bicolor", "Buckley oak", "Quercus buckleyi", "Canyon live oak", "Quercus chrysolepis", "Scarlet oak", "Quercus coccinea", "Blue oak", "Quercus douglasii", "Northern pin oak", "Quercus ellipsoidalis", "Emory oak", "Quercus emoryi", "Engelmann oak", "Quercus engelmannii", "Southern red oak", "Quercus falcata", "Gambel oak", "Quercus gambelii", "Oregon white oak", "Quercus garryana", "Ring-cup oak", "Quercus glauca", "Chisos oak", "Quercus graciliformis", "Graves oak", "Quercus gravesii", "Gray oak", "Quercus grisea", "Silverleaf oak", "Quercus hypoleucoides", "Bear oak", "Quercus ilicifolia", "Shingle oak", "Quercus imbricaria", "Bluejack oak", "Quercus incana", "California black oak", "Quercus kelloggii", "Lacey oak", "Quercus laceyi", "Turkey oak", "Quercus laevis", "Laurel oak", "Quercus laurifolia", "California white oak", "Quercus lobata", "Overcup oak", "Quercus lyrata", "Bur oak", "Quercus macrocarpa", "Dwarf post oak", "Quercus margarettiae", "Blackjack oak", "Quercus marilandica", "Swamp chestnut oak", "Quercus michauxii", "Dwarf live oak", "Quercus minima", "Chestnut oak", "Quercus montana", "Chinkapin oak", "Quercus muehlenbergii", "Water oak", "Quercus nigra", "Mexican blue oak", "Quercus oblongifolia", "Oglethorpe oak", "Quercus oglethorpensis", "Cherrybark oak", "Quercus pagoda", "Pin oak", "Quercus palustris", "Willow oak", "Quercus phellos", "Mexican white oak", "Quercus polymorpha", "Dwarf chinkapin oak", "Quercus prinoides", "English oak", "Quercus robur", "Northern red oak", "Quercus rubra", "Netleaf oak", "Quercus rugosa", "Shumard oak", "Quercus shumardii", "Delta post oak", "Quercus similis", "Durand oak", "Quercus sinuata", "Post oak", "Quercus stellata", "Texas red oak", "Quercus texana", "Black oak", "Quercus velutina", "Live oak", "Quercus virginiana", "Interior live oak", "Quercus wislizeni", "Common buckthorn", "Rhamnus cathartica", "Frangula alnus", "Rhamnus frangula", "American mangrove", "Rhizophora mangle", "Dwarf azalea", "Rhododendron atlanticum", "Florida azalea", "Rhododendron austrinum", "Mountain azalea", "Rhododendron canescens", "Catawba rhododendron", "Rhododendron catawbiense", "Piedmont azalea", "Rhododendron flammeum", "Great rhododendron", "Rhododendron maximum", "Plumleaf azalea", "Rhododendron prunifolium", "Jetbead", "Rhodotypos scandens", "Winged sumac", "Rhus copallinum", "Smooth sumac", "Rhus glabra", "Staghorn sumac", "Rhus typhina", "New mexico locust", "Robinia neomexicana", "Black locust", "Robinia pseudoacacia", "Multiflora rose", "Rosa multiflora", "Wineberry", "Rubus phoenicolasius", "Mexican palmetto", "Sabal mexicana", "Cabbage palmetto", "Sabal palmetto", "White willow", "Salix alba", "Peachleaf willow", "Salix amygdaloides", "Weeping willow", "Salix babylonica", "Bebb willow", "Salix bebbiana", "Bonpland willow", "Salix bonplandiana", "Coastal plain willow", "Salix caroliniana", "Black willow", "Salix nigra", "Balsam willow", "Salix pyrifolia", "Scoulers willow", "Salix scouleriana", "Red elderberry", "Sambucus racemosa", "Western soapberry", "Sapindus saponaria", "Sassafras", "Sassafras albidum", "Octopus tree", "Schefflera actinophylla", "False mastic", "Sideroxylon foetidissimum", "Chittamwood", "Sideroxylon lanuginosum", "White bully", "Sideroxylon salicifolium", "Paradisetree", "Simarouba glauca", "Texas sophora", "Sophora affinis", "American mountain-ash", "Sorbus americana", "European mountain-ash", "Sorbus aucuparia", "Northern mountain-ash", "Sorbus decora", "American bladdernut", "Staphylea trifolia", "Japanese snowbell", "Styrax japonicus", "West indian mahogany", "Swietenia mahagoni", "Sweetleaf", "Symplocos tinctoria", "Japanese tree lilac", "Syringa reticulata", "Java plum", "Syzygium cumini", "Tamarind", "Tamarindus indica", "Key thatch palm", "Thrinax morrisii", "Florida thatch palm", "Thrinax radiata", "American basswood", "Tilia americana", "Littleleaf linden", "Tilia cordata", "Common lime", "Tilia X europaea", "California torreya", "Torreya californica", "Florida torreya", "Torreya taxifolia", "Chinese tallowtree", "Triadica sebifera", "Winged elm", "Ulmus alata", "American elm", "Ulmus americana", "Cedar elm", "Ulmus crassifolia", "Siberian elm", "Ulmus pumila", "Slippery elm", "Ulmus rubra", "September elm", "Ulmus serotina", "Rock elm", "Ulmus thomasii", "California laurel", "Umbellularia californica", "Highbush blueberry", "Vaccinium corymbosum", "Deerberry", "Vaccinium stamineum", "Tungoil tree", "Vernicia fordii", "Viburnum", "Mapleleaf viburnum", "Viburnum acerifolium", "Southern arrowwood", "Viburnum dentatum", "Linden arrowwood", "Viburnum dilatatum", "Nannyberry", "Viburnum lentago", "Possumhaw viburnum", "Viburnum nudum", "European cranberrybush", "Viburnum opulus", "Japanese snowball", "Viburnum plicatum", "Blackhaw", "Viburnum prunifolium", "Rusty blackhaw", "Viburnum rufidulum", "Canyon grape", "Vitis arizonica", "Joshua tree", "Yucca brevifolia", "Japanese zelkova", "Zelkova serrata", "Fir spp.", "Abies spp.", "White-cedar spp.", "Chamaecyparis spp.", "Cypress spp.", "Cupressus spp.", "Redcedar/juniper spp.", "Juniperus spp.", "Larch spp.", "Larix spp.", "Spruce spp.", "Picea spp.", "Pine spp.", "Pinus spp.", "Douglas-fir spp.", "Pseudotsuga spp.", "Baldcypress spp.", "Taxodium spp.", "Yew spp.", "Taxus spp.", "Thuja spp.", "Hemlock spp.", "Tsuga spp.", "Pacific silver fir", "Abies amabilis", "Balsam fir", "Abies balsamea", "Bristlecone fir", "Abies bracteata", "White fir", "Abies concolor", "Fraser fir", "Abies fraseri", "Grand fir", "Abies grandis", "Subalpine fir", "Abies lasiocarpa", "California red fir", "Abies magnifica", "Noble fir", "Abies procera", "Shasta red fir", "Abies shastensis", "Port-orford-cedar", "Chamaecyparis lawsoniana", "Alaska yellow-cedar", "Chamaecyparis nootkatensis", "Atlantic white-cedar", "Chamaecyparis thyoides", "Arizona cypress", "Cupressus arizonica", "Modoc cypress", "Cupressus bakeri", "Tecate cypress", "Cupressus forbesii", "Macnabs cypress", "Cupressus macnabiana", "Monterey cypress", "Cupressus macrocarpa", "Sargents cypress", "Cupressus sargentii", "Ashe juniper", "Juniperus ashei", "California juniper", "Juniperus californica", "Redberry juniper", "Juniperus coahuilensis", "Alligator juniper", "Juniperus deppeana", "Drooping juniper", "Juniperus flaccida", "Oneseed juniper", "Juniperus monosperma", "Western juniper", "Juniperus occidentalis", "Utah juniper", "Juniperus osteosperma", "Pinchot juniper", "Juniperus pinchotii", "Rocky mountain juniper", "Juniperus scopulorum", "Eastern redcedar", "Juniperus virginiana", "Tamarack", "Larix laricina", "Subalpine larch", "Larix lyallii", "Western larch", "Larix occidentalis", "Norway spruce", "Picea abies", "Brewer spruce", "Picea breweriana", "Engelmann spruce", "Picea engelmannii", "White spruce", "Picea glauca", "Black spruce", "Picea mariana", "Blue spruce", "Picea pungens", "Red spruce", "Picea rubens", "Sitka spruce", "Picea sitchensis", "Whitebark pine", "Pinus albicaulis", "Bristlecone pine", "Pinus aristata", "Arizona pine", "Pinus arizonica", "Knobcone pine", "Pinus attenuata", "Foxtail pine", "Pinus balfouriana", "Jack pine", "Pinus banksiana", "Mexican pinyon pine", "Pinus cembroides", "Sand pine", "Pinus clausa", "Lodgepole pine", "Pinus contorta", "Coulter pine", "Pinus coulteri", "Border pinyon", "Pinus discolor", "Shortleaf pine", "Pinus echinata", "Common pinyon", "Pinus edulis", "Slash pine", "Pinus elliottii", "Apache pine", "Pinus engelmannii", "Limber pine", "Pinus flexilis", "Spruce pine", "Pinus glabra", "Jeffrey pine", "Pinus jeffreyi", "Sugar pine", "Pinus lambertiana", "Chihuahua pine", "Pinus leiophylla", "Great basin bristlecone pine", "Pinus longaeva", "Singleleaf pinyon", "Pinus monophylla", "Western white pine", "Pinus monticola", "Bishop pine", "Pinus muricata", "Austrian pine", "Pinus nigra", "Longleaf pine", "Pinus palustris", "Ponderosa pine", "Pinus ponderosa", "Table mountain pine", "Pinus pungens", "Four-leaf or parry pinyon pine", "Pinus quadrifolia", "Monterey pine", "Pinus radiata", "Papershell pinyon pine", "Pinus remota", "Red pine", "Pinus resinosa", "Pitch pine", "Pinus rigida", "Gray or california foothill pine", "Pinus sabiniana", "Pond pine", "Pinus serotina", "Southwestern white pine", "Pinus strobiformis", "Eastern white pine", "Pinus strobus", "Scotch pine", "Pinus sylvestris", "Loblolly pine", "Pinus taeda", "Torrey pine", "Pinus torreyana", "Virginia pine", "Pinus virginiana", "Washoe pine", "Pinus washoensis", "Bigcone douglas-fir", "Pseudotsuga macrocarpa", "Douglas-fir", "Pseudotsuga menziesii", "Redwood", "Sequoia sempervirens", "Giant sequoia", "Sequoiadendron giganteum", "Pondcypress", "Taxodium ascendens", "Bald cypress", "Taxodium distichum", "Montezuma baldcypress", "Taxodium mucronatum", "Pacific yew", "Taxus brevifolia", "Florida yew", "Taxus floridana", "Eastern white cedar", "Thuja occidentalis", "Western redcedar", "Thuja plicata", "Eastern hemlock", "Tsuga canadensis", "Carolina hemlock", "Tsuga caroliniana", "Western hemlock", "Tsuga heterophylla", "Mountain hemlock", "Tsuga mertensiana"];
+			var coniferSpeciesList = ["fir spp", "abies spp", "white cedar spp", "chamaecyparis spp", "cypress spp", "cupressus spp", "redcedar juniper spp", "juniperus spp", "larch spp", "larix spp", "spruce spp", "picea spp", "pine spp", "pinus spp", "douglas fir spp", "pseudotsuga spp", "baldcypress spp", "taxodium spp", "yew spp", "taxus spp", "thuja spp", "hemlock spp", "tsuga spp", "pacific silver fir", "abies amabilis", "balsam fir", "abies balsamea", "bristlecone fir", "abies bracteata", "white fir", "abies concolor", "fraser fir", "abies fraseri", "grand fir", "abies grandis", "subalpine fir", "abies lasiocarpa", "california red fir", "abies magnifica", "noble fir", "abies procera", "shasta red fir", "abies shastensis", "port orford cedar", "chamaecyparis lawsoniana", "alaska yellow cedar", "chamaecyparis nootkatensis", "atlantic white cedar", "chamaecyparis thyoides", "arizona cypress", "cupressus arizonica", "modoc cypress", "cupressus bakeri", "tecate cypress", "cupressus forbesii", "macnabs cypress", "cupressus macnabiana", "monterey cypress", "cupressus macrocarpa", "sargents cypress", "cupressus sargentii", "ashe juniper", "juniperus ashei", "california juniper", "juniperus californica", "redberry juniper", "juniperus coahuilensis", "alligator juniper", "juniperus deppeana", "drooping juniper", "juniperus flaccida", "oneseed juniper", "juniperus monosperma", "western juniper", "juniperus occidentalis", "utah juniper", "juniperus osteosperma", "pinchot juniper", "juniperus pinchotii", "rocky mountain juniper", "juniperus scopulorum", "eastern redcedar", "juniperus virginiana", "tamarack", "larix laricina", "subalpine larch", "larix lyallii", "western larch", "larix occidentalis", "norway spruce", "picea abies", "brewer spruce", "picea breweriana", "engelmann spruce", "picea engelmannii", "white spruce", "picea glauca", "black spruce", "picea mariana", "blue spruce", "picea pungens", "red spruce", "picea rubens", "sitka spruce", "picea sitchensis", "whitebark pine", "pinus albicaulis", "bristlecone pine", "pinus aristata", "arizona pine", "pinus arizonica", "knobcone pine", "pinus attenuata", "foxtail pine", "pinus balfouriana", "jack pine", "pinus banksiana", "mexican pinyon pine", "pinus cembroides", "sand pine", "pinus clausa", "lodgepole pine", "pinus contorta", "coulter pine", "pinus coulteri", "border pinyon", "pinus discolor", "shortleaf pine", "pinus echinata", "common pinyon", "pinus edulis", "slash pine", "pinus elliottii", "apache pine", "pinus engelmannii", "limber pine", "pinus flexilis", "spruce pine", "pinus glabra", "jeffrey pine", "pinus jeffreyi", "sugar pine", "pinus lambertiana", "chihuahua pine", "pinus leiophylla", "great basin bristlecone pine", "pinus longaeva", "singleleaf pinyon", "pinus monophylla", "western white pine", "pinus monticola", "bishop pine", "pinus muricata", "austrian pine", "pinus nigra", "longleaf pine", "pinus palustris", "ponderosa pine", "pinus ponderosa", "table mountain pine", "pinus pungens", "four leaf or parry pinyon pine", "pinus quadrifolia", "monterey pine", "pinus radiata", "papershell pinyon pine", "pinus remota", "red pine", "pinus resinosa", "pitch pine", "pinus rigida", "gray or california foothill pine", "pinus sabiniana", "pond pine", "pinus serotina", "southwestern white pine", "pinus strobiformis", "eastern white pine", "pinus strobus", "scotch pine", "pinus sylvestris", "loblolly pine", "pinus taeda", "torrey pine", "pinus torreyana", "virginia pine", "pinus virginiana", "washoe pine", "pinus washoensis", "bigcone douglas fir", "pseudotsuga macrocarpa", "douglas fir", "pseudotsuga menziesii", "redwood", "sequoia sempervirens", "giant sequoia", "sequoiadendron giganteum", "pondcypress", "taxodium ascendens", "bald cypress", "taxodium distichum", "montezuma baldcypress", "taxodium mucronatum", "pacific yew", "taxus brevifolia", "florida yew", "taxus floridana", "eastern white cedar", "thuja occidentalis", "western redcedar", "thuja plicata", "eastern hemlock", "tsuga canadensis", "carolina hemlock", "tsuga caroliniana", "western hemlock", "tsuga heterophylla", "mountain hemlock", "tsuga mertensiana"];
 			
 			var switchingToPanel = false;
 			var currentPanelID = "site";
@@ -570,7 +577,7 @@
 							if($("#sitePasswordGroup")[0].style.display != "none" && ($("#sitePassword")[0].value.length < 4 || $("#sitePassword")[0].value.indexOf(" ") > -1)){
 								errors += "Invalid site password. ";
 							}
-							if($("#site .dualOptionButton").eq(0)[0].style.backgroundColor == ""){
+							if($("#site .dualOptionButton")[0].style.backgroundColor == ""){
 								errors += "Select an observation method. ";
 							}
 							$("#time")[0].value = getFormattedTime($("#time")[0].value, false);
@@ -700,7 +707,7 @@
 							if($("#sitePasswordGroup")[0].style.display != "none" && ($("#sitePassword")[0].value.length < 4 || $("#sitePassword")[0].value.indexOf(" ") > -1)){
 								errors += "Invalid site password. ";
 							}
-							if($("#site .dualOptionButton").eq(0)[0].style.backgroundColor == ""){
+							if($("#site .dualOptionButton")[0].style.backgroundColor == ""){
 								errors += "Select an observation method. ";
 							}
 							$("#time")[0].value = getFormattedTime($("#time")[0].value, false);
@@ -868,7 +875,7 @@
 					}
 					
 					toggleMaxHeight($(optionElement.parentNode).find(".option"));
-					var selectedElement = $(optionElement.parentNode).find(".selected").eq(0)[0];
+					var selectedElement = $(optionElement.parentNode).find(".selected")[0];
 					selectedElement.className = selectedElement.className.replace("selected", "").trim();
 					optionElement.className = optionElement.className + " selected";
 					$(optionElement).stop().animate({maxHeight:"250px"}, "swing", function(){selectToggling = false});
@@ -909,8 +916,8 @@
 				selectElement = $(selectElement)[0];
 				var options = selectElement.getElementsByClassName("option");
 				for(var i = 0; i < options.length; i++){
-					if($(options[i]).find(".value").eq(0)[0].innerHTML == val){
-						return $(options[i]).find(".text").eq(0)[0].innerHTML;
+					if($(options[i]).find(".value")[0].innerHTML == val){
+						return $(options[i]).find(".text")[0].innerHTML;
 					}
 				}
 			}
@@ -920,8 +927,8 @@
 				selectElement = $(selectElement)[0];
 				var options = selectElement.getElementsByClassName("option");
 				for(var i = 0; i < options.length; i++){
-					if($(options[i]).find(".text").eq(0)[0].innerHTML == txt){
-						return $(options[i]).find(".value").eq(0)[0].innerHTML;
+					if($(options[i]).find(".text")[0].innerHTML == txt){
+						return $(options[i]).find(".value")[0].innerHTML;
 					}
 				}
 			}
@@ -931,8 +938,8 @@
 				selectElement = $(selectElement)[0];
 				var options = selectElement.getElementsByClassName("option");
 				for(var i = 0; i < options.length; i++){
-					if($(options[i]).find(".text").eq(0)[0].innerHTML == txt){
-						bgimg = $(options[i]).find(".image").eq(0)[0].style.backgroundImage;
+					if($(options[i]).find(".text")[0].innerHTML == txt){
+						bgimg = $(options[i]).find(".image")[0].style.backgroundImage;
 						return bgimg.substring(bgimg.indexOf("(") + 1, bgimg.lastIndexOf(")")).replace(/"/g, "").replace(/'/g, "");
 						//TODO: remove this line. "
 					}
@@ -945,8 +952,10 @@
 				if (right < 0) {return str.slice(left);}
 				return str.slice(left, right + index);
     		}
-			function attachAutoCompleteToInput(inputElement, sourceList){
-				$(inputElement).autocomplete({
+			function attachAutoCompleteToInput(inputElement, sourceList, bindSetConifer){
+				bindSetConifer = bindSetConifer || false;
+				
+				var autoCompleteOptions = {
 					minLength: 2,
 					source: function(request, response) {
 						var results = $.ui.autocomplete.filter(sourceList, request.term);
@@ -987,7 +996,15 @@
 						var leftOffset = 0;
         					$('#ui-id-' + idNumber).css({left: (left - leftOffset) + "px", width: this.clientWidth + "px"});
 					}
-				});
+				};
+				
+				if(bindSetConifer){
+					autoCompleteOptions["close"] = function(event, ui){
+						setConifer(this);
+					}
+				}
+				
+				$(inputElement).autocomplete(autoCompleteOptions);
 			}
 			
 			function incrementCountInput(inputElement, min, max, step){
@@ -1021,13 +1038,13 @@
 			function countTo(inputElement, max){
 				inputElement = $(inputElement)[0];
 				inputElement.value = inputElement.value.substring(0, max);
-				$(inputElement.parentNode.parentNode).find('.characterCount').eq(0)[0].innerHTML = inputElement.value.length + "/" + max;
+				$(inputElement.parentNode.parentNode).find('.characterCount')[0].innerHTML = inputElement.value.length + "/" + max;
 			}
 			
 			function clearCountInput(inputElement){
 				inputElement = $(inputElement)[0];
 				inputElement.value = "";
-				var charCountDiv = $(inputElement.parentNode.parentNode).find(".characterCount").eq(0)[0];
+				var charCountDiv = $(inputElement.parentNode.parentNode).find(".characterCount")[0];
 				charCountDiv.innerHTML = "0" + charCountDiv.innerHTML.substring(charCountDiv.innerHTML.indexOf("/"));
 			}
 			
@@ -1036,8 +1053,8 @@
 			function getPlant(codeInput, passwordGroup){
 				codeInput = $(codeInput)[0];
 				codeInput.value = codeInput.value.toUpperCase().replace(/ /g, "").replace(/[^A-Z]/g, "");
-				$("#plant input").eq(0)[0].value = "";
-				$("#plant input").eq(0)[0].readOnly = false;
+				$("#plant input")[0].value = "";
+				$("#plant input")[0].readOnly = false;
 				
 				if(!haveInternet()){
 					codeInput.parentNode.style.color = "";
@@ -1045,7 +1062,7 @@
 					codeInput.parentNode.style.background = "";
 					codeInput.parentNode.style.padding = "";
 					codeInput.parentNode.style.marginTop = "";
-					$(codeInput.parentNode).find("div").eq(0)[0].innerHTML = "";
+					$(codeInput.parentNode).find("div")[0].innerHTML = "";
 					return false;
 				}
 				
@@ -1063,15 +1080,17 @@
 									var siteName = plantArray["siteName"];
 									var species = plantArray["species"];
 									var circle = plantArray["circle"];
+									var isConifer = plantArray["isConifer"];
 									var validated = plantArray["validated"];
 									observationMethod = plantArray["observationMethod"];//refers to global var
+									setConiferInputs(isConifer);
 									
 									codeInput.parentNode.style.color = "#fff";
 									codeInput.parentNode.style.borderRadius = "4px";
 									codeInput.parentNode.style.background = color;
 									codeInput.parentNode.style.padding = "10px 10px 0px 10px";
 									codeInput.parentNode.style.marginTop = "10px";
-									$(codeInput.parentNode).find("div").eq(0)[0].innerHTML = siteName + ", Circle " + circle + ", " + species;
+									$(codeInput.parentNode).find("div")[0].innerHTML = siteName + ", Circle " + circle + ", " + species;
 									
 									if(validated){
 										$(passwordGroup).stop().hide(300);
@@ -1091,14 +1110,14 @@
 										}
 										
 										if(species == "N/A"){
-											var speciesInput = $("#plant input").eq(0)[0];
+											var speciesInput = $("#plant input")[0];
 											
 											//$("#plant .group").eq(0).show();
 											speciesInput.value = "";
 											speciesInput.readOnly = false;
 										}
 										else{
-											var speciesInput = $("#plant input").eq(0)[0];
+											var speciesInput = $("#plant input")[0];
 												
 											//$("#plant .group").eq(0).hide();
 											speciesInput.value = species;
@@ -1112,7 +1131,7 @@
 									codeInput.parentNode.style.background = "";
 									codeInput.parentNode.style.padding = "";
 									codeInput.parentNode.style.marginTop = "";
-									$(codeInput.parentNode).find("div").eq(0)[0].innerHTML = "";
+									$(codeInput.parentNode).find("div")[0].innerHTML = "";
 									$(passwordGroup).stop().show(300);
 									if(data != "no plant" && $(codeInput)[0] == $("#plantCode")[0]){
 										var plantError = data.replace("false|", "");
@@ -1191,9 +1210,12 @@
 				var wetLeaves = checkboxIsChecked($("#wetLeavesCheckbox")).toString();
 				//arthropodData: [[orderType, orderLength, orderQuantity, orderNotes, pupa, hairy, leafRoll, silkTent, sawfly, beetle larva, fileInput]]
 				var plantSpecies = $("#plantSpecies")[0].value.trim();
-				var numberOfLeaves = $("#numberOfLeaves")[0].value.trim();
-				var averageLeafLength = $("#averageLeafLength")[0].value.trim();
-				var herbivoryScore = getSelectValue($("#herbivoryScore"));
+				var isConifer = $("#coniferInputs")[0].style.display == "block";
+				var numberOfLeaves = isConifer ? -1 : $("#numberOfLeaves")[0].value.trim();
+				var averageLeafLength = isConifer ? -1 : $("#averageLeafLength")[0].value.trim();
+				var herbivoryScore = isConifer ? -1 : getSelectValue($("#herbivoryScore"));
+				var averageNeedleLength = isConifer ? $("#averageNeedleLength")[0].value.trim() : -1;
+				var linearBranchLength = isConifer ? $("#linearBranchLength")[0].value.trim() : -1;
 					
 				//front end checking of plant vals
 				var errors = "";
@@ -1202,16 +1224,26 @@
 					errors += "Enter an approved plant species. ";
 				}
 				*/
-				if(numberOfLeaves.length != numberOfLeaves.replace(/\D/g, "").length || numberOfLeaves.length == 0 || Number(numberOfLeaves) > 500 || Number(numberOfLeaves) < 1){
-					errors += "Enter a number of leaves between 1 and 500. ";
+				if(isConifer){
+					if(averageNeedleLength.length != averageNeedleLength.replace(/\D/g, "").length || averageNeedleLength.length == 0 || Number(averageNeedleLength) > 60 || Number(averageNeedleLength) < 1){
+						errors += "Enter an average needle length between 1 and 60 centimeters. ";
+					}
+					if(linearBranchLength.length != linearBranchLength.replace(/\D/g, "").length || linearBranchLength.length == 0 || Number(linearBranchLength) > 500 || Number(linearBranchLength) < 1){
+						errors += "Enter a linear branch length between 1 and 500 centimeters. ";
+					}
 				}
-				if(averageLeafLength.length != averageLeafLength.replace(/\D/g, "").length || averageLeafLength.length == 0 || Number(averageLeafLength) > 60 || Number(averageLeafLength) < 1){
-					errors += "Enter an average leaf length between 1 and 60 centimeters. ";
+				else{
+					if(numberOfLeaves.length != numberOfLeaves.replace(/\D/g, "").length || numberOfLeaves.length == 0 || Number(numberOfLeaves) > 500 || Number(numberOfLeaves) < 1){
+						errors += "Enter a number of leaves between 1 and 500. ";
+					}
+					if(averageLeafLength.length != averageLeafLength.replace(/\D/g, "").length || averageLeafLength.length == 0 || Number(averageLeafLength) > 60 || Number(averageLeafLength) < 1){
+						errors += "Enter an average leaf length between 1 and 60 centimeters. ";
+					}
+					if(herbivoryScore == ""){
+						errors += "Select an herbivory score. ";
+					}
 				}
-				if(herbivoryScore == ""){
-					errors += "Select an herbivory score. ";
-				}
-					
+				
 				if(errors.length > 0){
 					queueNotice("error", errors);
 					return false;
@@ -1251,7 +1283,7 @@
 							if(!existingPendingSurveys){existingPendingSurveys = [];}
 							else{existingPendingSurveys = JSON.parse(existingPendingSurveys);}
 		//alert("3");
-							existingPendingSurveys[existingPendingSurveys.length] = [plantCode, sitePassword, dateAndTime, observationMethod, siteNotes, wetLeaves, arthropodDataCopy, plantSpecies, numberOfLeaves, averageLeafLength, herbivoryScore, window.localStorage.getItem("email")];
+							existingPendingSurveys[existingPendingSurveys.length] = [plantCode, sitePassword, dateAndTime, observationMethod, siteNotes, wetLeaves, arthropodDataCopy, plantSpecies, numberOfLeaves, averageLeafLength, herbivoryScore, window.localStorage.getItem("email"), averageNeedleLength, linearBranchLength];
 		//alert("4");
 		//alert(JSON.stringify(existingPendingSurveys));
 		
@@ -1354,6 +1386,8 @@
 							formData.append("numberOfLeaves", numberOfLeaves);
 							formData.append("averageLeafLength", averageLeafLength);
 							formData.append("herbivoryScore", herbivoryScore);
+							formData.append("averageNeedleLength", averageNeedleLength);
+							formData.append("linearBranchLength", linearBranchLength);
 							formData.append("observationMethod", observationMethod);
 							formData.append("plantSpecies", plantSpecies);
 							formData.append("submittedThroughApp", false);
@@ -1404,7 +1438,7 @@
 			}
 			
 			function toggleSamePass(){
-				if($("#samePass .checkBox").eq(0)[0].className.indexOf("checked") > -1){
+				if($("#samePass .checkBox")[0].className.indexOf("checked") > -1){
 					uncheckCheckbox($("#samePass .checkBox").eq(0));
 					$("#sitePassword")[0].value = "";
 					$("#sitePassword")[0].focus();
@@ -1466,8 +1500,8 @@
 					var sawfly = checkboxIsChecked($("#sawflyCheckbox"));
 					var beetleLarva = checkboxIsChecked($("#beetleLarvaCheckbox"));
 					var base64 = "";
-					if($("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.indexOf("#") == -1){
-						base64 = $("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.replace("url(", "").replace(/'/g, "").replace(/"/g, "").replace(")", "");
+					if($("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage.indexOf("#") == -1){
+						base64 = $("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage.replace("url(", "").replace(/'/g, "").replace(/"/g, "").replace(")", "");
 					}
 					arthropodData[currentlyShownIndex] = [orderType, orderLength, orderQuantity, orderNotes, pupa, hairy, leafRoll, silkTent, sawfly, beetleLarva, base64];
 					updateArthropodCards();
@@ -1514,11 +1548,11 @@
 				$("#orderQuantity")[0].value = $("#orderQuantity")[0].defaultValue;
 				$("#orderNotes")[0].value = "";
 				$("#fileInputRemoveLink")[0].style.display = "none";
-				$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage = "url('#')";
-				$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.height = "0px";
-				$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.margin = "";
-				$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.padding = "";
-				$("#arthropodFileInputHolder .snapIcon").eq(0)[0].src = "../images/camera.png";
+				$("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage = "url('#')";
+				$("#arthropodFileInputHolder .uploadedImage")[0].style.height = "0px";
+				$("#arthropodFileInputHolder .uploadedImage")[0].style.margin = "";
+				$("#arthropodFileInputHolder .uploadedImage")[0].style.padding = "";
+				$("#arthropodFileInputHolder .snapIcon")[0].src = "../images/camera.png";
 				
 				
 				selectDualOptionButton($("#moreArthropods .dualOptionButton").eq(1));
@@ -1544,7 +1578,7 @@
 					checkboxIsChecked($("#silkTentCheckbox")[0]) != arthropodData[currentlyShownIndex][7] ||
 					checkboxIsChecked($("#sawflyCheckbox")[0]) != arthropodData[currentlyShownIndex][8] ||
 					checkboxIsChecked($("#beetleLarvaCheckbox")[0]) != arthropodData[currentlyShownIndex][9] ||
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.indexOf(arthropodData[currentlyShownIndex][10]) == -1);
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage.indexOf(arthropodData[currentlyShownIndex][10]) == -1);
 				}
 				
 				var newDataIsShown = (currentlyShownIndex == arthropodData.length);
@@ -1560,7 +1594,7 @@
 					checkboxIsChecked($("#silkTentCheckbox")[0]) ||
 					checkboxIsChecked($("#sawflyCheckbox")[0]) ||
 					checkboxIsChecked($("#beetleLarvaCheckbox")[0]) ||
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.indexOf("#") == -1);
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage.indexOf("#") == -1);
 				}
 				
 				if((oldDataIsShown && oldDataHasChanged) || (newDataIsShown && newDataHasChanged)){
@@ -1610,19 +1644,19 @@
 				$("#orderQuantity")[0].value = arthropodData[i][2];
 				
 				if(arthropodData[i][10] != ""){
-					$("#arthropodFileInputHolder .snapIcon").eq(0)[0].src = "../images/inputCheckIcon.png";
+					$("#arthropodFileInputHolder .snapIcon")[0].src = "../images/inputCheckIcon.png";
 					showUploadedImage(arthropodData[i][10]);
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.height = "80px";
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.margin = "-20px -20px 16px -20px";
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.padding = "0px 20px";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.height = "80px";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.margin = "-20px -20px 16px -20px";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.padding = "0px 20px";
 				}
 				else{
-					$("#arthropodFileInputHolder .snapIcon").eq(0)[0].src = "../images/camera.png";
+					$("#arthropodFileInputHolder .snapIcon")[0].src = "../images/camera.png";
 					$("#fileInputRemoveLink")[0].style.display = "none";
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage = "url('#')";
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.height = "0px";
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.margin = "";
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.padding = "";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage = "url('#')";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.height = "0px";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.margin = "";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.padding = "";
 				}
 				
 				$("#orderNotes")[0].value = arthropodData[i][3];
@@ -1710,29 +1744,45 @@
 				
 				for(var i = 0; i < arthropodData.length; i++){
 					if(arthropodData[i][10] != ""){
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage = "url('" + arthropodData[i][10] + "')";
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundSize = "cover";
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.padding = "5px";
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.margin = "-5px -10px -5px -5px";
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.borderRadius = "4px";
-						if($("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage.length <= 22){
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.backgroundImage = "url('" + arthropodData[i][10] + "')";
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.backgroundSize = "cover";
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.padding = "5px";
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.margin = "-5px -10px -5px -5px";
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.borderRadius = "4px";
+						if($("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.backgroundImage.length <= 22){
 							var cardPhotoCheck = setInterval(function(){
-								$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage = "url('" + arthropodData[i][10] + "')";
-								if($("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundImage.length > 22){
+								$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.backgroundImage = "url('" + arthropodData[i][10] + "')";
+								if($("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.backgroundImage.length > 22){
 									clearInterval(cardPhotoCheck);
 								}
 							}, 100);
 						}
 					}
 					else{
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.backgroundSize = "";
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.padding = "";
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.margin = "";
-						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div").eq(0)[0].style.borderRadius = "";
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.backgroundSize = "";
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.padding = "";
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.margin = "";
+						$("#arthropodCards .orderTable").eq(i).find("td").eq(0).find("div")[0].style.borderRadius = "";
 					}
 				}
 				
 				rewordMoreArthropodsQuestion();
+			}
+			
+			function setConiferInputs(isConifer){
+				//this function is called whenever value of #plantSpecies changes
+				if(isConifer){
+					$("#coniferInputs").css({display:"block"});
+					$("#leafInputs").css({display:"none"});
+					$("#herbivoryGroup").css({display:"none"});
+					$("#leavesText")[0].innerHTML = "needles";
+				}
+				else{
+					$("#coniferInputs").css({display:"none"});
+					$("#leafInputs").css({display:"block"});
+					$("#herbivoryGroup").css({display:"block"});
+					$("#leavesText")[0].innerHTML = "leaves";
+				}
 			}
 			
 			var beforeForce = "";
@@ -1772,10 +1822,10 @@
 				forceCompression = forceCompression || false;
 				if(!forceCompression && (typeof base64OrURI === 'string' || base64OrURI instanceof String) && base64OrURI.indexOf("data:") == 0){
 					//base64 provided
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage = "url('" + base64OrURI + "')";
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.height = "80px";
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.margin = "-20px -20px 16px -20px";
-					$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.padding = "0px 20px";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage = "url('" + base64OrURI + "')";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.height = "80px";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.margin = "-20px -20px 16px -20px";
+					$("#arthropodFileInputHolder .uploadedImage")[0].style.padding = "0px 20px";
 					$("#fileInputRemoveLink")[0].style.display = "block";
 				}
 				else{
@@ -1785,21 +1835,21 @@
 					compressBase64Index(data, 0, 1750, 100, false);
 					var compressedCheck = setInterval(function(){
 						if(data != [base64OrURI]){
-							$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage = "url('data:" + data[0][0] + ";base64," + data[0][1] + "')";
-							if($("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.length > 22){
-								$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.height = "80px";
-								$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.margin = "-20px -20px 16px -20px";
-								$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.padding = "0px 20px";
+							$("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage = "url('data:" + data[0][0] + ";base64," + data[0][1] + "')";
+							if($("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage.length > 22){
+								$("#arthropodFileInputHolder .uploadedImage")[0].style.height = "80px";
+								$("#arthropodFileInputHolder .uploadedImage")[0].style.margin = "-20px -20px 16px -20px";
+								$("#arthropodFileInputHolder .uploadedImage")[0].style.padding = "0px 20px";
 								$("#fileInputRemoveLink")[0].style.display = "block";
 								$("#clearInteractionBlock")[0].style.display = "none";
 							}
 							else{
 								var backgroundImageSetCheck = setInterval(function(){
-									$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage = "url('data:" + data[0][0] + ";base64," + data[0][1] + "')";
-									if($("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage.length > 22){
-										$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.height = "80px";
-										$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.margin = "-20px -20px 16px -20px";
-										$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.padding = "0px 20px";
+									$("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage = "url('data:" + data[0][0] + ";base64," + data[0][1] + "')";
+									if($("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage.length > 22){
+										$("#arthropodFileInputHolder .uploadedImage")[0].style.height = "80px";
+										$("#arthropodFileInputHolder .uploadedImage")[0].style.margin = "-20px -20px 16px -20px";
+										$("#arthropodFileInputHolder .uploadedImage")[0].style.padding = "0px 20px";
 										$("#fileInputRemoveLink")[0].style.display = "block";
 										$("#clearInteractionBlock")[0].style.display = "none";
 										clearInterval(backgroundImageSetCheck);
@@ -1813,11 +1863,11 @@
 			}
 			
 			function removeUploadedFile(){
-				$("#arthropodFileInputHolder .snapIcon").eq(0)[0].src = "../images/camera.png";
-				$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.backgroundImage = "url('#')";
-				$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.height = "0px";
-				$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.margin = "";
-				$("#arthropodFileInputHolder .uploadedImage").eq(0)[0].style.padding = "";
+				$("#arthropodFileInputHolder .snapIcon")[0].src = "../images/camera.png";
+				$("#arthropodFileInputHolder .uploadedImage")[0].style.backgroundImage = "url('#')";
+				$("#arthropodFileInputHolder .uploadedImage")[0].style.height = "0px";
+				$("#arthropodFileInputHolder .uploadedImage")[0].style.margin = "";
+				$("#arthropodFileInputHolder .uploadedImage")[0].style.padding = "";
 				$("#fileInputRemoveLink")[0].style.display = "none";
 			}
 			
@@ -1849,7 +1899,7 @@
 				$("#plantCode")[0].parentNode.style.background = "";
 				$("#plantCode")[0].parentNode.style.padding = "";
 				$("#plantCode")[0].parentNode.style.marginTop = "";
-				$($("#plantCode")[0].parentNode).find("div").eq(0)[0].innerHTML = "";
+				$($("#plantCode")[0].parentNode).find("div")[0].innerHTML = "";
 				
 				$("#date")[0].value = "";
 				$("#time")[0].value = "";
@@ -1862,7 +1912,7 @@
 				}
 				
 				$("#plant input").val("");
-				$("#plant input").eq(0)[0].readOnly = false;
+				$("#plant input")[0].readOnly = false;
 				if(observationMethod == "Visual"){forceFiftyLeaves();}
 				else{relaxFiftyLeaves();}
 				setSelectValue($("#herbivoryScore"), "");
@@ -1916,6 +1966,64 @@
 					if(haystack[i].replace(/\s\s+/g, ' ').trim().toLowerCase() == needle.replace(/\s\s+/g, ' ').trim().toLowerCase()){return true;}
 				}
 				return false;
+			}
+			
+			function isKnownConifer(plantSpeciesName){
+				plantSpeciesName = plantSpeciesName.replace(/[^A-Za-z]+/g," ").replace(/\s\s+/g, ' ').trim().toLowerCase();
+				
+				if(plantSpeciesName == ""){
+					return false;
+				}
+				
+				if(coniferSpeciesList.indexOf(plantSpeciesName) > -1){
+					return true;
+				}
+				
+				var prefixes = ["abies", "chamaecyparis", "juniperus", "larix", "picea", "pinus", "pseudotsuga", "taxodium", "taxus", "thuja", "tsuga"];
+				for(var i = 0; i < prefixes.length; i++){
+					if((" " + plantSpeciesName).indexOf(" " + prefixes[i])> -1){
+						return true;
+					}
+				}
+				
+				var suffixes = ["fir", "cedar", "juniper", "larch", "spruce", "pine", "cypress", "yew", "hemlock"];
+				var plantSpeciesNameParts = plantSpeciesName.split(" ");
+				return suffixes.indexOf(plantSpeciesNameParts[plantSpeciesNameParts.length - 1]) > -1;
+			}
+			
+			lastManualConiferSettings = {};
+			function setConifer(plantSpeciesInput){
+				//this function is called whenever value of #plantSpecies changes
+				var plantSpecies = plantSpeciesInput.value;
+				
+				//if we recognize it
+				if(isKnownConifer(plantSpecies)){
+					//check and gray out
+					$("#checkboxTableOverlay" + plantSpeciesInput.id).css({display: "block"});
+					$("#checkboxTable" + plantSpeciesInput.id).css({opacity: ".5"});
+					checkCheckbox($("#coniferCheckbox" + plantSpeciesInput.id));
+				}
+				else if(inArrayIgnoreCaseAndWhitespace(plantSpecies, plantSpeciesList)){
+					//uncheck and gray out
+					$("#checkboxTableOverlay" + plantSpeciesInput.id).css({display: "block"});
+					$("#checkboxTable" + plantSpeciesInput.id).css({opacity: ".5"});
+					uncheckCheckbox($("#coniferCheckbox" + plantSpeciesInput.id));
+				}
+				else{
+					//ungray
+					$("#checkboxTableOverlay" + plantSpeciesInput.id).css({display: "none"});
+					$("#checkboxTable" + plantSpeciesInput.id).css({opacity: "1"});
+					
+					//revert to last manual selection
+					if(lastManualConiferSettings[plantSpeciesInput.id] === true){
+						if(!checkboxIsChecked($("#coniferCheckbox" + plantSpeciesInput.id))){
+							checkCheckbox($("#coniferCheckbox" + plantSpeciesInput.id));
+						}
+					}
+					else if(checkboxIsChecked($("#coniferCheckbox" + plantSpeciesInput.id))){
+						uncheckCheckbox($("#coniferCheckbox" + plantSpeciesInput.id));
+					}
+				}
 			}
 			
 			var customPlantSpeciesConfirmed = false;
