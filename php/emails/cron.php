@@ -316,7 +316,7 @@
 			$query = mysqli_query($dbconn, "SELECT `Iteration` FROM `CronJobStatus` WHERE `Name`='iNaturalistIdentificationFetch';");
 			if(intval(mysqli_fetch_assoc($query)["Iteration"]) == 0){
 				//finished grabbing ExpertIdentifications from iNaturalist
-				$query = mysqli_query($dbconn, "SELECT TemporaryExpertIdentificationChangeLog.*, `User`.ID AS UserID, `User`.`Hidden`, `User`.FirstName, `User`.Email, ArthropodSighting.INaturalistID, ArthropodSighting.OriginalGroup, ArthropodSighting.PhotoURL, `User`.`INaturalistObserverID` FROM `TemporaryExpertIdentificationChangeLog` JOIN ArthropodSighting ON TemporaryExpertIdentificationChangeLog.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID WHERE `Timestamp`<'" . date("Y-m-d", strtotime('Monday this week')) . " 00:00:00' AND `User`.`Hidden`='0' ORDER BY User.ID, ArthropodSightingFK, Timestamp DESC");
+				$query = mysqli_query($dbconn, "SELECT TemporaryExpertIdentificationChangeLog.*, `User`.ID AS UserID, `User`.`Hidden`, `User`.FirstName, `User`.Email, ArthropodSighting.INaturalistID, ArthropodSighting.OriginalGroup, ArthropodSighting.OriginalSawfly, ArthropodSighting.PhotoURL, `User`.`INaturalistObserverID` FROM `TemporaryExpertIdentificationChangeLog` JOIN ArthropodSighting ON TemporaryExpertIdentificationChangeLog.ArthropodSightingFK=ArthropodSighting.ID JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID WHERE `Timestamp`<'" . date("Y-m-d", strtotime('Monday this week')) . " 00:00:00' AND `User`.`Hidden`='0' ORDER BY User.ID, ArthropodSightingFK, Timestamp DESC");
 				$userID = -1;
 				$userEmail = "";
 				$userFirstName = "iNaturalist results are in";
@@ -355,7 +355,7 @@
 						$originalGroup = $row["OriginalGroup"];
 						$previousExpertIdentification = $row["PreviousExpertIdentification"];
 						if($previousExpertIdentification == ""){
-							$previousExpertIdentification = $originalGroup;
+							$previousExpertIdentification = filter_var($row["OriginalSawfly"], FILTER_VALIDATE_BOOLEAN) ? "sawfly" : $originalGroup;
 						}
 						$newExpertIdentification = $row["NewExpertIdentification"];
 						$iNaturalistObservationID = $row["INaturalistID"];
