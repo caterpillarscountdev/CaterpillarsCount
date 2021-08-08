@@ -378,7 +378,7 @@
 
 						$newExpertIdentificationN = in_array(strtolower(substr($newExpertIdentificationSingular, 0, 1)), array("a", "e", "i", "o", "u")) ? "n" : "";
 						
-						if(($previousExpertIdentification == "other" && in_array($newExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))) || ($previousExpertIdentificationSingular != "other" && $previousExpertIdentificationSingular != $newExpertIdentificationSingular)){
+						if(($previousExpertIdentification == "other" && in_array($newExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))) || ($previousExpertIdentificationSingular != "other" && !($previousExpertIdentificationSingular == "beetle" && $newExpertIdentificationSingular == "beetle larva") && $previousExpertIdentificationSingular != $newExpertIdentificationSingular)){
 							if($firstNewExpertIdentification == ""){
 								$firstNewExpertIdentification = $newExpertIdentification;
 								$firstNewExpertIdentificationPhotoURL = "https://caterpillarscount.unc.edu/images/arthropods/" . $row["PhotoURL"];
