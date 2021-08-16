@@ -15,7 +15,7 @@
 		return $param;
 	}
 	
-	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
+	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $sawfly, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
 		curl_setopt($ch, CURLOPT_POST, 1);
@@ -46,6 +46,7 @@
 			"ant" => "Ants",
 			"aphid" => "Sternorrhyncha",
 			"bee" => "Hymenoptera",
+			"sawfly" => "Symphyta",
 			"beetle" => "Beetles",
 			"caterpillar" => "Lepidoptera",
 			"daddylonglegs" => "Daddy longlegs",
@@ -59,7 +60,10 @@
 			"unidentified" => "Arthropoda"
 		);
 		$newOrder = $order;
-		if(array_key_exists($order, $newOrders)){
+		if($order === "bee" && $sawfly){
+			$newOrder = $newOrders["sawfly"];
+		}
+		else if(array_key_exists($order, $newOrders)){
 			$newOrder = $newOrders[$order];
 		}
 		
