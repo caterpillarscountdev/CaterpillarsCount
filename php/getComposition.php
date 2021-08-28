@@ -139,7 +139,7 @@
  		}
  		die("true|" . json_encode($arthropodPercents));
  	}
- 	else if(in_array($breakdown, array("year", "month"))){
+ 	else if($breakdown == "year"){
 		//CHECK FOR SAVE
 		$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . $breakdown . $comparisonMetric);
 		if($HIGH_TRAFFIC_MODE){
@@ -149,59 +149,38 @@
 			}
 		}
 		
-		function renameMonthProperties($obj){
-			$keysWereMonths = false;
-			$months = array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
-			foreach($obj as $key => $value){
-				if(intval($key) - 1 < count($months)){
-					$obj[$months[intval($monthOrYear) - 1]] = $obj[$key];
-					unset($obj[$key]);
-					$keysWereMonths = true;
-				}
-			}
-			
-			if($keysWereMonths){
-				uksort($obj, function($a, $b){
-					return array_search($a) - array_search($b);
-				});
-			}
-		}
-		
-		$breakdownUpper = strtoupper($breakdown);
-		$breakdownTitle = ucwords($breakdown);
-		
 		if($comparisonMetric == "occurrence"){
  			$arthropodOccurrencesSet = array();
  			$arthropodSurveyCounts = array();
- 			$query = mysqli_query($dbconn, "SELECT DISTINCT $breakdownUpper(LocalDate) AS $breakdownTitle FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE SiteFK='$siteID'");
+ 			$query = mysqli_query($dbconn, "SELECT DISTINCT YEAR(LocalDate) AS Year FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE SiteFK='$siteID'");
  			while($row = mysqli_fetch_assoc($query)){
-				$arthropodSurveyCounts[strval($row[$breakdownTitle])] = array();
-				$arthropodOccurrencesSet[strval($row[$breakdownTitle])] = array();
+				$arthropodSurveyCounts[strval($row["Year"])] = array();
+				$arthropodOccurrencesSet[strval($row["Year"])] = array();
  			}
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, ArthropodSighting.UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS ArthropodSurveyCounts FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK = Survey.ID JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK = '$siteID' GROUP BY CONCAT($breakdownUpper(Survey.LocalDate), '-', ArthropodSighting.UpdatedGroup)");
+ 			$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, ArthropodSighting.UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS ArthropodSurveyCounts FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK = Survey.ID JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK = '$siteID' GROUP BY CONCAT(YEAR(Survey.LocalDate), '-', ArthropodSighting.UpdatedGroup)");
  			while($row = mysqli_fetch_assoc($query)){
- 				$arthropodSurveyCounts[strval($row[$breakdownTitle])][$row["UpdatedGroup"]] = $row["ArthropodSurveyCounts"];
+ 				$arthropodSurveyCounts[strval($row["Year"])][$row["UpdatedGroup"]] = $row["ArthropodSurveyCounts"];
  			}
  
  			$surveyCounts = array();
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, COUNT(Survey.ID) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY $breakdownUpper(Survey.LocalDate)");
+ 			$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, COUNT(Survey.ID) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY YEAR(Survey.LocalDate)");
  			while($row = mysqli_fetch_assoc($query)){
- 				$surveyCounts[strval($row[$breakdownTitle])] = $row["SurveyCount"];
+ 				$surveyCounts[strval($row["Year"])] = $row["SurveyCount"];
  			}
  
- 			$monthOrYearKeys = array_keys($arthropodSurveyCounts);
- 			foreach($monthOrYearKeys as $monthOrYear) {
+ 			$yearKeys = array_keys($arthropodSurveyCounts);
+ 			foreach($yearKeys as $year) {
 				$arthropodOccurrences = array();
-				$arthropodKeys = array_keys($arthropodSurveyCounts[$monthOrYear]);
+				$arthropodKeys = array_keys($arthropodSurveyCounts[$year]);
 				foreach($arthropodKeys as $arthropod){
-					$arthropodOccurrences[$readableArthropods[$arthropod]] = round(($arthropodSurveyCounts[$monthOrYear][$arthropod] / $surveyCounts[$monthOrYear]) * 100, 2);
+					$arthropodOccurrences[$readableArthropods[$arthropod]] = round(($arthropodSurveyCounts[$year][$arthropod] / $surveyCounts[$year]) * 100, 2);
 				}
-				$arthropodOccurrencesSet[$monthOrYear] = $arthropodOccurrences;
+				$arthropodOccurrencesSet[$year] = $arthropodOccurrences;
 			}
  			uksort($arthropodOccurrencesSet, function($a, $b){
 				return intval($a) - intval($b);
 			});
-			$result = "true|" . json_encode(renameMonthProperties($arthropodOccurrencesSet));
+			$result = "true|" . json_encode($arthropodOccurrencesSet);
 			if($HIGH_TRAFFIC_MODE){
 				save($baseFileName, $result);
 			}
@@ -210,35 +189,35 @@
  		else if($comparisonMetric == "absoluteDensity"){
  			$arthropodDensitiesSet = array();
  			$arthropodCounts = array();
- 			$query = mysqli_query($dbconn, "SELECT DISTINCT $breakdownUpper(LocalDate) AS $breakdownTitle FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE SiteFK='$siteID'");
+ 			$query = mysqli_query($dbconn, "SELECT DISTINCT YEAR(LocalDate) AS Year FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE SiteFK='$siteID'");
  			while($row = mysqli_fetch_assoc($query)){
-				$arthropodCounts[strval($row[$breakdownTitle])] = array();
-				$arthropodDensitiesSet[strval($row[$breakdownTitle])] = array();
+				$arthropodCounts[strval($row["Year"])] = array();
+				$arthropodDensitiesSet[strval($row["Year"])] = array();
  			}
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY CONCAT($breakdownUpper(Survey.LocalDate), '-', ArthropodSighting.UpdatedGroup)");
+ 			$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY CONCAT(YEAR(Survey.LocalDate), '-', ArthropodSighting.UpdatedGroup)");
  			while($row = mysqli_fetch_assoc($query)){
- 				$arthropodCounts[strval($row[$breakdownTitle])][$row["UpdatedGroup"]] = $row["ArthropodCount"];
+ 				$arthropodCounts[strval($row["Year"])][$row["UpdatedGroup"]] = $row["ArthropodCount"];
  			}
  
  			$surveyCounts = array();
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, COUNT(Survey.ID) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY $breakdownUpper(Survey.LocalDate)");
+ 			$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, COUNT(Survey.ID) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY YEAR(Survey.LocalDate)");
  			while($row = mysqli_fetch_assoc($query)){
- 				$surveyCounts[strval($row[$breakdownTitle])] = $row["SurveyCount"];
+ 				$surveyCounts[strval($row["Year"])] = $row["SurveyCount"];
  			}
  
- 			$monthOrYearKeys = array_keys($arthropodCounts);
- 			foreach($monthOrYearKeys as $monthOrYear) {
+ 			$yearKeys = array_keys($arthropodCounts);
+ 			foreach($yearKeys as $year) {
 				$arthropodDensities = array();
-				$arthropodKeys = array_keys($arthropodCounts[$monthOrYear]);
+				$arthropodKeys = array_keys($arthropodCounts[$year]);
 				foreach($arthropodKeys as $arthropod){
-					$arthropodDensities[$readableArthropods[$arthropod]] = round($arthropodCounts[$monthOrYear][$arthropod] / $surveyCounts[$monthOrYear], 2);
+					$arthropodDensities[$readableArthropods[$arthropod]] = round($arthropodCounts[$year][$arthropod] / $surveyCounts[$year], 2);
 				}
-				$arthropodDensitiesSet[$monthOrYear] = $arthropodDensities;
+				$arthropodDensitiesSet[$year] = $arthropodDensities;
 			}
  			uksort($arthropodDensitiesSet, function($a, $b){
 				return intval($a) - intval($b);
 			});
-			$result = "true|" . json_encode(renameMonthProperties($arthropodDensitiesSet));
+			$result = "true|" . json_encode($arthropodDensitiesSet);
 			if($HIGH_TRAFFIC_MODE){
 				save($baseFileName, $result);
 			}
@@ -247,38 +226,38 @@
 		else if($comparisonMetric == "meanBiomass"){
 			$meanBiomassesSet = array();
  			$biomasses = array();
- 			$query = mysqli_query($dbconn, "SELECT DISTINCT $breakdownUpper(LocalDate) AS $breakdownTitle FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE SiteFK='$siteID'");
+ 			$query = mysqli_query($dbconn, "SELECT DISTINCT YEAR(LocalDate) AS Year FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE SiteFK='$siteID'");
  			while($row = mysqli_fetch_assoc($query)){
-				$biomasses[strval($row[$breakdownTitle])] = array();
-				$meanBiomassesSet[strval($row[$breakdownTitle])] = array();
+				$biomasses[strval($row["Year"])] = array();
+				$meanBiomassesSet[strval($row["Year"])] = array();
  			}
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, ArthropodSighting.UpdatedGroup, ArthropodSighting.Length, SUM(ArthropodSighting.Quantity) AS TotalQuantity FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK = Survey.ID JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK = '$siteID' GROUP BY $breakdownUpper(Survey.LocalDate), ArthropodSighting.UpdatedGroup, ArthropodSighting.Length");
+ 			$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, ArthropodSighting.UpdatedGroup, ArthropodSighting.Length, SUM(ArthropodSighting.Quantity) AS TotalQuantity FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK = Survey.ID JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK = '$siteID' GROUP BY YEAR(Survey.LocalDate), ArthropodSighting.UpdatedGroup, ArthropodSighting.Length");
  			while($row = mysqli_fetch_assoc($query)){
-				if(!array_key_exists($row["UpdatedGroup"], $biomasses[strval($row[$breakdownTitle])])){
-					$biomasses[strval($row[$breakdownTitle])][$row["UpdatedGroup"]] = 0;
+				if(!array_key_exists($row["UpdatedGroup"], $biomasses[strval($row["Year"])])){
+					$biomasses[strval($row["Year"])][$row["UpdatedGroup"]] = 0;
 				}
-				$biomasses[strval($row[$breakdownTitle])][$row["UpdatedGroup"]] += (getBiomass($row["UpdatedGroup"], $row["Length"]) * floatval($row["TotalQuantity"]));
+				$biomasses[strval($row["Year"])][$row["UpdatedGroup"]] += (getBiomass($row["UpdatedGroup"], $row["Length"]) * floatval($row["TotalQuantity"]));
  			}
  
  			$surveyCounts = array();
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, COUNT(Survey.ID) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY $breakdownUpper(Survey.LocalDate)");
+ 			$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, COUNT(Survey.ID) AS SurveyCount FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY YEAR(Survey.LocalDate)");
  			while($row = mysqli_fetch_assoc($query)){
- 				$surveyCounts[strval($row[$breakdownTitle])] = $row["SurveyCount"];
+ 				$surveyCounts[strval($row["Year"])] = $row["SurveyCount"];
  			}
  
- 			$monthOrYearKeys = array_keys($biomasses);
- 			foreach($monthOrYearKeys as $monthOrYear) {
+ 			$yearKeys = array_keys($biomasses);
+ 			foreach($yearKeys as $year) {
 				$meanBiomasses = array();
-				$arthropodKeys = array_keys($biomasses[$monthOrYear]);
+				$arthropodKeys = array_keys($biomasses[$year]);
 				foreach($arthropodKeys as $arthropod){
-					$meanBiomasses[$readableArthropods[$arthropod]] = round(($biomasses[$monthOrYear][$arthropod] / $surveyCounts[$monthOrYear]), 2);
+					$meanBiomasses[$readableArthropods[$arthropod]] = round(($biomasses[$year][$arthropod] / $surveyCounts[$year]), 2);
 				}
-				$meanBiomassesSet[$monthOrYear] = $meanBiomasses;
+				$meanBiomassesSet[$year] = $meanBiomasses;
 			}
  			uksort($meanBiomassesSet, function($a, $b){
 				return intval($a) - intval($b);
 			});
-			$result = "true|" . json_encode(renameMonthProperties($meanBiomassesSet));
+			$result = "true|" . json_encode($meanBiomassesSet);
 			if($HIGH_TRAFFIC_MODE){
 				save($baseFileName, $result);
 			}
@@ -287,35 +266,35 @@
  		else{//relative proportion
 			$arthropodRelativeProportionsSet = array();
  			$arthropodCounts = array();
- 			$query = mysqli_query($dbconn, "SELECT DISTINCT $breakdownUpper(LocalDate) AS $breakdownTitle FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE SiteFK='$siteID'");
+ 			$query = mysqli_query($dbconn, "SELECT DISTINCT YEAR(LocalDate) AS Year FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE SiteFK='$siteID'");
  			while($row = mysqli_fetch_assoc($query)){
-				$arthropodCounts[strval($row[$breakdownTitle])] = array();
-				$arthropodRelativeProportionsSet[strval($row[$breakdownTitle])] = array();
+				$arthropodCounts[strval($row["Year"])] = array();
+				$arthropodRelativeProportionsSet[strval($row["Year"])] = array();
  			}
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY CONCAT($breakdownUpper(Survey.LocalDate), '-', ArthropodSighting.UpdatedGroup)");
+ 			$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY CONCAT(YEAR(Survey.LocalDate), '-', ArthropodSighting.UpdatedGroup)");
  			while($row = mysqli_fetch_assoc($query)){
- 				$arthropodCounts[strval($row[$breakdownTitle])][$row["UpdatedGroup"]] = $row["ArthropodCount"];
+ 				$arthropodCounts[strval($row["Year"])][$row["UpdatedGroup"]] = $row["ArthropodCount"];
  			}
  
  			$allArthropodCounts = array();
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, SUM(ArthropodSighting.Quantity) AS AllArthropodsCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY $breakdownUpper(Survey.LocalDate)");
+ 			$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, SUM(ArthropodSighting.Quantity) AS AllArthropodsCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' GROUP BY YEAR(Survey.LocalDate)");
  			while($row = mysqli_fetch_assoc($query)){
- 				$allArthropodCounts[strval($row[$breakdownTitle])] = $row["AllArthropodsCount"];
+ 				$allArthropodCounts[strval($row["Year"])] = $row["AllArthropodsCount"];
  			}
  
- 			$monthOrYearKeys = array_keys($arthropodCounts);
- 			foreach($monthOrYearKeys as $monthOrYear) {
+ 			$yearKeys = array_keys($arthropodCounts);
+ 			foreach($yearKeys as $year) {
 				$arthropodRelativeProportions = array();
-				$arthropodKeys = array_keys($arthropodCounts[$monthOrYear]);
+				$arthropodKeys = array_keys($arthropodCounts[$year]);
 				foreach($arthropodKeys as $arthropod){
-					$arthropodRelativeProportions[$readableArthropods[$arthropod]] = round(($arthropodCounts[$monthOrYear][$arthropod] / $allArthropodCounts[$monthOrYear]) * 100, 2);
+					$arthropodRelativeProportions[$readableArthropods[$arthropod]] = round(($arthropodCounts[$year][$arthropod] / $allArthropodCounts[$year]) * 100, 2);
 				}
-				$arthropodRelativeProportionsSet[$monthOrYear] = $arthropodRelativeProportions;
+				$arthropodRelativeProportionsSet[$year] = $arthropodRelativeProportions;
 			}
  			uksort($arthropodRelativeProportionsSet, function($a, $b){
 				return intval($a) - intval($b);
 			});
-			$result = "true|" . json_encode(renameMonthProperties($arthropodRelativeProportionsSet));
+			$result = "true|" . json_encode($arthropodRelativeProportionsSet);
 			if($HIGH_TRAFFIC_MODE){
 				save($baseFileName, $result);
 			}
