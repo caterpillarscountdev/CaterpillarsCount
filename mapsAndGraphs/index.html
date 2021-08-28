@@ -2763,7 +2763,7 @@
 				var xAxis = $("#barGraph .xAxisLabel .selected").eq(0)[0].innerHTML.toLowerCase();
 				var yAxis = $("#barGraph .yAxisLabel .selected").eq(0)[0].innerHTML.replace("Percent of Arthropods", "relativeProportion").replace("Percent of Surveys", "occurrence").replace("Number Per Survey", "absoluteDensity").replace("Biomass Per Survey", "meanBiomass");
 				queueCompositionLoad(xAxis, yAxis, activeSiteID);
-				var xAxes = ["site", "year", "plant species"];
+				var xAxes = ["site", "year", "month", "plant species"];
 				var yAxes = ["relativeProportion", "occurrence", "absoluteDensity", "meanBiomass"];
 				for(var i = (xAxes.length - 1); i >= 0; i--){
 					for(var j = (yAxes.length - 1); j >= 0; j--){
@@ -3240,6 +3240,10 @@
 					headers = ["Site", "Description", "Latitude", "Longitude", "Year", "Arthropod Group", yAxis];
 					siteName = $("#selectedSitePanel h2").eq(0)[0].innerHTML;
 				}
+				else if(xAxis == "month"){
+					headers = ["Site", "Description", "Latitude", "Longitude", "Month", "Arthropod Group", yAxis];
+					siteName = $("#selectedSitePanel h2").eq(0)[0].innerHTML;
+				}
 				else{//plant species
 					headers = ["Site", "Description", "Latitude", "Longitude", "Plant Species", "Arthropod Group", yAxis];
 					siteName = $("#selectedSitePanel h2").eq(0)[0].innerHTML;
@@ -3662,6 +3666,7 @@
 											<div class="selected" onclick="showSmallSelectOptions(this);">Site</div>
 											<div class="options">
 												<div onclick="smallSelectOption(this);updateSiteSelections();showComposition();">Site</div>
+												<div onclick="smallSelectOption(this);updateSiteSelections();showComposition();">Month</div>
 												<div onclick="smallSelectOption(this);updateSiteSelections();showComposition();">Year</div>
 												<div onclick="smallSelectOption(this);updateSiteSelections();showComposition();">Plant Species</div>
 											</div>
