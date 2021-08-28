@@ -139,7 +139,7 @@
  		}
  		die("true|" . json_encode($arthropodPercents));
  	}
- 	else if(in_aray($breakdown, array("year", "month")){
+ 	else if(in_aray($breakdown, array("year", "month"))){
 		//CHECK FOR SAVE
 		$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . $breakdown . $comparisonMetric);
 		if($HIGH_TRAFFIC_MODE){
