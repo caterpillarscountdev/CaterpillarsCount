@@ -153,7 +153,7 @@
 			$keysWereMonths = false;
 			$months = array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
 			foreach($obj as $key => $value){
-				if(intval(key) - 1 < count($months)){
+				if(intval($key) - 1 < count($months)){
 					$obj[$months[intval($monthOrYear) - 1]] = $obj[$key];
 					unset($obj[$key]);
 					$keysWereMonths = true;
