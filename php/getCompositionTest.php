@@ -165,6 +165,8 @@
 					return array_search($a) - array_search($b);
 				});
 			}
+			
+			return $obj;
 		}
 		
 		$breakdownUpper = strtoupper($breakdown);
@@ -278,8 +280,7 @@
  			uksort($meanBiomassesSet, function($a, $b){
 				return intval($a) - intval($b);
 			});
-      renameMonthProperties($meanBiomassesSet);
-			$result = "true|" . json_encode($meanBiomassesSet);
+			$result = "true|" . json_encode(renameMonthProperties($meanBiomassesSet));
 			if($HIGH_TRAFFIC_MODE){
 				save($baseFileName, $result);
 			}
