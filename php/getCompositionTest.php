@@ -279,7 +279,7 @@
 				return intval($a) - intval($b);
 			});
       renameMonthProperties($meanBiomassesSet);
-			$result = "true|" . json_encode(renameMonthProperties($meanBiomassesSet));
+			$result = "true|" . json_encode($meanBiomassesSet);
 			if($HIGH_TRAFFIC_MODE){
 				save($baseFileName, $result);
 			}
