@@ -161,7 +161,7 @@
 			}
 			
 			if($keysWereMonths){
-				uksort($obj, function($a, $b){
+				uksort($obj, function($a, $b) use ($months){
 					return array_search($a, $months) - array_search($b, $months);
 				});
 			}
