@@ -182,15 +182,26 @@ class Site
 	
 	public static function findManagedSitesByManager($manager){
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT `SiteFK` FROM `ManagerRequest` WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `Status`='Approved'");
+		$query = mysqli_query($dbconn, "SELECT `Site`.* FROM `ManagerRequest` JOIN Site ON `ManagerRequest`.`SiteFK`=`Site`.`ID` WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `Status`='Approved'");
 		mysqli_close($dbconn);
 		
 		$sitesArray = array();
-		while($managerRow = mysqli_fetch_assoc($query)){
-			$siteFK = $managerRow["SiteFK"];
-			$site = self::findByID($siteFK);
-			if(is_object($site) && get_class($site) == "Site"){
-				array_push($sitesArray, $site);
+		if(mysqli_num_rows($query) > 0){
+			while($siteRow = mysqli_fetch_assoc($query)){
+				$creator = User::findByID($siteRow["UserFKOfCreator"]);
+				$name = $siteRow["Name"];
+				$dateEstablished = $siteRow["DateEstablished"];
+				$description = $siteRow["Description"];
+				$url = $siteRow["URL"];
+				$latitude = $siteRow["Latitude"];
+				$longitude = $siteRow["Longitude"];
+				$region = $siteRow["Region"];
+				$salt = $siteRow["Salt"];
+				$saltedPasswordHash = $siteRow["SaltedPasswordHash"];
+				$openToPublic = $siteRow["OpenToPublic"];
+				$active = filter_var($siteRow["Active"], FILTER_VALIDATE_BOOLEAN);
+
+				array_push($sitesArray, (new Site($id, $creator, $name, $dateEstablished, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, $active)));
 			}
 		}
 		return $sitesArray;
