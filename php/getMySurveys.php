@@ -78,20 +78,25 @@
 			}
 		}
 		$sites = $user->getSites();
+		for($i = 0; $i < count($sites); $i++){
+			$sites[$i] = array($sites[$i]->getID(), $sites[$i]->getName());
+		}
+		
 		$isSiteAuthority = (count($sites) > 0);
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.UserFKOfObserver='" . $user->getID() . "' GROUP BY Plant.SiteFK");
+		$query = mysqli_query($dbconn, "SELECT Site.ID, Site.Name FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK=Site.ID WHERE Survey.UserFKOfObserver='" . $user->getID() . "' GROUP BY Plant.SiteFK");
 		while($siteRow = mysqli_fetch_assoc($query)){
-			$siteID = $siteRow["SiteFK"];
+			$siteID = intval($siteRow["ID"]);
 			$siteIsAlreadyInArray = false;
 			for($i = 0; $i < count($sites); $i++){
-				if($sites[$i]->getID() == $siteID){
+				if($sites[$i][0] === $siteID){
 					$siteIsAlreadyInArray = true;
 					break;
 				}
 			}
+			
 			if(!$siteIsAlreadyInArray){
-				$sites[] = Site::findByID($siteID);
+				$sites[] = array($siteID, $siteRow["Name"]);
 			}
 		}
 		
@@ -100,7 +105,7 @@
 		$userHasINaturalistObservations = (mysqli_num_rows($query) > 0);
 		mysqli_close($dbconn);
 		for($i = 0; $i < count($sites); $i++){
-			$siteName = $sites[$i]->getName();
+			$siteName = $sites[$i][1];
 			if($siteName != "Example Site"){
 				$sitesArray[] = array($siteName);
 			}
