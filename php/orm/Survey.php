@@ -243,8 +243,6 @@ class Survey
 		for($i = 0; $i < count($plants); $i++){
 			$plantsByID[$plants[$i]->getID()] = $plants[$i];
 		}
-die(json_encode($plantFKs));
-die(json_encode($plantsByID));
 		
 		mysqli_data_seek($query, 0);
 		while($surveyRow = mysqli_fetch_assoc($query)){
