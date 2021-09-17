@@ -21,7 +21,7 @@
 		$totalCount = $surveys[0];
 		$totalPages = ceil($totalCount/$PAGE_LENGTH);
 		$surveys = $surveys[1];
-		for($i = count($surveys - 1); $i >= 0; $i--){
+		for($i = count($surveys) - 1; $i >= 0; $i--){
 			if(!is_object($surveys[$i]) || get_class($surveys[$i]) != "Survey"){
 				unset($surveys[$i]);
 			}
