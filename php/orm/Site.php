@@ -207,6 +207,46 @@ class Site
 		return $sitesArray;
 	}
 	
+	public static function findSitesByIDs($siteIDs){
+		$siteIDs[] = -1;//make sure it's not empty
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `ID` IN (" . implode(",", $siteIDs) . "'");
+		mysqli_close($dbconn);
+		
+		$creatorFKs = array();
+		while($siteRow = mysqli_fetch_assoc($query)){
+			$creatorFKs[] = $siteRow["UserFKOfCreator"];
+		}
+		$users = User::findUsersByIDs($creatorFKs);
+		$usersByID = array();
+		for($i = 0; $i < count($users); $i++){
+			$usersByID[$users[$i]->getID()] = $users[$i];
+		}
+		
+		$sitesArray = array();
+		mysqli_data_seek($query, 0);
+		while($siteRow = mysqli_fetch_assoc($query)){
+			$creator = $usersByID[$siteRow["UserFKOfCreator"]];
+			$id = $siteRow["ID"];
+			$name = $siteRow["Name"];
+			$dateEstablished = $siteRow["DateEstablished"];
+			$description = $siteRow["Description"];
+			$url = $siteRow["URL"];
+			$latitude = $siteRow["Latitude"];
+			$longitude = $siteRow["Longitude"];
+			$region = $siteRow["Region"];
+			$salt = $siteRow["Salt"];
+			$saltedPasswordHash = $siteRow["SaltedPasswordHash"];
+			$openToPublic = $siteRow["OpenToPublic"];
+			$active = filter_var($siteRow["Active"], FILTER_VALIDATE_BOOLEAN);
+			$site = new Site($id, $creator, $name, $dateEstablished, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, $active);
+			
+			array_push($sitesArray, $site);
+		}
+		return $sitesArray;
+	}
+	
 	public static function findAllActivePublicSites(){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `OpenToPublic`='1'");
