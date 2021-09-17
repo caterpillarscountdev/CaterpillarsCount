@@ -145,6 +145,38 @@ class Plant
 		return self::findByID(intval(mysqli_fetch_assoc($query)["ID"]));
 	}
 	
+	public static function findPlantsByIDs($plantIDs){
+		$plantIDs[] = -1;//make sure it's not empty
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `ID` IN (" . implode(",", $plantIDs) . ") AND `Circle`>0");
+		mysqli_close($dbconn);
+		
+		$siteFKs = array();
+		while($plantRow = mysqli_fetch_assoc($query)){
+			$siteFKs[] = $plantRow["SiteFK"];
+		}
+		$sites = Site::findSitesByIDs($siteFKs);
+		$sitesByID = array();
+		for($i = 0; $i < count($sites); $i++){
+			$sitesByID[$sites[$i]->getID()] = $sites[$i];
+		}
+		
+		$plantsArray = array();
+		while($plantRow = mysqli_fetch_assoc($query)){
+			$id = $plantRow["ID"];
+			$site = $sitesByID[$plantRow["SiteFK"]];
+			$circle = $plantRow["Circle"];
+			$orientation = $plantRow["Orientation"];
+			$code = $plantRow["Code"];
+			$species = $plantRow["Species"];
+			$isConifer = $plantRow["IsConifer"];
+			
+			array_push($plantsArray, new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer));
+		}
+		return $plantsArray;
+	}
+	
 	public static function findPlantsBySite($site){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `SiteFK`='" . $site->getID() . "' AND `Circle`>0");
