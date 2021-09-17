@@ -245,10 +245,21 @@ class Site
 		$query = mysqli_query($dbconn, "SELECT * FROM `Site`" . $limitSQL);
 		mysqli_close($dbconn);
 		
+		$siteCreatorFKs = array();
+		while($siteRow = mysqli_fetch_assoc($query)){
+			array_push($siteCreatorFKs, $siteRow["UserFKOfCreator"]);
+		}
+		$users = User::findByIDs($siteCreatorFKs);
+		$usersByID = array();
+		for($i = 0; $i < count($users); $i++){
+			$usersByID[$users[$i]->getID()] = $users[$i];
+		}
+		
 		$sitesArray = array();
+		mysqli_data_seek($query, 0);
 		while($siteRow = mysqli_fetch_assoc($query)){
 			$id = $siteRow["ID"];
-			$creator = User::findByID($siteRow["UserFKOfCreator"]);
+			$creator = $usersByID[$siteRow["UserFKOfCreator"]];
 			$name = $siteRow["Name"];
 			$dateEstablished = $siteRow["DateEstablished"];
 			$description = $siteRow["Description"];
