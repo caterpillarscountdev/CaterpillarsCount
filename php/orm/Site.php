@@ -249,7 +249,7 @@ class Site
 		while($siteRow = mysqli_fetch_assoc($query)){
 			array_push($siteCreatorFKs, $siteRow["UserFKOfCreator"]);
 		}
-		$users = User::findByIDs($siteCreatorFKs);
+		$users = User::findUsersByIDs($siteCreatorFKs);
 		$usersByID = array();
 		for($i = 0; $i < count($users); $i++){
 			$usersByID[$users[$i]->getID()] = $users[$i];
