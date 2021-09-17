@@ -211,7 +211,7 @@ class Site
 		$siteIDs[] = -1;//make sure it's not empty
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `ID` IN (" . implode(",", $siteIDs) . "'");
+		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `ID` IN (" . implode(",", $siteIDs) . ")");
 		mysqli_close($dbconn);
 		
 		$creatorFKs = array();
