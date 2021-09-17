@@ -149,7 +149,7 @@ class Plant
 		$plantIDs[] = -1;//make sure it's not empty
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `ID` IN (" . implode(",", $plantIDs) . ") AND `Circle`>0");
+		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `ID` IN (" . implode(",", $plantIDs) . ")");
 		mysqli_close($dbconn);
 		
 		$siteFKs = array();
