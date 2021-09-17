@@ -2,6 +2,7 @@
 	require_once('orm/User.php');
 	require_once('orm/Survey.php');
 	require_once('orm/Site.php');
+	require_once('orm/ArthropodSighting.php');
 	require_once('orm/resources/Keychain.php');
 	
 	$email = $_GET["email"];
@@ -20,13 +21,18 @@
 		$totalCount = $surveys[0];
 		$totalPages = ceil($totalCount/$PAGE_LENGTH);
 		$surveys = $surveys[1];
+		for($i = count($surveys - 1); $i >= 0; $i--){
+			if(!is_object($surveys[$i]) || get_class($surveys[$i]) != "Survey"){
+				unset($surveys[$i]);
+			}
+		}
+		$arthropodSightings  = ArthropodSighting::findArthropodSightingsBySurveys($surveys);
 		$surveysArray = array();
 		for($i = 0; $i < count($surveys); $i++){
 			if(is_object($surveys[$i]) && get_class($surveys[$i]) == "Survey"){
-				$arthropodSightings = $surveys[$i]->getArthropodSightings();
 				$arthropodSightingsArray = array();
 				for($j = 0; $j < count($arthropodSightings); $j++){
-					if(is_object($arthropodSightings[$j]) && get_class($arthropodSightings[$j]) == "ArthropodSighting"){
+					if(is_object($arthropodSightings[$j]) && get_class($arthropodSightings[$j]) == "ArthropodSighting" && $arthropodSightings[$j]->getSurvey()->getID() === $surveys[$i]->getID()){
 						$arthropodSightingsArray[] = array(
 							"id" => $arthropodSightings[$j]->getID(),
 							"originalGroup" => $arthropodSightings[$j]->getOriginalGroup(),
