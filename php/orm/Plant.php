@@ -163,6 +163,7 @@ class Plant
 		}
 		
 		$plantsArray = array();
+		mysqli_data_seek($query, 0);
 		while($plantRow = mysqli_fetch_assoc($query)){
 			$id = $plantRow["ID"];
 			$site = $sitesByID[$plantRow["SiteFK"]];
