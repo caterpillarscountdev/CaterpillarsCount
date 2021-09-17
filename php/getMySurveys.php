@@ -18,7 +18,6 @@
 			$start = ((intval($page) - 1) * $PAGE_LENGTH);
 		}
 		$surveys = Survey::findSurveysByUser($user, $filters, $start, $PAGE_LENGTH);
-die("false|" . $surveys);
 		$totalCount = $surveys[0];
 		$totalPages = ceil($totalCount/$PAGE_LENGTH);
 		$surveys = $surveys[1];
