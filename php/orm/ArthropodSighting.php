@@ -162,7 +162,7 @@ class ArthropodSighting
 	public static function findArthropodSightingsBySurveys($surveys){
 		$surveyIDs = array(-1);//make sure it's not empty
 		$surveysByID = array();
-		for($i = 0; $i < count($surveys[$i]); $i++){
+		for($i = 0; $i < count($surveys); $i++){
 			$surveyID = $surveys[$i]->getID();
 			$surveysByID[$surveyID] = $surveys[$i];
 			$surveyIDs[] = $surveyID;
