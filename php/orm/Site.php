@@ -187,8 +187,20 @@ class Site
 		
 		$sitesArray = array();
 		if(mysqli_num_rows($query) > 0){
+			
+			$creatorFKs = array();
 			while($siteRow = mysqli_fetch_assoc($query)){
-				$creator = User::findByID($siteRow["UserFKOfCreator"]);
+				$creatorFKs[] = $siteRow["UserFKOfCreator"];
+			}
+			$users = User::findUsersByIDs($creatorFKs);
+			$usersByID = array();
+			for($i = 0; $i < count($users); $i++){
+				$usersByID[$users[$i]->getID()] = $users[$i];
+			}
+			
+			while($siteRow = mysqli_fetch_assoc($query)){
+				$id = $siteRow["ID"];
+				$creator = $usersByID[$siteRow["UserFKOfCreator"]];
 				$name = $siteRow["Name"];
 				$dateEstablished = $siteRow["DateEstablished"];
 				$description = $siteRow["Description"];
