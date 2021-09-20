@@ -165,6 +165,30 @@ class User
 
 		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
 	}
+	
+	public static function findUsersByIDs($userIDs){
+		$userIDs[] = -1;//make sure it's not empty
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		$query = mysqli_query($dbconn, "SELECT * FROM `User` WHERE ID IN (" . implode(",", $userIDs) . ")");
+		mysqli_close($dbconn);
+
+		$usersArray = array();
+		while($userRow = mysqli_fetch_assoc($query)){
+			$id = $userRow["ID"];
+			$firstName = $userRow["FirstName"];
+			$lastName = $userRow["LastName"];
+			$desiredEmail = $userRow["DesiredEmail"];
+			$email = $userRow["Email"];
+			$salt = $userRow["Salt"];
+			$saltedPasswordHash = $userRow["SaltedPasswordHash"];
+			$hidden = $userRow["Hidden"];
+			$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+
+			$usersArray[] = new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+		}
+		return $usersArray;
+	}
 
 	public static function findAll(){
 		$dbconn = (new Keychain)->getDatabaseConnection();

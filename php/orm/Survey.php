@@ -224,11 +224,32 @@ class Survey
 			}
 		}
 		$query = mysqli_query($dbconn, "SELECT Survey.* FROM " . $baseTable . " JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `User` ON Survey.UserFKOfObserver=User.ID WHERE (Plant.SiteFK IN (" . join(",", $siteIDs) . ") OR Survey.UserFKOfObserver='" . $user->getID() . "') AND Survey.LocalDate LIKE '" . $dateSearch . "'" . $additionalSQL . $groupBy . " ORDER BY Survey.LocalDate DESC, Survey.LocalTime DESC, Plant.Code DESC LIMIT " . $start . ", " . $limit);
+		$observerFKs = array();
+		$plantFKs = array();
+		while($surveyRow = mysqli_fetch_assoc($query)){
+			$observerFKs[] = $surveyRow["UserFKOfObserver"];
+			$plantFKs[] = $surveyRow["PlantFK"];
+		}
+		
+		$users = User::findUsersByIDs($observerFKs);
+		$plants = Plant::findPlantsByIDs($plantFKs);
+		
+		$usersByID = array();
+		for($i = 0; $i < count($users); $i++){
+			$usersByID[$users[$i]->getID()] = $users[$i];
+		}
+		
+		$plantsByID = array();
+		for($i = 0; $i < count($plants); $i++){
+			$plantsByID[$plants[$i]->getID()] = $plants[$i];
+		}
+		
+		mysqli_data_seek($query, 0);
 		while($surveyRow = mysqli_fetch_assoc($query)){
 			$id = $surveyRow["ID"];
 			$submissionTimestamp = intval($surveyRow["SubmissionTimestamp"]);
-			$observer = User::findByID($surveyRow["UserFKOfObserver"]);
-			$plant = Plant::findByID($surveyRow["PlantFK"]);
+			$observer = $usersByID[$surveyRow["UserFKOfObserver"]];
+			$plant = $plantsByID[$surveyRow["PlantFK"]];
 			$localDate = $surveyRow["LocalDate"];
 			$localTime = $surveyRow["LocalTime"];
 			$observationMethod = $surveyRow["ObservationMethod"];

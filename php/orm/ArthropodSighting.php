@@ -138,7 +138,44 @@ class ArthropodSighting
 		$arthropodSightingsArray = array();
 		while($arthropodSightingRow = mysqli_fetch_assoc($query)){
 			$id = $arthropodSightingRow["ID"];
-			$survey = Survey::findByID($arthropodSightingRow["SurveyFK"]);
+			$originalGroup = $arthropodSightingRow["OriginalGroup"];
+			$updatedGroup = $arthropodSightingRow["UpdatedGroup"];
+			$length = $arthropodSightingRow["Length"];
+			$quantity = $arthropodSightingRow["Quantity"];
+			$photoURL = $arthropodSightingRow["PhotoURL"];
+			$notes = $arthropodSightingRow["Notes"];
+			$pupa = $arthropodSightingRow["Pupa"];
+			$hairy = $arthropodSightingRow["Hairy"];
+			$rolled = $arthropodSightingRow["Rolled"];
+			$tented = $arthropodSightingRow["Tented"];
+			$originalSawfly = $arthropodSightingRow["OriginalSawfly"];
+			$updatedSawfly = $arthropodSightingRow["UpdatedSawfly"];
+			$originalBeetleLarva = $arthropodSightingRow["OriginalBeetleLarva"];
+			$updatedBeetleLarva = $arthropodSightingRow["UpdatedBeetleLarva"];
+			$iNaturalistID = $arthropodSightingRow["INaturalistID"];
+
+			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $originalGroup, $updatedGroup, $length, $quantity, $photoURL, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $updatedSawfly, $originalBeetleLarva, $updatedBeetleLarva, $iNaturalistID);
+		}
+		return $arthropodSightingsArray;
+	}
+	
+	public static function findArthropodSightingsBySurveys($surveys){
+		$surveyIDs = array(-1);//make sure it's not empty
+		$surveysByID = array();
+		for($i = 0; $i < count($surveys); $i++){
+			$surveyID = $surveys[$i]->getID();
+			$surveysByID[$surveyID] = $surveys[$i];
+			$surveyIDs[] = $surveyID;
+		}
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		$query = mysqli_query($dbconn, "SELECT * FROM `ArthropodSighting` WHERE `SurveyFK` IN (" . implode(",", $surveyIDs) . ")");
+		mysqli_close($dbconn);
+		
+		$arthropodSightingsArray = array();
+		while($arthropodSightingRow = mysqli_fetch_assoc($query)){
+			$id = $arthropodSightingRow["ID"];
+			$survey = $surveysByID[$arthropodSightingRow["SurveyFK"]];
 			$originalGroup = $arthropodSightingRow["OriginalGroup"];
 			$updatedGroup = $arthropodSightingRow["UpdatedGroup"];
 			$length = $arthropodSightingRow["Length"];

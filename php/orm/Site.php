@@ -182,16 +182,57 @@ class Site
 	
 	public static function findManagedSitesByManager($manager){
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT `SiteFK` FROM `ManagerRequest` WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `Status`='Approved'");
+		$query = mysqli_query($dbconn, "SELECT `Site`.`ID` FROM `ManagerRequest` JOIN Site ON `ManagerRequest`.`SiteFK`=`Site`.`ID` WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `Status`='Approved'");
 		mysqli_close($dbconn);
 		
 		$sitesArray = array();
-		while($managerRow = mysqli_fetch_assoc($query)){
-			$siteFK = $managerRow["SiteFK"];
-			$site = self::findByID($siteFK);
-			if(is_object($site) && get_class($site) == "Site"){
-				array_push($sitesArray, $site);
+		if(mysqli_num_rows($query) > 0){
+			
+			$siteIDs = array();
+			while($siteRow = mysqli_fetch_assoc($query)){
+				$siteIDs[] = $siteRow["ID"];
 			}
+			$sitesArray = self::findSitesByIds($siteIDs);
+		}
+		return $sitesArray;
+	}
+	
+	public static function findSitesByIDs($siteIDs){
+		$siteIDs[] = -1;//make sure it's not empty
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `ID` IN (" . implode(",", $siteIDs) . ")");
+		mysqli_close($dbconn);
+		
+		$creatorFKs = array();
+		while($siteRow = mysqli_fetch_assoc($query)){
+			$creatorFKs[] = $siteRow["UserFKOfCreator"];
+		}
+		$users = User::findUsersByIDs($creatorFKs);
+		$usersByID = array();
+		for($i = 0; $i < count($users); $i++){
+			$usersByID[$users[$i]->getID()] = $users[$i];
+		}
+		
+		$sitesArray = array();
+		mysqli_data_seek($query, 0);
+		while($siteRow = mysqli_fetch_assoc($query)){
+			$creator = $usersByID[$siteRow["UserFKOfCreator"]];
+			$id = $siteRow["ID"];
+			$name = $siteRow["Name"];
+			$dateEstablished = $siteRow["DateEstablished"];
+			$description = $siteRow["Description"];
+			$url = $siteRow["URL"];
+			$latitude = $siteRow["Latitude"];
+			$longitude = $siteRow["Longitude"];
+			$region = $siteRow["Region"];
+			$salt = $siteRow["Salt"];
+			$saltedPasswordHash = $siteRow["SaltedPasswordHash"];
+			$openToPublic = $siteRow["OpenToPublic"];
+			$active = filter_var($siteRow["Active"], FILTER_VALIDATE_BOOLEAN);
+			$site = new Site($id, $creator, $name, $dateEstablished, $description, $url, $latitude, $longitude, $region, $salt, $saltedPasswordHash, $openToPublic, $active);
+			
+			array_push($sitesArray, $site);
 		}
 		return $sitesArray;
 	}
@@ -234,10 +275,21 @@ class Site
 		$query = mysqli_query($dbconn, "SELECT * FROM `Site`" . $limitSQL);
 		mysqli_close($dbconn);
 		
+		$siteCreatorFKs = array();
+		while($siteRow = mysqli_fetch_assoc($query)){
+			array_push($siteCreatorFKs, $siteRow["UserFKOfCreator"]);
+		}
+		$users = User::findUsersByIDs($siteCreatorFKs);
+		$usersByID = array();
+		for($i = 0; $i < count($users); $i++){
+			$usersByID[$users[$i]->getID()] = $users[$i];
+		}
+		
 		$sitesArray = array();
+		mysqli_data_seek($query, 0);
 		while($siteRow = mysqli_fetch_assoc($query)){
 			$id = $siteRow["ID"];
-			$creator = User::findByID($siteRow["UserFKOfCreator"]);
+			$creator = $usersByID[$siteRow["UserFKOfCreator"]];
 			$name = $siteRow["Name"];
 			$dateEstablished = $siteRow["DateEstablished"];
 			$description = $siteRow["Description"];

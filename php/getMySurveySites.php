@@ -11,26 +11,28 @@
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
 		$sites = $user->getSites();
+		$sitesArray = array();
 		$siteIDs = array();
 		for($i = 0; $i < count($sites); $i++){
 			$siteIDs[] = $sites[$i]->getID();
-		}
-		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT Site.ID FROM `Survey` JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `Site` ON Plant.SiteFK=Site.ID WHERE Survey.UserFKOfObserver='" . $user->getID() . "'");
-		while($siteRow = mysqli_fetch_assoc($query)){
-			$id = $siteRow["ID"];
-			if(!in_array($id, $siteIDs)){
-				$siteIDs[] = $id;
-				$sites[] = Site::findByID($id);
-			}
-		}
-		$sitesArray = array();
-		for($i = 0; $i < count($sites); $i++){
-			$sitesArray[$i] = array(
+			$sitesArray[] = array(
 				"id" => $sites[$i]->getID(),
 				"name" => $sites[$i]->getName(),
 				"region" => $sites[$i]->getRegion(),
 			);
+		}
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		$query = mysqli_query($dbconn, "SELECT Site.ID, Site.Name, Site.Region FROM `Survey` JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `Site` ON Plant.SiteFK=Site.ID WHERE Survey.UserFKOfObserver='" . $user->getID() . "' GROUP BY Site.ID");
+		while($siteRow = mysqli_fetch_assoc($query)){
+			$id = $siteRow["ID"];
+			if(!in_array($id, $siteIDs)){
+				$siteIDs[] = $id;
+				$sitesArray[] =  array(
+					"id" => $id,
+					"name" => $siteRow["Name"],
+					"region" => $siteRow["Region"],
+				);
+			}
 		}
 		die("true|" . json_encode($sitesArray));
 	}
