@@ -1302,9 +1302,14 @@
 			}
 			function markerClick(marker){
 				var graphType = "Phenology";
-				if(window.location.toString().substring(window.location.toString().indexOf("#") + 1).indexOf("Composition") > -1){
+				var urlAnchorText = window.location.toString().substring(window.location.toString().indexOf("#") + 1);
+				if(urlAnchorText.indexOf("Composition") > -1){
 					graphType = "Composition";
 					switchGraphTo('bar');
+				}
+				else if(urlAnchorText.indexOf("Trends") > -1){
+					graphType = "Trends";
+					switchGraphTo('trends');
 				}
 				window.location = "#selected" + graphType + marker.siteInformation["ID"];
 				activeSite = marker.siteInformation["Name"];
@@ -1374,10 +1379,15 @@
 				if(marker.siteInformation["MostRecentDateTime"] != "Never"){
 					clearSets();
 					clearCompositionSites();
+					clearTrends();
 					$(".siteSelectionText").css({display: "none"});
 					showSiteUserLeaderboard(marker.siteInformation["ID"], function(){
+						var earliestYear = Number(marker.siteInformation["EarliestDateTime"].split(" ")[0].split('-')[0]);
+						var mostRecentYear = Number(marker.siteInformation["MostRecentDateTime"].split(" ")[0].split('-')[0]);
+						
 						addSetFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"], year: Number(dateParts[0])});
 						addCompositionSite(marker.siteInformation["ID"]);
+						addTrendFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"], startYear: earliestYear, endYear: mostRecentYear});
 						updateSiteSelections();
 						loadNewActiveSiteCompositionDefaults();
 						showComposition();
@@ -1746,7 +1756,8 @@
 								ArthropodCount: sites[i]["ArthropodCount"],
 								CaterpillarCount: sites[i]["CaterpillarCount"],
 								SurveyCount: sites[i]["SurveyCount"],
-								MostRecentDateTime: sites[i]["MostRecentDateTime"]
+								MostRecentDateTime: sites[i]["MostRecentDateTime"],
+								EarliestDateTime: sites[i]["EarliestDateTime"]
 							}
 						});
 						if(currentColor == "#fed136"){
@@ -1881,7 +1892,8 @@
 								ArthropodCount: sites[i]["ArthropodCount"],
 								CaterpillarCount: sites[i]["CaterpillarCount"],
 								SurveyCount: sites[i]["SurveyCount"],
-								MostRecentDateTime: sites[i]["MostRecentDateTime"]
+								MostRecentDateTime: sites[i]["MostRecentDateTime"],
+								EarliestDateTime: sites[i]["EarliestDateTime"]
 							}
 						});
 						marker.addListener('click', physicalMarkerClick);
@@ -2358,7 +2370,10 @@
 			function formatDate(dateString){//YYYY-MM-DD
 				return "2000" + dateString.substring(4) + "T12:00:00-00:00";
 			}
-			var chartedSets = {};
+			var chartedSets = {
+				phenology: {},
+				trends: {}
+			};
 			function getLine(label, color, points){
 				var occurrenceLine = {
 					label: label,
@@ -2398,7 +2413,7 @@
 				
 				return [occurrenceLine, densityLine, meanBiomassLine];
 			}
-			function getLines(label, color, points){
+			function getLines(chartType, label, color, points){
 				points = points.sort(function(a, b) {
 					return (new Date(a[0]).getTime()) - (new Date(b[0]).getTime());
 				});
@@ -2417,9 +2432,11 @@
 				for(var i = 0; i < pointSets.length; i++){
 					lines[lines.length] = getLine(label, color, pointSets[i]);
 				}
-				chartedSets[label] = lines;
+				chartedSets[chartType][label] = lines;
 				
-				var comparisonMetric = $("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(2)[0].innerHTML, "meanBiomass");
+				var graphID = chartType == "phenology" ? "lineGraph" : "trendsGraph";
+				var optionDivs = $("#" + graphID + " .yAxisLabel .smallSelect .options>div");
+				var comparisonMetric = $("#" + graphID + " .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace(optionDivs.eq(0)[0].innerHTML, "occurrence").replace(optionDivs.eq(1)[0].innerHTML, "density").replace(optionDivs.eq(2)[0].innerHTML, "meanBiomass");
 				var comparisonMetricIndex = 0;
 				if(comparisonMetric == "density"){
 					comparisonMetricIndex = 1;
@@ -2457,7 +2474,7 @@
 					}
 				}
 				labels[labels.length] = [label, color];
-				var lines = getLines(label, color, points);
+				var lines = getLines("phenology", label, color, points);
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					lineConfig.data.datasets = [];
 				}
@@ -2620,14 +2637,14 @@
 						labels.splice(i, 1);
 					}
 				}
-				delete chartedSets[$(labelDiv).find(".description").eq(0)[0].innerHTML];
+				delete chartedSets.phenology[$(labelDiv).find(".description").eq(0)[0].innerHTML];
 				window.phenology.update();
 				centerYAxisLabels();
 				updatePhenologyLegend();
 			}
 			function clearSets(){
 				labels = [];
-				chartedSets = {};
+				chartedSets.phenology = {};
 				lineConfig.data.datasets = [endpoints[0], endpoints[1]];
 				window.phenology.update();
 				centerYAxisLabels();
@@ -2691,9 +2708,9 @@
 				//otherwise, set lines to match metric
 				var comparisonMetric = $("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "meanBiomass");
 				var newData = [];
-				for (var setLabel in chartedSets) {
-					if (chartedSets.hasOwnProperty(setLabel)) {
-						var setLines = chartedSets[setLabel];
+				for (var setLabel in chartedSets.phenology) {
+					if (chartedSets.phenology.hasOwnProperty(setLabel)) {
+						var setLines = chartedSets.phenology[setLabel];
 						for(var i = 0; i < setLines.length; i++){
 							if(comparisonMetric == "occurrence"){
 								newData[newData.length] = setLines[i][0];
@@ -3060,11 +3077,69 @@
 				}
 			}
 			//END OF COMPOSITION CHART STUFF
-      //TRENDS CHART STUFF
-      function matchTrendLinesWithYAxisLabel(){
+      			//TRENDS CHART STUFF
+      			function matchTrendLinesWithYAxisLabel(){
 				//TODO
 			}
-      //END OF TRENDS CHART STUFF
+			
+			function addTrend(label, points, update){
+				if(update !== false){
+					update = true;
+				}
+				
+				var lines = getLines("trends", label, "rgb(255, 99, 132)", points);
+				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
+					trendsConfig.data.datasets = [];
+				}
+				for(var i = 0; i < lines.length; i++){
+					trendsConfig.data.datasets[trendsConfig.data.datasets.length] = lines[i];
+				}
+				if(update){
+					window.trends.update();
+					centerYAxisLabels();
+				}
+			}
+			
+			function clearTrends(){
+				//TODO
+			}
+			
+			function function loadTrendFromFilters(filters, callback){
+				//filters = {arthropod:"caterpillar", siteID: marker.siteInformation["ID"], startYear: earliestYear, endYear: mostRecentYear}
+				
+				console.log("Loading trend: " + JSON.stringify(filters));
+				
+				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])), function(data){
+					//success
+					console.log("Loaded trend: " + JSON.stringify(filters));
+					if(data.indexOf("true|") == 0){
+						var trends = JSON.parse(data.replace("true|", ""));
+						for(var label in trends){
+							if(trends.hasOwnProperty(label)){
+								addTrend(label, trends[label]);
+							}
+						}
+					}
+					else{
+						queueNotice("error", data);
+					}
+				})
+				.fail(function(){
+					//error
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+				})
+				.always(function() {
+					//complete
+					callback();
+				});
+			}
+			
+			function addTrendFromFilters(filters, callback){
+				//TODO: load in the queue instead of right away
+				loadTrendFromFilters(filters, callback);
+			}
+      			//END OF TRENDS CHART STUFF
+			
 			function downloadMapData(){
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)")];
 				var csvString = headers.join(",") + "\r\n";
@@ -3766,7 +3841,7 @@
 
 								<div id="compositionLegend"></div>
 							</div>
-              <div id="trendsGraph">
+              						<div id="trendsGraph">
 								<div class="chartExplanation">Click on the y-axis label to change the phenology metric being plotted. Data points are excluded if fewer than five surveys were conducted at the given site on that day.</div>
 								<div style="height:500px;margin-top:40px;position:relative;">
 									<div class="downloadChartButton" onclick="promptConfirm('To download, read and agree to the Caterpillars Count! <a href=&quot;../dataUsePolicy&quot; target=&quot;_blank&quot;>data use</a> and <a href=&quot;../dataAttributionPolicy&quot; target=&quot;_blank&quot;>attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadTrendsData();});">
