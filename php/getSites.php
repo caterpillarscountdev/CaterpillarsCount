@@ -82,9 +82,10 @@
 	while($row = mysqli_fetch_assoc($query)){
 		$sitesArray[strval($row["SiteFK"])]["Caterpillars"] = round(((floatval($row["Caterpillars"]) / floatval($sitesArray[strval($row["SiteFK"])]["SurveyCount"])) * 100), 2) . "%";
 	}
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(STR_TO_DATE(CONCAT(Survey.LocalDate, ' ', Survey.LocalTime), '%Y-%m-%d %T')) AS MostRecentDateTime FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(STR_TO_DATE(CONCAT(Survey.LocalDate, ' ', Survey.LocalTime), '%Y-%m-%d %T')) AS MostRecentDateTime, MIN(STR_TO_DATE(CONCAT(Survey.LocalDate, ' ', Survey.LocalTime), '%Y-%m-%d %T')) AS EarliestDateTime FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
 		$sitesArray[strval($row["SiteFK"])]["MostRecentDateTime"] = $row["MostRecentDateTime"];
+		$sitesArray[strval($row["SiteFK"])]["EarliestDateTime"] = $row["EarliestDateTime"];
 	}
 	
 	$minLoggedDensity = 9999;
@@ -150,6 +151,9 @@
 		}
 		if(!array_key_exists("MostRecentDateTime", $sitesArray[$siteIDs[$i]])){
 			$sitesArray[$siteIDs[$i]]["MostRecentDateTime"] = "Never";
+		}
+		if(!array_key_exists("EarliestDateTime", $sitesArray[$siteIDs[$i]])){
+			$sitesArray[$siteIDs[$i]]["EarliestDateTime"] = "Never";
 		}
 		if(!array_key_exists("RawValue", $sitesArray[$siteIDs[$i]])){
 			if($sitesArray[$siteIDs[$i]]["MostRecentDateTime"] == "Never"){
