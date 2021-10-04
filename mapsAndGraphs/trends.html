@@ -2320,7 +2320,9 @@
 					scales: {
 						xAxes: [{
 							type: 'time',
-							time: {unit: 'year', unitStepSize: 1, tooltipFormat: "MMM D, YYYY"},
+							time: {unit: 'year', unitStepSize: 1, tooltipFormat: "MMM D, YYYY", displayFormats: {
+           'year': 'YYYY'
+        }},
 							scaleLabel: {
 								display: true,
 								labelString: 'Date',
