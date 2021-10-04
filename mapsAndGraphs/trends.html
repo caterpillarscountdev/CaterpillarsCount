@@ -2367,14 +2367,18 @@
 			function opaque(color){
 				return formatColor(color);
 			}
-			function formatDate(dateString){//YYYY-MM-DD
-				return "2000" + dateString.substring(4) + "T12:00:00-00:00";
+			function formatDate(dateString, includeYear){//YYYY-MM-DD
+				includeYear = includeYear || false;
+				
+				return (includeYear ? dateString : "2000" + dateString.substring(4)) + "T12:00:00-00:00";
 			}
 			var chartedSets = {
 				phenology: {},
 				trends: {}
 			};
-			function getLine(label, color, points){
+			function getLine(label, color, points, includeYear){
+				includeYear = includeYear || false;
+				
 				var occurrenceLine = {
 					label: label,
 					backgroundColor: transluscent(color),
@@ -2384,7 +2388,7 @@
 					data: []
 				};
 				for(var i = 0; i < points.length; i++){
-					occurrenceLine.data[occurrenceLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][1])};
+					occurrenceLine.data[occurrenceLine.data.length] = {x: formatDate(points[i][0], includeYear), y: Number(points[i][1])};
 				}
 				
 				var densityLine = {
@@ -2396,7 +2400,7 @@
 					data: []
 				};
 				for(var i = 0; i < points.length; i++){
-					densityLine.data[densityLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][2])};
+					densityLine.data[densityLine.data.length] = {x: formatDate(points[i][0], includeYear), y: Number(points[i][2])};
 				}
 				
 				var meanBiomassLine = {
@@ -2408,12 +2412,14 @@
 					data: []
 				};
 				for(var i = 0; i < points.length; i++){
-					meanBiomassLine.data[meanBiomassLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][3])};
+					meanBiomassLine.data[meanBiomassLine.data.length] = {x: formatDate(points[i][0], includeYear), y: Number(points[i][3])};
 				}
 				
 				return [occurrenceLine, densityLine, meanBiomassLine];
 			}
-			function getLines(chartType, label, color, points){
+			function getLines(chartType, label, color, points, includeYear){
+				includeYear = includeYear || false;
+				
 				points = points.sort(function(a, b) {
 					return (new Date(a[0]).getTime()) - (new Date(b[0]).getTime());
 				});
@@ -2430,7 +2436,7 @@
 				}
 				var lines = [];
 				for(var i = 0; i < pointSets.length; i++){
-					lines[lines.length] = getLine(label, color, pointSets[i]);
+					lines[lines.length] = getLine(label, color, pointSets[i], includeYear);
 				}
 				chartedSets[chartType][label] = lines;
 				
@@ -3087,7 +3093,7 @@
 					update = true;
 				}
 				
-				var lines = getLines("trends", label, "rgb(255, 99, 132)", points);
+				var lines = getLines("trends", label, "rgb(255, 99, 132)", points, true);
 				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					trendsConfig.data.datasets = [];
 				}
