@@ -2321,12 +2321,9 @@
 						xAxes: [{
 							type: 'time',
 							time: {
-								unit: 'month', 
-								unitStepSize: 12, 
-								tooltipFormat: "MMM D, YYYY",
-								displayFormats: {
-									month: 'MMM, YYYY'
-								}
+								unit: 'year', 
+								unitStepSize: 1, 
+								tooltipFormat: "MMM D, YYYY"
 							},
 							scaleLabel: {
 								display: true,
@@ -2334,7 +2331,6 @@
 								fontSize: 20
 							},
 							ticks: {
-								callback: function(value, index, values) {return value.replace(/[0-9 ]/g, '');},
 								autoSkip: false,
 								maxRotation: 0,
 								fontSize: 18
