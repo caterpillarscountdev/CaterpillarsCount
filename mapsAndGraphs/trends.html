@@ -2320,7 +2320,7 @@
 					scales: {
 						xAxes: [{
 							type: 'time',
-							time: {unit: 'year',unitStepSize: 1,tooltipFormat: "MMM D, YYYY",},
+							time: {unit: 'year', unitStepSize: 1, tooltipFormat: "MMM D, YYYY"},
 							scaleLabel: {
 								display: true,
 								labelString: 'Date',
@@ -3112,6 +3112,7 @@
 			
 			function loadTrendFromFilters(filters, callback){
 				//filters = {arthropod:"caterpillar", siteID: marker.siteInformation["ID"], startYear: earliestYear, endYear: mostRecentYear}
+				callback = callback || function(){};
 				
 				console.log("Loading trend: " + JSON.stringify(filters));
 				
