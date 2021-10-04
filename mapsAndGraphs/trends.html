@@ -2333,7 +2333,7 @@
 							ticks: {
 								autoSkip: false,
 								maxRotation: 0,
-								fontSize: 18
+								fontSize: 12
 							},
 							bounds: "ticks",
 							gridLines: {color: "rgba(0,0,0,0.05)"}
@@ -3110,7 +3110,10 @@
 			}
 			
 			function clearTrends(){
-				//TODO
+				chartedSets.trends = {};
+				trendsConfig.data.datasets = [endpoints[0], endpoints[1]];
+				window.trends.update();
+				centerYAxisLabels();
 			}
 			
 			function loadTrendFromFilters(filters, callback){
@@ -3123,6 +3126,7 @@
 					//success
 					console.log("Loaded trend: " + JSON.stringify(filters));
 					if(data.indexOf("true|") == 0){
+						clearTrends();
 						var trends = JSON.parse(data.replace("true|", ""));
 						for(var label in trends){
 							if(trends.hasOwnProperty(label)){
