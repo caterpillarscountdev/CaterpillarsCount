@@ -3094,11 +3094,11 @@
 			function getCoords(ascendingPoints){
 				var coords = [];
 				var firstTime = new Date(ascendingPoints[0][0]).getTime();
-				for(var i = 0; i < points.length; i++){
+				for(var i = 0; i < ascendingPoints.length; i++){
 					var daysSinceFirstDate = Math.round((new Date(ascendingPoints[i][0]).getTime() - firstTime) / (1000 * 3600 * 24));
 					coords[coords.length] = [
 						daysSinceFirstDate,
-						Number(points[1])
+						Number(ascendingPoints[i][1])
 					];
 				}
 				return coords;
