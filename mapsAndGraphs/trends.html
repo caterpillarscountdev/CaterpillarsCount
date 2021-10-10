@@ -3136,7 +3136,7 @@
 			function getValuesByIndex(arr, index){
 				var vals = [];
 				for(var i = 0; i < arr.length; i++){
-					vals[vals.length] = arr[index];
+					vals[vals.length] = arr[i][index];
 				}
 				return vals;
 			}
@@ -3150,11 +3150,11 @@
 			}
 			
 			function getXs(coords){
-				getValuesByIndex(coords, 0);
+				return getValuesByIndex(coords, 0);
 			}
 			
 			function getYs(coords){
-				getValuesByIndex(coords, 1);
+				return getValuesByIndex(coords, 1);
 			}
 			
 			function getRegressionLineSlope(coords){
@@ -3183,7 +3183,7 @@
 			}
 			
 			function getRegressionLineYIntercept(coords){
-				return getMean(getYs(coords)) - (getSlope(coords) * getMean(getXs(coords)));
+				return getMean(getYs(coords)) - (getRegressionLineSlope(coords) * getMean(getXs(coords)));
 			}
 			
 			function getMean(nums){
