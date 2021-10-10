@@ -3091,6 +3091,110 @@
 				//TODO
 			}
 			
+			function getCoords(ascendingPoints){
+				var coords = [];
+				var firstTime = new Date(ascendingPoints[0][0]).getTime();
+				for(var i = 0; i < points.length; i++){
+					var daysSinceFirstDate = (new Date(ascendingPoints[i][0]).getTime() - firstTime) / (1000 * 3600 * 24);
+					coords[coords.length] = [
+						daysSinceFirstDate,
+						Number(points[1])
+					];
+				}
+				return coords;
+			}
+			
+			function getRegressionLineData(points, includeYear){
+				if(points.length < 1){
+					return [];
+				}
+				
+				var ascendingPoints = points.sort(function(a, b) {
+					return (new Date(a[0]).getTime()) - (new Date(b[0]).getTime());
+				});
+				
+				var coords = getCoords(ascendingPoints);
+				
+				var xs = getXs(coords);
+				
+				return [
+					{
+						x: formatDate(ascendingPoints[0][0], includeYear), 
+						y: getRegressionLineY(coords, xs[0])
+					},
+					{
+						x: formatDate(ascendingPoints[ascendingPoints.length - 1][0], includeYear), 
+						y: getRegressionLineY(coords, xs[xs.length - 1])
+					}
+				];
+			}
+			
+			function getRegressionLineY(coords, x){
+				return getRegressionLineYIntercept(coords) + (getRegressionLineSlope(coords) * x);
+			}
+			
+			function getValuesByIndex(arr, index){
+				var vals = [];
+				for(var i = 0; i < arr.length; i++){
+					vals[vals.length] = arr[index];
+				}
+				return vals;
+			}
+			
+			function getX(coord){
+				return coord[0];
+			}
+			
+			function getY(coord){
+				return coord[1];
+			}
+			
+			function getXs(coords){
+				getValuesByIndex(coords, 0);
+			}
+			
+			function getYs(coords){
+				getValuesByIndex(coords, 1);
+			}
+			
+			function getRegressionLineSlope(coords){
+				var xs = getXs(coords);
+				var ys = getYs(coords);
+				var meanX = getMean(xs);
+				var meanY = getMean(ys);
+				
+				var xDeviationTimesYDeviationSum = 0;
+				var xDeviationSquaredSum = 0;
+				var yDeviationSquaredSum = 0;
+				for(var i = 0; i < coords.length; i++){
+					var xDeviation = getX(coords[i]) - meanX;
+					var yDeviation = getY(coords[i]) - meanY;
+					
+					xDeviationTimesYDeviationSum += xDeviation * yDeviation;
+					xDeviationSquaredSum += Math.pow(xDeviation, 2);
+					yDeviationSquaredSum += Math.pow(yDeviation, 2);
+				}
+				
+				var pearsonCorrelationCoefficient = xDeviationTimesYDeviationSum / Math.sqrt(xDeviationSquaredSum * yDeviationSquaredSum);
+				var standardDeviationX = xDeviationSquaredSum / (coords.length - 1);
+				var standardDeviationY = yDeviationSquaredSum / (coords.length - 1);
+				
+				return pearsonCorrelationCoefficient * (standardDeviationY / standardDeviationX);
+			}
+			
+			function getRegressionLineYIntercept(coords){
+				return getMean(getYs(coords)) - (getSlope(coords) * getMean(getXs(coords)));
+			}
+			
+			function getMean(nums){
+				var sum = 0;
+				for(var i = 0; i < nums.length; i++){
+					sum += nums[i];
+				}
+				return sum / nums.length;
+			}
+
+			
 			function addTrend(label, points, update){
 				if(update !== false){
 					update = true;
@@ -3103,6 +3207,16 @@
 				for(var i = 0; i < lines.length; i++){
 					trendsConfig.data.datasets[trendsConfig.data.datasets.length] = lines[i];
 				}
+				
+				trendsConfig.data.datasets[trendsConfig.data.datasets.length] = {
+					label: label + " Trend",
+					backgroundColor: transluscent("rgb(255, 99, 132)"),
+					borderColor: opaque("rgb(255, 99, 132)"),
+					lineTension: LINE_TENSION,
+					fill: false,
+					data: getRegressionLineData(points, true)
+				};
+				
 				if(update){
 					window.trends.update();
 					centerYAxisLabels();
