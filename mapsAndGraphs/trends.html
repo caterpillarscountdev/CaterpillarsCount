@@ -2382,13 +2382,13 @@
 				phenology: {},
 				trends: {}
 			};
-			function getLine(label, color, points, includeYear){
+			function getLine(label, color, points, includeYear, fadeLine){
 				includeYear = includeYear || false;
 				
 				var occurrenceLine = {
 					label: label,
 					backgroundColor: transluscent(color),
-					borderColor: opaque(color),
+					borderColor: fadeLine ? transluscent(color) : opaque(color),
 					lineTension: LINE_TENSION,
 					fill: false,
 					data: []
@@ -2400,7 +2400,7 @@
 				var densityLine = {
 					label: label,
 					backgroundColor: transluscent(color),
-					borderColor: opaque(color),
+					borderColor: fadeLine ? transluscent(color) : opaque(color),
 					lineTension: LINE_TENSION,
 					fill: false,
 					data: []
@@ -2412,7 +2412,7 @@
 				var meanBiomassLine = {
 					label: label,
 					backgroundColor: transluscent(color),
-					borderColor: opaque(color),
+					borderColor: fadeLine ? transluscent(color) : opaque(color),
 					lineTension: LINE_TENSION,
 					fill: false,
 					data: []
@@ -2423,9 +2423,7 @@
 				
 				return [occurrenceLine, densityLine, meanBiomassLine];
 			}
-			function getLines(chartType, label, color, points, includeYear){
-				includeYear = includeYear || false;
-				
+			function getLines(chartType, label, color, points, includeYear, includeLinerRegressionLine){
 				points = points.sort(function(a, b) {
 					return (new Date(a[0]).getTime()) - (new Date(b[0]).getTime());
 				});
@@ -2441,8 +2439,44 @@
 					pointSets[pointSets.length - 1][pointSets[pointSets.length - 1].length] = points[i];
 				}
 				var lines = [];
+				if(includeLinerRegressionLine){
+					var occurrencePoints = [];
+					var densityPoints = [];
+					var meanBiomassPoints = [];
+					for(var i = 0; i < points.length; i++){
+						occurrencePoints[occurrencePoints.length] = [points[i][0], points[i][1]];
+						densityPoints[densityPoints.length] = [points[i][0], points[i][2]];
+						meanBiomassPoints[meanBiomassPoints.length] = [points[i][0], points[i][3]];
+					}
+					regressionLine[regressionLine.length] = [
+						{
+							label: label + " (linear regression)",
+							backgroundColor: transluscent(color),
+							borderColor: opaque(color),
+							lineTension: LINE_TENSION,
+							fill: false,
+							data: getRegressionLineData(occurrencePoints, true)
+						},
+						{
+							label: label + " (linear regression)",
+							backgroundColor: transluscent(color),
+							borderColor: opaque(color),
+							lineTension: LINE_TENSION,
+							fill: false,
+							data: getRegressionLineData(densityPoints, true)
+						},
+						{
+							label: label + " (linear regression)",
+							backgroundColor: transluscent(color),
+							borderColor: opaque(color),
+							lineTension: LINE_TENSION,
+							fill: false,
+							data: getRegressionLineData(meanBiomassPoints, true)
+						}
+					];
+				}
 				for(var i = 0; i < pointSets.length; i++){
-					lines[lines.length] = getLine(label, color, pointSets[i], includeYear);
+					lines[lines.length] = getLine(label, color, pointSets[i], includeYear, includeLinerRegressionLine);
 				}
 				chartedSets[chartType][label] = lines;
 				
@@ -2486,7 +2520,7 @@
 					}
 				}
 				labels[labels.length] = [label, color];
-				var lines = getLines("phenology", label, color, points);
+				var lines = getLines("phenology", label, color, points, false, false);
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					lineConfig.data.datasets = [];
 				}
@@ -3114,6 +3148,7 @@
 						}
 					}
 				}
+				
 				trendsConfig.data.datasets = newData;
 				//set tooltip to match units
 				if(comparisonMetric == "occurrence"){
@@ -3235,19 +3270,10 @@
 					update = true;
 				}
 				
-				var lines = getLines("trends", label, "rgb(255, 212, 221)", points, true);
+				var lines = getLines("trends", label, "rgb(255, 99, 132)", points, true, true);
 				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					trendsConfig.data.datasets = [];
 				}
-				
-				trendsConfig.data.datasets[trendsConfig.data.datasets.length] = {
-					label: label + " (linear regression)",
-					backgroundColor: transluscent("rgb(255, 99, 132)"),
-					borderColor: opaque("rgb(255, 99, 132)"),
-					lineTension: LINE_TENSION,
-					fill: false,
-					data: getRegressionLineData(points, true)
-				};
 				
 				for(var i = 0; i < lines.length; i++){
 					trendsConfig.data.datasets[trendsConfig.data.datasets.length] = lines[i];
