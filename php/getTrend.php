@@ -44,7 +44,7 @@
 		if($HIGH_TRAFFIC_MODE){
 			$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
 			if($save !== null){
-				$weightedLines[$readableArthropods[$arthropod] . " at " . $siteName . " in " . $year] = json_decode($save);
+				$weightedLines[$readableArthropods[$arthropod] . " at " . $siteName] = json_decode($save);
 				continue;
 			}
 		}
