@@ -584,6 +584,9 @@
 				display:none;
 				font-size:18px;
 			}
+			#trendsGraph{
+				display:none;
+			}
 			#phenologyLegend{
 				text-align:center;
 				margin:20px 0px;
@@ -3200,7 +3203,7 @@
 					update = true;
 				}
 				
-				var lines = getLines("trends", label, "rgb(255, 99, 132)", points, true);
+				var lines = getLines("trends", label, "rgb(255, 212, 221)", points, true);
 				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					trendsConfig.data.datasets = [];
 				}
@@ -3209,7 +3212,7 @@
 				}
 				
 				trendsConfig.data.datasets[trendsConfig.data.datasets.length] = {
-					label: label + " Trend",
+					label: label + " (linear regression)",
 					backgroundColor: transluscent("rgb(255, 99, 132)"),
 					borderColor: opaque("rgb(255, 99, 132)"),
 					lineTension: LINE_TENSION,
