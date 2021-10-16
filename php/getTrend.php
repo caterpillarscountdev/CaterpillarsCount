@@ -95,8 +95,8 @@
 		if($HIGH_TRAFFIC_MODE){
 			save($baseFileName, json_encode($dateWeights));
 		}
-    		$weightedLines[$readableArthropods[$arthropod] . " at " . $siteName . " in " . $year] = $dateWeights;
+    		$weightedLines[$readableArthropods[$arthropod] . " at " . $siteName] = $dateWeights;
   	}
   	mysqli_close($dbconn);
-  	die("true|" . json_encode($weightedLines));//in the form of: [LABEL: [[LOCAL_DATE, OCCURRENCE, DENSITY, MEAN BIOMASS]]] //example: ["All arthropods at Example Site in 2018": [[2018-08-09, 30, 2.51, 9.7], [2018-08-12, 25, 3.1, 25.2]], [[2018-08-15, 21.3, 0.12, 7.7], [2018-09-02, 70, 0.7, 3.12]]]
+  	die("true|" . json_encode($weightedLines));//in the form of: [LABEL: [[LOCAL_DATE, OCCURRENCE, DENSITY, MEAN BIOMASS]]] //example: ["All arthropods at Example Site": [[2018-08-09, 30, 2.51, 9.7], [2018-08-12, 25, 3.1, 25.2]], [[2018-08-15, 21.3, 0.12, 7.7], [2018-09-02, 70, 0.7, 3.12]]]
 ?>
