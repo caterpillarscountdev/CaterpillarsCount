@@ -3397,8 +3397,35 @@
 				loadTrendFromFilters(filters, callback);
 			}
 			
-			function editTrend(){
-				//TODO
+			function editTrend(labelDiv){
+				//get options
+				var optionsString = $(labelDiv).find(".description").eq(0)[0].innerHTML;
+				var arthropod = optionsString;
+				var arthropods = ["All arthropods", "Ants", "Aphids and psyllids", "Bees, wasps, sawflies", "Beetles", "Caterpillars", "Daddy longlegs", "Flies", "Grasshoppers and crickets", "Leaf hoppers and cicadas", "Moths and butterflies", "Spiders", "True bugs", "Other arthropods", "Unidentified arthropods"];
+				for(var i = 0; i < arthropods.length; i++){
+					if(arthropod.indexOf(arthropods[i]) == 0){
+						arthropod = arthropods[i];
+						break;
+					}
+				}
+				var siteName = optionsString.replace(arthropod + " at ", "");
+				//Remove line
+				removeTrend(labelDiv);
+				//Add new line with same presets
+				showAddNewTrendLineOptions();
+				var labelDivs = $("#trendsLegend .label");
+				var addNewLineLabel = labelDivs.eq(labelDivs.length - 1);
+				var selectedOptions = addNewLineLabel.find(".selected");
+				selectedOptions.eq(0)[0].innerHTML = arthropod;
+				selectedOptions.eq(1)[0].innerHTML = siteName;
+				//Change x icon to cancel(presets)
+				var cancelFunction = function(){
+					addNewLineLabel[0].style.display = "none";
+					selectedOptions.eq(0)[0].innerHTML = arthropod;
+					selectedOptions.eq(1)[0].innerHTML = siteName;
+					addNewTrend(addNewLineLabel);
+				};
+				addNewLineLabel.find(".cancel").eq(0)[0].onclick = cancelFunction;
 			}
 			
 			function addNewTrend(labelDiv){
@@ -3423,8 +3450,22 @@
 				labelDiv.outerHTML = "";
 			}
 			
-			function removeTrend(){
-				//TODO
+			function removeTrend(labelDiv){
+				var lineColor = opaque($(labelDiv).find(".box").eq(0)[0].style.background);
+				for(var i = (trendsConfig.data.datasets.length - 1); i >= 0; i--){
+					if(lineColor == opaque(trendsConfig.data.datasets[i].backgroundColor)){
+						trendsConfig.data.datasets.splice(i, 1);
+					}
+				}
+				for(var i = (trendsLabels.length - 1); i >=0; i--){
+					if(lineColor == opaque(trendsLabels[i][1])){
+						trendsLabels.splice(i, 1);
+					}
+				}
+				delete chartedSets.trends[$(labelDiv).find(".description").eq(0)[0].innerHTML];
+				window.trends.update();
+				centerYAxisLabels();
+				updateTrendsLegend();
 			}
 			
 			function showAddNewTrendLineOptions(){
