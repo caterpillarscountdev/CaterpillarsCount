@@ -3294,6 +3294,25 @@
 					update = true;
 				}
 				
+				if(trendsLabels.length >= colors.length){
+					queueNotice("error", "You have too many trends on your trends chart. Please delete at least one of them before adding more.");
+					return false;
+				}
+				var color = "";
+				for(var i = 0; i < colors.length; i++){
+					var colorIsInUse = false;
+					for(var j = 0; j < trendsLabels.length; j++){
+						if(opaque(trendsLabels[j][1]) == opaque(colors[i])){
+							colorIsInUse = true;
+						}
+					}
+					if(!colorIsInUse){
+						color = colors[i];
+						break;
+					}
+				}
+				trendsLabels[trendsLabels.length] = [label, color];
+				
 				var lines = getLines("trends", label, "rgb(255, 99, 132)", points, true, true);
 				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					trendsConfig.data.datasets = [];
