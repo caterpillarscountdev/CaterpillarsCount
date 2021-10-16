@@ -3707,9 +3707,127 @@
 				}
 				$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
 			}
-      function downloadTrendsData(){
-        //TODO
-      }
+		      function downloadTrendsData(){
+			var metric = $("#trendsGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
+				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Date", "Julian Day", metric, "Linear Regression Value"];
+				var csvString = headers.join(",") + "\r\n";
+				var filtersString = "Y-Axis: " + metric + ", Trend Lines:";
+				
+				var date = new Date();
+				var earliestEstablishedYear = date.getFullYear();
+				var mostRecentlySurveyedYear = 0;
+				var untouchedSiteNames = ["No sites"];
+				var siteNames = [];
+				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
+					//nodata
+				}
+				else{
+					var datasets = lineConfig.data.datasets;
+					untouchedSiteNames = [];
+					for(var i = 0; i < datasets.length; i++){
+						var optionsString = datasets[i].label;
+						var arthropod = optionsString;
+						var arthropods = ["All arthropods", "Ants", "Aphids and psyllids", "Bees, wasps, sawflies", "Beetles", "Caterpillars", "Daddy longlegs", "Flies", "Grasshoppers and crickets", "Leaf hoppers and cicadas", "Moths and butterflies", "Spiders", "True bugs", "Other arthropods", "Unidentified arthropods"];
+						for(var j = 0; j < arthropods.length; j++){
+							if(arthropod.indexOf(arthropods[j]) == 0){
+								arthropod = arthropods[j];
+								break;
+							}
+						}
+						var siteName = optionsString.replace(arthropod + " at ", "").replace(" (linear regression)", "");
+						if(siteNames.indexOf(siteName.replace(/[\W_]+/g," ")) == -1){
+							siteNames[siteNames.length] = siteName.replace(/[\W_]+/g," ");
+						}
+						if(untouchedSiteNames.indexOf(siteName) == -1){
+						   untouchedSiteNames[untouchedSiteNames.length] = siteName;
+						}
+						var marker = findMarkerBySiteName(siteName);
+						var points = datasets[i].data;
+						for(var j = 0; j < points.length; j++){
+							var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), arthropod, points[j].x, getJulianDay(points[j].x.substring(0, 4), points[j].x.substring(5, 7), points[j].x.substring(8, 10)), points[j].y, optionsString.indexOf(" (linear regression)") > -1 ? "Yes" : "No"];
+							for(var t = 0; t < row.length; t++){
+								row[t] = "\"" + row[t].toString().replace(/"/g, "'") + "\"";
+							}
+							csvString += row.join(",") + "\r\n";
+						}
+						filtersString += " " + arthropod + " at " + siteName + ";";
+						
+						if(year < Number(earliestEstablishedYear)){
+							earliestEstablishedYear = year;
+						}
+						
+						if(year > Number(mostRecentlySurveyedYear)){
+							mostRecentlySurveyedYear = year;
+						}
+					}
+				}
+				
+				if(mostRecentlySurveyedYear == 0){
+					mostRecentlySurveyedYear = earliestEstablishedYear;
+				}
+				
+				var headerDescriptions = {
+					"site": "Name of the Caterpillars Count! site",
+					"description": "Description of the Caterpillars Count! site",
+					"latitude": "Latitude of the Caterpillars Count! site",
+					"longitude": "Longitude of the Caterpillars Count! site",
+					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
+					"date": "The Gregorian calendar date in the form YYYY-MM-DD",
+					"julian day": "The number of days since the beginning of the year, starting with January 1st as 1",
+					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
+					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
+					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions",
+					"linear regression value": "\"No\" if the row represents raw data. \"Yes\" if the row represents data calculated as part of a linear regression."
+				};
+				
+				var metadataText = "";
+				for(var i = 0; i < headers.length; i++){
+					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
+				}
+				
+				untouchedSiteNames.sort(function(a, b){
+					if(a.toLowerCase() < b.toLowerCase()) return -1;
+					if(a.toLowerCase() > b.toLowerCase()) return 1;
+					return 0;
+				});
+				if(untouchedSiteNames.length == 0){
+					untouchedSiteNames = ["No sites"];
+				}
+				
+				siteNames.sort(function(a, b){
+					if(a.toLowerCase() < b.toLowerCase()) return -1;
+					if(a.toLowerCase() > b.toLowerCase()) return 1;
+					return 0;
+				});
+				if(siteNames.length == 0){
+					siteNames = ["No sites".replace(/[\W_]+/g," ")];
+				}
+				
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Trends Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
+				
+				var zip = new JSZip();
+				var folder = zip.folder("Caterpillars Count! " + siteNames.join(" - ") + " trends data");
+				folder.file("metadata.txt", metadataText);
+				folder.file("data.csv", csvString);
+				zip.generateAsync({type:"blob"})
+				.then(function(content) {
+					saveAs(content, "CaterpillarsCountTrendsData-" + siteNames.join("-") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".zip");
+				});
+				
+				//track download
+				var downloadedFile = "Dynamically Generated Trends CSV";
+				var downloadFilters = filtersString;
+				var page = window.location.toString().replace("http://", "").replace("https://", "");
+				page = page.substring(page.indexOf("/") + 1);
+				if(page.indexOf("#") > -1){
+					page = page.substring(0, page.indexOf("#"));
+				}
+				if(page.slice(-1) == "/"){
+					page = page.substring(0, page.length - 1);
+				}
+				$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
+		      }
+			
 			var submittedClassificationToSciStarter = false;
 			function submitClassificationToSciStarter(){
 				if(!submittedClassificationToSciStarter && window.localStorage.getItem("email") !== null){
