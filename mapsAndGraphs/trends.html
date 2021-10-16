@@ -3091,7 +3091,39 @@
 			//END OF COMPOSITION CHART STUFF
       			//TRENDS CHART STUFF
       			function matchTrendLinesWithYAxisLabel(){
-				//TODO
+				//if we just have the invisible endpoints loaded on an empty chart, don't bother doing anything
+				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
+					return true;
+				}
+				//otherwise, set lines to match metric
+				var comparisonMetric = $("#trendsGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#trendsGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#trendsGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#trendsGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "meanBiomass");
+				var newData = [];
+				for (var setLabel in chartedSets.trends) {
+					if (chartedSets.trends.hasOwnProperty(setLabel)) {
+						var setLines = chartedSets.trends[setLabel];
+						for(var i = 0; i < setLines.length; i++){
+							if(comparisonMetric == "occurrence"){
+								newData[newData.length] = setLines[i][0];
+							}
+							else if(comparisonMetric == "density"){
+								newData[newData.length] = setLines[i][1];
+							}
+							else{//mean biomass
+								newData[newData.length] = setLines[i][2];
+							}
+						}
+					}
+				}
+				trendsConfig.data.datasets = newData;
+				//set tooltip to match units
+				if(comparisonMetric == "occurrence"){
+					trendsConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel + '%';};
+				}
+				else{//density or meanBiomass
+					trendsConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel;};
+				}
+				//update
+				window.trends.update();
 			}
 			
 			function getCoords(ascendingPoints){
