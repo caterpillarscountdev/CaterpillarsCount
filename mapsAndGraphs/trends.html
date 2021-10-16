@@ -2587,7 +2587,7 @@
 					queueNotice("error", "You have too many lines on your phenology chart. Please delete at least one of them before adding more.");
 					return false;
 				}
-				$(".editDeleteSpan").fadeOut(0);
+				$("#phenologyLegend .editDeleteSpan").fadeOut(0);
 				var siteSelectOptions = "";
 				for(var i = 0; i < siteNamesAndIDs.length; i++){
 					siteSelectOptions += "<div onclick=\"smallSelectOption(this);\">" + siteNamesAndIDs[i][0] + "</div>";
@@ -3432,7 +3432,7 @@
 					queueNotice("error", "You have too many trends on your trends chart. Please delete at least one of them before adding more.");
 					return false;
 				}
-				$(".editDeleteSpan").fadeOut(0);
+				$("#trendsLegend .editDeleteSpan").fadeOut(0);
 				var siteSelectOptions = "";
 				for(var i = 0; i < siteNamesAndIDs.length; i++){
 					siteSelectOptions += "<div onclick=\"smallSelectOption(this);\">" + siteNamesAndIDs[i][0] + "</div>";
