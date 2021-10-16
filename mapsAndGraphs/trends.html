@@ -3123,11 +3123,11 @@
 				return [
 					{
 						x: formatDate(ascendingPoints[0][0], includeYear), 
-						y: getRegressionLineY(coords, xs[0])
+						y: Math.round(getRegressionLineY(coords, xs[0]) * 100) / 100
 					},
 					{
 						x: formatDate(ascendingPoints[ascendingPoints.length - 1][0], includeYear), 
-						y: getRegressionLineY(coords, xs[xs.length - 1])
+						y: Math.round(getRegressionLineY(coords, xs[xs.length - 1]) * 100) / 100
 					}
 				];
 			}
@@ -3207,9 +3207,6 @@
 				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					trendsConfig.data.datasets = [];
 				}
-				for(var i = 0; i < lines.length; i++){
-					trendsConfig.data.datasets[trendsConfig.data.datasets.length] = lines[i];
-				}
 				
 				trendsConfig.data.datasets[trendsConfig.data.datasets.length] = {
 					label: label + " (linear regression)",
@@ -3219,6 +3216,10 @@
 					fill: false,
 					data: getRegressionLineData(points, true)
 				};
+				
+				for(var i = 0; i < lines.length; i++){
+					trendsConfig.data.datasets[trendsConfig.data.datasets.length] = lines[i];
+				}
 				
 				if(update){
 					window.trends.update();
