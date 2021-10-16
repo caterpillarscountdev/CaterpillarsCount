@@ -3313,7 +3313,7 @@
 				}
 				trendsLabels[trendsLabels.length] = [label, color];
 				
-				var lines = getLines("trends", label, "rgb(255, 99, 132)", points, true, true);
+				var lines = getLines("trends", label, color, points, true, true);
 				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					trendsConfig.data.datasets = [];
 				}
