@@ -3718,7 +3718,7 @@
 				var mostRecentlySurveyedYear = 0;
 				var untouchedSiteNames = ["No sites"];
 				var siteNames = [];
-				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
+				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					//nodata
 				}
 				else{
@@ -3755,12 +3755,16 @@
 						}
 						filtersString += " " + arthropod + " at " + siteName + ";";
 						
-						if(year < Number(earliestEstablishedYear)){
-							earliestEstablishedYear = year;
-						}
-						
-						if(year > Number(mostRecentlySurveyedYear)){
-							mostRecentlySurveyedYear = year;
+						for(var j = 0; j < datasets[i].data.length; j++){
+							var year = Number(formatDate(datasets[i].data[j].x, true).substring(0, 4));
+							
+							if(year < Number(earliestEstablishedYear)){
+								earliestEstablishedYear = year;
+							}
+
+							if(year > Number(mostRecentlySurveyedYear)){
+								mostRecentlySurveyedYear = year;
+							}
 						}
 					}
 				}
