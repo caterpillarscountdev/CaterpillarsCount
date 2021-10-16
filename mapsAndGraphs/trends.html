@@ -3722,7 +3722,7 @@
 					//nodata
 				}
 				else{
-					var datasets = lineConfig.data.datasets;
+					var datasets = trendsConfig.data.datasets;
 					untouchedSiteNames = [];
 					for(var i = 0; i < datasets.length; i++){
 						var optionsString = datasets[i].label;
@@ -3734,7 +3734,10 @@
 								break;
 							}
 						}
-						var siteName = optionsString.replace(arthropod + " at ", "").replace(" (linear regression)", "");
+						var siteName = optionsString.replace(arthropod + " at ", "");
+						if(siteName.indexOf(" (linear regression)") == siteName.length - " (linear regression)".length){
+							siteName = siteName.replace(" (linear regression)", "");
+						}
 						if(siteNames.indexOf(siteName.replace(/[\W_]+/g," ")) == -1){
 							siteNames[siteNames.length] = siteName.replace(/[\W_]+/g," ");
 						}
