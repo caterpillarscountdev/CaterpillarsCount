@@ -3348,7 +3348,6 @@
 					//success
 					console.log("Loaded trend: " + JSON.stringify(filters));
 					if(data.indexOf("true|") == 0){
-						clearTrends();
 						var trends = JSON.parse(data.replace("true|", ""));
 						for(var label in trends){
 							if(trends.hasOwnProperty(label)){
