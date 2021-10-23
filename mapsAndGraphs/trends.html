@@ -3392,9 +3392,10 @@
 				trendsRemaining = [];
 				
 				for(var i = 0; i < trendsLabels.length; i++){
-					var trendsLabelPieces = trendsLabels[i][0].split(" at ");
+					var trendLabel = trendsLabels[i][0];
+					console.log("TREND LABEL: ", trendLabel);
 					
-					var arthropod = trendsLabels[i][0].substring(0, trendsLabels[i][0].indexOf(" at "));
+					var arthropod = trendLabel.substring(0, trendLabel.indexOf(" at "));
 					var readableAndUnreadableArthropods = [["All arthropods", "%"], ["Ants", "ant"], ["Aphids and psyllids", "aphid"], ["Bees, wasps, sawflies", "bee"], ["Beetles", "beetle"], ["Caterpillars", "caterpillar"], ["Daddy longlegs", "daddylonglegs"], ["Flies", "fly"], ["Grasshoppers and crickets", "grasshopper"], ["Leaf hoppers and cicadas", "leafhopper"], ["Moths and butterflies", "moths"], ["Spiders", "spider"], ["True bugs", "truebugs"], ["Other arthropods", "other"], ["Unidentified arthropods", "unidentified"]];
 					for(var i = 0; i < readableAndUnreadableArthropods.length; i++){
 						if(readableAndUnreadableArthropods[i][0] == arthropod){
@@ -3403,7 +3404,7 @@
 						}
 					}
 					
-					var siteName = trendsLabels[i][0].substring(trendsLabels[i][0].indexOf(" at ") + " at ".length);
+					var siteName = trendLabel.substring(trendLabel.indexOf(" at ") + " at ".length);
 					var siteID = -1;
 					for(var i = 0; i < siteNamesAndIDs.length; i++){
 						if(siteNamesAndIDs[i][0] == siteName){
