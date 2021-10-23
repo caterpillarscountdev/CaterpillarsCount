@@ -3428,8 +3428,6 @@
 					trendsRemaining = [];
 				}
 				
-				var thisLoadTrendFromFiltersIteration = ++loadTrendFromFiltersIteration;
-				
 				console.log("Loading trend: " + JSON.stringify(filters));
 				
 				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])) + "&startMonth=" + trendsStartMonth + "&endMonth=" + trendsEndMonth, function(data){
