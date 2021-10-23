@@ -1430,7 +1430,7 @@
 						
 						addSetFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"], year: Number(dateParts[0])});
 						addCompositionSite(marker.siteInformation["ID"]);
-						addTrendFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"], startYear: earliestYear, endYear: mostRecentYear});
+						addTrendFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"]});
 						updateSiteSelections();
 						loadNewActiveSiteCompositionDefaults();
 						showComposition();
@@ -3378,22 +3378,12 @@
 				updateTrendsLegend();
 			}
 			
-			var trendsRemaining = [];
-			var reloadIteration = 0;
-			function reloadNextTrend(){
-				if(trendsRemaining.length > 0){
-					var thisTrend = trendsRemaining.shift();
-					console.log("RELOAD NEXT TREND DATA: ", {arthropod: thisTrend[0], siteID: thisTrend[1]}, reloadNextTrend, reloadIteration);
-					loadTrendFromFilters({arthropod: thisTrend[0], siteID: thisTrend[1]}, reloadNextTrend, reloadIteration);
-				}
-			}
-			
 			var realodTrendsTimeout = null;
 			function reloadTrends(){
 				clearTimeout(realodTrendsTimeout);
 				realodTrendsTimeout = setTimeout(function(){
 					reloadIteration++;
-					trendsRemaining = [];
+					var filters = [];
 
 					for(var i = 0; i < trendsLabels.length; i++){
 						var trendLabel = trendsLabels[i][0];
@@ -3417,29 +3407,26 @@
 							}
 						}
 
-						trendsRemaining[trendsRemaining.length] = [arthropod, siteID];
+						filters[filters.length] = {arthropod: arthropod, siteID: siteID};
 					}
-
-					clearTrends();
-					reloadNextTrend();
+					
+					loadTrendsFromFilters(filters);
 				}, 300);
 			}
 			
-			var currentLoadSetIteration = 0;
-			function loadTrendFromFilters(filters, callback, loadSetIteration){
-				//filters = {arthropod:"caterpillar", siteID: marker.siteInformation["ID"], startYear: earliestYear, endYear: mostRecentYear}
-				callback = callback || function(){};
-				loadSetIteration = loadSetIteration || 0;
-				currentLoadSetIteration = loadSetIteration;
-				if(loadSetIteration === 0){
-					trendsRemaining = [];
-				}
+			var loadTrendsIteration = 0;
+			function loadTrendsFromFilters(filters){
+				//filters = [{arthropod:"caterpillar", siteID: marker.siteInformation["ID"]}]
 				
-				console.log("Loading trend: " + JSON.stringify(filters));
+				var thisLoadTrendsIteration = ++loadTrendsIteration;
 				
-				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
+				console.log("Loading trends: " + JSON.stringify(filters));
+				
+				clearTrends();
+				
+				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify(filters)) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
 					//success
-					if(currentLoadSetIteration === loadSetIteration){
+					if(thisLoadTrendsIteration === loadTrendsIteration){
 						console.log("Loaded trend: " + JSON.stringify(filters));
 						if(data.indexOf("true|") == 0){
 							var trends = JSON.parse(data.replace("true|", ""));
@@ -3456,8 +3443,46 @@
 				})
 				.fail(function(){
 					//error
-					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
-					updateTrendsLegend();
+					if(thisLoadTrendsIteration === loadTrendsIteration){
+						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+						updateTrendsLegend();
+					}
+				})
+				.always(function() {
+					//complete
+				});
+			}
+			
+			function loadTrendFromFilters(filters, callback){
+				//filters = {arthropod:"caterpillar", siteID: marker.siteInformation["ID"]}
+				callback = callback || function(){};
+				
+				console.log("Loading trend: " + JSON.stringify(filters));
+				
+				var thisLoadTrendsIteration = ++loadTrendsIteration;
+				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
+					//success
+					if(thisLoadTrendsIteration === loadTrendsIteration){
+						console.log("Loaded trend: " + JSON.stringify(filters));
+						if(data.indexOf("true|") == 0){
+							var trends = JSON.parse(data.replace("true|", ""));
+							for(var label in trends){
+								if(trends.hasOwnProperty(label)){
+									addTrend(label, trends[label]);
+								}
+							}
+						}
+						else{
+							queueNotice("error", data);
+						}
+					}
+				})
+				.fail(function(){
+					//error
+					if(thisLoadTrendsIteration === loadTrendsIteration){
+						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+						updateTrendsLegend();
+					}
 				})
 				.always(function() {
 					//complete
