@@ -2519,7 +2519,8 @@
 							borderColor: opaque(color),
 							lineTension: LINE_TENSION,
 							fill: false,
-							data: getRegressionLineData(occurrencePoints, true)
+							data: getRegressionLineEndpoints(occurrencePoints, true),
+							regressionData: getRegressionLineData(occurrencePoints)
 						},
 						{
 							label: label + " (linear regression)",
@@ -2527,7 +2528,8 @@
 							borderColor: opaque(color),
 							lineTension: LINE_TENSION,
 							fill: false,
-							data: getRegressionLineData(densityPoints, true)
+							data: getRegressionLineEndpoints(densityPoints, true),
+							regressionData: getRegressionLineData(densityPoints)
 						},
 						{
 							label: label + " (linear regression)",
@@ -2535,7 +2537,8 @@
 							borderColor: opaque(color),
 							lineTension: LINE_TENSION,
 							fill: false,
-							data: getRegressionLineData(meanBiomassPoints, true)
+							data: getRegressionLineEndpoints(meanBiomassPoints, true),
+							regressionData: getRegressionLineData(meanBiomassPoints)
 						}
 					];
 				}
@@ -3241,7 +3244,30 @@
 				return coords;
 			}
 			
-			function getRegressionLineData(points, includeYear){
+			function getRegressionLineData(points){
+				if(points.length < 1){
+					return [];
+				}
+				
+				var ascendingPoints = points.sort(function(a, b) {
+					return (new Date(a[0]).getTime()) - (new Date(b[0]).getTime());
+				});
+				
+				var coords = getCoords(ascendingPoints);
+				
+				var xs = getXs(coords);
+				
+				var r = getPearsonCorrelationCoefficient(coords);
+				
+				return {
+					b: getRegressionLineYIntercept(coords),
+					m: getRegressionLineSlope(coords),
+					r2: Math.pow(r, 2),
+					p: "?"
+				};
+			}
+			
+			function getRegressionLineEndpoints(points, includeYear){
 				if(points.length < 1){
 					return [];
 				}
@@ -3292,6 +3318,29 @@
 			
 			function getYs(coords){
 				return getValuesByIndex(coords, 1);
+			}
+			
+			function getPearsonCorrelationCoefficient(coords){
+				var xs = getXs(coords);
+				var ys = getYs(coords);
+				var meanX = getMean(xs);
+				var meanY = getMean(ys);
+				
+				var xDeviationTimesYDeviationSum = 0;
+				var xDeviationSquaredSum = 0;
+				var yDeviationSquaredSum = 0;
+				for(var i = 0; i < coords.length; i++){
+					var xDeviation = getX(coords[i]) - meanX;
+					var yDeviation = getY(coords[i]) - meanY;
+					
+					xDeviationTimesYDeviationSum += xDeviation * yDeviation;
+					xDeviationSquaredSum += Math.pow(xDeviation, 2);
+					yDeviationSquaredSum += Math.pow(yDeviation, 2);
+				}
+				
+				var pearsonCorrelationCoefficient = xDeviationTimesYDeviationSum / Math.sqrt(xDeviationSquaredSum * yDeviationSquaredSum);
+				
+				return pearsonCorrelationCoefficient;
 			}
 			
 			function getRegressionLineSlope(coords){
@@ -3654,19 +3703,47 @@
 						"</div>";
 			}
 			
+			function getLinearRegressionDataByTrendLabel(label){
+				for(var i = 0; i < trendsConfig.data.datasets.length; i++){
+					if(trendsConfig.data.datasets[i].label.indexOf(label) == 0){
+						return trendsConfig.data.datasets[i].regressionData;
+					}
+				}
+				
+				return {
+					b: "b",
+					m: "m",
+					r2: "r^2",
+					p: "p"
+				};
+			}
+			
 			function updateTrendsLegend(){
 				var htmlToAdd = "<div style=\"display:inline-block;text-align:left;\">";
 				for(var i = 0; i < trendsLabels.length; i++){
+					var lightColor = lightenColor(.6, trendsLabels[i][1]);
+					var opaqueColor = opaque(trendsLabels[i][1]);
+					
+					var regressionData = getLinearRegressionDataByTrendLabel(trendsLabels[i]);
+					
 					htmlToAdd += "<div class=\"label\">" +
-							"<div class=\"box\" style=\"background:" + transluscent(trendsLabels[i][1]) + ";border:3px solid " + opaque(trendsLabels[i][1]) + ";\"></div>" +
-							"<span class=\"description\">" + trendsLabels[i][0] + "</span>" +
-							"<span style=\"color:#bbb;\" class=\"editDeleteSpan\">" +
-								" ( " +
-								"<span class=\"underline pointer\" onclick=\"editTrend(this.parentNode.parentNode);\">edit</span>" +
-								" | " +
-								"<span class=\"underline pointer\" onclick=\"removeTrend(this.parentNode.parentNode)\">delete</span>" +
-								" )" +
-							"</span>" +
+							"<div>" + 
+								"<div class=\"box\" style=\"background:" + lightColor + ";border:3px solid " + lightColor + ";\"></div>" +
+								"<span class=\"description\">" + trendsLabels[i][0] + "</span>" +
+								"<span style=\"color:#bbb;\" class=\"editDeleteSpan\">" +
+									" ( " +
+									"<span class=\"underline pointer\" onclick=\"editTrend(this.parentNode.parentNode);\">edit</span>" +
+									" | " +
+									"<span class=\"underline pointer\" onclick=\"removeTrend(this.parentNode.parentNode)\">delete</span>" +
+									" )" +
+								"</span>" +
+							"</div>" + 
+							"<div>" + 
+								"<div class=\"box\" style=\"background:" + opaqueColor + ";border:3px solid " + opaqueColor + ";\"></div>" +
+								"<span class=\"description\">" + trendsLabels[i][0] + " (linear regression)</span>" +
+								"<div>y = " + regressionData.m + "*Year + " + regressionData.b + "</div>" + 
+								"<div>R2 = " + regressionData.r2 + ", p = " + regressionData.p + "</div>" + 
+							"</div>" + 
 						"</div><br/>";
 				}
 				htmlToAdd += 	"<div id=\"trendsLoadingLine\" style=\"display:none;\">" +
