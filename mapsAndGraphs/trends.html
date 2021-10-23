@@ -608,6 +608,10 @@
 				margin:0px 3px -4px 0px;
 			}
 			
+			#trendsLegend .label{
+				margin-bottom:20px;
+			}
+			
 			.linearRegressionData{
 				padding-left:19px;
 				font-size:12px;
@@ -3271,9 +3275,27 @@
 				return {
 					b: getRegressionLineYIntercept(coords).toFixed(2),
 					m: getRegressionLineSlope(coords).toFixed(2),
-					r2: "?",
+					r2: getRegressionLineR2(coords).toFixed(2),
 					p: "?"
 				};
+			}
+			
+			function getRegressionLineR2(coords){
+				var ys = getYs(coords);
+				var meanY = getMean(ys);
+				var m = getRegressionLineSlope(coords);
+				var b = getRegressionLineYIntercept(coords);
+				
+				var numeratorSum = 0;
+				var denominatorSum = 0;
+				for(var i = 0; i < coords.length; i++){
+					var regressionY = b + (m * getX(coords[i]));
+					var y = getY(coords[i]);
+					numeratorSum += Math.pow(regressionY - y, 2);
+					denominatorSum += Math.pow(y - meanY, 2);
+				}
+				
+				return 1 - (numeratorSum / denominatorSum);
 			}
 			
 			function getRegressionLineEndpoints(points, includeYear){
