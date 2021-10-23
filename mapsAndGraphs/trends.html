@@ -3645,7 +3645,7 @@
 			}
 			
 			function removeTrend(labelDiv){
-				var lineColor = opaque($(labelDiv).find(".box").eq(0)[0].style.background);
+				var lineColor = opaque($(labelDiv)[0].dataset.lineColor);
 				for(var i = (trendsConfig.data.datasets.length - 1); i >= 0; i--){
 					if(lineColor == opaque(trendsConfig.data.datasets[i].backgroundColor) || opaque(lightenColor(0.6, $(labelDiv).find(".box").eq(0)[0].style.background)) == opaque(trendsConfig.data.datasets[i].backgroundColor)){
 						trendsConfig.data.datasets.splice(i, 1);
@@ -3734,7 +3734,7 @@
 					
 					var regressionData = getLinearRegressionDataByTrendLabel(trendsLabels[i][0]);
 					
-					htmlToAdd += "<div class=\"label\">" +
+					htmlToAdd += "<div class=\"label\" data-line-color=\"" + opaqueColor + "\">" +
 							"<div>" + 
 								"<div class=\"box\" style=\"background:" + lightColor + ";border:3px solid " + lightColor + ";\"></div>" +
 								"<span class=\"description\">" + trendsLabels[i][0] + "</span>" +
