@@ -3391,11 +3391,6 @@
 				reloadIteration++;
 				trendsRemaining = [];
 				
-				delete chartedSets.trends[$(labelDiv).find(".description").eq(0)[0].innerHTML];
-				window.trends.update();
-				centerYAxisLabels();
-				updateTrendsLegend();
-				
 				for(var i = 0; i < trendsLabels.length; i++){
 					var trendLabel = trendsLabels[i][0];
 					console.log("TREND LABEL: ", trendLabel);
