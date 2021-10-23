@@ -3221,6 +3221,9 @@
 				else{//density or meanBiomass
 					trendsConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel;};
 				}
+				
+				underlayRegressionLines();
+				
 				//update
 				window.trends.update();
 			}
@@ -3327,6 +3330,20 @@
 				}
 				return sum / nums.length;
 			}
+			
+			function underlayRegressionLines(){
+				var prioritizedLineData = [];
+				for(var i = 0; i < trendsConfig.data.datasets.length; i++){
+					if(trendsConfig.data.datasets[i].label.toLowerCase().indexOf("regression") > -1){
+						prioritizedLineData.unshift(trendsConfig.data.datasets[i]);
+					}
+					else{
+						prioritizedLineData[prioritizedLineData.length] = trendsConfig.data.datasets[i];
+					}
+				}
+				
+				trendsConfig.data.datasets = prioritizedLineData;
+			}
 
 			var trendsLabels = [];
 			function addTrend(label, points, update){
@@ -3361,6 +3378,8 @@
 				for(var i = 0; i < lines.length; i++){
 					trendsConfig.data.datasets[trendsConfig.data.datasets.length] = lines[i];
 				}
+				
+				underlayRegressionLines();
 				
 				if(update){
 					window.trends.update();
