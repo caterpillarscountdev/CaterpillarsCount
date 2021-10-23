@@ -3430,7 +3430,7 @@
 				
 				console.log("Loading trend: " + JSON.stringify(filters));
 				
-				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])) + "&startMonth=" + trendsStartMonth + "&endMonth=" + trendsEndMonth, function(data){
+				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
 					//success
 					if(currentLoadSetIteration === loadSetIteration){
 						console.log("Loaded trend: " + JSON.stringify(filters));
