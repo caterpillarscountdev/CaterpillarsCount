@@ -3274,15 +3274,36 @@
 				var xs = getXs(coords);
 				
 				return {
-					b: getRegressionLineYIntercept(coords).toFixed(2),
-					m: getRegressionLineSlope(coords).toFixed(2),
-					r2: getRegressionLineR2(coords).toFixed(2),
+					b: getRegressionLineYIntercept(coords).toFixed(2).replace("-0.00", "0.00"),
+					m: getRegressionLineSlope(coords).toFixed(2).replace("-0.00", "0.00"),
+					r2: getRegressionLineR2(coords).toFixed(2).replace("-0.00", "0.00"),
 					p: "?"
 				};
 			}
 			
 			function getRegressionLineR2(coords){
 				console.log(JSON.stringify(coords));
+				
+				var ys = getYs(coords);
+				var meanY = getMean(ys);
+				var m = getRegressionLineSlope(coords);
+				var b = getRegressionLineYIntercept(coords);
+				
+				var numeratorSum = 0;
+				var denominatorSum = 0;
+				for(var i = 0; i < coords.length; i++){
+					var regressionY = b + (m * getX(coords[i]));
+					var y = getY(coords[i]);
+					numeratorSum += Math.pow(regressionY - y, 2);
+					denominatorSum += Math.pow(y - meanY, 2);
+				}
+				
+				return 1 - (numeratorSum / denominatorSum);
+				
+				
+				/*
+				ALTERNATE ALGORITHM FOUND AT https://www.youtube.com/watch?v=w2FKXOa0HGA
+				------------------------------------------------------------------------
 				var ys = getYs(coords);
 				var meanY = getMean(ys);
 				var m = getRegressionLineSlope(coords);
@@ -3298,6 +3319,7 @@
 				}
 				
 				return numeratorSum / denominatorSum;
+				*/
 			}
 			
 			function getRegressionLineEndpoints(points, includeYear){
@@ -3751,7 +3773,7 @@
 							"<div>" + 
 								"<div class=\"box\" style=\"background:" + opaqueColor + ";border:3px solid " + opaqueColor + ";\"></div>" +
 								"<span class=\"description\">" + trendsLabels[i][0] + " linear regression</span>" +
-								"<div class=\"linearRegressionData\">Where <span>y = " + regressionData.m + " * year + " + regressionData.b + "</span>, <span>R2 = " + regressionData.r2 + "</span>, and <span>p = " + regressionData.p + "</span></div>" + 
+								"<div class=\"linearRegressionData\">Where <span>y = " + regressionData.m + " * year + " + regressionData.b + "</span>, <span>R<sup>2</sup> = " + regressionData.r2 + "</span>, and <span>p = " + regressionData.p + "</span></div>" + 
 							"</div>" + 
 						"</div><br/>";
 				}
