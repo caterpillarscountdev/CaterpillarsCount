@@ -610,11 +610,12 @@
 			
 			.linearRegressionData{
 				padding-left:19px;
-				font-size:15px;
+				font-size:12px;
 				margin-top:2px;
+				color:#999;
 			}
 			.linearRegressionData span{
-				color:#000;
+				color:#666;
 			}
 			
 			#compositionLegend{
@@ -3268,8 +3269,8 @@
 				var xs = getXs(coords);
 				
 				return {
-					b: getRegressionLineYIntercept(coords),
-					m: getRegressionLineSlope(coords),
+					b: getRegressionLineYIntercept(coords).toFixed(2),
+					m: getRegressionLineSlope(coords).toFixed(2),
 					r2: "?",
 					p: "?"
 				};
