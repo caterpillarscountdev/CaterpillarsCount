@@ -9,6 +9,9 @@
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
   	$lines = json_decode($_GET["lines"], true);
+  	$startMonth = intval($_GET["startMonth"]);
+  	$endMonth = intval($_GET["endMonth"]);
+	
 	$readableArthropods = array(
 		"%" => "All arthropods",
 		"ant" => "Ants",
@@ -52,28 +55,28 @@
     		$dateWeights = array();
     
 		//get survey counts each day
-		$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, COUNT(*) AS YearlySurveyCount FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND (YEAR(Survey.LocalDate)>='$startYear' OR YEAR(Survey.LocalDate)<='$endYear') GROUP BY YEAR(Survey.LocalDate) ORDER BY YEAR(Survey.LocalDate)");
+		$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, COUNT(*) AS YearlySurveyCount FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND (YEAR(Survey.LocalDate)>='$startYear' OR YEAR(Survey.LocalDate)<='$endYear') AND (MONTH(Survey.LocalDate)>='$startMonth' OR MONTH(Survey.LocalDate)<='$endMonth') GROUP BY YEAR(Survey.LocalDate) ORDER BY YEAR(Survey.LocalDate)");
 		while($row = mysqli_fetch_assoc($query)){
 			$dateWeights[$row["Year"]] = array($row["Year"], 0, 0, 0, intval($row["YearlySurveyCount"]));
 		}
     		
 		//occurrence
 		//get [survey with specified arthropod] counts each day
-		$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS SurveysWithArthropodsCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND (YEAR(Survey.LocalDate)>='$startYear' OR YEAR(Survey.LocalDate)<='$endYear') GROUP BY YEAR(Survey.LocalDate) ORDER BY YEAR(Survey.LocalDate)");
+		$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS SurveysWithArthropodsCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND (YEAR(Survey.LocalDate)>='$startYear' OR YEAR(Survey.LocalDate)<='$endYear') AND (MONTH(Survey.LocalDate)>='$startMonth' OR MONTH(Survey.LocalDate)<='$endMonth') GROUP BY YEAR(Survey.LocalDate) ORDER BY YEAR(Survey.LocalDate)");
 		while($row = mysqli_fetch_assoc($query)){
 			$dateWeights[$row["Year"]][1] = intval($row["SurveysWithArthropodsCount"]);
 		}
 		
 		//density
 		//get arthropod counts each day
-		$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, SUM(ArthropodSighting.Quantity) AS YearlyArthropodSightings FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND (YEAR(Survey.LocalDate)>='$startYear' OR YEAR(Survey.LocalDate)<='$endYear') GROUP BY YEAR(Survey.LocalDate) ORDER BY YEAR(Survey.LocalDate)");
+		$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, SUM(ArthropodSighting.Quantity) AS YearlyArthropodSightings FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND (YEAR(Survey.LocalDate)>='$startYear' OR YEAR(Survey.LocalDate)<='$endYear') AND (MONTH(Survey.LocalDate)>='$startMonth' OR MONTH(Survey.LocalDate)<='$endMonth') GROUP BY YEAR(Survey.LocalDate) ORDER BY YEAR(Survey.LocalDate)");
 		while($row = mysqli_fetch_assoc($query)){
 			$dateWeights[$row["Year"]][2] = intval($row["YearlyArthropodSightings"]);
 		}
 		
 		//mean biomass
 		//get total biomass each day
-		$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, ArthropodSighting.UpdatedGroup, ArthropodSighting.Length, SUM(ArthropodSighting.Quantity) AS TotalQuantity FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND (YEAR(Survey.LocalDate)>='$startYear' OR YEAR(Survey.LocalDate)<='$endYear') GROUP BY YEAR(Survey.LocalDate), ArthropodSighting.UpdatedGroup, ArthropodSighting.Length");
+		$query = mysqli_query($dbconn, "SELECT YEAR(Survey.LocalDate) AS Year, ArthropodSighting.UpdatedGroup, ArthropodSighting.Length, SUM(ArthropodSighting.Quantity) AS TotalQuantity FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND (YEAR(Survey.LocalDate)>='$startYear' OR YEAR(Survey.LocalDate)<='$endYear') AND (MONTH(Survey.LocalDate)>='$startMonth' OR MONTH(Survey.LocalDate)<='$endMonth') GROUP BY YEAR(Survey.LocalDate), ArthropodSighting.UpdatedGroup, ArthropodSighting.Length");
 		while($row = mysqli_fetch_assoc($query)){
 			$dateWeights[$row["Year"]][3] += (getBiomass($row["UpdatedGroup"], $row["Length"]) * floatval($row["TotalQuantity"]));
 		}
