@@ -43,7 +43,7 @@
 		$endYear = intval($lines[$i]["endYear"]);
 		
 		//CHECK FOR SAVE
-		$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . str_replace('%', 'all', $arthropod) . $year);
+		$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . str_replace('%', 'all', $arthropod) . $startMonth . "-" . $endMonth);
 		if($HIGH_TRAFFIC_MODE){
 			$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
 			if($save !== null){
