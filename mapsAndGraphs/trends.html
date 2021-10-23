@@ -607,6 +607,16 @@
 				height:10px;
 				margin:0px 3px -4px 0px;
 			}
+			
+			.linearRegressionData{
+				padding-left:19px;
+				font-size:15px;
+				margin-top:2px;
+			}
+			.linearRegressionData span{
+				color:#000;
+			}
+			
 			#compositionLegend{
 				margin-top:30px;
 			}
@@ -2514,7 +2524,7 @@
 					}
 					lines[lines.length] = [
 						{
-							label: label + " (linear regression)",
+							label: label + " linear regression",
 							backgroundColor: transluscent(color),
 							borderColor: opaque(color),
 							lineTension: LINE_TENSION,
@@ -2523,7 +2533,7 @@
 							regressionData: getRegressionLineData(occurrencePoints)
 						},
 						{
-							label: label + " (linear regression)",
+							label: label + " linear regression",
 							backgroundColor: transluscent(color),
 							borderColor: opaque(color),
 							lineTension: LINE_TENSION,
@@ -2532,7 +2542,7 @@
 							regressionData: getRegressionLineData(densityPoints)
 						},
 						{
-							label: label + " (linear regression)",
+							label: label + " linear regression",
 							backgroundColor: transluscent(color),
 							borderColor: opaque(color),
 							lineTension: LINE_TENSION,
@@ -3257,12 +3267,10 @@
 				
 				var xs = getXs(coords);
 				
-				var r = getPearsonCorrelationCoefficient(coords);
-				
 				return {
 					b: getRegressionLineYIntercept(coords),
 					m: getRegressionLineSlope(coords),
-					r2: Math.pow(r, 2),
+					r2: "?",
 					p: "?"
 				};
 			}
@@ -3318,29 +3326,6 @@
 			
 			function getYs(coords){
 				return getValuesByIndex(coords, 1);
-			}
-			
-			function getPearsonCorrelationCoefficient(coords){
-				var xs = getXs(coords);
-				var ys = getYs(coords);
-				var meanX = getMean(xs);
-				var meanY = getMean(ys);
-				
-				var xDeviationTimesYDeviationSum = 0;
-				var xDeviationSquaredSum = 0;
-				var yDeviationSquaredSum = 0;
-				for(var i = 0; i < coords.length; i++){
-					var xDeviation = getX(coords[i]) - meanX;
-					var yDeviation = getY(coords[i]) - meanY;
-					
-					xDeviationTimesYDeviationSum += xDeviation * yDeviation;
-					xDeviationSquaredSum += Math.pow(xDeviation, 2);
-					yDeviationSquaredSum += Math.pow(yDeviation, 2);
-				}
-				
-				var pearsonCorrelationCoefficient = xDeviationTimesYDeviationSum / Math.sqrt(xDeviationSquaredSum * yDeviationSquaredSum);
-				
-				return pearsonCorrelationCoefficient;
 			}
 			
 			function getRegressionLineSlope(coords){
@@ -3724,7 +3709,7 @@
 					var lightColor = lightenColor(.6, trendsLabels[i][1]);
 					var opaqueColor = opaque(trendsLabels[i][1]);
 					
-					var regressionData = getLinearRegressionDataByTrendLabel(trendsLabels[i]);
+					var regressionData = getLinearRegressionDataByTrendLabel(trendsLabels[i][0]);
 					
 					htmlToAdd += "<div class=\"label\">" +
 							"<div>" + 
@@ -3740,9 +3725,8 @@
 							"</div>" + 
 							"<div>" + 
 								"<div class=\"box\" style=\"background:" + opaqueColor + ";border:3px solid " + opaqueColor + ";\"></div>" +
-								"<span class=\"description\">" + trendsLabels[i][0] + " (linear regression)</span>" +
-								"<div>y = " + regressionData.m + "*Year + " + regressionData.b + "</div>" + 
-								"<div>R2 = " + regressionData.r2 + ", p = " + regressionData.p + "</div>" + 
+								"<span class=\"description\">" + trendsLabels[i][0] + " linear regression</span>" +
+								"<div class=\"linearRegressionData\">Where <span>y = " + regressionData.m + " * year + " + regressionData.b + "</span>, <span>R2 = " + regressionData.r2 + "</span>, and <span>p = " + regressionData.p + "</span></div>" + 
 							"</div>" + 
 						"</div><br/>";
 				}
@@ -4139,8 +4123,8 @@
 							}
 						}
 						var siteName = optionsString.replace(arthropod + " at ", "");
-						if(siteName.indexOf(" (linear regression)") == siteName.length - " (linear regression)".length){
-							siteName = siteName.replace(" (linear regression)", "");
+						if(siteName.substring(siteName.length - " linear regression".length) == " linear regression"){
+							siteName = siteName.substring(0, siteName.length - " linear regression".length);
 						}
 						if(siteNames.indexOf(siteName.replace(/[\W_]+/g," ")) == -1){
 							siteNames[siteNames.length] = siteName.replace(/[\W_]+/g," ");
@@ -4151,7 +4135,7 @@
 						var marker = findMarkerBySiteName(siteName);
 						var points = datasets[i].data;
 						for(var j = 0; j < points.length; j++){
-							var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), arthropod, points[j].x.substring(0,10), getJulianDay(points[j].x.substring(0, 4), points[j].x.substring(5, 7), points[j].x.substring(8, 10)), points[j].y, optionsString.indexOf(" (linear regression)") > -1 ? "Yes" : "No"];
+							var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), arthropod, points[j].x.substring(0,10), getJulianDay(points[j].x.substring(0, 4), points[j].x.substring(5, 7), points[j].x.substring(8, 10)), points[j].y, optionsString.substring(optionsString.length - " linear regression".length) == " linear regression" ? "Yes" : "No"];
 							for(var t = 0; t < row.length; t++){
 								row[t] = "\"" + row[t].toString().replace(/"/g, "'") + "\"";
 							}
