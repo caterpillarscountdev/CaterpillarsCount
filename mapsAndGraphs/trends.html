@@ -2518,7 +2518,7 @@
 					pointSets[pointSets.length - 1][pointSets[pointSets.length - 1].length] = points[i];
 				}
 				var lines = [];
-				if(includeLinerRegressionLine){
+				if(includeLinerRegressionLine && points.length >= MIN_POINTS_TO_SHOW_LINEAR_REGRESSION){
 					var occurrencePoints = [];
 					var densityPoints = [];
 					var meanBiomassPoints = [];
@@ -3206,6 +3206,8 @@
 			}
 			//END OF COMPOSITION CHART STUFF
       			//TRENDS CHART STUFF
+			var MIN_POINTS_TO_SHOW_LINEAR_REGRESSION = 3;
+			
       			function matchTrendLinesWithYAxisLabel(){
 				//if we just have the invisible endpoints loaded on an empty chart, don't bother doing anything
 				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
@@ -3424,6 +3426,15 @@
 				}
 				
 				trendsConfig.data.datasets = prioritizedLineData;
+			}
+			
+			function showingRegressionLine(label){
+				for(var i = 0; i < trendsConfig.data.datasets.length; i++){
+					if(trendsConfig.data.datasets[i].label === label){
+						return trendsConfig.data.datasets[i].data.length >= MIN_POINTS_TO_SHOW_LINEAR_REGRESSION;
+					}
+				}
+				return false;
 			}
 
 			var trendsLabels = [];
@@ -3770,11 +3781,17 @@
 									" )" +
 								"</span>" +
 							"</div>" + 
+							showingRegressionLine(trendsLabels[i][0]) ? (
 							"<div>" + 
 								"<div class=\"box\" style=\"background:" + opaqueColor + ";border:3px solid " + opaqueColor + ";\"></div>" +
 								"<span class=\"description\">" + trendsLabels[i][0] + " linear regression</span>" +
-								"<div class=\"linearRegressionData\">Where <span>y = " + regressionData.m + " * year + " + regressionData.b + "</span>, <span>R<sup>2</sup> = " + regressionData.r2 + "</span>, and <span>p = " + regressionData.p + "</span></div>" + 
+								"<div class=\"linearRegressionData\">&#8627; Where <span>y = " + regressionData.m + " * year + " + regressionData.b + "</span>, <span>R<sup>2</sup> = " + regressionData.r2 + "</span>, and <span>p = " + regressionData.p + "</span></div>" + 
 							"</div>" + 
+							) : (
+							"<div>" + 
+								"<div class=\"linearRegressionData\">&#8627; NOTE: No trend shown because site has fewer than " + MIN_POINTS_TO_SHOW_LINEAR_REGRESSION + " years of data.</div>" + 
+							"</div>" + 
+							) + 
 						"</div><br/>";
 				}
 				htmlToAdd += 	"<div id=\"trendsLoadingLine\" style=\"display:none;\">" +
