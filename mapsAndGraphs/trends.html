@@ -3387,37 +3387,41 @@
 				}
 			}
 			
+			var realodTrendsTimeout = null;
 			function reloadTrends(){
-				reloadIteration++;
-				trendsRemaining = [];
-				
-				for(var i = 0; i < trendsLabels.length; i++){
-					var trendLabel = trendsLabels[i][0];
-					console.log("TREND LABEL: ", trendLabel);
-					
-					var arthropod = trendLabel.substring(0, trendLabel.indexOf(" at "));
-					var readableAndUnreadableArthropods = [["All arthropods", "%"], ["Ants", "ant"], ["Aphids and psyllids", "aphid"], ["Bees, wasps, sawflies", "bee"], ["Beetles", "beetle"], ["Caterpillars", "caterpillar"], ["Daddy longlegs", "daddylonglegs"], ["Flies", "fly"], ["Grasshoppers and crickets", "grasshopper"], ["Leaf hoppers and cicadas", "leafhopper"], ["Moths and butterflies", "moths"], ["Spiders", "spider"], ["True bugs", "truebugs"], ["Other arthropods", "other"], ["Unidentified arthropods", "unidentified"]];
-					for(var i = 0; i < readableAndUnreadableArthropods.length; i++){
-						if(readableAndUnreadableArthropods[i][0] == arthropod){
-							arthropod = readableAndUnreadableArthropods[i][1];
-							break;
+				clearTimeout(realodTrendsTimeout);
+				realodTrendsTimeout = setTimeout(function(){
+					reloadIteration++;
+					trendsRemaining = [];
+
+					for(var i = 0; i < trendsLabels.length; i++){
+						var trendLabel = trendsLabels[i][0];
+						console.log("TREND LABEL: ", trendLabel);
+
+						var arthropod = trendLabel.substring(0, trendLabel.indexOf(" at "));
+						var readableAndUnreadableArthropods = [["All arthropods", "%"], ["Ants", "ant"], ["Aphids and psyllids", "aphid"], ["Bees, wasps, sawflies", "bee"], ["Beetles", "beetle"], ["Caterpillars", "caterpillar"], ["Daddy longlegs", "daddylonglegs"], ["Flies", "fly"], ["Grasshoppers and crickets", "grasshopper"], ["Leaf hoppers and cicadas", "leafhopper"], ["Moths and butterflies", "moths"], ["Spiders", "spider"], ["True bugs", "truebugs"], ["Other arthropods", "other"], ["Unidentified arthropods", "unidentified"]];
+						for(var i = 0; i < readableAndUnreadableArthropods.length; i++){
+							if(readableAndUnreadableArthropods[i][0] == arthropod){
+								arthropod = readableAndUnreadableArthropods[i][1];
+								break;
+							}
 						}
-					}
-					
-					var siteName = trendLabel.substring(trendLabel.indexOf(" at ") + " at ".length);
-					var siteID = -1;
-					for(var i = 0; i < siteNamesAndIDs.length; i++){
-						if(siteNamesAndIDs[i][0] == siteName){
-							siteID = Number(siteNamesAndIDs[i][1]);
-							break;
+
+						var siteName = trendLabel.substring(trendLabel.indexOf(" at ") + " at ".length);
+						var siteID = -1;
+						for(var i = 0; i < siteNamesAndIDs.length; i++){
+							if(siteNamesAndIDs[i][0] == siteName){
+								siteID = Number(siteNamesAndIDs[i][1]);
+								break;
+							}
 						}
+
+						trendsRemaining[trendsRemaining.length] = [arthropod, siteID];
 					}
-					
-					trendsRemaining[trendsRemaining.length] = [arthropod, siteID];
-				}
-				
-				clearTrends();
-				reloadNextTrend();
+
+					clearTrends();
+					reloadNextTrend();
+				}, 300);
 			}
 			
 			var currentLoadSetIteration = 0;
