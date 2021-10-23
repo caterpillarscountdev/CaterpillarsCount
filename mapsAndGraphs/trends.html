@@ -3771,12 +3771,12 @@
 					
 					var regressionHTML = "";
 					if(showingRegressionLine(trendsLabels[i][0])){
-						return "<div class=\"box\" style=\"background:" + opaqueColor + ";border:3px solid " + opaqueColor + ";\"></div>" +
+						regressionHTML = "<div class=\"box\" style=\"background:" + opaqueColor + ";border:3px solid " + opaqueColor + ";\"></div>" +
 						"<span class=\"description\">" + trendsLabels[i][0] + " linear regression</span>" +
 						"<div class=\"linearRegressionData\">&#8627; Where <span>y = " + regressionData.m + " * year + " + regressionData.b + "</span>, <span>R<sup>2</sup> = " + regressionData.r2 + "</span>, and <span>p = " + regressionData.p + "</span></div>";
 					}
 					else{
-						return "<div class=\"linearRegressionData\">&#8627; NOTE: No trend shown because site has fewer than " + MIN_POINTS_TO_SHOW_LINEAR_REGRESSION + " years of data.</div>";
+						regressionHTML = "<div class=\"linearRegressionData\">&#8627; NOTE: No trend shown because site has fewer than " + MIN_POINTS_TO_SHOW_LINEAR_REGRESSION + " years of data.</div>";
 					}
 					
 					htmlToAdd += "<div class=\"label\" data-line-color=\"" + opaqueColor + "\">" +
