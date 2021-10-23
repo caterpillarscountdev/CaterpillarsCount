@@ -3291,11 +3291,11 @@
 				for(var i = 0; i < coords.length; i++){
 					var regressionY = b + (m * getX(coords[i]));
 					var y = getY(coords[i]);
-					numeratorSum += Math.pow(regressionY - y, 2);
+					numeratorSum += Math.pow(regressionY - meanY, 2);
 					denominatorSum += Math.pow(y - meanY, 2);
 				}
 				
-				return 1 - (numeratorSum / denominatorSum);
+				return numeratorSum / denominatorSum;
 			}
 			
 			function getRegressionLineEndpoints(points, includeYear){
