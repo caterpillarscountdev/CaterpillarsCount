@@ -3383,7 +3383,8 @@
 			function reloadNextTrend(){
 				if(trendsRemaining.length > 0){
 					var thisTrend = trendsRemaining.shift();
-					addTrendFromFilters({arthropod: thisTrend[0], siteID: thisTrend[1]}, reloadNextTrend, reloadIteration);
+					console.log("RELOAD NEXT TREND DATA: ", {arthropod: thisTrend[0], siteID: thisTrend[1]}, reloadNextTrend, reloadIteration);
+					loadTrendFromFilters({arthropod: thisTrend[0], siteID: thisTrend[1]}, reloadNextTrend, reloadIteration);
 				}
 			}
 			
