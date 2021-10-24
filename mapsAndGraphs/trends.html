@@ -3395,11 +3395,17 @@
 					yDeviationSquaredSum += Math.pow(yDeviation, 2);
 				}
 				
+				return xDeviationTimesYDeviationSum / xDeviationSquaredSum;
+				
+				/*
+				ALTERNATIVE CODE RECOMMENDED BY https://www.youtube.com/watch?v=GhrxgbQnEEU
+				---------------------------------------------------------------------------
 				var pearsonCorrelationCoefficient = xDeviationTimesYDeviationSum / Math.sqrt(xDeviationSquaredSum * yDeviationSquaredSum);
 				var standardDeviationX = xDeviationSquaredSum / (coords.length - 1);
 				var standardDeviationY = yDeviationSquaredSum / (coords.length - 1);
 				
 				return pearsonCorrelationCoefficient * (standardDeviationY / standardDeviationX);
+				*/
 			}
 			
 			function getRegressionLineYIntercept(coords){
