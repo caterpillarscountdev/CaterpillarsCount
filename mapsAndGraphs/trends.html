@@ -4173,7 +4173,7 @@
 			}
 		      function downloadTrendsData(){
 			var metric = $("#trendsGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
-				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Date", "Julian Day", metric, "Linear Regression Value"];
+				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Year", metric, "Linear Regression Value"];
 				var csvString = headers.join(",") + "\r\n";
 				var filtersString = "Y-Axis: " + metric + ", Trend Lines:";
 				
@@ -4211,7 +4211,7 @@
 						var marker = findMarkerBySiteName(siteName);
 						var points = datasets[i].data;
 						for(var j = 0; j < points.length; j++){
-							var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), arthropod, points[j].x.substring(0,10), getJulianDay(points[j].x.substring(0, 4), points[j].x.substring(5, 7), points[j].x.substring(8, 10)), points[j].y, optionsString.substring(optionsString.length - " linear regression".length) == " linear regression" ? "Yes" : "No"];
+							var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), arthropod, points[j].x.substring(0,4), points[j].y, optionsString.substring(optionsString.length - " linear regression".length) == " linear regression" ? "Yes" : "No"];
 							for(var t = 0; t < row.length; t++){
 								row[t] = "\"" + row[t].toString().replace(/"/g, "'") + "\"";
 							}
@@ -4243,8 +4243,7 @@
 					"latitude": "Latitude of the Caterpillars Count! site",
 					"longitude": "Longitude of the Caterpillars Count! site",
 					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
-					"date": "The Gregorian calendar date in the form YYYY-MM-DD",
-					"julian day": "The number of days since the beginning of the year, starting with January 1st as 1",
+					"year": "The year in the form YYYY",
 					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
 					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
 					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions",
