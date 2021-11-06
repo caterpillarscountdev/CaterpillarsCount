@@ -3260,12 +3260,9 @@
 			
 			function getCoords(ascendingPoints){
 				var coords = [];
-				var firstTime = new Date(ascendingPoints[0][0]).getTime();
 				for(var i = 0; i < ascendingPoints.length; i++){
-					console.log("ascendingPoints[i][0]", ascendingPoints[i][0]);
-					var yearsSinceFirstDate = Number(ascendingPoints[i][0]);//Math.round((new Date(ascendingPoints[i][0]).getTime() - firstTime) / (1000 * 60 * 60 * 24 * 365));
 					coords[coords.length] = [
-						yearsSinceFirstDate,
+						Number(ascendingPoints[i][0]),
 						Number(ascendingPoints[i][1])
 					];
 				}
@@ -3787,7 +3784,7 @@
 					
 					var regressionHTML = "";
 					if(showingRegressionLine(trendsLabels[i][0])){
-						regressionHTML = "<div class=\"linearRegressionData\">&#8627; Where <span>y = " + regressionData.m + " * year + " + regressionData.b + "</span>, <span>R<sup>2</sup> = " + regressionData.r2 + "</span>, and <span>p = " + regressionData.p + "</span> <a href=\"#\" onclick=\"event.preventDefault();queueNotice('alert', 'The slope of this regression line (the number multiplied by Year) is the trend estimate, or the amount the y-variable is changing per year on average.<br/><br/>The R<sup>2</sup> is the proportion of variance explained by this trend, with values close to 1 indicating that Year explains most of the variance and values close to 0 indicating very noisy year-to-year variation.<br/><br/>The p-value indicates the strength of evidence that the trend differs from 0 (lower values are stronger evidence).');\">What does this mean?</a></div>";
+						regressionHTML = "<div class=\"linearRegressionData\">&#8627; Where <span>y = " + regressionData.m + " * year " + (regressionData.b < 0 ? "-" : "+") + " " + regressionData.b + "</span>, <span>R<sup>2</sup> = " + regressionData.r2 + "</span>, and <span>p = " + regressionData.p + "</span> <a href=\"#\" onclick=\"event.preventDefault();queueNotice('alert', 'The slope of this regression line (the number multiplied by Year) is the trend estimate, or the amount the y-variable is changing per year on average.<br/><br/>The R<sup>2</sup> is the proportion of variance explained by this trend, with values close to 1 indicating that Year explains most of the variance and values close to 0 indicating very noisy year-to-year variation.<br/><br/>The p-value indicates the strength of evidence that the trend differs from 0 (lower values are stronger evidence).');\">What does this mean?</a></div>";
 					}
 					else{
 						regressionHTML = "<div class=\"linearRegressionData\">&#8627; NOTE: No trend shown- fewer than " + MIN_POINTS_TO_SHOW_LINEAR_REGRESSION + " active years of data plotted.</div>";
@@ -4177,8 +4174,9 @@
 			}
 		      function downloadTrendsData(){
 			var metric = $("#trendsGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
-				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Year", metric, "Linear Regression Value"];
+				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Year", metric, "Beginning Month", "End Month"];
 				var csvString = headers.join(",") + "\r\n";
+			      	var rows = [];
 				var filtersString = "Y-Axis: " + metric + ", Trend Lines:";
 				
 				var date = new Date();
@@ -4215,11 +4213,16 @@
 						var marker = findMarkerBySiteName(siteName);
 						var points = datasets[i].data;
 						for(var j = 0; j < points.length; j++){
-							var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), arthropod, points[j].x.substring(0,4), points[j].y, optionsString.substring(optionsString.length - " linear regression".length) == " linear regression" ? "Yes" : "No"];
+							if(optionsString.substring(optionsString.length - " linear regression".length) == " linear regression"){
+								//skip linear regression data
+								continue;
+							}
+							
+							var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), arthropod, points[j].x.substring(0,4), points[j].y, trendsMonthStart, trendsMonthEnd];
 							for(var t = 0; t < row.length; t++){
 								row[t] = "\"" + row[t].toString().replace(/"/g, "'") + "\"";
 							}
-							csvString += row.join(",") + "\r\n";
+							rows[rows.length] = [siteName, arthropod, Number(points[j].x.substring(0,4)), row.join(",") + "\r\n"];
 						}
 						filtersString += " " + arthropod + " at " + siteName + ";";
 						
@@ -4251,7 +4254,8 @@
 					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
 					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
 					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions",
-					"linear regression value": "\"No\" if the row represents raw data. \"Yes\" if the row represents data calculated as part of a linear regression."
+					"beginning month": "A number 1-12 representing the earliest month at which data is included",
+					"end month": "A number 1-12 representing the latest month at which data is included"
 				};
 				
 				var metadataText = "";
@@ -4279,6 +4283,20 @@
 				
 				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Trends Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
 				
+			      	//sort rows
+			      	rows.sort(function(a, b){
+					//sort by site (alphbetical ascending)
+					if(a[0] < b[0]) return -1;
+					if(a[0] > b[0]) return 1;
+					
+					//then by arthropod (alphbetical ascending)
+					if(a[1] < b[1]) return -1;
+					if(a[1] > b[1]) return 1;
+					
+					//then by year (numerical ascending)
+					return a - b;
+				});
+			      
 				var zip = new JSZip();
 				var folder = zip.folder("Caterpillars Count! " + siteNames.join(" - ") + " trends data");
 				folder.file("metadata.txt", metadataText);
