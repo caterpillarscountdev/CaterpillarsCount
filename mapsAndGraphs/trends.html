@@ -2395,7 +2395,7 @@
 								fontSize: 20
 							},
 							ticks: {
-								autoSkip: false,
+								autoSkip: true,
 								maxRotation: 0,
 								fontSize: 12
 							},
@@ -2541,7 +2541,8 @@
 							lineTension: LINE_TENSION,
 							fill: false,
 							data: getRegressionLineEndpoints(occurrencePoints, true),
-							regressionData: getRegressionLineData(occurrencePoints)
+							regressionData: getRegressionLineData(occurrencePoints),
+							pointRadius: 0
 						},
 						{
 							label: label + " linear regression",
@@ -2550,7 +2551,8 @@
 							lineTension: LINE_TENSION,
 							fill: false,
 							data: getRegressionLineEndpoints(densityPoints, true),
-							regressionData: getRegressionLineData(densityPoints)
+							regressionData: getRegressionLineData(densityPoints),
+							pointRadius: 0
 						},
 						{
 							label: label + " linear regression",
@@ -2559,7 +2561,8 @@
 							lineTension: LINE_TENSION,
 							fill: false,
 							data: getRegressionLineEndpoints(meanBiomassPoints, true),
-							regressionData: getRegressionLineData(meanBiomassPoints)
+							regressionData: getRegressionLineData(meanBiomassPoints),
+							pointRadius: 0
 						}
 					];
 				}
@@ -3259,7 +3262,8 @@
 				var coords = [];
 				var firstTime = new Date(ascendingPoints[0][0]).getTime();
 				for(var i = 0; i < ascendingPoints.length; i++){
-					var yearsSinceFirstDate = Math.round((new Date(ascendingPoints[i][0]).getTime() - firstTime) / (1000 * 60 * 60 * 24 * 365));
+					console.log("ascendingPoints[i][0]", ascendingPoints[i][0]);
+					var yearsSinceFirstDate = Number(ascendingPoints[i][0]);//Math.round((new Date(ascendingPoints[i][0]).getTime() - firstTime) / (1000 * 60 * 60 * 24 * 365));
 					coords[coords.length] = [
 						yearsSinceFirstDate,
 						Number(ascendingPoints[i][1])
