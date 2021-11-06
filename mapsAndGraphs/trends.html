@@ -2542,7 +2542,8 @@
 							fill: false,
 							data: getRegressionLineEndpoints(occurrencePoints, true),
 							regressionData: getRegressionLineData(occurrencePoints),
-							pointRadius: 0
+							pointRadius: 0,
+							pointHitRadius: 0
 						},
 						{
 							label: label + " linear regression",
@@ -2552,7 +2553,8 @@
 							fill: false,
 							data: getRegressionLineEndpoints(densityPoints, true),
 							regressionData: getRegressionLineData(densityPoints),
-							pointRadius: 0
+							pointRadius: 0,
+							pointHitRadius: 0
 						},
 						{
 							label: label + " linear regression",
@@ -2562,7 +2564,8 @@
 							fill: false,
 							data: getRegressionLineEndpoints(meanBiomassPoints, true),
 							regressionData: getRegressionLineData(meanBiomassPoints),
-							pointRadius: 0
+							pointRadius: 0,
+							pointHitRadius: 0
 						}
 					];
 				}
@@ -3784,7 +3787,7 @@
 					
 					var regressionHTML = "";
 					if(showingRegressionLine(trendsLabels[i][0])){
-						regressionHTML = "<div class=\"linearRegressionData\">&#8627; Where <span>y = " + regressionData.m + " * year " + (regressionData.b < 0 ? "&minus;" : "+") + " " + Math.abs(regressionData.b) + "</span>, <span>R<sup>2</sup> = " + regressionData.r2 + "</span>, and <span>p = " + regressionData.p + "</span> <a href=\"#\" onclick=\"event.preventDefault();queueNotice('alert', 'The slope of this regression line (the number multiplied by Year) is the trend estimate, or the amount the y-variable is changing per year on average.<br/><br/>The R<sup>2</sup> is the proportion of variance explained by this trend, with values close to 1 indicating that Year explains most of the variance and values close to 0 indicating very noisy year-to-year variation.<br/><br/>The p-value indicates the strength of evidence that the trend differs from 0 (lower values are stronger evidence).');\">What does this mean?</a></div>";
+						regressionHTML = "<div class=\"linearRegressionData\">&#8627; Where <span>y = " + regressionData.m + " * year " + (regressionData.b.toString().indexOf("-") > -1 ? "&minus;" : "+") + " " + regressionData.b.toString().replace("-", "") + "</span>, <span>R<sup>2</sup> = " + regressionData.r2 + "</span>, and <span>p = " + regressionData.p + "</span> <a href=\"#\" onclick=\"event.preventDefault();queueNotice('alert', 'The slope of this regression line (the number multiplied by Year) is the trend estimate, or the amount the y-variable is changing per year on average.<br/><br/>The R<sup>2</sup> is the proportion of variance explained by this trend, with values close to 1 indicating that Year explains most of the variance and values close to 0 indicating very noisy year-to-year variation.<br/><br/>The p-value indicates the strength of evidence that the trend differs from 0 (lower values are stronger evidence).');\">What does this mean?</a></div>";
 					}
 					else{
 						regressionHTML = "<div class=\"linearRegressionData\">&#8627; NOTE: No trend shown- fewer than " + MIN_POINTS_TO_SHOW_LINEAR_REGRESSION + " active years of data plotted.</div>";
