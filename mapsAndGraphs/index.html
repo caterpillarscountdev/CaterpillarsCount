@@ -9,7 +9,7 @@
 			gtag('config', 'UA-113319025-1');
 		</script>
 		<!-- End of Google Analytics -->
-
+		<meta name="robots" content="noindex">
 		<title>Maps & Graphs | Caterpillars Count!</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
@@ -525,12 +525,18 @@
 				text-transform:uppercase;
 				font-family:'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 			}
-			#monthsSlider.rangeSlider, #yearsSlider.rangeSlider{
+			#monthsSlider.rangeSlider, #yearsSlider.rangeSlider, #trendsMonthsSlider.rangeSlider{
 				margin:20px;
 				height:2px;
 				border:0px none transparent;
 				background:rgba(0,0,0,0.1);
 				cursor:pointer;
+			}
+			#trendsMonths{
+				font-family:'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				font-size:12px;
+				color:#666;
+				text-transform:uppercase;
 			}
 			#yearsSlider.rangeSlider{
 				display:none;
@@ -561,26 +567,44 @@
 				display:none;
 				font-size:18px;
 			}
-			#phenologyLegend{
+			#trendsGraph{
+				display:none;
+			}
+			#phenologyLegend, #trendsLegend{
 				text-align:center;
 				margin:20px 0px;
 			}
-			#loadingLine{
+			#phenologyLoadingLine, #trendsLoadingLine{
 				display:none;
 			}
-			.label, #loadingLine{
+			.label, #phenologyLoadingLine, #trendsLoadingLine{
 				display:inline-block;
 				font-size:18px;
 				color:#666;
 				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
 				margin-bottom:10px;
 			}
-			.label .box, #loadingLine .colorBlock{
+			.label .box, #phenologyLoadingLine .colorBlock, #trendsLoadingLine .colorBlock{
 				display:inline-block;
 				width:10px;
 				height:10px;
 				margin:0px 3px -4px 0px;
 			}
+			
+			#trendsLegend .label{
+				margin-bottom:20px;
+			}
+			
+			.linearRegressionData{
+				padding-left:19px;
+				font-size:12px;
+				margin-top:2px;
+				color:#999;
+			}
+			.linearRegressionData span{
+				color:#666;
+			}
+			
 			#compositionLegend{
 				margin-top:30px;
 			}
@@ -698,7 +722,7 @@
 				font-size:17px;
 				padding-top:2px;
 			}
-			#lineGraph .yAxisLabel, #lineGraph .label, #barGraph .yAxisLabel, #barGraph .label{
+			#lineGraph .yAxisLabel, #lineGraph .label, #barGraph .yAxisLabel, #barGraph .label, #trendsGraph .yAxisLabel, #trendsGraph .label{
 				font-size:18px;
 			}
 			#compositionLoadingCover{
@@ -860,6 +884,32 @@
 					border-right:0px none transparent;
 				}
 			}
+			@media screen and (max-width: 470px){
+				#graphSwitch{
+					display:block;
+					background:transparent;
+					border-radius:0px;
+					border-bottom:0px none transparent;
+				}
+				
+				#graphSwitch button{
+					display:block;
+					width:100%;
+					margin-bottom:10px;
+					background:#eee;
+					border-radius:5px;
+				}
+				
+				#graphSwitch button:last-of-type{
+					margin-left:0px;
+					margin-bottom:0px;
+				}
+				
+				#graphSwitch .active{
+					background:#fed136;
+					color:#fff;
+				}
+			}
 			@media screen and (max-width: 400px){
 				#mapTitle{
 					font-size:10px;
@@ -870,7 +920,7 @@
 			}
 		</style>
 		<script>
-			var plantSpeciesList = ["Acacia spp.", "Maple spp.", "Acer spp.", "Buckeye spp.", "Aesculus spp.", "Ailanthus spp.", "Alder spp.", "Alnus spp.", "Madrone spp.", "Arbutus spp.", "Birch spp.", "Betula spp.", "Boxwood spp.", "Buxus spp.", "Sweetshrub spp.", "Calycanthus spp.", "Camellia spp.", "Hornbeam spp.", "Carpinus spp.", "Hickory spp.", "Carya spp.", "Chestnut spp.", "Castanea spp.", "Sheoak spp.", "Casuarina spp.", "Catalpa spp.", "Hackberry spp.", "Celtis spp.", "Fringetree spp.", "Chionanthus spp.", "Citrus spp.", "Cleyera spp.", "Dogwood spp.", "Cornus spp.", "Hazelnut spp.", "Corylus spp.", "Hawthorn spp.", "Crataegus spp.", "Bush honeysuckle spp.", "Diervilla spp.", "Persimmon spp.", "Diospyros spp.", "Eucalyptus spp.", "Beech spp.", "Fagus spp.", "Fig spp.", "Ficus spp.", "Forsythia spp.", "Ash spp.", "Fraxinus spp.", "Gardenia spp.", "Huckleberry spp.", "Gaylussacia spp.", "Locust spp.", "Gleditsia spp.", "Silverbell spp.", "Halesia spp.", "Hydrangea spp.", "Walnut spp.", "Juglans spp.", "Privet spp.", "Ligustrum spp.", "Spicebush spp.", "Lindera spp.", "Honeysuckle spp.", "Lonicera spp.", "Magnolia spp.", "Apple spp.", "Malus spp.", "Mulberry spp.", "Morus spp.", "Tupelo spp.", "Nyssa spp.", "Tupelo spp.", "Nyssa spp.", "Hophornbeam spp.", "Ostrya spp.", "Bay spp.", "Persea spp.", "Sycamore spp.", "Platanus spp.", "Sycamore spp.", "Platanus spp.", "NA spp.", "Podocarpus spp.", "Cottonwood and poplar spp.", "Populus spp.", "Mesquite spp.", "Prosopis spp.", "Cherry spp.", "Prunus spp.", "Cherry and plum spp.", "Prunus spp.", "Pear spp.", "Pyrus spp.", "Oak spp.", "Quercus spp.", "Buckthorn spp.", "Rhamnus spp.", "Azalea, rhododendron spp.", "Rhododendron spp.", "Sumac spp.", "Rhus spp.", "Rose spp.", "Rosa spp.", "Royal palm spp.", "Roystonea spp.", "Brambles spp.", "Rubus spp.", "Willow spp.", "Salix spp.", "Elderberry spp.", "Sambucus spp.", "Sassafras spp.", "Mountain-ash spp.", "Sorbus spp.", "Stewartia spp.", "Lilac spp.", "Syringa spp.", "Saltcedar spp.", "Tamarix spp.", "Basswood spp.", "Tilia spp.", "Torreya spp.", "Elm spp.", "Ulmus spp.", "Blueberry spp.", "Vaccinium spp.", "Viburnum spp.", "Wisteria spp.", "Sweet acacia", "Acacia farnesiana", "Catclaw acacia", "Acacia greggii", "Trident maple", "Acer buergerianum", "Hedge maple", "Acer campestre", "Horned maple", "Acer diabolicum", "Florida maple", "Acer floridanum", "Amur maple", "Acer ginnala", "Rocky mountain maple", "Acer glabrum", "Bigtooth maple", "Acer grandidentatum", "Chalk maple", "Acer leucoderme", "Bigleaf maple", "Acer macrophyllum", "Boxelder", "Acer negundo", "Black maple", "Acer nigrum", "Japanese maple", "Acer palmatum", "Striped maple", "Acer pensylvanicum", "Norway maple", "Acer platanoides", "Red maple", "Acer rubrum", "Silver maple", "Acer saccharinum", "Sugar maple", "Acer saccharum", "Mountain maple", "Acer spicatum", "Freeman maple", "Acer X freemanii", "Everglades palm", "Acoelorraphe wrightii", "California buckeye", "Aesculus californica", "Yellow buckeye", "Aesculus flava", "Ohio buckeye", "Aesculus glabra", "Horse chestnut", "Aesculus hippocastanum", "Bottlebrush buckeye", "Aesculus parviflora", "Red buckeye", "Aesculus pavia", "Painted buckeye", "Aesculus sylvatica", "Aesculus flava", "Tree of heaven", "Ailanthus altissima", "Mimosa", "Albizia julibrissin", "European alder", "Alnus glutinosa", "Arizona alder", "Alnus oblongifolia", "White alder", "Alnus rhombifolia", "Red alder", "Alnus rubra", "Hazel alder", "Alnus serrulata", "Grey alder", "Alnus incana", "Serviceberry", "Amelanchier", "Common serviceberry", "Amelanchier arborea", "Allegheny serviceberry", "Amelanchier laevis", "Roundleaf serviceberry", "Amelanchier sanguinea", "Sea torchwood", "Amyris elemifera", "Pond-apple", "Annona glabra", "Arizona madrone", "Arbutus arizonica", "Pacific madrone", "Arbutus menziesii", "Texas madrone", "Arbutus xalapensis", "Dwarf pawpaw", "Asimina pygmea", "Pawpaw", "Asimina triloba", "Black-mangrove", "Avicennia germinans", "Eastern baccharis", "Baccharis halimifolia", "Yellow birch", "Betula alleghaniensis", "Sweet birch", "Betula lenta", "White birch", "Betula minor", "River birch", "Betula nigra", "Water birch", "Betula occidentalis", "Paper birch", "Betula papyrifera", "Gray birch", "Betula populifolia", "Virginia roundleaf birch", "Betula uber", "Northwestern paper birch", "Betula x utahensis", "Gumbo limbo", "Bursera simaruba", "American beautyberry", "Callicarpa americana", "Incense-cedar", "Calocedrus decurrens", "Eastern sweetshrub", "Calycanthus floridus", "American hornbeam", "Carpinus caroliniana", "Mockernut hickory", "Carya alba", "Water hickory", "Carya aquatica", "Southern shagbark hickory", "Carya carolinae-septentrionalis", "Bitternut hickory", "Carya cordiformis", "Scrub hickory", "Carya floridana", "Pignut hickory", "Carya glabra", "Pecan", "Carya illinoinensis", "Shellbark hickory", "Carya laciniosa", "Nutmeg hickory", "Carya myristiciformis", "Red hickory", "Carya ovalis", "Shagbark hickory", "Carya ovata", "Sand hickory", "Carya pallida", "Black hickory", "Carya texana", "Carya tomentosa", "American chestnut", "Castanea dentata", "Chinese chestnut", "Castanea mollissima", "Chinquapin", "Castanea pumila", "Gray sheoak", "Casuarina glauca", "Belah", "Casuarina lepidophloia", "Southern catalpa", "Catalpa bignonioides", "Northern catalpa", "Catalpa speciosa", "Oriental bittersweet", "Celastrus orbiculatus", "Sugarberry", "Celtis laevigata", "Western hackberry", "Celtis occidentalis", "Common buttonbush", "Cephalanthus occidentalis", "Eastern redbud", "Cercis canadensis", "Curlleaf mountain-mahogany", "Cercocarpus ledifolius", "Chinese quince", "Chaenomeles sinensis", "Fragrant wintersweet", "Chimonanthus praecox", "Giant chinkapin", "Chrysolepis chrysophylla", "Camphortree", "Cinnamomum camphora", "Florida fiddlewood", "Citharexylum fruticosum", "Kentucky yellowwood", "Cladrastis kentukea", "Tietongue", "Coccoloba diversifolia", "Florida silver palm", "Coccothrinax argentata", "Coconut palm", "Cocos nucifera", "Soldierwood", "Colubrina elliptica", "Bluewood", "Condalia hookeri", "Buttonwood-mangrove", "Conocarpus erectus", "Anacahuita", "Cordia boissieri", "Largeleaf geigertree", "Cordia sebestena", "Alternate-leaf dogwood", "Cornus alternifolia", "Silky dogwood", "Cornus amomum", "Roughleaf dogwood", "Cornus drummondii", "Flowering dogwood", "Cornus florida", "Stiff dogwood", "Cornus foemina", "Kousa dogwood", "Cornus kousa", "Big-leaf dogwood", "Cornus macrophylla", "Cornelian cherry", "Cornus mas", "Pacific dogwood", "Cornus nuttallii", "Redosier dogwood", "Cornus sericea", "Grey dogwood", "Cornus racemosa", "American hazelnut", "Corylus americana", "Beaked hazel", "Corylus cornuta", "Smoketree", "Cotinus obovatus", "Brainerd's hawthorn", "Crataegus brainerdii", "Pear hawthorn", "Crataegus calpodendron", "Fireberry hawthorn", "Crataegus chrysocarpa", "Cockspur hawthorn", "Crataegus crus-galli", "Broadleaf hawthorn", "Crataegus dilatata", "Fanleaf hawthorn", "Crataegus flabellata", "Downy hawthorn", "Crataegus mollis", "Oneseed hawthorn", "Crataegus monogyna", "Scarlet hawthorn", "Crataegus pedicellata", "Washington hawthorn", "Crataegus phaenopyrum", "Fleshy hawthorn", "Crataegus succulenta", "Dwarf hawthorn", "Crataegus uniflora", "Crataegus coccinioides", "Carrotwood", "Cupaniopsis anacardioides", "Swamp titi", "Cyrilla racemiflora", "Texas persimmon", "Diospyros texana", "Common persimmon", "Diospyros virginiana", "Blackbead ebony", "Ebenopsis ebano", "Oriental paperbush", "Edgeworthia chrysantha", "Anacua knockaway", "Ehretia anacua", "Russian olive", "Elaeagnus angustifolia", "Autumn olive", "Elaeagnus umbellata", "River redgum", "Eucalyptus camaldulensis", "Tasmanian bluegum", "Eucalyptus globulus", "Grand eucalyptus", "Eucalyptus grandis", "Swampmahogany", "Eucalyptus robusta", "Red stopper", "Eugenia rhombea", "Burningbush", "Euonymus alatus", "European spindletree", "Euonymus europaeus", "Yeddo euonymous", "Euonymus hamiltonianus", "Butterbough", "Exothea paniculata", "American beech", "Fagus grandifolia", "European beech", "Fagus sylvatica", "Japanese knotweed", "Fallopia japonica", "Speckled japanese aralla", "Fatsia japonica", "Florida strangler fig", "Ficus aurea", "Wild banyantree", "Ficus citrifolia", "Florida swampprivet", "Forestiera segregata", "White ash", "Fraxinus americana", "Berlandier ash", "Fraxinus berlandieriana", "Carolina ash", "Fraxinus caroliniana", "Oregon ash", "Fraxinus latifolia", "Black ash", "Fraxinus nigra", "Green ash", "Fraxinus pennsylvanica", "Pumpkin ash", "Fraxinus profunda", "Blue ash", "Fraxinus quadrangulata", "Texas ash", "Fraxinus texensis", "Velvet ash", "Fraxinus velutina", "Black huckleberry", "Gaylussacia baccata", "Ginkgo", "Ginkgo biloba", "Waterlocust", "Gleditsia aquatica", "Honeylocust", "Gleditsia triacanthos", "Loblolly-bay", "Gordonia lasianthus", "Beeftree", "Guapira discolor", "Kentucky coffeetree", "Gymnocladus dioicus", "Carolina silverbell", "Halesia carolina", "Two-wing silverbell", "Halesia diptera", "Little silverbell", "Halesia parviflora", "Witch-hazel", "Hamamelis virginiana", "Ozark witch hazel", "Hamamelis vernalis", "Rose of sharon", "Hibiscus syriacus", "Manchineel", "Hippomane mancinella", "Raisin", "Hovenia dulcis", "Oakleaf hydrangea", "Hydrangea quercifolia", "Possumhaw", "Ilex decidua", "Inkberry", "Ilex glabra", "Mountain holly", "Ilex montana", "Catberry", "Ilex mucronata", "American holly", "Ilex opaca", "Winterberry", "Ilex verticillata", "Yaupon", "Ilex vomitoria", "Virginia sweetspire", "Itea virginica", "Southern california black walnut", "Juglans californica", "Butternut", "Juglans cinerea", "Northern california black walnut", "Juglans hindsii", "Arizona walnut", "Juglans major", "Texas walnut", "Juglans microcarpa", "Black walnut", "Juglans nigra", "Mountain laurel", "Kalmia latifolia", "Castor aralia", "Kalopanax septemlobus", "Flamegold", "Koelreuteria elegans", "Golden rain tree", "Koelreuteria paniculata", "Crapemyrtle", "Lagerstroemia indica", "White-mangrove", "Laguncularia racemosa", "Great leucaene", "Leucaena pulverulenta", "Coastal doghobble", "Leucothoe axillaris", "Japanese privet", "Ligustrum japonicum", "Waxyleaf privet", "Ligustrum quihoui", "Northern spicebush", "Lindera benzoin", "Sweetgum", "Liquidambar styraciflua", "Tuliptree", "Liriodendron tulipifera", "Tanoak", "Lithocarpus densiflorus", "Pink honeysuckle", "Lonicera hispidula", "Japanese honeysuckle", "Lonicera japonica", "Amur honeysuckle", "Lonicera maackii", "Tatarian honeysuckle", "Lonicera tatarica", "False tamarind", "Lysiloma latisiliquum", "Amur maackia", "Maackia amurensis", "Osage-orange", "Maclura pomifera", "Cucumbertree", "Magnolia acuminata", "Fraser's magnolia", "Magnolia fraseri", "Southern magnolia", "Magnolia grandiflora", "Bigleaf magnolia", "Magnolia macrophylla", "Pyramid magnolia", "Magnolia pyramidata", "Umbrella magnolia", "Magnolia tripetala", "Sweetbay", "Magnolia virginiana", "Loebner magnolia", "Magnolia X loebneri", "Southern crab apple", "Malus angustifolia", "Siberian crab apple", "Malus baccata", "Sweet crab apple", "Malus coronaria", "Oregon crab apple", "Malus fusca", "Prairie crab apple", "Malus ioensis", "Toringa crab apple", "Malus sieboldii", "Mango", "Mangifera indica", "Melaleuca", "Melaleuca quinquenervia", "Chinaberry", "Melia azedarach", "Florida poisontree", "Metopium toxiferum", "Southern bayberry", "Morella caroliniensis", "Wax myrtle", "Morella cerifera", "Red bay", "Morella rubra", "White mulberry", "Morus alba", "Texas mulberry", "Morus microphylla", "Black mulberry", "Morus nigra", "Red mulberry", "Morus rubra", "Heavenly bamboo", "Nandina domestica", "Water tupelo", "Nyssa aquatica", "Swamp tupelo", "Nyssa biflora", "Ogeechee tupelo", "Nyssa ogeche", "Blackgum", "Nyssa sylvatica", "Desert ironwood", "Olneya tesota", "Eastern hophornbeam", "Ostrya virginiana", "Sourwood", "Oxydendrum arboreum", "Persian ironwood", "Parrotia persica", "Paulownia  empress-tree", "Paulownia tomentosa", "Avocado", "Persea americana", "Redbay", "Persea borbonia", "Common ninebark", "Physocarpus opulifolius", "Fishpoison tree", "Piscidia piscipula", "Water-elm  planertree", "Planera aquatica", "American sycamore", "Platanus occidentalis", "California sycamore", "Platanus racemosa", "Arizona sycamore", "Platanus wrightii", "Silver poplar", "Populus alba", "Narrowleaf cottonwood", "Populus angustifolia", "Balsam poplar", "Populus balsamifera", "Eastern cottonwood", "Populus deltoides", "Fremont cottonwood", "Populus fremontii", "Bigtooth aspen", "Populus grandidentata", "Swamp cottonwood", "Populus heterophylla", "Lombardy poplar", "Populus nigra", "Quaking aspen", "Populus tremuloides", "Honey mesquite", "Prosopis glandulosa", "Screwbean mesquite", "Prosopis pubescens", "Velvet mesquite", "Prosopis velutina", "Allegheny plum", "Prunus alleghaniensis", "American plum", "Prunus americana", "Chickasaw plum", "Prunus angustifolia", "Sweet cherry", "Prunus avium", "Sour cherry", "Prunus cerasus", "European plum", "Prunus domestica", "Bitter cherry", "Prunus emarginata", "Cherry laurel", "Prunus laurocerasus", "Mahaleb cherry", "Prunus mahaleb", "Beach plum", "Prunus maritima", "Japanese apricot", "Prunus mume", "Canada plum", "Prunus nigra", "Pin cherry", "Prunus pensylvanica", "Peach", "Prunus persica", "Black cherry", "Prunus serotina", "Chokecherry", "Prunus virginiana", "Kwanzan cherry", "Prunus serrulata", "Weeping cherry", "Prunus subhirtella", "Wafer ash", "Ptelea trifoliata", "Buffalo nut", "Pyrularia pubera", "Callery pear", "Pyrus calleryana", "California live oak", "Quercus agrifolia", "White oak", "Quercus alba", "Arizona white oak", "Quercus arizonica", "Swamp white oak", "Quercus bicolor", "Buckley oak", "Quercus buckleyi", "Canyon live oak", "Quercus chrysolepis", "Scarlet oak", "Quercus coccinea", "Blue oak", "Quercus douglasii", "Northern pin oak", "Quercus ellipsoidalis", "Emory oak", "Quercus emoryi", "Engelmann oak", "Quercus engelmannii", "Southern red oak", "Quercus falcata", "Gambel oak", "Quercus gambelii", "Oregon white oak", "Quercus garryana", "Ring-cup oak", "Quercus glauca", "Chisos oak", "Quercus graciliformis", "Graves oak", "Quercus gravesii", "Gray oak", "Quercus grisea", "Silverleaf oak", "Quercus hypoleucoides", "Bear oak", "Quercus ilicifolia", "Shingle oak", "Quercus imbricaria", "Bluejack oak", "Quercus incana", "California black oak", "Quercus kelloggii", "Lacey oak", "Quercus laceyi", "Turkey oak", "Quercus laevis", "Laurel oak", "Quercus laurifolia", "California white oak", "Quercus lobata", "Overcup oak", "Quercus lyrata", "Bur oak", "Quercus macrocarpa", "Dwarf post oak", "Quercus margarettiae", "Blackjack oak", "Quercus marilandica", "Swamp chestnut oak", "Quercus michauxii", "Dwarf live oak", "Quercus minima", "Chestnut oak", "Quercus montana", "Chinkapin oak", "Quercus muehlenbergii", "Water oak", "Quercus nigra", "Mexican blue oak", "Quercus oblongifolia", "Oglethorpe oak", "Quercus oglethorpensis", "Cherrybark oak", "Quercus pagoda", "Pin oak", "Quercus palustris", "Willow oak", "Quercus phellos", "Mexican white oak", "Quercus polymorpha", "Dwarf chinkapin oak", "Quercus prinoides", "English oak", "Quercus robur", "Northern red oak", "Quercus rubra", "Netleaf oak", "Quercus rugosa", "Shumard oak", "Quercus shumardii", "Delta post oak", "Quercus similis", "Durand oak", "Quercus sinuata", "Post oak", "Quercus stellata", "Texas red oak", "Quercus texana", "Black oak", "Quercus velutina", "Live oak", "Quercus virginiana", "Interior live oak", "Quercus wislizeni", "Common buckthorn", "Rhamnus cathartica", "Frangula alnus", "Rhamnus frangula", "American mangrove", "Rhizophora mangle", "Dwarf azalea", "Rhododendron atlanticum", "Florida azalea", "Rhododendron austrinum", "Mountain azalea", "Rhododendron canescens", "Catawba rhododendron", "Rhododendron catawbiense", "Piedmont azalea", "Rhododendron flammeum", "Great rhododendron", "Rhododendron maximum", "Plumleaf azalea", "Rhododendron prunifolium", "Jetbead", "Rhodotypos scandens", "Winged sumac", "Rhus copallinum", "Smooth sumac", "Rhus glabra", "Staghorn sumac", "Rhus typhina", "New mexico locust", "Robinia neomexicana", "Black locust", "Robinia pseudoacacia", "Multiflora rose", "Rosa multiflora", "Wineberry", "Rubus phoenicolasius", "Mexican palmetto", "Sabal mexicana", "Cabbage palmetto", "Sabal palmetto", "White willow", "Salix alba", "Peachleaf willow", "Salix amygdaloides", "Weeping willow", "Salix babylonica", "Bebb willow", "Salix bebbiana", "Bonpland willow", "Salix bonplandiana", "Coastal plain willow", "Salix caroliniana", "Black willow", "Salix nigra", "Balsam willow", "Salix pyrifolia", "Scoulers willow", "Salix scouleriana", "Red elderberry", "Sambucus racemosa", "Western soapberry", "Sapindus saponaria", "Sassafras", "Sassafras albidum", "Octopus tree", "Schefflera actinophylla", "False mastic", "Sideroxylon foetidissimum", "Chittamwood", "Sideroxylon lanuginosum", "White bully", "Sideroxylon salicifolium", "Paradisetree", "Simarouba glauca", "Texas sophora", "Sophora affinis", "American mountain-ash", "Sorbus americana", "European mountain-ash", "Sorbus aucuparia", "Northern mountain-ash", "Sorbus decora", "American bladdernut", "Staphylea trifolia", "Japanese snowbell", "Styrax japonicus", "West indian mahogany", "Swietenia mahagoni", "Sweetleaf", "Symplocos tinctoria", "Japanese tree lilac", "Syringa reticulata", "Java plum", "Syzygium cumini", "Tamarind", "Tamarindus indica", "Key thatch palm", "Thrinax morrisii", "Florida thatch palm", "Thrinax radiata", "American basswood", "Tilia americana", "Littleleaf linden", "Tilia cordata", "Common lime", "Tilia X europaea", "California torreya", "Torreya californica", "Florida torreya", "Torreya taxifolia", "Chinese tallowtree", "Triadica sebifera", "Winged elm", "Ulmus alata", "American elm", "Ulmus americana", "Cedar elm", "Ulmus crassifolia", "Siberian elm", "Ulmus pumila", "Slippery elm", "Ulmus rubra", "September elm", "Ulmus serotina", "Rock elm", "Ulmus thomasii", "California laurel", "Umbellularia californica", "Highbush blueberry", "Vaccinium corymbosum", "Deerberry", "Vaccinium stamineum", "Tungoil tree", "Vernicia fordii", "Viburnum", "Mapleleaf viburnum", "Viburnum acerifolium", "Southern arrowwood", "Viburnum dentatum", "Linden arrowwood", "Viburnum dilatatum", "Nannyberry", "Viburnum lentago", "Possumhaw viburnum", "Viburnum nudum", "European cranberrybush", "Viburnum opulus", "Japanese snowball", "Viburnum plicatum", "Blackhaw", "Viburnum prunifolium", "Rusty blackhaw", "Viburnum rufidulum", "Canyon grape", "Vitis arizonica", "Joshua tree", "Yucca brevifolia", "Japanese zelkova", "Zelkova serrata", "Fir spp.", "Abies spp.", "White-cedar spp.", "Chamaecyparis spp.", "Cypress spp.", "Cupressus spp.", "Redcedar/juniper spp.", "Juniperus spp.", "Larch spp.", "Larix spp.", "Spruce spp.", "Picea spp.", "Pine spp.", "Pinus spp.", "Douglas-fir spp.", "Pseudotsuga spp.", "Baldcypress spp.", "Taxodium spp.", "Yew spp.", "Taxus spp.", "Thuja spp.", "Hemlock spp.", "Tsuga spp.", "Pacific silver fir", "Abies amabilis", "Balsam fir", "Abies balsamea", "Bristlecone fir", "Abies bracteata", "White fir", "Abies concolor", "Fraser fir", "Abies fraseri", "Grand fir", "Abies grandis", "Subalpine fir", "Abies lasiocarpa", "California red fir", "Abies magnifica", "Noble fir", "Abies procera", "Shasta red fir", "Abies shastensis", "Port-orford-cedar", "Chamaecyparis lawsoniana", "Alaska yellow-cedar", "Chamaecyparis nootkatensis", "Atlantic white-cedar", "Chamaecyparis thyoides", "Arizona cypress", "Cupressus arizonica", "Modoc cypress", "Cupressus bakeri", "Tecate cypress", "Cupressus forbesii", "Macnabs cypress", "Cupressus macnabiana", "Monterey cypress", "Cupressus macrocarpa", "Sargents cypress", "Cupressus sargentii", "Ashe juniper", "Juniperus ashei", "California juniper", "Juniperus californica", "Redberry juniper", "Juniperus coahuilensis", "Alligator juniper", "Juniperus deppeana", "Drooping juniper", "Juniperus flaccida", "Oneseed juniper", "Juniperus monosperma", "Western juniper", "Juniperus occidentalis", "Utah juniper", "Juniperus osteosperma", "Pinchot juniper", "Juniperus pinchotii", "Rocky mountain juniper", "Juniperus scopulorum", "Eastern redcedar", "Juniperus virginiana", "Tamarack", "Larix laricina", "Subalpine larch", "Larix lyallii", "Western larch", "Larix occidentalis", "Norway spruce", "Picea abies", "Brewer spruce", "Picea breweriana", "Engelmann spruce", "Picea engelmannii", "White spruce", "Picea glauca", "Black spruce", "Picea mariana", "Blue spruce", "Picea pungens", "Red spruce", "Picea rubens", "Sitka spruce", "Picea sitchensis", "Whitebark pine", "Pinus albicaulis", "Bristlecone pine", "Pinus aristata", "Arizona pine", "Pinus arizonica", "Knobcone pine", "Pinus attenuata", "Foxtail pine", "Pinus balfouriana", "Jack pine", "Pinus banksiana", "Mexican pinyon pine", "Pinus cembroides", "Sand pine", "Pinus clausa", "Lodgepole pine", "Pinus contorta", "Coulter pine", "Pinus coulteri", "Border pinyon", "Pinus discolor", "Shortleaf pine", "Pinus echinata", "Common pinyon", "Pinus edulis", "Slash pine", "Pinus elliottii", "Apache pine", "Pinus engelmannii", "Limber pine", "Pinus flexilis", "Spruce pine", "Pinus glabra", "Jeffrey pine", "Pinus jeffreyi", "Sugar pine", "Pinus lambertiana", "Chihuahua pine", "Pinus leiophylla", "Great basin bristlecone pine", "Pinus longaeva", "Singleleaf pinyon", "Pinus monophylla", "Western white pine", "Pinus monticola", "Bishop pine", "Pinus muricata", "Austrian pine", "Pinus nigra", "Longleaf pine", "Pinus palustris", "Ponderosa pine", "Pinus ponderosa", "Table mountain pine", "Pinus pungens", "Four-leaf or parry pinyon pine", "Pinus quadrifolia", "Monterey pine", "Pinus radiata", "Papershell pinyon pine", "Pinus remota", "Red pine", "Pinus resinosa", "Pitch pine", "Pinus rigida", "Gray or california foothill pine", "Pinus sabiniana", "Pond pine", "Pinus serotina", "Southwestern white pine", "Pinus strobiformis", "Eastern white pine", "Pinus strobus", "Scotch pine", "Pinus sylvestris", "Loblolly pine", "Pinus taeda", "Torrey pine", "Pinus torreyana", "Virginia pine", "Pinus virginiana", "Washoe pine", "Pinus washoensis", "Bigcone douglas-fir", "Pseudotsuga macrocarpa", "Douglas-fir", "Pseudotsuga menziesii", "Redwood", "Sequoia sempervirens", "Giant sequoia", "Sequoiadendron giganteum", "Pondcypress", "Taxodium ascendens", "Bald cypress", "Taxodium distichum", "Montezuma baldcypress", "Taxodium mucronatum", "Pacific yew", "Taxus brevifolia", "Florida yew", "Taxus floridana", "Eastern white cedar", "Thuja occidentalis", "Western redcedar", "Thuja plicata", "Eastern hemlock", "Tsuga canadensis", "Carolina hemlock", "Tsuga caroliniana", "Western hemlock", "Tsuga heterophylla", "Mountain hemlock", "Tsuga mertensiana"];
+			var plantSpeciesList = ["Acacia spp.", "Maple spp.", "Acer spp.", "Buckeye spp.", "Aesculus spp.", "Ailanthus spp.", "Alder spp.", "Alnus spp.", "Madrone spp.", "Arbutus spp.", "Birch spp.", "Betula spp.", "Boxwood spp.", "Buxus spp.", "Sweetshrub spp.", "Calycanthus spp.", "Camellia spp.", "Hornbeam spp.", "Carpinus spp.", "Hickory spp.", "Carya spp.", "Chestnut spp.", "Castanea spp.", "Sheoak spp.", "Casuarina spp.", "Catalpa spp.", "Hackberry spp.", "Celtis spp.", "Fringetree spp.", "Chionanthus spp.", "Citrus spp.", "Cleyera spp.", "Dogwood spp.", "Cornus spp.", "Hazelnut spp.", "Corylus spp.", "Hawthorn spp.", "Crataegus spp.", "Bush honeysuckle spp.", "Diervilla spp.", "Persimmon spp.", "Diospyros spp.", "Eucalyptus spp.", "Beech spp.", "Fagus spp.", "Fig spp.", "Ficus spp.", "Forsythia spp.", "Ash spp.", "Fraxinus spp.", "Gardenia spp.", "Huckleberry spp.", "Gaylussacia spp.", "Locust spp.", "Gleditsia spp.", "Silverbell spp.", "Halesia spp.", "Hydrangea spp.", "Walnut spp.", "Juglans spp.", "Privet spp.", "Ligustrum spp.", "Spicebush spp.", "Lindera spp.", "Honeysuckle spp.", "Lonicera spp.", "Magnolia spp.", "Apple spp.", "Malus spp.", "Mulberry spp.", "Morus spp.", "Tupelo spp.", "Nyssa spp.", "Tupelo spp.", "Nyssa spp.", "Hophornbeam spp.", "Ostrya spp.", "Bay spp.", "Persea spp.", "Sycamore spp.", "Platanus spp.", "Sycamore spp.", "Platanus spp.", "NA spp.", "Podocarpus spp.", "Cottonwood and poplar spp.", "Populus spp.", "Mesquite spp.", "Prosopis spp.", "Cherry spp.", "Prunus spp.", "Cherry and plum spp.", "Prunus spp.", "Pear spp.", "Pyrus spp.", "Oak spp.", "Quercus spp.", "Buckthorn spp.", "Rhamnus spp.", "Azalea, rhododendron spp.", "Rhododendron spp.", "Sumac spp.", "Rhus spp.", "Rose spp.", "Rosa spp.", "Royal palm spp.", "Roystonea spp.", "Brambles spp.", "Rubus spp.", "Willow spp.", "Salix spp.", "Elderberry spp.", "Sambucus spp.", "Sassafras spp.", "Mountain-ash spp.", "Sorbus spp.", "Stewartia spp.", "Lilac spp.", "Syringa spp.", "Saltcedar spp.", "Tamarix spp.", "Basswood spp.", "Tilia spp.", "Torreya spp.", "Elm spp.", "Ulmus spp.", "Blueberry spp.", "Vaccinium spp.", "Viburnum spp.", "Wisteria spp.", "Sweet acacia", "Acacia farnesiana", "Catclaw acacia", "Acacia greggii", "Trident maple", "Acer buergerianum", "Hedge maple", "Acer campestre", "Horned maple", "Acer diabolicum", "Florida maple", "Acer floridanum", "Amur maple", "Acer ginnala", "Rocky mountain maple", "Acer glabrum", "Bigtooth maple", "Acer grandidentatum", "Chalk maple", "Acer leucoderme", "Bigleaf maple", "Acer macrophyllum", "Boxelder", "Acer negundo", "Black maple", "Acer nigrum", "Japanese maple", "Acer palmatum", "Striped maple", "Acer pensylvanicum", "Norway maple", "Acer platanoides", "Red maple", "Acer rubrum", "Silver maple", "Acer saccharinum", "Sugar maple", "Acer saccharum", "Mountain maple", "Acer spicatum", "Freeman maple", "Acer X freemanii", "Everglades palm", "Acoelorraphe wrightii", "California buckeye", "Aesculus californica", "Yellow buckeye", "Aesculus flava", "Ohio buckeye", "Aesculus glabra", "Horse chestnut", "Aesculus hippocastanum", "Bottlebrush buckeye", "Aesculus parviflora", "Red buckeye", "Aesculus pavia", "Painted buckeye", "Aesculus sylvatica", "Aesculus flava", "Tree of heaven", "Ailanthus altissima", "Mimosa", "Albizia julibrissin", "European alder", "Alnus glutinosa", "Arizona alder", "Alnus oblongifolia", "White alder", "Alnus rhombifolia", "Red alder", "Alnus rubra", "Hazel alder", "Alnus serrulata", "Grey alder", "Alnus incana", "Serviceberry", "Amelanchier", "Common serviceberry", "Amelanchier arborea", "Allegheny serviceberry", "Amelanchier laevis", "Roundleaf serviceberry", "Amelanchier sanguinea", "Sea torchwood", "Amyris elemifera", "Pond-apple", "Annona glabra", "Arizona madrone", "Arbutus arizonica", "Pacific madrone", "Arbutus menziesii", "Texas madrone", "Arbutus xalapensis", "Dwarf pawpaw", "Asimina pygmea", "Pawpaw", "Asimina triloba", "Black-mangrove", "Avicennia germinans", "Eastern baccharis", "Baccharis halimifolia", "Yellow birch", "Betula alleghaniensis", "Sweet birch", "Betula lenta", "White birch", "Betula minor", "River birch", "Betula nigra", "Water birch", "Betula occidentalis", "Paper birch", "Betula papyrifera", "Gray birch", "Betula populifolia", "Virginia roundleaf birch", "Betula uber", "Northwestern paper birch", "Betula x utahensis", "Gumbo limbo", "Bursera simaruba", "American beautyberry", "Callicarpa americana", "Incense-cedar", "Calocedrus decurrens", "Eastern sweetshrub", "Calycanthus floridus", "American hornbeam", "Carpinus caroliniana", "Mockernut hickory", "Carya alba", "Water hickory", "Carya aquatica", "Southern shagbark hickory", "Carya carolinae-septentrionalis", "Bitternut hickory", "Carya cordiformis", "Scrub hickory", "Carya floridana", "Pignut hickory", "Carya glabra", "Pecan", "Carya illinoinensis", "Shellbark hickory", "Carya laciniosa", "Nutmeg hickory", "Carya myristiciformis", "Red hickory", "Carya ovalis", "Shagbark hickory", "Carya ovata", "Sand hickory", "Carya pallida", "Black hickory", "Carya texana", "Carya tomentosa", "American chestnut", "Castanea dentata", "Chinese chestnut", "Castanea mollissima", "Chinquapin", "Castanea pumila", "Gray sheoak", "Casuarina glauca", "Belah", "Casuarina lepidophloia", "Southern catalpa", "Catalpa bignonioides", "Northern catalpa", "Catalpa speciosa", "Oriental bittersweet", "Celastrus orbiculatus", "Sugarberry", "Celtis laevigata", "Western hackberry", "Celtis occidentalis", "Common buttonbush", "Cephalanthus occidentalis", "Eastern redbud", "Cercis canadensis", "Curlleaf mountain-mahogany", "Cercocarpus ledifolius", "Chinese quince", "Chaenomeles sinensis", "Fragrant wintersweet", "Chimonanthus praecox", "Giant chinkapin", "Chrysolepis chrysophylla", "Camphortree", "Cinnamomum camphora", "Florida fiddlewood", "Citharexylum fruticosum", "Kentucky yellowwood", "Cladrastis kentukea", "Tietongue", "Coccoloba diversifolia", "Florida silver palm", "Coccothrinax argentata", "Coconut palm", "Cocos nucifera", "Soldierwood", "Colubrina elliptica", "Bluewood", "Condalia hookeri", "Buttonwood-mangrove", "Conocarpus erectus", "Anacahuita", "Cordia boissieri", "Largeleaf geigertree", "Cordia sebestena", "Alternate-leaf dogwood", "Cornus alternifolia", "Silky dogwood", "Cornus amomum", "Roughleaf dogwood", "Cornus drummondii", "Flowering dogwood", "Cornus florida", "Stiff dogwood", "Cornus foemina", "Kousa dogwood", "Cornus kousa", "Big-leaf dogwood", "Cornus macrophylla", "Cornelian cherry", "Cornus mas", "Pacific dogwood", "Cornus nuttallii", "Redosier dogwood", "Cornus sericea", "Grey dogwood", "Cornus racemosa", "American hazelnut", "Corylus americana", "Beaked hazel", "Corylus cornuta", "Smoketree", "Cotinus obovatus", "Brainerd's hawthorn", "Crataegus brainerdii", "Pear hawthorn", "Crataegus calpodendron", "Fireberry hawthorn", "Crataegus chrysocarpa", "Cockspur hawthorn", "Crataegus crus-galli", "Broadleaf hawthorn", "Crataegus dilatata", "Fanleaf hawthorn", "Crataegus flabellata", "Downy hawthorn", "Crataegus mollis", "Oneseed hawthorn", "Crataegus monogyna", "Scarlet hawthorn", "Crataegus pedicellata", "Washington hawthorn", "Crataegus phaenopyrum", "Fleshy hawthorn", "Crataegus succulenta", "Dwarf hawthorn", "Crataegus uniflora", "Crataegus coccinioides", "Carrotwood", "Cupaniopsis anacardioides", "Swamp titi", "Cyrilla racemiflora", "Texas persimmon", "Diospyros texana", "Common persimmon", "Diospyros virginiana", "Blackbead ebony", "Ebenopsis ebano", "Oriental paperbush", "Edgeworthia chrysantha", "Anacua knockaway", "Ehretia anacua", "Russian olive", "Elaeagnus angustifolia", "Autumn olive", "Elaeagnus umbellata", "River redgum", "Eucalyptus camaldulensis", "Tasmanian bluegum", "Eucalyptus globulus", "Grand eucalyptus", "Eucalyptus grandis", "Swampmahogany", "Eucalyptus robusta", "Red stopper", "Eugenia rhombea", "Burningbush", "Euonymus alatus", "European spindletree", "Euonymus europaeus", "Yeddo euonymous", "Euonymus hamiltonianus", "Butterbough", "Exothea paniculata", "American beech", "Fagus grandifolia", "European beech", "Fagus sylvatica", "Japanese knotweed", "Fallopia japonica", "Speckled japanese aralla", "Fatsia japonica", "Florida strangler fig", "Ficus aurea", "Wild banyantree", "Ficus citrifolia", "Florida swampprivet", "Forestiera segregata", "White ash", "Fraxinus americana", "Berlandier ash", "Fraxinus berlandieriana", "Carolina ash", "Fraxinus caroliniana", "Oregon ash", "Fraxinus latifolia", "Black ash", "Fraxinus nigra", "Green ash", "Fraxinus pennsylvanica", "Pumpkin ash", "Fraxinus profunda", "Blue ash", "Fraxinus quadrangulata", "Texas ash", "Fraxinus texensis", "Velvet ash", "Fraxinus velutina", "Black huckleberry", "Gaylussacia baccata", "Ginkgo", "Ginkgo biloba", "Waterlocust", "Gleditsia aquatica", "Honeylocust", "Gleditsia triacanthos", "Loblolly-bay", "Gordonia lasianthus", "Beeftree", "Guapira discolor", "Kentucky coffeetree", "Gymnocladus dioicus", "Carolina silverbell", "Halesia carolina", "Two-wing silverbell", "Halesia diptera", "Little silverbell", "Halesia parviflora", "Witch-hazel", "Hamamelis virginiana", "Ozark witch hazel", "Hamamelis vernalis", "Rose of sharon", "Hibiscus syriacus", "Manchineel", "Hippomane mancinella", "Raisin", "Hovenia dulcis", "Oakleaf hydrangea", "Hydrangea quercifolia", "Possumhaw", "Ilex decidua", "Inkberry", "Ilex glabra", "Mountain holly", "Ilex montana", "Catberry", "Ilex mucronata", "American holly", "Ilex opaca", "Winterberry", "Ilex verticillata", "Yaupon", "Ilex vomitoria", "Virginia sweetspire", "Itea virginica", "Southern california black walnut", "Juglans californica", "Butternut", "Juglans cinerea", "Northern california black walnut", "Juglans hindsii", "Arizona walnut", "Juglans major", "Texas walnut", "Juglans microcarpa", "Black walnut", "Juglans nigra", "Mountain laurel", "Kalmia latifolia", "Castor aralia", "Kalopanax septemlobus", "Flamegold", "Koelreuteria elegans", "Golden rain tree", "Koelreuteria paniculata", "Crapemyrtle", "Lagerstroemia indica", "White-mangrove", "Laguncularia racemosa", "Great leucaene", "Leucaena pulverulenta", "Coastal doghobble", "Leucothoe axillaris", "Japanese privet", "Ligustrum japonicum", "Waxyleaf privet", "Ligustrum quihoui", "Northern spicebush", "Lindera benzoin", "Sweetgum", "Liquidambar styraciflua", "Tuliptree", "Liriodendron tulipifera", "Tanoak", "Lithocarpus densiflorus", "Pink honeysuckle", "Lonicera hispidula", "Japanese honeysuckle", "Lonicera japonica", "Amur honeysuckle", "Lonicera maackii", "Tatarian honeysuckle", "Lonicera tatarica", "False tamarind", "Lysiloma latisiliquum", "Amur maackia", "Maackia amurensis", "Osage-orange", "Maclura pomifera", "Cucumbertree", "Magnolia acuminata", "Fraser's magnolia", "Magnolia fraseri", "Southern magnolia", "Magnolia grandiflora", "Bigleaf magnolia", "Magnolia macrophylla", "Pyramid magnolia", "Magnolia pyramidata", "Umbrella magnolia", "Magnolia tripetala", "Sweetbay", "Magnolia virginiana", "Loebner magnolia", "Magnolia X loebneri", "Southern crab apple", "Malus angustifolia", "Siberian crab apple", "Malus baccata", "Sweet crab apple", "Malus coronaria", "Oregon crab apple", "Malus fusca", "Prairie crab apple", "Malus ioensis", "Toringa crab apple", "Malus sieboldii", "Mango", "Mangifera indica", "Melaleuca", "Melaleuca quinquenervia", "Chinaberry", "Melia azedarach", "Florida poisontree", "Metopium toxiferum", "Southern bayberry", "Morella caroliniensis", "Wax myrtle", "Morella cerifera", "Red bay", "Morella rubra", "White mulberry", "Morus alba", "Texas mulberry", "Morus microphylla", "Black mulberry", "Morus nigra", "Red mulberry", "Morus rubra", "Heavenly bamboo", "Nandina domestica", "Water tupelo", "Nyssa aquatica", "Swamp tupelo", "Nyssa biflora", "Ogeechee tupelo", "Nyssa ogeche", "Blackgum", "Nyssa sylvatica", "Desert ironwood", "Olneya tesota", "Eastern hophornbeam", "Ostrya virginiana", "Sourwood", "Oxydendrum arboreum", "Persian ironwood", "Parrotia persica", "Paulownia  empress-tree", "Paulownia tomentosa", "Avocado", "Persea americana", "Redbay", "Persea borbonia", "Common ninebark", "Physocarpus opulifolius", "Fishpoison tree", "Piscidia piscipula", "Water-elm  planertree", "Planera aquatica", "American sycamore", "Platanus occidentalis", "California sycamore", "Platanus racemosa", "Arizona sycamore", "Platanus wrightii", "Silver poplar", "Populus alba", "Narrowleaf cottonwood", "Populus angustifolia", "Balsam poplar", "Populus balsamifera", "Eastern cottonwood", "Populus deltoides", "Fremont cottonwood", "Populus fremontii", "Bigtooth aspen", "Populus grandidentata", "Swamp cottonwood", "Populus heterophylla", "Lombardy poplar", "Populus nigra", "Quaking aspen", "Populus tremuloides", "Honey mesquite", "Prosopis glandulosa", "Screwbean mesquite", "Prosopis pubescens", "Velvet mesquite", "Prosopis velutina", "Allegheny plum", "Prunus alleghaniensis", "American plum", "Prunus americana", "Chickasaw plum", "Prunus angustifolia", "Sweet cherry", "Prunus avium", "Sour cherry", "Prunus cerasus", "European plum", "Prunus domestica", "Bitter cherry", "Prunus emarginata", "Cherry laurel", "Prunus laurocerasus", "Mahaleb cherry", "Prunus mahaleb", "Beach plum", "Prunus maritima", "Japanese apricot", "Prunus mume", "Canada plum", "Prunus nigra", "Pin cherry", "Prunus pensylvanica", "Peach", "Prunus persica", "Black cherry", "Prunus serotina", "Chokecherry", "Prunus virginiana", "Kwanzan cherry", "Prunus serrulata", "Weeping cherry", "Prunus subhirtella", "Wafer ash", "Ptelea trifoliata", "Buffalo nut", "Pyrularia pubera", "Callery pear", "Pyrus calleryana", "California live oak", "Quercus agrifolia", "White oak", "Quercus alba", "Arizona white oak", "Quercus arizonica", "Swamp white oak", "Quercus bicolor", "Buckley oak", "Quercus buckleyi", "Canyon live oak", "Quercus chrysolepis", "Scarlet oak", "Quercus coccinea", "Blue oak", "Quercus douglasii", "Northern pin oak", "Quercus ellipsoidalis", "Emory oak", "Quercus emoryi", "Engelmann oak", "Quercus engelmannii", "Southern red oak", "Quercus falcata", "Gambel oak", "Quercus gambelii", "Oregon white oak", "Quercus garryana", "Ring-cup oak", "Quercus glauca", "Chisos oak", "Quercus graciliformis", "Graves oak", "Quercus gravesii", "Gray oak", "Quercus grisea", "Silverleaf oak", "Quercus hypoleucoides", "Bear oak", "Quercus ilicifolia", "Shingle oak", "Quercus imbricaria", "Bluejack oak", "Quercus incana", "California black oak", "Quercus kelloggii", "Lacey oak", "Quercus laceyi", "Turkey oak", "Quercus laevis", "Laurel oak", "Quercus laurifolia", "California white oak", "Quercus lobata", "Overcup oak", "Quercus lyrata", "Bur oak", "Quercus macrocarpa", "Dwarf post oak", "Quercus margarettiae", "Blackjack oak", "Quercus marilandica", "Swamp chestnut oak", "Quercus michauxii", "Dwarf live oak", "Quercus minima", "Chestnut oak", "Quercus montana", "Chinkapin oak", "Quercus muehlenbergii", "Water oak", "Quercus nigra", "Mexican blue oak", "Quercus oblongifolia", "Oglethorpe oak", "Quercus oglethorpensis", "Cherrybark oak", "Quercus pagoda", "Pin oak", "Quercus palustris", "Willow oak", "Quercus phellos", "Mexican white oak", "Quercus polymorpha", "Dwarf chinkapin oak", "Quercus prinoides", "English oak", "Quercus robur", "Northern red oak", "Quercus rubra", "Netleaf oak", "Quercus rugosa", "Shumard oak", "Quercus shumardii", "Delta post oak", "Quercus similis", "Durand oak", "Quercus sinuata", "Post oak", "Quercus stellata", "Texas red oak", "Quercus texana", "Black oak", "Quercus velutina", "Live oak", "Quercus virginiana", "Interior live oak", "Quercus wislizeni", "Common buckthorn", "Rhamnus cathartica", "Frangula alnus", "Rhamnus frangula", "American mangrove", "Rhizophora mangle", "Dwarf azalea", "Rhododendron atlanticum", "Florida azalea", "Rhododendron austrinum", "Mountain azalea", "Rhododendron canescens", "Catawba rhododendron", "Rhododendron catawbiense", "Piedmont azalea", "Rhododendron flammeum", "Great rhododendron", "Rhododendron maximum", "Plumleaf azalea", "Rhododendron prunifolium", "Jetbead", "Rhodotypos scandens", "Winged sumac", "Rhus copallinum", "Smooth sumac", "Rhus glabra", "Staghorn sumac", "Rhus typhina", "New mexico locust", "Robinia neomexicana", "Black locust", "Robinia pseudoacacia", "Multiflora rose", "Rosa multiflora", "Wineberry", "Rubus phoenicolasius", "Mexican palmetto", "Sabal mexicana", "Cabbage palmetto", "Sabal palmetto", "White willow", "Salix alba", "Peachleaf willow", "Salix amygdaloides", "Weeping willow", "Salix babylonica", "Bebb willow", "Salix bebbiana", "Bonpland willow", "Salix bonplandiana", "Coastal plain willow", "Salix caroliniana", "Black willow", "Salix nigra", "Balsam willow", "Salix pyrifolia", "Scoulers willow", "Salix scouleriana", "Red elderberry", "Sambucus racemosa", "Western soapberry", "Sapindus saponaria", "Sassafras", "Sassafras albidum", "Octopus tree", "Schefflera actinophylla", "False mastic", "Sideroxylon foetidissimum", "Chittamwood", "Sideroxylon lanuginosum", "White bully", "Sideroxylon salicifolium", "Paradisetree", "Simarouba glauca", "Texas sophora", "Sophora affinis", "American mountain-ash", "Sorbus americana", "European mountain-ash", "Sorbus aucuparia", "Northern mountain-ash", "Sorbus decora", "American bladdernut", "Staphylea trifolia", "Japanese snowbell", "Styrax japonicus", "West indian mahogany", "Swietenia mahagoni", "Sweetleaf", "Symplocos tinctoria", "Japanese tree lilac", "Syringa reticulata", "Java plum", "Syzygium cumini", "Tamarind", "Tamarindus indica", "Key thatch palm", "Thrinax morrisii", "Florida thatch palm", "Thrinax radiata", "American basswood", "Tilia americana", "Littleleaf linden", "Tilia cordata", "Common lime", "Tilia X europaea", "California torreya", "Torreya californica", "Florida torreya", "Torreya taxifolia", "Chinese tallowtree", "Triadica sebifera", "Winged elm", "Ulmus alata", "American elm", "Ulmus americana", "Cedar elm", "Ulmus crassifolia", "Siberian elm", "Ulmus pumila", "Slippery elm", "Ulmus rubra", "September elm", "Ulmus serotina", "Rock elm", "Ulmus thomasii", "California laurel", "Umbellularia californica", "Highbush blueberry", "Vaccinium corymbosum", "Deerberry", "Vaccinium stamineum", "Tungoil tree", "Vernicia fordii", "Viburnum", "Mapleleaf viburnum", "Viburnum acerifolium", "Southern arrowwood", "Viburnum dentatum", "Linden arrowwood", "Viburnum dilatatum", "Nannyberry", "Viburnum lentago", "Possumhaw viburnum", "Viburnum nudum", "European cranberrybush", "Viburnum opulus", "Japanese snowball", "Viburnum plicatum", "Blackhaw", "Viburnum prunifolium", "Rusty blackhaw", "Viburnum rufidulum", "Canyon grape", "Vitis arizonica", "Joshua tree", "Yucca brevifolia", "Japanese zelkova", "Zelkova serrata", "Fir spp.", "Abies spp.", "White-cedar spp.", "Chamaecyparis spp.", "Cypress spp.", "Cupressus spp.", "Redcedar/juniper spp.", "Juniperus spp.", "Larch spp.", "Larix spp.", "Spruce spp.", "Picea spp.", "Pine spp.", "Pinus spp.", "Douglas-fir spp.", "Pseudotsuga spp.", "Baldcypress spp.", "Taxodium spp.", "Yew spp.", "Taxus spp.", "Thuja spp.", "Hemlock spp.", "Tsuga spp.", "Pacific silver fir", "Abies amabilis", "Balsam fir", "Abies balsamea", "Bristlecone fir", "Abies bracteata", "White fir", "Abies concolor", "Fraser fir", "Abies fraseri", "Grand fir", "Abies grandis", "Subalpine fir", "Abies lasiocarpa", "California red fir", "Abies magnifica", "Noble fir", "Abies procera", "Shasta red fir", "Abies shastensis", "Port-orford-cedar", "Chamaecyparis lawsoniana", "Alaska yellow-cedar", "Chamaecyparis nootkatensis", "Atlantic white-cedar", "Chamaecyparis thyoides", "Arizona cypress", "Cupressus arizonica", "Modoc cypress", "Cupressus bakeri", "Tecate cypress", "Cupressus forbesii", "Macnabs cypress", "Cupressus macnabiana", "Monterey cypress", "Cupressus macrocarpa", "Sargents cypress", "Cupressus sargentii", "Ashe juniper", "Juniperus ashei", "California juniper", "Juniperus californica", "Redberry juniper", "Juniperus coahuilensis", "Alligator juniper", "Juniperus deppeana", "Drooping juniper", "Juniperus flaccida", "Oneseed juniper", "Juniperus monosperma", "Western juniper", "Juniperus occidentalis", "Utah juniper", "Juniperus osteosperma", "Pinchot juniper", "Juniperus pinchotii", "Rocky mountain juniper", "Juniperus scopulorum", "Eastern redcedar", "Juniperus virginiana", "Tamarack", "Larix laricina", "Subalpine larch", "Larix lyallii", "Western larch", "Larix occidentalis", "Norway spruce", "Picea abies", "Brewer spruce", "Picea breweriana", "Engelmann spruce", "Picea engelmannii", "White spruce", "Picea glauca", "Black spruce", "Picea mariana", "Blue spruce", "Picea pungens", "Red spruce", "Picea rubens", "Sitka spruce", "Picea sitchensis", "Whitebark pine", "Pinus albicaulis", "Bristlecone pine", "Pinus aristata", "Arizona pine", "Pinus arizonica", "Knobcone pine", "Pinus attenuata", "Foxtail pine", "Pinus balfouriana", "Jack pine", "Pinus banksiana", "Mexican pinyon pine", "Pinus cembroides", "Sand pine", "Pinus clausa", "Lodgepole pine", "Pinus contorta", "Coulter pine", "Pinus coulteri", "Border pinyon", "Pinus discolor", "Shortleaf pine", "Pinus echinata", "Common pinyon", "Pinus edulis", "Slash pine", "Pinus elliottii", "Apache pine", "Pinus engelmannii", "Limber pine", "Pinus flexilis", "Spruce pine", "Pinus glabra", "Jeffrey pine", "Pinus jeffreyi", "Sugar pine", "Pinus lambertiana", "Chihuahua pine", "Pinus leiophylla", "Great basin bristlecone pine", "Pinus longaeva", "Singleleaf pinyon", "Pinus monophylla", "Western white pine", "Pinus monticola", "Bishop pine", "Pinus muricata", "Austrian pine", "Pinus nigra", "Longleaf pine", "Pinus palustris", "Ponderosa pine", "Pinus ponderosa", "Table mountain pine", "Pinus pungens", "Four-leaf or parry pinyon pine", "Pinus quadrifolia", "Monterey pine", "Pinus radiata", "Papershell pinyon pine", "Pinus remota", "Red pine", "Pinus resinosa", "Pitch pine", "Pinus rigida", "Gray or california foothill pine", "Pinus sabiniana", "Pond pine", "Pinus serotina", "Southwestern white pine", "Pinus strobiformis", "Eastern white pine", "Pinus strobus", "Scotch pine", "Pinus sylvestris", "Loblolly pine", "Pinus taeda", "Torrey pine", "Pinus torreyana", "Virginia pine", "Pinus virginiana", "Washoe pine", "Pinus washoensis", "Bigcone douglas-fir", "Pseudotsuga macrocarpa", "Douglas-fir", "Pseudotsuga menziesii", "Redwood", "Sequoia sempervirens", "Giant sequoia", "Sequoiadendron giganteum", "Pondcypress", "Taxodium ascendens", "Bald cypress", "Taxodium distichum", "Montezuma baldcypress", "Taxodium mucronatum", "Pacific yew", "Taxus brevifolia", "Florida yew", "Taxus floridana", "Eastern white cedar", "Thuja occidentalis", "Western redcedar", "Thuja plicata", "Eastern hemlock", "Tsuga canadensis", "Carolina hemlock", "Tsuga caroliniana", "Western hemlock", "Tsuga heterophylla", "Mountain hemlock", "Tsuga mertensiana"];
 			
 			var startTime = 0;
 			$(document).ready(function(){
@@ -897,6 +947,7 @@
 				});
 				window.phenology = new Chart(document.getElementById('phenologyChart'), lineConfig);
 				window.composition = new Chart($('#compositionChart')[0].getContext('2d'), barConfig);
+				window.trends = new Chart(document.getElementById('trendsChart'), trendsConfig);
 			});
 			$(document).click(function(){
 				$(".smallSelect .options").fadeOut(0);
@@ -1138,12 +1189,14 @@
 					//queueNotice("alert", "Value must be between " + min + " and " + max + ".");
 				}
 			}
-			var monthStart = 1;
-			var monthEnd = 12;
-			var yearStart = 1980;
-			var yearEnd = (new Date()).getFullYear();
-			var absoluteYearStart = yearStart;
-			var absoluteYearEnd = yearEnd;
+			var filterMonthStart = 1;
+			var filterMonthEnd = 12;
+			var filterYearStart = 1980;
+			var filterYearEnd = (new Date()).getFullYear();
+			var absoluteYearStart = filterYearStart;
+			var absoluteYearEnd = filterYearEnd;
+			var trendsMonthStart = 1;
+			var trendsMonthEnd = 12;
 			function setSliders(){
 				$("#years")[0].innerHTML = "Loading...";
 				var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
@@ -1153,9 +1206,21 @@
 					max: 12,
 					values: [1, 12],
 					slide: function(event, ui){
-						monthStart = ui.values[0];
-						monthEnd = ui.values[1];
+						filterMonthStart = ui.values[0];
+						filterMonthEnd = ui.values[1];
 						$("#months")[0].innerHTML = months[ui.values[0] - 1] + " - " + months[ui.values[1] - 1];
+					}
+				});
+				$("#trendsMonthsSlider").slider({
+					range: true,
+					min: 1,
+					max: 12,
+					values: [1, 12],
+					slide: function(event, ui){
+						trendsMonthStart = ui.values[0];
+						trendsMonthEnd = ui.values[1];
+						$("#trendsMonths")[0].innerHTML = months[ui.values[0] - 1] + " - " + months[ui.values[1] - 1];
+						reloadTrends();
 					}
 				});
 				$.get("../php/getEarliestYear.php", function(data){
@@ -1163,7 +1228,7 @@
 					var date = new Date();
 					var currentYear = date.getFullYear();
 					var earliestYear = Math.min(Number(data), (currentYear - 1));
-					yearStart = earliestYear;
+					filterYearStart = earliestYear;
 					absoluteYearStart = earliestYear;
 					$("#yearsSlider").slider({
 						range: true,
@@ -1171,8 +1236,8 @@
 						max: currentYear,
 						values: [earliestYear, currentYear],
 						slide: function(event, ui){
-							yearStart = ui.values[0];
-							yearEnd = ui.values[1];
+							filterYearStart = ui.values[0];
+							filterYearEnd = ui.values[1];
 							$("#years")[0].innerHTML = ui.values[0] + " - " + ui.values[1];
 						}
 					});
@@ -1278,9 +1343,14 @@
 			}
 			function markerClick(marker){
 				var graphType = "Phenology";
-				if(window.location.toString().substring(window.location.toString().indexOf("#") + 1).indexOf("Composition") > -1){
+				var urlAnchorText = window.location.toString().substring(window.location.toString().indexOf("#") + 1);
+				if(urlAnchorText.indexOf("Composition") > -1){
 					graphType = "Composition";
 					switchGraphTo('bar');
+				}
+				else if(urlAnchorText.indexOf("Trends") > -1){
+					graphType = "Trends";
+					switchGraphTo('trends');
 				}
 				window.location = "#selected" + graphType + marker.siteInformation["ID"];
 				activeSite = marker.siteInformation["Name"];
@@ -1350,10 +1420,15 @@
 				if(marker.siteInformation["MostRecentDateTime"] != "Never"){
 					clearSets();
 					clearCompositionSites();
+					clearTrends();
 					$(".siteSelectionText").css({display: "none"});
 					showSiteUserLeaderboard(marker.siteInformation["ID"], function(){
+						var earliestYear = Number(marker.siteInformation["EarliestDateTime"].split(" ")[0].split('-')[0]);
+						var mostRecentYear = Number(marker.siteInformation["MostRecentDateTime"].split(" ")[0].split('-')[0]);
+						
 						addSetFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"], year: Number(dateParts[0])});
 						addCompositionSite(marker.siteInformation["ID"]);
+						addTrendFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"]});
 						updateSiteSelections();
 						loadNewActiveSiteCompositionDefaults();
 						showComposition();
@@ -1656,17 +1731,17 @@
 				var minSize = Number($("#minLength")[0].value);
 				var plantSpecies = $("#plantSpecies")[0].value;
 				var monthAbbrs = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-				var months = "during " + monthAbbrs[monthStart - 1];
-				if(monthStart != monthEnd){
-					months = "from " + monthAbbrs[monthStart - 1] + " to " + monthAbbrs[monthEnd - 1];
+				var months = "during " + monthAbbrs[filterMonthStart - 1];
+				if(filterMonthStart != filterMonthEnd){
+					months = "from " + monthAbbrs[filterMonthStart - 1] + " to " + monthAbbrs[filterMonthEnd - 1];
 				}
-				var years = yearStart;
-				if(yearStart != yearEnd){
-					years = yearStart + " through " + yearEnd;
+				var years = filterYearStart;
+				if(filterYearStart != filterYearEnd){
+					years = filterYearStart + " through " + filterYearEnd;
 				}
 				if(plantSpecies.replace(/ /g, "") == ""){plantSpecies = "%";}
 				
-				$.get("../php/getSites.php?cron=false&observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&comparisonMetric=" + comparisonMetric + "&monthStart=" + monthStart + "&monthEnd=" + monthEnd + "&yearStart=" + yearStart + "&yearEnd=" + yearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies), function(data){
+				$.get("../php/getSites.php?cron=false&observationMethod=" + observationMethod + "&includeWetLeaves=" + includeWetLeaves + "&comparisonMetric=" + comparisonMetric + "&monthStart=" + filterMonthStart + "&monthEnd=" + filterMonthEnd + "&yearStart=" + filterYearStart + "&yearEnd=" + filterYearEnd + "&arthropod=" + encodeURIComponent(arthropod) + "&minSize=" + minSize + "&plantSpecies=" + encodeURIComponent(plantSpecies), function(data){
 					//success
 					saveMapFilters();
 					//clear old markers
@@ -1722,7 +1797,8 @@
 								ArthropodCount: sites[i]["ArthropodCount"],
 								CaterpillarCount: sites[i]["CaterpillarCount"],
 								SurveyCount: sites[i]["SurveyCount"],
-								MostRecentDateTime: sites[i]["MostRecentDateTime"]
+								MostRecentDateTime: sites[i]["MostRecentDateTime"],
+								EarliestDateTime: sites[i]["EarliestDateTime"]
 							}
 						});
 						if(currentColor == "#fed136"){
@@ -1800,10 +1876,10 @@
 					minimumLength: minimumLength,
 					plantSpecies: plantSpecies,
 					wetLeaves: checkboxIsChecked($("#includeWetLeavesCheckbox")),
-					monthStart: monthStart,
-					monthEnd: monthEnd,
-					yearStart: yearStart,
-					yearEnd: yearEnd
+					monthStart: filterMonthStart,
+					monthEnd: filterMonthEnd,
+					yearStart: filterYearStart,
+					yearEnd: filterYearEnd
 				};
 			}
 			var siteNamesAndIDs = [];
@@ -1857,7 +1933,8 @@
 								ArthropodCount: sites[i]["ArthropodCount"],
 								CaterpillarCount: sites[i]["CaterpillarCount"],
 								SurveyCount: sites[i]["SurveyCount"],
-								MostRecentDateTime: sites[i]["MostRecentDateTime"]
+								MostRecentDateTime: sites[i]["MostRecentDateTime"],
+								EarliestDateTime: sites[i]["EarliestDateTime"]
 							}
 						});
 						marker.addListener('click', physicalMarkerClick);
@@ -2174,14 +2251,19 @@
 			}
 			function switchGraphTo(graphType){
 				if(graphType == "bar"){
-					window.location = "#" + window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace("Phenology", "Composition");
+					window.location = "#" + window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace("Phenology", "Composition").replace("Trends", "Composition");
+				}
+				else if(graphType == "line"){
+					window.location = "#" + window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace("Composition", "Phenology").replace("Trends", "Phenology");
 				}
 				else{
-					window.location = "#" + window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace("Composition", "Phenology");
+					window.location = "#" + window.location.toString().substring(window.location.toString().indexOf("#") + 1).replace("Composition", "Trends").replace("Phenology", "Trends");
 				}
 				$("#barGraphSwitchButton")[0].className = "";
 				$("#lineGraphSwitchButton")[0].className = "";
+				$("#trendsGraphSwitchButton")[0].className = "";
 				$("#" + graphType + "GraphSwitchButton")[0].className = "active";
+				$("#trendsGraph")[0].style.display = "none";
 				$("#lineGraph")[0].style.display = "none";
 				$("#barGraph")[0].style.display = "none";
 				$("#" + graphType + "Graph")[0].style.display = "block";
@@ -2264,6 +2346,50 @@
 					}
 				}
 			};
+      var trendsConfig = {
+				type: 'line',
+				data: {
+					datasets: [
+						endpoints[0],
+						endpoints[1]
+					]
+				},
+				options: {
+					responsive: true,
+					legend: {display:false},
+					tooltips: {callbacks: {label: function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel + '%';}}},
+					scales: {
+						xAxes: [{
+							type: 'time',
+							time: {
+								unit: 'year', 
+								unitStepSize: 1, 
+								tooltipFormat: "YYYY"
+							},
+							scaleLabel: {
+								display: true,
+								labelString: 'Date',
+								fontSize: 20
+							},
+							ticks: {
+								autoSkip: true,
+								maxRotation: 0,
+								fontSize: 12
+							},
+							bounds: "ticks",
+							gridLines: {color: "rgba(0,0,0,0.05)"}
+						}],
+						yAxes: [{
+							scaleLabel: {display: true,labelString: '', fontSize: 18},
+							gridLines: {color: "rgba(0,0,0,0.05)"},
+							ticks:{
+								beginAtZero: true,
+								fontSize: 18
+							}
+						}]
+					}
+				}
+			};
 			function getClearPoint(x, y){
 				var background = "rgba(230,230,230,0)";
 				var border = "rgba(200,200,200,0)";
@@ -2285,50 +2411,81 @@
 			function opaque(color){
 				return formatColor(color);
 			}
-			function formatDate(dateString){//YYYY-MM-DD
-				return "2000" + dateString.substring(4) + "T12:00:00-00:00";
+			function lightenColor(p,c0,c1,l){
+			    let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
+			    if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
+			    if(!this.lightenColorr)this.lightenColorr=(d)=>{
+				let n=d.length,x={};
+				if(n>9){
+				    [r,g,b,a]=d=d.split(","),n=d.length;
+				    if(n<3||n>4)return null;
+				    x.r=i(r[3]=="a"?r.slice(5):r.slice(4)),x.g=i(g),x.b=i(b),x.a=a?parseFloat(a):-1
+				}else{
+				    if(n==8||n==6||n<4)return null;
+				    if(n<6)d="#"+d[1]+d[1]+d[2]+d[2]+d[3]+d[3]+(n>4?d[4]+d[4]:"");
+				    d=i(d.slice(1),16);
+				    if(n==9||n==5)x.r=d>>24&255,x.g=d>>16&255,x.b=d>>8&255,x.a=m((d&255)/0.255)/1000;
+				    else x.r=d>>16,x.g=d>>8&255,x.b=d&255,x.a=-1
+				}return x};
+			    h=c0.length>9,h=a?c1.length>9?true:c1=="c"?!h:false:h,f=this.lightenColorr(c0),P=p<0,t=c1&&c1!="c"?this.lightenColorr(c1):P?{r:0,g:0,b:0,a:-1}:{r:255,g:255,b:255,a:-1},p=P?p*-1:p,P=1-p;
+			    if(!f||!t)return null;
+			    if(l)r=m(P*f.r+p*t.r),g=m(P*f.g+p*t.g),b=m(P*f.b+p*t.b);
+			    else r=m((P*f.r**2+p*t.r**2)**0.5),g=m((P*f.g**2+p*t.g**2)**0.5),b=m((P*f.b**2+p*t.b**2)**0.5);
+			    a=f.a,t=t.a,f=a>=0||t>=0,a=f?a<0?t:t<0?a:a*P+t*p:0;
+			    if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
+			    return "#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
 			}
-			var chartedSets = {};
-			function getLine(label, color, points){
+			function formatDate(dateString, includeYear){//YYYY-MM-DD
+				includeYear = includeYear || false;
+				
+				return (includeYear ? dateString : "2000" + dateString.substring(4)) + "T12:00:00-00:00";
+			}
+			var chartedSets = {
+				phenology: {},
+				trends: {}
+			};
+			function getLine(label, color, points, includeYear, fadeLine){
+				includeYear = includeYear || false;
+				
 				var occurrenceLine = {
 					label: label,
-					backgroundColor: transluscent(color),
-					borderColor: opaque(color),
+					backgroundColor: fadeLine ? lightenColor(.6, color) : transluscent(color),
+					borderColor: fadeLine ? lightenColor(.6, color) : opaque(color),
 					lineTension: LINE_TENSION,
 					fill: false,
 					data: []
 				};
 				for(var i = 0; i < points.length; i++){
-					occurrenceLine.data[occurrenceLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][1])};
+					occurrenceLine.data[occurrenceLine.data.length] = {x: formatDate(points[i][0], includeYear), y: Number(points[i][1])};
 				}
 				
 				var densityLine = {
 					label: label,
-					backgroundColor: transluscent(color),
-					borderColor: opaque(color),
+					backgroundColor: fadeLine ? lightenColor(.6, color) : transluscent(color),
+					borderColor: fadeLine ? lightenColor(.6, color) : opaque(color),
 					lineTension: LINE_TENSION,
 					fill: false,
 					data: []
 				};
 				for(var i = 0; i < points.length; i++){
-					densityLine.data[densityLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][2])};
+					densityLine.data[densityLine.data.length] = {x: formatDate(points[i][0], includeYear), y: Number(points[i][2])};
 				}
 				
 				var meanBiomassLine = {
 					label: label,
-					backgroundColor: transluscent(color),
-					borderColor: opaque(color),
+					backgroundColor: fadeLine ? lightenColor(.6, color) : transluscent(color),
+					borderColor: fadeLine ? lightenColor(.6, color) : opaque(color),
 					lineTension: LINE_TENSION,
 					fill: false,
 					data: []
 				};
 				for(var i = 0; i < points.length; i++){
-					meanBiomassLine.data[meanBiomassLine.data.length] = {x: formatDate(points[i][0]), y: Number(points[i][3])};
+					meanBiomassLine.data[meanBiomassLine.data.length] = {x: formatDate(points[i][0], includeYear), y: Number(points[i][3])};
 				}
 				
 				return [occurrenceLine, densityLine, meanBiomassLine];
 			}
-			function getLines(label, color, points){
+			function getLines(chartType, label, color, points, daysOfSeparationBetweenLines, includeYear, includeLinerRegressionLine){
 				points = points.sort(function(a, b) {
 					return (new Date(a[0]).getTime()) - (new Date(b[0]).getTime());
 				});
@@ -2337,19 +2494,66 @@
 				var lastDatesTime = -1;
 				for(var i = 0; i < points.length; i++){
 					var thisDatesTime = new Date(points[i][0]).getTime();
-					if(i == 0 || Math.abs(thisDatesTime - lastDatesTime) > (DAY * 30)){
+					if(i == 0 || Math.abs(thisDatesTime - lastDatesTime) > (DAY * daysOfSeparationBetweenLines)){
 						pointSets[pointSets.length] = [];
 					}
 					lastDatesTime = thisDatesTime;
 					pointSets[pointSets.length - 1][pointSets[pointSets.length - 1].length] = points[i];
 				}
 				var lines = [];
-				for(var i = 0; i < pointSets.length; i++){
-					lines[lines.length] = getLine(label, color, pointSets[i]);
+				if(includeLinerRegressionLine && points.length >= MIN_POINTS_TO_SHOW_LINEAR_REGRESSION){
+					var occurrencePoints = [];
+					var densityPoints = [];
+					var meanBiomassPoints = [];
+					for(var i = 0; i < points.length; i++){
+						occurrencePoints[occurrencePoints.length] = [points[i][0], points[i][1]];
+						densityPoints[densityPoints.length] = [points[i][0], points[i][2]];
+						meanBiomassPoints[meanBiomassPoints.length] = [points[i][0], points[i][3]];
+					}
+					lines[lines.length] = [
+						{
+							label: label + " linear regression",
+							backgroundColor: transluscent(color),
+							borderColor: opaque(color),
+							lineTension: LINE_TENSION,
+							fill: false,
+							data: getRegressionLineEndpoints(occurrencePoints, true),
+							regressionData: getRegressionLineData(occurrencePoints),
+							pointRadius: 0,
+							pointHitRadius: 0
+						},
+						{
+							label: label + " linear regression",
+							backgroundColor: transluscent(color),
+							borderColor: opaque(color),
+							lineTension: LINE_TENSION,
+							fill: false,
+							data: getRegressionLineEndpoints(densityPoints, true),
+							regressionData: getRegressionLineData(densityPoints),
+							pointRadius: 0,
+							pointHitRadius: 0
+						},
+						{
+							label: label + " linear regression",
+							backgroundColor: transluscent(color),
+							borderColor: opaque(color),
+							lineTension: LINE_TENSION,
+							fill: false,
+							data: getRegressionLineEndpoints(meanBiomassPoints, true),
+							regressionData: getRegressionLineData(meanBiomassPoints),
+							pointRadius: 0,
+							pointHitRadius: 0
+						}
+					];
 				}
-				chartedSets[label] = lines;
+				for(var i = 0; i < pointSets.length; i++){
+					lines[lines.length] = getLine(label, color, pointSets[i], includeYear, includeLinerRegressionLine);
+				}
+				chartedSets[chartType][label] = lines;
 				
-				var comparisonMetric = $("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(2)[0].innerHTML, "meanBiomass");
+				var graphID = chartType == "phenology" ? "lineGraph" : "trendsGraph";
+				var optionDivs = $("#" + graphID + " .yAxisLabel .smallSelect .options>div");
+				var comparisonMetric = $("#" + graphID + " .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace(optionDivs.eq(0)[0].innerHTML, "occurrence").replace(optionDivs.eq(1)[0].innerHTML, "density").replace(optionDivs.eq(2)[0].innerHTML, "meanBiomass");
 				var comparisonMetricIndex = 0;
 				if(comparisonMetric == "density"){
 					comparisonMetricIndex = 1;
@@ -2364,20 +2568,20 @@
 				}
 				return comparisonMetricLines;
 			}
-			var labels = [];
+			var phenologyLabels = [];
 			function addSet(label, points, update){
 				if(update !== false){
 					update = true;
 				}
-				if(labels.length >= colors.length){
+				if(phenologyLabels.length >= colors.length){
 					queueNotice("error", "You have too many lines on your phenology chart. Please delete at least one of them before adding more.");
 					return false;
 				}
 				var color = "";
 				for(var i = 0; i < colors.length; i++){
 					var colorIsInUse = false;
-					for(var j = 0; j < labels.length; j++){
-						if(opaque(labels[j][1]) == opaque(colors[i])){
+					for(var j = 0; j < phenologyLabels.length; j++){
+						if(opaque(phenologyLabels[j][1]) == opaque(colors[i])){
 							colorIsInUse = true;
 						}
 					}
@@ -2386,8 +2590,8 @@
 						break;
 					}
 				}
-				labels[labels.length] = [label, color];
-				var lines = getLines(label, color, points);
+				phenologyLabels[phenologyLabels.length] = [label, color];
+				var lines = getLines("phenology", label, color, points, 30, false, false);
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					lineConfig.data.datasets = [];
 				}
@@ -2402,10 +2606,10 @@
 			}
 			function updatePhenologyLegend(){
 				var htmlToAdd = "<div style=\"display:inline-block;text-align:left;\">";
-				for(var i = 0; i < labels.length; i++){
+				for(var i = 0; i < phenologyLabels.length; i++){
 					htmlToAdd += "<div class=\"label\">" +
-							"<div class=\"box\" style=\"background:" + transluscent(labels[i][1]) + ";border:3px solid " + opaque(labels[i][1]) + ";\"></div>" +
-							"<span class=\"description\">" + labels[i][0] + "</span>" +
+							"<div class=\"box\" style=\"background:" + transluscent(phenologyLabels[i][1]) + ";border:3px solid " + opaque(phenologyLabels[i][1]) + ";\"></div>" +
+							"<span class=\"description\">" + phenologyLabels[i][0] + "</span>" +
 							"<span style=\"color:#bbb;\" class=\"editDeleteSpan\">" +
 								" ( " +
 								"<span class=\"underline pointer\" onclick=\"editSet(this.parentNode.parentNode);\">edit</span>" +
@@ -2415,7 +2619,7 @@
 							"</span>" +
 						"</div><br/>";
 				}
-				htmlToAdd += 	"<div id=\"loadingLine\" style=\"display:none;\">" +
+				htmlToAdd += 	"<div id=\"phenologyLoadingLine\" style=\"display:none;\">" +
 							"<div class=\"colorBlock\"></div> Loading..." +
 						"</div>" +
 						"<div class=\"label\" id=\"addNewSetLabel\">" +
@@ -2426,11 +2630,11 @@
 				$("#phenologyLegend")[0].innerHTML = htmlToAdd;
 			}
 			function showAddNewLineOptions(){
-				if(labels.length >= colors.length){
+				if(phenologyLabels.length >= colors.length){
 					queueNotice("error", "You have too many lines on your phenology chart. Please delete at least one of them before adding more.");
 					return false;
 				}
-				$(".editDeleteSpan").fadeOut(0);
+				$("#phenologyLegend .editDeleteSpan").fadeOut(0);
 				var siteSelectOptions = "";
 				for(var i = 0; i < siteNamesAndIDs.length; i++){
 					siteSelectOptions += "<div onclick=\"smallSelectOption(this);\">" + siteNamesAndIDs[i][0] + "</div>";
@@ -2470,7 +2674,7 @@
 							"</div>" +
 							" in " +
 							"<div class=\"smallSelect\">" + //YEAR
-								"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + yearEnd + "</div>" +
+								"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + filterYearEnd + "</div>" +
 								"<div class=\"options\">" +
 									yearOptions +
 								"</div>" +
@@ -2545,19 +2749,19 @@
 						lineConfig.data.datasets.splice(i, 1);
 					}
 				}
-				for(var i = (labels.length - 1); i >=0; i--){
-					if(lineColor == opaque(labels[i][1])){
-						labels.splice(i, 1);
+				for(var i = (phenologyLabels.length - 1); i >=0; i--){
+					if(lineColor == opaque(phenologyLabels[i][1])){
+						phenologyLabels.splice(i, 1);
 					}
 				}
-				delete chartedSets[$(labelDiv).find(".description").eq(0)[0].innerHTML];
+				delete chartedSets.phenology[$(labelDiv).find(".description").eq(0)[0].innerHTML];
 				window.phenology.update();
 				centerYAxisLabels();
 				updatePhenologyLegend();
 			}
 			function clearSets(){
-				labels = [];
-				chartedSets = {};
+				phenologyLabels = [];
+				chartedSets.phenology = {};
 				lineConfig.data.datasets = [endpoints[0], endpoints[1]];
 				window.phenology.update();
 				centerYAxisLabels();
@@ -2568,8 +2772,8 @@
 				var color = "";
 				for(var i = 0; i < colors.length; i++){
 					var colorIsInUse = false;
-					for(var j = 0; j < labels.length; j++){
-						if(opaque(labels[j][1]) == opaque(colors[i])){
+					for(var j = 0; j < phenologyLabels.length; j++){
+						if(opaque(phenologyLabels[j][1]) == opaque(colors[i])){
 							colorIsInUse = true;
 						}
 					}
@@ -2578,9 +2782,9 @@
 						break;
 					}
 				}
-				$("#loadingLine .colorBlock")[0].style.background = transluscent(color);
-				$("#loadingLine .colorBlock")[0].style.border= "3px solid " + opaque(color);
-				$("#loadingLine")[0].style.display = "block";
+				$("#phenologyLoadingLine .colorBlock")[0].style.background = transluscent(color);
+				$("#phenologyLoadingLine .colorBlock")[0].style.border= "3px solid " + opaque(color);
+				$("#phenologyLoadingLine")[0].style.display = "block";
 				console.log("Force phenology chart to front of composition queue: " + JSON.stringify(filters));
 				pauseCompositionLoads(function(){loadSetFromFilters(filters, function(){callback();resumeCompositionLoads();})});
 			}
@@ -2609,7 +2813,7 @@
 				})
 				.always(function() {
 					//complete
-					$("#loadingLine")[0].style.display = "none";
+					$("#phenologyLoadingLine")[0].style.display = "none";
 					callback();
 				});
 			}
@@ -2621,9 +2825,9 @@
 				//otherwise, set lines to match metric
 				var comparisonMetric = $("#lineGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#lineGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "meanBiomass");
 				var newData = [];
-				for (var setLabel in chartedSets) {
-					if (chartedSets.hasOwnProperty(setLabel)) {
-						var setLines = chartedSets[setLabel];
+				for (var setLabel in chartedSets.phenology) {
+					if (chartedSets.phenology.hasOwnProperty(setLabel)) {
+						var setLines = chartedSets.phenology[setLabel];
 						for(var i = 0; i < setLines.length; i++){
 							if(comparisonMetric == "occurrence"){
 								newData[newData.length] = setLines[i][0];
@@ -2990,6 +3194,611 @@
 				}
 			}
 			//END OF COMPOSITION CHART STUFF
+      			//TRENDS CHART STUFF
+			var MIN_POINTS_TO_SHOW_LINEAR_REGRESSION = 3;
+			
+      			function matchTrendLinesWithYAxisLabel(){
+				//if we just have the invisible endpoints loaded on an empty chart, don't bother doing anything
+				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
+					return true;
+				}
+				//otherwise, set lines to match metric
+				var comparisonMetric = $("#trendsGraph .yAxisLabel .smallSelect .selected").eq(0)[0].innerHTML.replace($("#trendsGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "occurrence").replace($("#trendsGraph .yAxisLabel .smallSelect .options>div").eq(1)[0].innerHTML, "density").replace($("#trendsGraph .yAxisLabel .smallSelect .options>div").eq(0)[0].innerHTML, "meanBiomass");
+				var newData = [];
+				for (var setLabel in chartedSets.trends) {
+					if (chartedSets.trends.hasOwnProperty(setLabel)) {
+						var setLines = chartedSets.trends[setLabel];
+						for(var i = 0; i < setLines.length; i++){
+							if(comparisonMetric == "occurrence"){
+								newData[newData.length] = setLines[i][0];
+							}
+							else if(comparisonMetric == "density"){
+								newData[newData.length] = setLines[i][1];
+							}
+							else{//mean biomass
+								newData[newData.length] = setLines[i][2];
+							}
+						}
+					}
+				}
+				
+				trendsConfig.data.datasets = newData;
+				//set tooltip to match units
+				if(comparisonMetric == "occurrence"){
+					trendsConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel + '%';};
+				}
+				else{//density or meanBiomass
+					trendsConfig.options.tooltips.callbacks.label = function(tooltipItems, data) {return data.datasets[tooltipItems.datasetIndex].label +': ' + tooltipItems.yLabel;};
+				}
+				
+				underlayRegressionLines();
+				
+				//update
+				window.trends.update();
+				updateTrendsLegend();
+			}
+			
+			function getCoords(ascendingPoints){
+				var coords = [];
+				for(var i = 0; i < ascendingPoints.length; i++){
+					coords[coords.length] = [
+						Number(ascendingPoints[i][0]),
+						Number(ascendingPoints[i][1])
+					];
+				}
+				return coords;
+			}
+			
+			function getRegressionLineData(points){
+				if(points.length < 1){
+					return [];
+				}
+				
+				var ascendingPoints = points.sort(function(a, b) {
+					return (new Date(a[0]).getTime()) - (new Date(b[0]).getTime());
+				});
+				
+				var coords = getCoords(ascendingPoints);
+				
+				var xs = getXs(coords);
+				
+				return {
+					b: getRegressionLineYIntercept(coords).toFixed(2).replace("-0.00", "0.00"),
+					m: getRegressionLineSlope(coords, true).toFixed(2).replace("-0.00", "0.00"),
+					r2: getRegressionLineR2(coords).toFixed(2).replace("-0.00", "0.00"),
+					p: "?"
+				};
+			}
+			
+			function getRegressionLineR2(coords){
+				console.log(JSON.stringify(coords));
+				
+				var ys = getYs(coords);
+				var meanY = getMean(ys);
+				var m = getRegressionLineSlope(coords);
+				var b = getRegressionLineYIntercept(coords);
+				
+				var numeratorSum = 0;
+				var denominatorSum = 0;
+				for(var i = 0; i < coords.length; i++){
+					var regressionY = b + (m * getX(coords[i]));
+					var y = getY(coords[i]);
+					numeratorSum += Math.pow(regressionY - y, 2);
+					denominatorSum += Math.pow(y - meanY, 2);
+				}
+				
+				return 1 - (numeratorSum / denominatorSum);
+				
+				
+				/*
+				ALTERNATE ALGORITHM FOUND AT https://www.youtube.com/watch?v=w2FKXOa0HGA
+				------------------------------------------------------------------------
+				var ys = getYs(coords);
+				var meanY = getMean(ys);
+				var m = getRegressionLineSlope(coords);
+				var b = getRegressionLineYIntercept(coords);
+				
+				var numeratorSum = 0;
+				var denominatorSum = 0;
+				for(var i = 0; i < coords.length; i++){
+					var regressionY = b + (m * getX(coords[i]));
+					var y = getY(coords[i]);
+					numeratorSum += Math.pow(regressionY - meanY, 2);
+					denominatorSum += Math.pow(y - meanY, 2);
+				}
+				
+				return numeratorSum / denominatorSum;
+				*/
+			}
+			
+			function getRegressionLineEndpoints(points, includeYear){
+				if(points.length < 1){
+					return [];
+				}
+				
+				var ascendingPoints = points.sort(function(a, b) {
+					return (new Date(a[0]).getTime()) - (new Date(b[0]).getTime());
+				});
+				
+				var coords = getCoords(ascendingPoints);
+				
+				var xs = getXs(coords);
+				
+				return [
+					{
+						x: formatDate(ascendingPoints[0][0], includeYear), 
+						y: Math.round(getRegressionLineY(coords, xs[0]) * 100) / 100
+					},
+					{
+						x: formatDate(ascendingPoints[ascendingPoints.length - 1][0], includeYear), 
+						y: Math.round(getRegressionLineY(coords, xs[xs.length - 1]) * 100) / 100
+					}
+				];
+			}
+			
+			function getRegressionLineY(coords, x){
+				return getRegressionLineYIntercept(coords) + (getRegressionLineSlope(coords) * x);
+			}
+			
+			function getValuesByIndex(arr, index){
+				var vals = [];
+				for(var i = 0; i < arr.length; i++){
+					vals[vals.length] = arr[i][index];
+				}
+				return vals;
+			}
+			
+			function getX(coord){
+				return coord[0];
+			}
+			
+			function getY(coord){
+				return coord[1];
+			}
+			
+			function getXs(coords){
+				return getValuesByIndex(coords, 0);
+			}
+			
+			function getYs(coords){
+				return getValuesByIndex(coords, 1);
+			}
+			
+			function getRegressionLineSlope(coords){
+				var xs = getXs(coords);
+				var ys = getYs(coords);
+				var meanX = getMean(xs);
+				var meanY = getMean(ys);
+				
+				var xDeviationTimesYDeviationSum = 0;
+				var xDeviationSquaredSum = 0;
+				var yDeviationSquaredSum = 0;
+				for(var i = 0; i < coords.length; i++){
+					var xDeviation = getX(coords[i]) - meanX;
+					var yDeviation = getY(coords[i]) - meanY;
+					
+					xDeviationTimesYDeviationSum += xDeviation * yDeviation;
+					xDeviationSquaredSum += Math.pow(xDeviation, 2);
+					yDeviationSquaredSum += Math.pow(yDeviation, 2);
+				}
+				
+				return xDeviationTimesYDeviationSum / xDeviationSquaredSum;
+				
+				/*
+				ALTERNATIVE CODE RECOMMENDED BY https://www.youtube.com/watch?v=GhrxgbQnEEU
+				---------------------------------------------------------------------------
+				var pearsonCorrelationCoefficient = xDeviationTimesYDeviationSum / Math.sqrt(xDeviationSquaredSum * yDeviationSquaredSum);
+				var standardDeviationX = xDeviationSquaredSum / (coords.length - 1);
+				var standardDeviationY = yDeviationSquaredSum / (coords.length - 1);
+				
+				return pearsonCorrelationCoefficient * (standardDeviationY / standardDeviationX);
+				*/
+			}
+			
+			function getRegressionLineYIntercept(coords){
+				return getMean(getYs(coords)) - (getRegressionLineSlope(coords) * getMean(getXs(coords)));
+			}
+			
+			function getMean(nums){
+				var sum = 0;
+				for(var i = 0; i < nums.length; i++){
+					sum += nums[i];
+				}
+				return sum / nums.length;
+			}
+			
+			function underlayRegressionLines(){
+				var prioritizedLineData = [];
+				for(var i = 0; i < trendsConfig.data.datasets.length; i++){
+					if(trendsConfig.data.datasets[i].label.toLowerCase().indexOf("regression") > -1){
+						prioritizedLineData.unshift(trendsConfig.data.datasets[i]);
+					}
+					else{
+						prioritizedLineData[prioritizedLineData.length] = trendsConfig.data.datasets[i];
+					}
+				}
+				
+				trendsConfig.data.datasets = prioritizedLineData;
+			}
+			
+			function showingRegressionLine(label){
+				for(var i = 0; i < trendsConfig.data.datasets.length; i++){
+					if(trendsConfig.data.datasets[i].label === label){
+						return trendsConfig.data.datasets[i].data.length >= MIN_POINTS_TO_SHOW_LINEAR_REGRESSION;
+					}
+				}
+				return false;
+			}
+
+			var trendsLabels = [];
+			function addTrend(label, points, update){
+				if(update !== false){
+					update = true;
+				}
+				
+				if(trendsLabels.length >= colors.length){
+					queueNotice("error", "You have too many trends on your trends chart. Please delete at least one of them before adding more.");
+					return false;
+				}
+				var color = "";
+				for(var i = 0; i < colors.length; i++){
+					var colorIsInUse = false;
+					for(var j = 0; j < trendsLabels.length; j++){
+						if(opaque(trendsLabels[j][1]) == opaque(colors[i])){
+							colorIsInUse = true;
+						}
+					}
+					if(!colorIsInUse){
+						color = colors[i];
+						break;
+					}
+				}
+				trendsLabels[trendsLabels.length] = [label, color];
+				
+				var lines = getLines("trends", label, color, points, 365 * 100, true, true);
+				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
+					trendsConfig.data.datasets = [];
+				}
+				
+				for(var i = 0; i < lines.length; i++){
+					trendsConfig.data.datasets[trendsConfig.data.datasets.length] = lines[i];
+				}
+				
+				underlayRegressionLines();
+				
+				if(update){
+					window.trends.update();
+					centerYAxisLabels();
+					updateTrendsLegend();
+				}
+			}
+			
+			function clearTrends(){
+				trendsLabels = [];
+				chartedSets.trends = {};
+				trendsConfig.data.datasets = [endpoints[0], endpoints[1]];
+				window.trends.update();
+				centerYAxisLabels();
+				updateTrendsLegend();
+			}
+			
+			var realodTrendsTimeout = null;
+			function reloadTrends(){
+				clearTimeout(realodTrendsTimeout);
+				realodTrendsTimeout = setTimeout(function(){
+					var filters = [];
+
+					for(var i = 0; i < trendsLabels.length; i++){
+						var trendLabel = trendsLabels[i][0];
+						console.log("TREND LABEL: ", trendLabel);
+
+						var arthropod = trendLabel.substring(0, trendLabel.indexOf(" at "));
+						var readableAndUnreadableArthropods = [["All arthropods", "%"], ["Ants", "ant"], ["Aphids and psyllids", "aphid"], ["Bees, wasps, sawflies", "bee"], ["Beetles", "beetle"], ["Caterpillars", "caterpillar"], ["Daddy longlegs", "daddylonglegs"], ["Flies", "fly"], ["Grasshoppers and crickets", "grasshopper"], ["Leaf hoppers and cicadas", "leafhopper"], ["Moths and butterflies", "moths"], ["Spiders", "spider"], ["True bugs", "truebugs"], ["Other arthropods", "other"], ["Unidentified arthropods", "unidentified"]];
+						for(var j = 0; j < readableAndUnreadableArthropods.length; j++){
+							if(readableAndUnreadableArthropods[j][0] == arthropod){
+								arthropod = readableAndUnreadableArthropods[j][1];
+								break;
+							}
+						}
+
+						var siteName = trendLabel.substring(trendLabel.indexOf(" at ") + " at ".length);
+						var siteID = -1;
+						for(var j = 0; j < siteNamesAndIDs.length; j++){
+							if(siteNamesAndIDs[j][0] == siteName){
+								siteID = Number(siteNamesAndIDs[j][1]);
+								break;
+							}
+						}
+
+						filters[filters.length] = {arthropod: arthropod, siteID: siteID};
+					}
+					
+					loadTrendsFromFilters(filters);
+				}, 300);
+			}
+			
+			var loadTrendsIteration = 0;
+			function loadTrendsFromFilters(filters){
+				//filters = [{arthropod:"caterpillar", siteID: marker.siteInformation["ID"]}]
+				
+				var thisLoadTrendsIteration = ++loadTrendsIteration;
+				
+				console.log("Loading trends: " + JSON.stringify(filters));
+				
+				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify(filters)) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
+					//success
+					if(thisLoadTrendsIteration === loadTrendsIteration){
+						console.log("Loaded trend: " + JSON.stringify(filters));
+						if(data.indexOf("true|") == 0){
+							clearTrends();
+							var trends = JSON.parse(data.replace("true|", ""));
+							for(var label in trends){
+								if(trends.hasOwnProperty(label)){
+									addTrend(label, trends[label]);
+								}
+							}
+						}
+						else{
+							queueNotice("error", data);
+						}
+					}
+				})
+				.fail(function(){
+					//error
+					if(thisLoadTrendsIteration === loadTrendsIteration){
+						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+						updateTrendsLegend();
+					}
+				})
+				.always(function() {
+					//complete
+				});
+			}
+			
+			function loadTrendFromFilters(filters, callback){
+				//filters = {arthropod:"caterpillar", siteID: marker.siteInformation["ID"]}
+				callback = callback || function(){};
+				
+				console.log("Loading trend: " + JSON.stringify(filters));
+				
+				var thisLoadTrendsIteration = ++loadTrendsIteration;
+				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
+					//success
+					if(thisLoadTrendsIteration === loadTrendsIteration){
+						console.log("Loaded trend: " + JSON.stringify(filters));
+						if(data.indexOf("true|") == 0){
+							var trends = JSON.parse(data.replace("true|", ""));
+							for(var label in trends){
+								if(trends.hasOwnProperty(label)){
+									addTrend(label, trends[label]);
+								}
+							}
+						}
+						else{
+							queueNotice("error", data);
+						}
+					}
+				})
+				.fail(function(){
+					//error
+					if(thisLoadTrendsIteration === loadTrendsIteration){
+						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+						updateTrendsLegend();
+					}
+				})
+				.always(function() {
+					//complete
+					callback();
+				});
+			}
+			
+			function addTrendFromFilters(filters, callback){
+				callback = callback || function(){};
+				var color = "";
+				for(var i = 0; i < colors.length; i++){
+					var colorIsInUse = false;
+					for(var j = 0; j < trendsLabels.length; j++){
+						if(opaque(trendsLabels[j][1]) == opaque(colors[i])){
+							colorIsInUse = true;
+						}
+					}
+					if(!colorIsInUse){
+						color = colors[i];
+						break;
+					}
+				}
+				$("#trendsLoadingLine .colorBlock")[0].style.background = transluscent(color);
+				$("#trendsLoadingLine .colorBlock")[0].style.border= "3px solid " + opaque(color);
+				$("#trendsLoadingLine")[0].style.display = "block";
+				
+				//TODO: load in the queue instead of right away, like we would for phenology stuff:
+				//console.log("Force phenology chart to front of composition queue: " + JSON.stringify(filters));
+				//pauseCompositionLoads(function(){loadSetFromFilters(filters, function(){callback();resumeCompositionLoads();})});
+				
+				//but for now, just...
+				loadTrendFromFilters(filters, callback);
+			}
+			
+			function editTrend(labelDiv){
+				//get options
+				var optionsString = $(labelDiv).find(".description").eq(0)[0].innerHTML;
+				var arthropod = optionsString;
+				var arthropods = ["All arthropods", "Ants", "Aphids and psyllids", "Bees, wasps, sawflies", "Beetles", "Caterpillars", "Daddy longlegs", "Flies", "Grasshoppers and crickets", "Leaf hoppers and cicadas", "Moths and butterflies", "Spiders", "True bugs", "Other arthropods", "Unidentified arthropods"];
+				for(var i = 0; i < arthropods.length; i++){
+					if(arthropod.indexOf(arthropods[i]) == 0){
+						arthropod = arthropods[i];
+						break;
+					}
+				}
+				var siteName = optionsString.replace(arthropod + " at ", "");
+				//Remove line
+				removeTrend(labelDiv);
+				//Add new line with same presets
+				showAddNewTrendLineOptions();
+				var labelDivs = $("#trendsLegend .label");
+				var addNewLineLabel = labelDivs.eq(labelDivs.length - 1);
+				var selectedOptions = addNewLineLabel.find(".selected");
+				selectedOptions.eq(0)[0].innerHTML = arthropod;
+				selectedOptions.eq(1)[0].innerHTML = siteName;
+				//Change x icon to cancel(presets)
+				var cancelFunction = function(){
+					addNewLineLabel[0].style.display = "none";
+					selectedOptions.eq(0)[0].innerHTML = arthropod;
+					selectedOptions.eq(1)[0].innerHTML = siteName;
+					addNewTrend(addNewLineLabel);
+				};
+				addNewLineLabel.find(".cancel").eq(0)[0].onclick = cancelFunction;
+			}
+			
+			function addNewTrend(labelDiv){
+				var options = $(labelDiv).find(".smallSelect .selected");
+				var arthropod = options.eq(0)[0].innerHTML;
+				var readableAndUnreadableArthropods = [["All arthropods", "%"], ["Ants", "ant"], ["Aphids and psyllids", "aphid"], ["Bees, wasps, sawflies", "bee"], ["Beetles", "beetle"], ["Caterpillars", "caterpillar"], ["Daddy longlegs", "daddylonglegs"], ["Flies", "fly"], ["Grasshoppers and crickets", "grasshopper"], ["Leaf hoppers and cicadas", "leafhopper"], ["Moths and butterflies", "moths"], ["Spiders", "spider"], ["True bugs", "truebugs"], ["Other arthropods", "other"], ["Unidentified arthropods", "unidentified"]];
+				for(var i = 0; i < readableAndUnreadableArthropods.length; i++){
+					if(readableAndUnreadableArthropods[i][0] == arthropod){
+						arthropod = readableAndUnreadableArthropods[i][1];
+						break;
+					}
+				}
+				var siteName = options.eq(1)[0].innerHTML;
+				var siteID = -1;
+				for(var i = 0; i < siteNamesAndIDs.length; i++){
+					if(siteNamesAndIDs[i][0] == siteName){
+						siteID = Number(siteNamesAndIDs[i][1]);
+						break;
+					}
+				}
+				addTrendFromFilters({arthropod: arthropod, siteID: siteID});
+				labelDiv.outerHTML = "";
+			}
+			
+			function removeTrend(labelDiv){
+				var lineColor = opaque($(labelDiv)[0].dataset.lineColor);
+				for(var i = (trendsConfig.data.datasets.length - 1); i >= 0; i--){
+					if(lineColor == opaque(trendsConfig.data.datasets[i].backgroundColor) || opaque(lightenColor(0.6, lineColor)) == opaque(trendsConfig.data.datasets[i].backgroundColor)){
+						trendsConfig.data.datasets.splice(i, 1);
+					}
+				}
+				for(var i = (trendsLabels.length - 1); i >=0; i--){
+					if(lineColor == opaque(trendsLabels[i][1])){
+						trendsLabels.splice(i, 1);
+					}
+				}
+				delete chartedSets.trends[$(labelDiv).find(".description").eq(0)[0].innerHTML];
+				window.trends.update();
+				centerYAxisLabels();
+				updateTrendsLegend();
+			}
+			
+			function showAddNewTrendLineOptions(){
+				if(trendsLabels.length >= colors.length){
+					queueNotice("error", "You have too many trends on your trends chart. Please delete at least one of them before adding more.");
+					return false;
+				}
+				$("#trendsLegend .editDeleteSpan").fadeOut(0);
+				var siteSelectOptions = "";
+				for(var i = 0; i < siteNamesAndIDs.length; i++){
+					siteSelectOptions += "<div onclick=\"smallSelectOption(this);\">" + siteNamesAndIDs[i][0] + "</div>";
+				}
+				$("#addNewTrendLabel")[0].outerHTML = "<div class=\"label\">" +
+							"<div class=\"box\" style=\"background:" + transluscent("#ccc") + ";border:3px solid #ccc;\"></div>" +
+							"<div class=\"smallSelect\">" + //ARTHROPODS
+								"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">All arthropods</div>" +
+								"<div class=\"options\" style=\"min-width:153px;\">" +
+									"<div onclick=\"smallSelectOption(this);\">All arthropods</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Ants</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Aphids and psyllids</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Bees, wasps, sawflies</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Beetles</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Caterpillars</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Daddy longlegs</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Flies</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Grasshoppers and crickets</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Leaf hoppers and cicadas</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Moths and butterflies</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Spiders</div>" +
+									"<div onclick=\"smallSelectOption(this);\">True bugs</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Other arthropods</div>" +
+									"<div onclick=\"smallSelectOption(this);\">Unidentified arthropods</div>" +
+								"</div>" +
+							"</div>" +
+							" at " +
+							"<div class=\"smallSelect\">" + //SITE
+								"<div class=\"selected\" onclick=\"showSmallSelectOptions(this);\">" + activeSite + "</div>" +
+								"<div class=\"options\" style=\"min-width:250px;\">" +
+									siteSelectOptions +
+								"</div>" +
+							"</div>" + 
+							"<span style=\"color:#bbb;\">" +
+								" ( " +
+								"<span onclick=\"addNewTrend(this.parentNode.parentNode);\" class=\"underline pointer\">confirm</span>" +
+								" | " +
+								"<span class=\"cancel underline pointer\" onclick=\"updateTrendsLegend();\">cancel</span>" +
+								" )" +
+							"</span>" +
+						"</div>";
+			}
+			
+			function getLinearRegressionDataByTrendLabel(label){
+				for(var i = 0; i < trendsConfig.data.datasets.length; i++){
+					if(trendsConfig.data.datasets[i].label.indexOf(label) == 0){
+						return trendsConfig.data.datasets[i].regressionData;
+					}
+				}
+				
+				return {
+					b: "b",
+					m: "m",
+					r2: "r^2",
+					p: "p"
+				};
+			}
+			
+			function updateTrendsLegend(){
+				var htmlToAdd = "<div style=\"display:inline-block;text-align:left;\">";
+				for(var i = 0; i < trendsLabels.length; i++){
+					var lightColor = lightenColor(.6, trendsLabels[i][1]);
+					var opaqueColor = opaque(trendsLabels[i][1]);
+					
+					var regressionData = getLinearRegressionDataByTrendLabel(trendsLabels[i][0]);
+					
+					var regressionHTML = "";
+					if(showingRegressionLine(trendsLabels[i][0])){
+						regressionHTML = "<div class=\"linearRegressionData\">&#8627; Where <span>y = " + regressionData.m + " * year " + (regressionData.b.toString().indexOf("-") > -1 ? "&minus;" : "+") + " " + regressionData.b.toString().replace("-", "") + "</span> and <span>R<sup>2</sup> = " + regressionData.r2 + "</span> <a href=\"#\" onclick=\"event.preventDefault();queueNotice('alert', 'The slope of this regression line (the number multiplied by Year) is the trend estimate, or the amount the y-variable is changing per year on average.<br/><br/>The R<sup>2</sup> is the proportion of variance explained by this trend, with values close to 1 indicating that Year explains most of the variance and values close to 0 indicating very noisy year-to-year variation.');\">What does this mean?</a></div>";
+					}
+					else{
+						regressionHTML = "<div class=\"linearRegressionData\">&#8627; NOTE: No trend shown- fewer than " + MIN_POINTS_TO_SHOW_LINEAR_REGRESSION + " active years of data plotted.</div>";
+					}
+					
+					htmlToAdd += "<div class=\"label\" data-line-color=\"" + opaqueColor + "\">" +
+							"<div>" + 
+								"<div class=\"box\" style=\"background:" + opaqueColor + ";border:3px solid " + opaqueColor + ";\"></div>" +
+								"<span class=\"description\">" + trendsLabels[i][0] + "</span>" +
+								"<span style=\"color:#bbb;\" class=\"editDeleteSpan\">" +
+									" ( " +
+									"<span class=\"underline pointer\" onclick=\"editTrend(this.parentNode.parentNode.parentNode);\">edit</span>" +
+									" | " +
+									"<span class=\"underline pointer\" onclick=\"removeTrend(this.parentNode.parentNode.parentNode)\">delete</span>" +
+									" )" +
+								"</span>" +
+							"</div>" + 
+							"<div>" + 
+								regressionHTML + 
+							"</div>" + 
+						"</div><br/>";
+				}
+				htmlToAdd += 	"<div id=\"trendsLoadingLine\" style=\"display:none;\">" +
+							"<div class=\"colorBlock\"></div> Loading..." +
+						"</div>" +
+						"<div class=\"label\" id=\"addNewTrendLabel\">" +
+							"<div class=\"box\" style=\"background:" + transluscent("#ccc") + ";border:3px solid #ccc;\"></div>" +
+							"<span class=\"underline pointer\" onclick=\"showAddNewTrendLineOptions();\">Add new trend</span>" +
+						"</div>";
+				htmlToAdd += "</div>";
+				$("#trendsLegend")[0].innerHTML = htmlToAdd;
+			}
+      			//END OF TRENDS CHART STUFF
+			
 			function downloadMapData(){
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)")];
 				var csvString = headers.join(",") + "\r\n";
@@ -3343,6 +4152,159 @@
 				}
 				$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
 			}
+		      function downloadTrendsData(){
+			var metric = $("#trendsGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
+				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Year", metric, "Beginning Month", "End Month"];
+				var csvString = headers.join(",") + "\r\n";
+			      	var rows = [];
+				var filtersString = "Y-Axis: " + metric + ", Trend Lines:";
+				
+				var date = new Date();
+				var earliestEstablishedYear = date.getFullYear();
+				var mostRecentlySurveyedYear = 0;
+				var untouchedSiteNames = ["No sites"];
+				var siteNames = [];
+				if(trendsConfig.data.datasets.length == 2 && opaque(trendsConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(trendsConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
+					//nodata
+				}
+				else{
+					var datasets = trendsConfig.data.datasets;
+					untouchedSiteNames = [];
+					for(var i = 0; i < datasets.length; i++){
+						var optionsString = datasets[i].label;
+						var arthropod = optionsString;
+						var arthropods = ["All arthropods", "Ants", "Aphids and psyllids", "Bees, wasps, sawflies", "Beetles", "Caterpillars", "Daddy longlegs", "Flies", "Grasshoppers and crickets", "Leaf hoppers and cicadas", "Moths and butterflies", "Spiders", "True bugs", "Other arthropods", "Unidentified arthropods"];
+						for(var j = 0; j < arthropods.length; j++){
+							if(arthropod.indexOf(arthropods[j]) == 0){
+								arthropod = arthropods[j];
+								break;
+							}
+						}
+						var siteName = optionsString.replace(arthropod + " at ", "");
+						if(siteName.substring(siteName.length - " linear regression".length) == " linear regression"){
+							siteName = siteName.substring(0, siteName.length - " linear regression".length);
+						}
+						if(siteNames.indexOf(siteName.replace(/[\W_]+/g," ")) == -1){
+							siteNames[siteNames.length] = siteName.replace(/[\W_]+/g," ");
+						}
+						if(untouchedSiteNames.indexOf(siteName) == -1){
+						   untouchedSiteNames[untouchedSiteNames.length] = siteName;
+						}
+						var marker = findMarkerBySiteName(siteName);
+						var points = datasets[i].data;
+						for(var j = 0; j < points.length; j++){
+							if(optionsString.substring(optionsString.length - " linear regression".length) == " linear regression"){
+								//skip linear regression data
+								continue;
+							}
+							
+							var row = [siteName, marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), arthropod, points[j].x.substring(0,4), points[j].y, trendsMonthStart, trendsMonthEnd];
+							for(var t = 0; t < row.length; t++){
+								row[t] = "\"" + row[t].toString().replace(/"/g, "'") + "\"";
+							}
+							rows[rows.length] = [siteName, arthropod, Number(points[j].x.substring(0,4)), row.join(",") + "\r\n"];
+						}
+						filtersString += " " + arthropod + " at " + siteName + ";";
+						
+						for(var j = 0; j < datasets[i].data.length; j++){
+							var year = Number(datasets[i].data[j].x.substring(0,4));
+							
+							if(year < Number(earliestEstablishedYear)){
+								earliestEstablishedYear = year;
+							}
+
+							if(year > Number(mostRecentlySurveyedYear)){
+								mostRecentlySurveyedYear = year;
+							}
+						}
+					}
+				}
+				
+				if(mostRecentlySurveyedYear == 0){
+					mostRecentlySurveyedYear = earliestEstablishedYear;
+				}
+				
+				var headerDescriptions = {
+					"site": "Name of the Caterpillars Count! site",
+					"description": "Description of the Caterpillars Count! site",
+					"latitude": "Latitude of the Caterpillars Count! site",
+					"longitude": "Longitude of the Caterpillars Count! site",
+					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
+					"year": "The year in the form YYYY",
+					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
+					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
+					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions",
+					"beginning month": "A number 1-12 representing the earliest month at which data is included",
+					"end month": "A number 1-12 representing the latest month at which data is included"
+				};
+				
+				var metadataText = "";
+				for(var i = 0; i < headers.length; i++){
+					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
+				}
+				
+				untouchedSiteNames.sort(function(a, b){
+					if(a.toLowerCase() < b.toLowerCase()) return -1;
+					if(a.toLowerCase() > b.toLowerCase()) return 1;
+					return 0;
+				});
+				if(untouchedSiteNames.length == 0){
+					untouchedSiteNames = ["No sites"];
+				}
+				
+				siteNames.sort(function(a, b){
+					if(a.toLowerCase() < b.toLowerCase()) return -1;
+					if(a.toLowerCase() > b.toLowerCase()) return 1;
+					return 0;
+				});
+				if(siteNames.length == 0){
+					siteNames = ["No sites".replace(/[\W_]+/g," ")];
+				}
+				
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Trends Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
+				
+			      	//sort rows
+			      	rows.sort(function(a, b){
+					//sort by site (alphbetical ascending)
+					if(a[0] < b[0]) return -1;
+					if(a[0] > b[0]) return 1;
+					
+					//then by arthropod (alphbetical ascending)
+					if(a[1] < b[1]) return -1;
+					if(a[1] > b[1]) return 1;
+					
+					//then by year (numerical ascending)
+					return a[2] - b[2];
+				});
+			      
+			      	//add rows
+			      	for(var i = 0; i < rows.length; i++){
+					csvString += rows[i][3];
+				}
+			      
+				var zip = new JSZip();
+				var folder = zip.folder("Caterpillars Count! " + siteNames.join(" - ") + " trends data");
+				folder.file("metadata.txt", metadataText);
+				folder.file("data.csv", csvString);
+				zip.generateAsync({type:"blob"})
+				.then(function(content) {
+					saveAs(content, "CaterpillarsCountTrendsData-" + siteNames.join("-") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".zip");
+				});
+				
+				//track download
+				var downloadedFile = "Dynamically Generated Trends CSV";
+				var downloadFilters = filtersString;
+				var page = window.location.toString().replace("http://", "").replace("https://", "");
+				page = page.substring(page.indexOf("/") + 1);
+				if(page.indexOf("#") > -1){
+					page = page.substring(0, page.indexOf("#"));
+				}
+				if(page.slice(-1) == "/"){
+					page = page.substring(0, page.length - 1);
+				}
+				$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
+		      }
+			
 			var submittedClassificationToSciStarter = false;
 			function submitClassificationToSciStarter(){
 				if(!submittedClassificationToSciStarter && window.localStorage.getItem("email") !== null){
@@ -3612,6 +4574,7 @@
 							<div id="graphSwitch">
 								<button id="lineGraphSwitchButton" class="active" onclick="switchGraphTo('line');">Phenology</button>
 								<button id="barGraphSwitchButton" onclick="switchGraphTo('bar');">Composition</button>
+								<button id="trendsGraphSwitchButton" onclick="switchGraphTo('trends');">Trends</button>
 							</div>
 							<div id="lineGraph">
 								<div class="chartExplanation">Click on the y-axis label to change the phenology metric being plotted. Data points are excluded if fewer than five surveys were conducted at the given site on that day.</div>
@@ -3686,6 +4649,30 @@
 								</div>
 
 								<div id="compositionLegend"></div>
+							</div>
+              						<div id="trendsGraph">
+								<div class="chartExplanation">Click on the y-axis label to change the trend metric being plotted. The lightly colored lines represet raw data, and the darker lines represent a linear regression of that raw data. Data points are excluded if fewer than five surveys were conducted at the given site during that year. These trends will be most meaningful if surveys were carried out over the same time period in each year. You may use the month slider below to restrict the calculation of arthropod occurrence, density, or biomass to a particular seasonal window.</div>
+								<div id="trendsMonthsSlider" class="rangeSlider"></div>
+								<div id="trendsMonths">Jan - Dec</div>
+								<div style="height:500px;margin-top:40px;position:relative;">
+									<div class="downloadChartButton" onclick="promptConfirm('To download, read and agree to the Caterpillars Count! <a href=&quot;../dataUsePolicy&quot; target=&quot;_blank&quot;>data use</a> and <a href=&quot;../dataAttributionPolicy&quot; target=&quot;_blank&quot;>attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadTrendsData();});">
+										<div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+										<div class="downloadText">Download</div>
+									</div>
+									<div class="yAxisLabel">
+										<div class="smallSelect">
+											<div class="selected" onclick="showSmallSelectOptions(this);">Percent of Surveys</div>
+											<div class="options">
+												<div onclick="smallSelectOption(this);centerYAxisLabels();matchTrendLinesWithYAxisLabel();">Percent of Surveys</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();matchTrendLinesWithYAxisLabel();">Number Per Survey</div>
+												<div onclick="smallSelectOption(this);centerYAxisLabels();matchTrendLinesWithYAxisLabel();">Biomass Per Survey</div>
+											</div>
+										</div>
+										<img src="../images/question.png" style="height:20px;cursor:pointer;opacity:.2;margin-left:6px;" onclick="queueNotice('alert', 'Percent of Surveys: The percent of survey branches examined with at least one arthropod of the type specified.<br/><br/>Number per Survey: The total number of arthropods encountered divided by the total number of surveys.<br/><br/>Biomass per Survey: The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (<em>M</em>) is estimated from reported lengths (<em>L</em>) using length-weight regressions of the form <em>M = a L<sup>b</sup></em> where <em>a</em> and <em>b</em> vary by arthropod group as shown in the table below. If needed, you can click the table to open a larger version of it.<br/><br/><a href=&quot;../lengthWeightRegressions&quot; target=&quot;_blank&quot; style=&quot;display:inline-block;margin:auto;&quot;><img src=&quot;../images/lengthWeightRegressions.png&quot; onclick=&quot;event.stopPropagation();&quot; style=&quot;cursor:pointer;&quot;/></a>');"/>
+									</div>
+									<canvas id="trendsChart" width="0" height="0"></canvas>
+								</div>
+								<div id="trendsLegend"></div>
 							</div>
 						</div>
 					</div>
