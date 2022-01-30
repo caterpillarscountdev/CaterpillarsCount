@@ -6,10 +6,13 @@
 	$email = $_GET["email"];
 	$salt = $_GET["salt"];
 	$score = intval($_GET["score"]);
+	$findingPercentage = intval($_GET["findingPercentage"]);
+	$identifyingPercentage = intval($_GET["identifyingPercentage"]);
+	$lengthPercentage = intval($_GET["lengthPercentage"]);
   
   	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
-		if($user->submitVirtualSurveyScore($score)){
+		if($user->submitVirtualSurveyScore($score, $findingPercentage, $identifyingPercentage, $lengthPercentage)){
 			$comparisons = $user->compareVirtualSurveyScore($score);
 			if($comparisons === false){
 				die("true|" . json_encode(array(0, 0)));
