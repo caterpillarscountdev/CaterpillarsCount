@@ -678,11 +678,17 @@ class User
 		));
 	}
 
-	public function submitVirtualSurveyScore($score){
+	public function submitVirtualSurveyScore($score, $findingPercentage, $identifyingPercentage, $lengthPercentage){
 		$score = intval($score);
-		if($score >= 0 && $score <= 1800){
+		$findingPercentage = intval($findingPercentage);
+		$identifyingPercentage = intval($identifyingPercentage);
+		$lengthPercentage = intval($lengthPercentage);
+		if($score >= 0 && $score <= 1800 && 
+		   $findingPercentage >= 0 && $findingPercentage <= 100 && 
+		   $identifyingPercentage >= 0 && $identifyingPercentage <= 100 && 
+		   $lengthPercentage >= 0 && $lengthPercentage <= 100){
 			$dbconn = (new Keychain)->getDatabaseConnection();
-			mysqli_query($dbconn, "INSERT INTO VirtualSurveyScore (`UserFK`, `Score`) VALUES ('" . $this->id . "', '$score')");
+			mysqli_query($dbconn, "INSERT INTO VirtualSurveyScore (`UserFK`, `Score`, `PercentFound`, `IdentificationAccuracy`, `LengthAccuracy`) VALUES ('" . $this->id . "', '$score', '$findingPercentage', '$identifyingPercentage', '$lengthPercentage')");
 			mysqli_close($dbconn);
 			return true;
 		}
