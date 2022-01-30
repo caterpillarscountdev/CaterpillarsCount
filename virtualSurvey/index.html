@@ -1795,8 +1795,6 @@
 					
 					var finalScore = Number($("#currentRunningScore")[0].innerHTML);
 					
-					submitScore(finalScore);
-					
 					var subheadingHTML = "<div class=\"finalBreakdownSubsection\">";
 					if(timedOut){
 						$("#roundBreakdown .heading").eq(0)[0].innerHTML = "Time's up- that's a wrap!";
@@ -1819,10 +1817,15 @@
 						lengthAccuracy = lengthAccuracy / lengthAccuracies.length;
 					}
 					
+					var findingPercentage = ((findingArthropodsStats[0] / findingArthropodsStats[1]) * 100).toFixed(2);
+					var identifyingPercentage = (findingArthropodsStats[0] == 0) ? "0.00" : ((correctlyIdentified / findingArthropodsStats[0]) * 100).toFixed(2);
+					var lengthPercentage = (lengthAccuracy * 100).toFixed(2);
+					submitScore(finalScore, findingPercentage, identifyingPercentage, lengthPercentage);
+					
 					subheadingHTML += "<div style=\"margin-top:3px;\">";
-					subheadingHTML += "Finding arthropods: " + Math.round((findingArthropodsStats[0] / findingArthropodsStats[1]) * 100) + "%";
-					subheadingHTML += "<br/>Identifying arthropods: " + ((findingArthropodsStats[0] == 0) ? 0 : Math.round((correctlyIdentified / findingArthropodsStats[0]) * 100)) + "%";
-					subheadingHTML += "<br/>Estimating length: " + Math.round(lengthAccuracy * 100) + "%";
+					subheadingHTML += "Finding arthropods: " + Math.round(Number(findingPercentage)) + "%";
+					subheadingHTML += "<br/>Identifying arthropods: " + Math.round(Number(identifyingPercentage)) + "%";
+					subheadingHTML += "<br/>Estimating length: " + Math.round(Number(lengthPercentage)) + "%";
 					findingArthropodsStats = [0, 0];
 					correctlyIdentified = 0;
 					lengthAccuracies = [];
@@ -2135,9 +2138,9 @@
 				zoomOut();
 			}
 			
-			function submitScore(score){
+			function submitScore(finalScore, findingPercentage, identifyingPercentage, lengthPercentage){
 				var url = window.location.toString();
-				$.get("../php/submitVirtualSurveyScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + score, function(data){
+				$.get("../php/submitVirtualSurveyScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + score + "&findingPercentage=" + findingPercentage + "&identifyingPercentage=" + identifyingPercentage + "&lengthPercentage=" + lengthPercentage, function(data){
 					if(data.indexOf("true|") == 0){
 						var comparisons = JSON.parse(data.replace("true|", ""));
 						$("#roundBreakdown .subheading .finalBreakdownSubsection").eq(2)[0].innerHTML += " You beat " + Math.round(Number(comparisons[0])) + "% of global scores this time around, and your best score is " + comparisons[1] + ".";
