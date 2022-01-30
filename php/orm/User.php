@@ -680,9 +680,9 @@ class User
 
 	public function submitVirtualSurveyScore($score, $findingPercentage, $identifyingPercentage, $lengthPercentage){
 		$score = intval($score);
-		$findingPercentage = intval($findingPercentage);
-		$identifyingPercentage = intval($identifyingPercentage);
-		$lengthPercentage = intval($lengthPercentage);
+		$findingPercentage = floatval($findingPercentage);
+		$identifyingPercentage = floatval($identifyingPercentage);
+		$lengthPercentage = floatval($lengthPercentage);
 		if($score >= 0 && $score <= 1800 && 
 		   $findingPercentage >= 0 && $findingPercentage <= 100 && 
 		   $identifyingPercentage >= 0 && $identifyingPercentage <= 100 && 
