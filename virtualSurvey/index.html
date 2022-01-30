@@ -2138,7 +2138,7 @@
 				zoomOut();
 			}
 			
-			function submitScore(finalScore, findingPercentage, identifyingPercentage, lengthPercentage){
+			function submitScore(score, findingPercentage, identifyingPercentage, lengthPercentage){
 				var url = window.location.toString();
 				$.get("../php/submitVirtualSurveyScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + score + "&findingPercentage=" + findingPercentage + "&identifyingPercentage=" + identifyingPercentage + "&lengthPercentage=" + lengthPercentage, function(data){
 					if(data.indexOf("true|") == 0){
