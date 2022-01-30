@@ -6,9 +6,9 @@
 	$email = $_GET["email"];
 	$salt = $_GET["salt"];
 	$score = intval($_GET["score"]);
-	$findingPercentage = intval($_GET["findingPercentage"]);
-	$identifyingPercentage = intval($_GET["identifyingPercentage"]);
-	$lengthPercentage = intval($_GET["lengthPercentage"]);
+	$findingPercentage = floatval($_GET["findingPercentage"]);
+	$identifyingPercentage = floatval($_GET["identifyingPercentage"]);
+	$lengthPercentage = floatval($_GET["lengthPercentage"]);
   
   	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
