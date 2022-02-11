@@ -1656,6 +1656,7 @@
 				//var colors = [hexToRgb("#000000"), hexToRgb("#22ff00")];//black, limegreen
 				//var colors = [hexToRgb("#000787"), hexToRgb("#ff00ff")];//midnightblue, hotpink
 				//var colors = [hexToRgb("#440154"), hexToRgb("#21908c"), hexToRgb("#FDE725")]; //viridis
+				if(percent == 0) return "rgb(" + colors[0].join(", ") + ")"; //added this line because it doesn't seem to work as desired 2 lines below
 				for(var i = 0; i < colors.length; i++){
 					if(percent == (i/(colors.length - 1))) return "rgb(" + colors[i].join(", ") + ")";
 				}
