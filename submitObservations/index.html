@@ -352,8 +352,8 @@
 									<div class="group">
 										<div class="observationFieldTitle">Arthropod group:</div>
 
-										<div class="select" id="orderType">
-											<div class="option selected" onclick="selectOption(this);$('.arthropodOptionsTable').parent().hide(300);" data-on-change="askToConfirmLongOrderLength();">	<div class="value"></div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
+										<div class="select" id="orderType" data-on-change="askToConfirmLongOrderLength();">
+											<div class="option selected" onclick="selectOption(this);$('.arthropodOptionsTable').parent().hide(300);">	<div class="value"></div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
 											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#butterflyOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
 											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#butterflyOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);">		<div class="value">aphid</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/aphid.png');"></div>		<div class="text">Aphids and Psyllids</div></div></div>
 											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#butterflyOptionsGroup').hide(300);$('#beeOptionsGroup').show(300);$('#beetleOptionsGroup').hide(300);">		<div class="value">bee</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/bee.png');"></div>			<div class="text">Bees, Wasps, Sawflies</div></div></div>
