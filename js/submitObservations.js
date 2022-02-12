@@ -964,7 +964,7 @@
 				}
 				
 				if(Number($('#orderLength')[0].value) > maxOrderLength){
-					promptConfirm('Wow, "' + getSelectText($("#orderType")) + '" measurements aren\'t usually that long! Are you sure they average ' + this.value + 'mm long? Remember that length does not include legs or antennae.', 'Whoops!', 'Yes, I am sure!', function(){
+					promptConfirm('Wow, "' + getSelectText($("#orderType")) + '" measurements aren\'t usually that long! Are you sure ' + $('#orderLength')[0].value + 'mm is accurate? Remember that length does not include legs or antennae.', 'Whoops!', 'Yes, I am sure!', function(){
 						$('#orderLength')[0].focus();
 						$('#orderLength')[0].select(0, 9999);
 					}, function(){
