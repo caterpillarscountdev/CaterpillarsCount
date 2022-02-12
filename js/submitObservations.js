@@ -863,6 +863,9 @@
 			
 			function selectOption(optionElement){
 				if(!selectToggling){
+					var selectElement = $(optionElement).parents(".select").eq(0);
+					var selectedValue = getSelectValue(selectElement);
+					
 					selectToggling = true;
 					//select an option in a custiom .select or open the custom .select
 					if(optionElement.parentNode.className.indexOf("active") > -1){
@@ -879,12 +882,18 @@
 					selectedElement.className = selectedElement.className.replace("selected", "").trim();
 					optionElement.className = optionElement.className + " selected";
 					$(optionElement).stop().animate({maxHeight:"250px"}, "swing", function(){selectToggling = false});
+					
+					if(selectedValue !== getSelectValue(selectElement)){
+						eval($(selectElement).data("onChange"));
+					}
 				}
 			}
 			
 			function setSelectValue(selectElement, val){
 				//set the value of a custom .select and show the selected option
 				selectElement = $(selectElement)[0];
+				var selectedValue = getSelectValue(selectElement);
+				
 				var options = selectElement.getElementsByClassName("option");
 				for(var i = 0; i < options.length; i++){
 					options[i].className = "option";
@@ -895,6 +904,10 @@
 						options[i].style.maxHeight = "250px";
 						options[i].style.overflow = "hidden";
 					}
+				}
+				
+				if(selectedValue !== getSelectValue(selectElement)){
+					eval($(selectElement).data("onChange"));
 				}
 			}
 			
