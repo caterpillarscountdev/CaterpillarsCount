@@ -527,6 +527,11 @@
 				cursor:pointer;
 				border-radius:5px;
 			}
+
+			main .panel button.half{
+				padding-left:0px;
+				padding-right:0px;
+			}
 			
 			main .panel iframe.video{
 				width:100%;
