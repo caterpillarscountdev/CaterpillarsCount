@@ -946,6 +946,33 @@
 				}
 			}
 
+			function askToConfirmLongOrderLength(){
+				var orderTypeValue = getSelectValue($("#orderType"));
+				if(orderTypeValue == ""){
+					return false;
+				}
+				
+				var maxOrderLength = 30;
+				if(orderTypeValue == "caterpillar"){
+					maxOrderLength = 60;
+				}
+				else if(orderTypeValue == "aphid"){
+					maxOrderLength = 10;
+				}
+				else if(orderTypeValue == "ant"){
+					maxOrderLength = 20;
+				}
+				
+				if(Number($('#orderLength')[0].value) > maxOrderLength){
+					promptConfirm('Wow, "' + getSelectText($("#orderType")) + '" measurements aren\'t usually that long! Are you sure they average ' + this.value + 'mm long? Remember that length does not include legs or antennae.', 'Whoops!', 'Yes, I am sure!', function(){
+						$('#orderLength')[0].focus();
+						$('#orderLength')[0].select(0, 9999);
+					}, function(){
+						
+					});
+				}
+			}
+
 			function getWordAtIndex(str, index){
 				var left = str.slice(0, index + 1).search(/\S+$/);
         		var right = str.slice(index).search(/\s/);
