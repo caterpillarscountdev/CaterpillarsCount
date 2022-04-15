@@ -588,16 +588,22 @@ class Site
 	public function addCircle(){
 		if(!$this->deleted)
 		{
+			mail("plocharczykweb@gmail.com", "SITE addCircle debug1", "1");
 			$numberOfPreexistingCircles = (count($this->getPlants()) / 5);
+			mail("plocharczykweb@gmail.com", "SITE addCircle debug2", "$numberOfPreexistingCircles");
+			mail("plocharczykweb@gmail.com", "SITE addCircle debug3", "site id: " . $this->getID());
 			if($numberOfPreexistingCircles < 25){
 				$a = Plant::create($this, ($numberOfPreexistingCircles + 1), "A");
 				$b = Plant::create($this, ($numberOfPreexistingCircles + 1), "B");
 				$c = Plant::create($this, ($numberOfPreexistingCircles + 1), "C");
 				$d = Plant::create($this, ($numberOfPreexistingCircles + 1), "D");
 				$e = Plant::create($this, ($numberOfPreexistingCircles + 1), "E");
+				mail("plocharczykweb@gmail.com", "SITE addCircle debug4", gettype($a). "|" . json_encode($a));
 				return array($a, $b, $c, $d, $e);
 			}
+			mail("plocharczykweb@gmail.com", "SITE addCircle debug5", "5");
 		}
+		mail("plocharczykweb@gmail.com", "SITE addCircle debug6", "6");
 		return false;
 	}
 	
