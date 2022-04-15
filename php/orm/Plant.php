@@ -2,6 +2,7 @@
 
 require_once('resources/Keychain.php');
 require_once('Site.php');
+require_once('resources/mailing.php');
 
 class Plant
 {
@@ -72,7 +73,7 @@ class Plant
 		mysqli_close($dbconn);
 		
 		$debug .= "|PLANT:: constructing using params: $id, [SITE OBJ ID: " . $site->getID() . "], $circle, $orientation, $code, N/A, false";
-		mail("plocharczykweb@gmail.com", "PLANT debug", $debug);
+		email("plocharczykweb@gmail.com", "PLANT debuga", $debug);
 		
 		return new Plant($id, $site, $circle, $orientation, $code, "N/A", false);
 	}
