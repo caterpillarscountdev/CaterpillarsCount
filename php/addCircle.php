@@ -34,9 +34,9 @@
 							);
 						}
 						else{
-							email("plocharczykweb@gmail.com", "ADDCIRCLE debug1", json_encode($newPlants));
-							email("plocharczykweb@gmail.com", "ADDCIRCLE debug2", json_encode($newPlants[0]));
-							email("plocharczykweb@gmail.com", "ADDCIRCLE debug3", gettype($newPlants[0]));
+							email("plocharczykweb@gmail.com", "ADDCIRCLE debuga1", json_encode($newPlants));
+							email("plocharczykweb@gmail.com", "ADDCIRCLE debuga2", json_encode($newPlants[0]));
+							email("plocharczykweb@gmail.com", "ADDCIRCLE debuga3", gettype($newPlants[0]));
 							$newPlants = array(
 								array($newPlants[0]->getOrientation(), $newPlants[0]->getCode(), $newPlants[0]->getSpecies(), $newPlants[0]->getIsConifer()),
 								array($newPlants[1]->getOrientation(), $newPlants[1]->getCode(), $newPlants[1]->getSpecies(), $newPlants[1]->getIsConifer()),
