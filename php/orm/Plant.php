@@ -2,7 +2,6 @@
 
 require_once('resources/Keychain.php');
 require_once('Site.php');
-require_once('resources/mailing.php');
 
 class Plant
 {
@@ -19,8 +18,6 @@ class Plant
 
 //FACTORY
 	public static function create($site, $circle, $orientation) {
-		$debug = "";
-		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		if(!$dbconn){
 			return "Cannot connect to server.";
@@ -67,13 +64,8 @@ class Plant
 		}
 		$code = self::IDToCode($id);
 		
-		$debug .= "|PLANT:: create() using values: '$id', '" . $site->getID() . "', '$circle', '$orientation', '$code', 'N/A', '0'.";
-		
 		mysqli_query($dbconn, "INSERT INTO Plant (`ID`, `SiteFK`, `Circle`, `Orientation`, `Code`, `Species`, `IsConifer`) VALUES ('$id', '" . $site->getID() . "', '$circle', '$orientation', '$code', 'N/A', '0')");
 		mysqli_close($dbconn);
-		
-		$debug .= "|PLANT:: constructing using params: $id, [SITE OBJ ID: " . $site->getID() . "], $circle, $orientation, $code, N/A, false";
-		email("plocharczykweb@gmail.com", "PLANT debuga", $debug);
 		
 		return new Plant($id, $site, $circle, $orientation, $code, "N/A", false);
 	}
