@@ -21,19 +21,19 @@
         
         
         [
-          "../images/publications/march2022newsLetterThumbnail.jpg",
+          "../images/publications/IMAGE_FILE_HERE.jpg",
           "",
           "Hurlbert, AH, TE Hayes, TN McKinnon, and CL Goforth. 2019. Caterpillars Count! A citizen science project for monitoring foliage arthropod abundance and phenology. Citizen Science: Theory and Practice 4: 1-12.",
           "https://theoryandpractice.citizenscienceassociation.org/articles/10.5334/cstp.148/"
         ],
         [
-          "../images/publications/december2021newsLetterThumbnail.png",
+          "../images/publications/IMAGE_FILE_HERE.png",
           "",
           "Vance-Chalcraft, HD, TA Gates, KA Hogan, M Evans, A Bunnell, and AH Hurlbert. 2021. Using citizen science to incorporate research into introductory biology courses at multiple universities. Citizen Science: Theory and Practice 6(1): 23.",
           "https://theoryandpractice.citizenscienceassociation.org/article/10.5334/cstp.424/"
         ],
         [
-          "../images/publications/november2021newsLetterThumbnail.png",
+          "../images/publications/IMAGE_FILE_HERE.png",
           "",
           "Di Cecco, GJ and AH Hurlbert. 2022. Caterpillar patterns in space and time: insights from and contrasts between two citizen science datasets.In Caterpillars in the Middle, RJ Marquis and S Koptur (eds.). Springer Nature. https://doi.org/10.1007/978-3-030-86688-4_17",
           ""
@@ -151,7 +151,7 @@
         			color:#555;
     			}
 
-    			.publicationsSection .head .text .preview{
+    			.publicationsSection .head .text .body{
         			font-size:16px;
         			color:#999;
         			margin-top:7px;
@@ -165,18 +165,6 @@
     			}
     			.publicationsSection .head .dropdownArrow img{
     				width:15px;
-    			}
-
-    			.publicationsSection .body{
-        			background:rgba(255, 255, 255,.3);
-        			color:#999;
-        			max-height:0px;
-        			overflow:hidden;
-    			}
-
-    			.publicationsSection .body>div{
-        			padding:20px;
-    				border-top:1px solid rgba(0,0,0,.085);
     			}
 
     			.publicationsSection .readMore{
@@ -216,7 +204,7 @@
 					font-size:20px;
 				}
 
-				.publicationsSection .head .textTable .preview{
+				.publicationsSection .head .textTable .body{
 					margin-top:15px;
 				}
 
@@ -256,52 +244,21 @@
 					}
 					htmlToAdd += 				">" + publications[i][1] + "</div>";
             				if(publications[i][2].trim().length > 0){
-            					htmlToAdd += 			"<div class=\"preview\"";
-					if(publications[i][3].trim().length > 0){
-					   	htmlToAdd +=			" style=\"color:inherit;\"";
-					}
-					htmlToAdd += 				">";
-                				if(publications[i][3].trim().length > 0){
-                    					htmlToAdd += 		publications[i][2];
-                				}
-                				else{
-                					htmlToAdd += 		publications[i][2].substring(0, 150);
-                				}
-                				if(publications[i][2].length > 150 && publications[i][3].trim().length == 0){
-                    					htmlToAdd += 		"...";
-                				}
+            					htmlToAdd += 			"<div class=\"body\"";
+						if(publications[i][3].trim().length > 0){
+					   		htmlToAdd +=			" style=\"color:inherit;\"";
+						}
+						htmlToAdd += 				">";
+						htmlToAdd += 		                    publications[i][2];
                 				htmlToAdd +=			"</div>";
             				}
             				htmlToAdd += 			"</div>";
     					htmlToAdd += 		"</div>";
     					htmlToAdd += 	"</div>";
-            				htmlToAdd += 	"<div class=\"body\">";
-            				htmlToAdd += 		"<div>" + publications[i][2] + "</div>";
-            				htmlToAdd += 	"</div>";
-            				if(publications[i][2].length > 150 && publications[i][3].trim().length == 0){
-            					htmlToAdd += 	"<div class=\"readMore\">Read more</div>";
-            				}
     					htmlToAdd += "</div>";
         			}
 
         			$("#publications")[0].innerHTML = htmlToAdd;
-
-    				$(".publicationsSection .readMore").click(function(){
-					if($(this).parent().find(".body").eq(0)[0].style.maxHeight == "0px" || $(this).parent().find(".body").eq(0)[0].style.maxHeight == ""){
-						$(this).parent().find(".body").stop().animate({maxHeight:"99999999px"}, 259999);
-                				$(this).parent().find(".preview").stop().hide(300);
-						this.innerHTML = "Close";
-					}
-					else{
-						$(this).parent().find(".body").eq(0).stop();
-						$(this).parent().find(".body").eq(0)[0].style.maxHeight = $(this).parent().find(".body").eq(0)[0].clientHeight + "px";
-
-                				$(this).parent().find(".preview").stop().show(300);
-						$(this).parent().find(".body").animate({maxHeight:"0px"}, 200, function(){
-							$(this).parent().find(".readMore").eq(0)[0].innerHTML = "Read more";
-						});
-					}
-				});
 			});
 
 			function trackDownload(downloadedFileURL){
