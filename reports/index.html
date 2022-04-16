@@ -40,6 +40,44 @@
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=1"></script>
     		<style>
+			#organizationSwitch{
+				color:#666;
+				background:#eee;
+				display:inline-block;
+				border-radius:5px;
+				overflow:hidden;
+				border-bottom:1px solid rgba(0,0,0,0.2);
+				white-space:nowrap;
+				margin-bottom:20px;
+				display:none;
+			}
+			
+			#organizationSwitch button{
+				color:inherit;
+				cursor:pointer;
+				outline:none;
+				margin:0px;
+				border:0px none transparent;
+				border-radius:0px;
+				padding:7px 15px;
+				font-size:14px;
+				background:transparent;
+				display:inline-block;
+				text-align:center;
+				width:70px;
+			}
+			
+			#organizationSwitch button:last-of-type{
+				margin-left:-4px;
+			}
+			
+			#organizationSwitch .active{
+				background:rgba(0,0,0,.1);
+				-webkit-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+				-moz-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+				box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+			}
+			
 			#sitesLoading{
 				background:#e6e6e6;
 				text-align:center;
@@ -50,6 +88,10 @@
 
 			#sitesLoading img{
 				height:22px;
+			}
+			
+			#reportsBySite{
+				display:none;
 			}
 			
 			.folderSection{
@@ -95,6 +137,7 @@
 				var jqxhr = $.get( "../php/getReports.php", function(response) {
 					try{
 						$("#reportsLoading").css({display:"none"});
+						$("#organizationSwitch").stop().css({display:"inline-block"});
 						
 						var reports = JSON.parse(response);
 						populateReportsByYear(reports);
@@ -185,16 +228,34 @@
 				$("#reportsBySite").html(htmlToAdd);
 			}
 			
+			function switchOrganizationTo(organizationType){
+				if(organizationType.toLowerCase() == "site"){
+					$("#organizeBySiteSwitchButton")[0].className = "active";
+					$("#organizeByYearSwitchButton")[0].className = "";
+					$("#reportsBySite").css({display:"block"});
+					$("#reportsByYear").css({display:"none"});
+				}
+				else{
+					$("#organizeByYearSwitchButton")[0].className = "active";
+					$("#organizeBySiteSwitchButton")[0].className = "";
+					$("#reportsByYear").css({display:"block"});
+					$("#reportsBySite").css({display:"none"});
+				}
+			}
+			
 			function toggleFolder(folderElement){
 				var folderIsActive = $(folderElement).hasClass("active");
 				
-				$(".folder.active").stop().animate({backgroundColor: "transparent", color:"#555"});
-				$(".folder.active").parent().find(".files").stop().animate({maxHeight:"0px"}, 200);
+				$(".folder.active").stop().animate({backgroundColor: "transparent", color:"#555"}, 200);
+				var activeFiles = $(".folder.active").parent().find(".files");
+				if(activeFiles.length > 0){
+					$(".folder.active").parent().find(".files").stop().css({maxHeight: activeFiles[0].clientHeight}).animate({maxHeight:"0px"}, 200);
+				}
 				$(".folder.active").removeClass("active");
 				
 				if(!folderIsActive){
 					$(folderElement).addClass("active");
-					$(folderElement).stop().animate({backgroundColor: "#333", color:"#fff"});
+					$(folderElement).stop().animate({backgroundColor: "#333", color:"#fff"}, 200);
 					$(folderElement).parent().find(".files").stop().animate({maxHeight:"99999999px"}, 259999);
 				}
 			}
@@ -313,6 +374,10 @@
 				<h2>Reports</h2>
 				<!--<div class="tagline"></div>-->
 				<div class="content">
+					<div id="organizationSwitch">
+						<button id="organizeByYearSwitchButton" class="active" onclick="switchOrganizationTo('year');">By Year</button>
+						<button id="organizeBySiteSwitchButton" onclick="switchOrganizationTo('site');">By Site</button>
+					</div>
 					<div id="reports">
 						<div id="reportsLoading">
 							<img src="../images/rolling.svg"/>
