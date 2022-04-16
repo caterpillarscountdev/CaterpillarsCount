@@ -61,7 +61,7 @@
 			function loadReports(){
 				var jqxhr = $.get( "../php/getReports.php", function(response) {
 					try{
-						$("#reportsLoading").css({display:none});
+						$("#reportsLoading").css({display:"none"});
 						
 						var reports = JSON.parse(response);
 						populateReportsByYear(reports);
