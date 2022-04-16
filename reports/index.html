@@ -40,62 +40,117 @@
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=1"></script>
     		<style>
-          
+			#sitesLoading{
+				background:#e6e6e6;
+				text-align:center;
+				padding:16px;
+				border-radius:4px;
+    				overflow:hidden;
+			}
+
+			#sitesLoading img{
+				height:22px;
+			}
     		</style>
 		<script>
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-        loadReports();
+				loadReports();
 			});
-      
-      function loadReports(){
-        var jqxhr = $.get( "../php/getReports.php", function(response) {
-          try{
-            var reports = JSON.parse(response);
-            populateReportsByYear(reports);
-            populateReportsBySite(reports);
-          }
-          catch(e){
-            $("#reports").html("<p>Could not find reports.</p>");
-          }
-        })
-        .fail(function() {
-          $("#reports").html("<p>Could not load reports. Please <a href=\"" + window.location + "\">refresh the page</a> to try again.</p>");
-        });
-      }
-      
-      function populateReportsByYear(reports){
-        var years = [];
-        for(var year in reports) {
-          if (reports.hasOwnProperty(year) && !isNaN(year)){
-            years[years.length] = Number(year);
-          }
-        }
-        
-        years.sort();
-        
-        var htmlToAdd = "";
-        for(var i = 0; i < years.length; i++){
-          if(years[i] > 2000 && years[i].toString() in reports){
-            var files = reports[years[i].toString()];
-            
-            htmlToAdd += "<div>";
-            htmlToAdd +=    "<div>" + years[i] + "</div>";
-            htmlToAdd +=    "<div>";
-            for(var j = 0; j < files.length; j++){
-              htmlToAdd +=      "<div class=\"highlighted underline pointer\" onclick=\"window.open('" + year + "/" + files[i] + "', '_blank')\">" + files[i] + "</div>";
-            }
-            htmlToAdd +=    "</div>";
-            htmlToAdd += "</div>";
-          }
-        }
-        
-        $("#reportsByYear").html(htmlToAdd);
-      }
-      
-      function populateReportsBySite(reports){
-        $("#reportsBySite").html("");
-      }
+			
+			function loadReports(){
+				var jqxhr = $.get( "../php/getReports.php", function(response) {
+					try{
+						$("#reportsLoading").css({display:none});
+						
+						var reports = JSON.parse(response);
+						populateReportsByYear(reports);
+						populateReportsBySite(reports);
+					}
+					catch(e){
+						$("#reports").html("<p>Could not find reports. Please <a href=\"" + window.location + "\">refresh the page</a> to try again.</p>");
+					}
+				})
+				.fail(function() {
+					$("#reports").html("<p>Could not load reports. Please <a href=\"" + window.location + "\">refresh the page</a> to try again.</p>");
+				});
+			}
+			
+			function populateReportsByYear(reports){
+				var years = [];
+				for(var year in reports) {
+					if (reports.hasOwnProperty(year) && !isNaN(year)){
+						years[years.length] = Number(year);
+					}
+				}
+				
+				years.sort();
+				
+				var htmlToAdd = "";
+				for(var i = 0; i < years.length; i++){
+					if(years[i] > 2000 && years[i].toString() in reports){
+						var files = reports[years[i].toString()];
+						
+						htmlToAdd += "<div>";
+						htmlToAdd +=    "<div>" + years[i] + "</div>";
+						htmlToAdd +=    "<div>";
+						for(var j = 0; j < files.length; j++){
+							htmlToAdd +=      "<div class=\"highlighted underline pointer\" onclick=\"window.open('" + years[i] + "/" + files[j] + "', '_blank')\">" + files[j] + "</div>";
+						}
+						htmlToAdd +=    "</div>";
+						htmlToAdd += "</div>";
+					}
+				}
+				$("#reportsByYear").html(htmlToAdd);
+			}
+			
+			function populateReportsBySite(reports){
+				var sites = [];
+				var reportsBySite = {};
+				
+				for(var year in reports) {
+					if (reports.hasOwnProperty(year) && !isNaN(year) && Number(year) > 2000){
+						for(var i = 0; i < reports[year].length; i++){
+							var fileName = reports[year][i];
+							var site = fileName.replace("_" + year + "_report.pdf", "");
+							sites[sites.length] = site;
+							
+							if(!(site in reportsBySite)){
+								reportsBySite[site] = [];
+							}
+							reportsBySite[site][reportsBySite[site].length] = [Number(year), fileName];
+						}
+					}
+				}
+				
+				sites.sort(function(a, b){
+					a = a.toLowerCase().trim();
+					b = b.toLowerCase().trim();
+					
+					if(a > b) return 1;
+					if(a < b) return -1;
+					return 0;
+				});
+				
+				var htmlToAdd = "";
+				for(var i = 0; i < sites.length; i++){
+					var files = reportsBySite[sites[i]];
+					
+					files.sort(function(a, b){
+						return a[0] - b[0];
+					});
+					
+					htmlToAdd += "<div>";
+					htmlToAdd +=    "<div>" + sites[i] + "</div>";
+					htmlToAdd +=    "<div>";
+					for(var j = 0; j < files.length; j++){
+						htmlToAdd +=      "<div class=\"highlighted underline pointer\" onclick=\"window.open('" + files[j][0] + "/" + files[j][1] + "', '_blank')\">" + files[j][1] + "</div>";
+					}
+					htmlToAdd +=    "</div>";
+					htmlToAdd += "</div>";
+				}
+				$("#reportsBySite").html(htmlToAdd);
+			}
 
 			function trackDownload(downloadedFileURL){
 				var downloadedFileURL = downloadedFileURL.replace("http://", "").replace("https://", "");
@@ -212,9 +267,12 @@
 				<!--<div class="tagline"></div>-->
 				<div class="content">
 					<div id="reports">
-            <div id="reportsByYear"></div>
-            <div id="reportsBySite"></div>
-          </div>
+						<div id="reportsLoading">
+							<img src="../images/rolling.svg"/>
+						</div>
+						<div id="reportsByYear"></div>
+						<div id="reportsBySite"></div>
+					</div>
 				</div>
 			</div>
 		</main>
