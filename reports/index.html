@@ -51,6 +51,36 @@
 			#sitesLoading img{
 				height:22px;
 			}
+			
+			.folderSection{
+				background:rgba(0,0,0,0.03);
+				border-radius:7px;
+				font-family:'Roboto Slab', serif;
+				font-size:16px;
+				margin-bottom:30px;
+				overflow:hidden;
+			}
+			
+			.folderSection:last-of-type{
+				margin-bottom:0px;
+			}
+			
+			.folder{
+				padding:10px;
+				color:#555;
+				font-weight:bold;
+			}
+			
+			.files{
+				border-left:1px solid #eee;
+				border-right:1px solid #eee;
+				border-bottom:1px solid #eee;
+			}
+			
+			.file{
+				padding:3px 10px;
+				border-top:1px solid #eee;
+			}
     		</style>
 		<script>
 			$(document).ready(function(){
@@ -91,11 +121,11 @@
 					if(years[i] > 2000 && years[i].toString() in reports){
 						var files = reports[years[i].toString()];
 						
-						htmlToAdd += "<div>";
-						htmlToAdd +=    "<div>" + years[i] + "</div>";
-						htmlToAdd +=    "<div>";
+						htmlToAdd += "<div class=\"folderSection\">";
+						htmlToAdd +=    "<div class=\"folder\">" + years[i] + "</div>";
+						htmlToAdd +=    "<div class=\"files\">";
 						for(var j = 0; j < files.length; j++){
-							htmlToAdd +=      "<div class=\"highlighted underline pointer\" onclick=\"window.open('" + years[i] + "/" + files[j] + "', '_blank')\">" + files[j] + "</div>";
+							htmlToAdd +=      "<div class=\"file highlighted underline pointer\" onclick=\"window.open('" + years[i] + "/" + files[j] + "', '_blank')\">" + files[j] + "</div>";
 						}
 						htmlToAdd +=    "</div>";
 						htmlToAdd += "</div>";
@@ -113,10 +143,10 @@
 						for(var i = 0; i < reports[year].length; i++){
 							var fileName = reports[year][i];
 							var site = fileName.replace("_" + year + "_report.pdf", "");
-							sites[sites.length] = site;
 							
 							if(!(site in reportsBySite)){
 								reportsBySite[site] = [];
+								sites[sites.length] = site;
 							}
 							reportsBySite[site][reportsBySite[site].length] = [Number(year), fileName];
 						}
@@ -140,11 +170,11 @@
 						return a[0] - b[0];
 					});
 					
-					htmlToAdd += "<div>";
-					htmlToAdd +=    "<div>" + sites[i] + "</div>";
-					htmlToAdd +=    "<div>";
+					htmlToAdd += "<div class=\"folderSection\">";
+					htmlToAdd +=    "<div class=\"folder\">" + sites[i] + "</div>";
+					htmlToAdd +=    "<div class=\"files\">";
 					for(var j = 0; j < files.length; j++){
-						htmlToAdd +=      "<div class=\"highlighted underline pointer\" onclick=\"window.open('" + files[j][0] + "/" + files[j][1] + "', '_blank')\">" + files[j][1] + "</div>";
+						htmlToAdd +=      "<div class=\"file highlighted underline pointer\" onclick=\"window.open('" + files[j][0] + "/" + files[j][1] + "', '_blank')\">" + files[j][1] + "</div>";
 					}
 					htmlToAdd +=    "</div>";
 					htmlToAdd += "</div>";
