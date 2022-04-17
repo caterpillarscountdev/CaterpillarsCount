@@ -104,6 +104,7 @@
 				font-family:'Roboto Slab', serif;
 				margin-bottom:30px;
 				overflow:hidden;
+				border:2px solid rgb(238, 238, 238);
 			}
 			
 			.folderSection:last-of-type{
@@ -251,6 +252,10 @@
 				var folderIsActive = $(folderElement).hasClass("active");
 				
 				$(".folder.active").stop().animate({backgroundColor: "transparent", color:"#555"}, 200);
+				var activeFolderSection = $(".folder.active").parent();
+				if(activeFolderSection.length > 0){
+					activeFolderSection.css({borderLeft:"2px solid rgb(238, 238, 238)", borderRight:"2px solid rgb(238, 238, 238)", borderTop:"2px solid rgb(238, 238, 238)", borderBottom:"3px solid rgb(238, 238, 238)"});
+				}
 				var activeFiles = $(".folder.active").parent().find(".files");
 				if(activeFiles.length > 0){
 					$(".folder.active").parent().find(".files").stop().css({maxHeight: activeFiles[0].clientHeight}).animate({maxHeight:"0px"}, 200);
@@ -260,6 +265,7 @@
 				if(!folderIsActive){
 					$(folderElement).addClass("active");
 					$(folderElement).stop().animate({backgroundColor: "#333", color:"#fff"}, 200);
+					$(folderElement).parent().css({borderLeft:"0px none transparent", borderRight:"0px none transparent", borderTop:"0px none transparent", borderBottom:"0px none transparent"});
 					$(folderElement).parent().find(".files").stop().animate({maxHeight:"99999999px"}, 259999);
 				}
 			}
