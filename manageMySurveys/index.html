@@ -942,12 +942,14 @@
 			var GLOBALPageNumber = 1;
 			var GLOBALTotalSurveys = 0;
 			var GLOBALTotalPages = 0;
-			var GLOBALFilters = {"user":"", "arthropod":"", "site":"", "circle":"", "code":"", date:"____-__-__"};
+			var GLOBALFilters = {"user":"", "arthropod":"", "minArthropodLength":0, "site":"", "circle":"", "code":"", date:"____-__-__"};
 			var loadingPage = false;
 			function loadPage(pageNumber, filters, firstLoad){
 				firstLoad = firstLoad || false;
 				if(!loadingPage){
 					loadingPage = true;
+					$("#resultsPage").css({display:"none"});
+					$(".loading").css({display:"block"});
 					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)), function(data){
 						//success
 						if(data.indexOf("true|") == 0){
@@ -957,8 +959,6 @@
 							closeHeight($("#editExtras"));
 							$("#pageNav").fadeIn(0);
 							$("#iconBar>div").fadeIn(300);
-							$(".loading").fadeOut(0);
-							$("#surveys").fadeIn(0);
 
 							var herbivoryScores = ["None", "Trace (1-5%)", "Light (6-10%)", "Moderate (11-25%)", "Heavy (> 25%)"]
 							var data = JSON.parse(data.replace("true|", ""));
@@ -1356,6 +1356,8 @@
 					.always(function() {
 						//complete
 						loadingPage = false;
+						$(".loading").css({display:"none"});
+						$("#resultsPage").css({display:"block"});
 					});
 				}
 			}
@@ -1504,7 +1506,7 @@
 
 			function filter(){
 				if(!loadingPage){
-					var filters = {"user": $('#userSearch')[0].value.trim(), "arthropod": getSelectValue($('#arthropodSearch')), "site": getSelectValue($('#siteSearch .select').eq(0)), "circle": $('#circleSearch')[0].value.trim(), "code": $('#codeSearch')[0].value.trim(), "date": getSelectValue($("#yearFilter")) + "-" + getSelectValue($("#monthFilter")) + "-" + getSelectValue($("#dayFilter"))};
+					var filters = {"user": $('#userSearch')[0].value.trim(), "arthropod": getSelectValue($('#arthropodSearch')), "minArthropodLength": 0, "site": getSelectValue($('#siteSearch .select').eq(0)), "circle": $('#circleSearch')[0].value.trim(), "code": $('#codeSearch')[0].value.trim(), "date": getSelectValue($("#yearFilter")) + "-" + getSelectValue($("#monthFilter")) + "-" + getSelectValue($("#dayFilter"))};
 					$("#filtersDropdown button")[0].innerHTML = "<img src=\"../images/rolling.svg\" alt=\"loading...\"/>";
 					loadPage(1, filters);
 					/*
@@ -2837,19 +2839,21 @@
 				<div class="tagline">...all the surveys you've personally submitted, plus all the surveys submitted at any sites you may manage</div>
 				<div class="content">
 					<div id="sciStarterNotice">If you use <a href="../SciStarter">SciStarter</a>, you can track your participation there too!</div>
-					<div id="surveys"></div>
 					<div class="loading"><img src="../images/rolling.svg"/></div>
-					<div id="editExtras">
-						<button id="saveSurveyButton">Save Changes</button>
-						<div style="text-align:center;margin-bottom:20px;"><span class="underline pointer" style="color:#ccc;font-size:16px;font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;" onclick="$('.loading').fadeIn(0);$('#surveys').fadeOut(0);closeHeight($('#editExtras'));reloadPage();">Cancel</span></div>
-					</div>
-					<div id="pageNav">
-						<div class="autoPage" onclick="loadFirstPage();">&lt;&lt;</div>
-						<div class="autoPage" onclick="loadPreviousPage();">&lt;</div>
-						<div id="pageNumbers"></div>
-						<div class="autoPage" onclick="loadNextPage();">&gt;</div>
-						<div class="autoPage" onclick="loadLastPage();">&gt;&gt;</div>
-						<div class="clearBoth"></div>
+					<div id="resultsPage">
+						<div id="surveys"></div>
+						<div id="editExtras">
+							<button id="saveSurveyButton">Save Changes</button>
+							<div style="text-align:center;margin-bottom:20px;"><span class="underline pointer" style="color:#ccc;font-size:16px;font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;" onclick="$('.loading').fadeIn(0);$('#surveys').fadeOut(0);closeHeight($('#editExtras'));reloadPage();">Cancel</span></div>
+						</div>
+						<div id="pageNav">
+							<div class="autoPage" onclick="loadFirstPage();">&lt;&lt;</div>
+							<div class="autoPage" onclick="loadPreviousPage();">&lt;</div>
+							<div id="pageNumbers"></div>
+							<div class="autoPage" onclick="loadNextPage();">&gt;</div>
+							<div class="autoPage" onclick="loadLastPage();">&gt;&gt;</div>
+							<div class="clearBoth"></div>
+						</div>
 					</div>
 				</div>
 			</div>
