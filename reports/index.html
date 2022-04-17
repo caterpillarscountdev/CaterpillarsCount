@@ -40,6 +40,10 @@
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=1"></script>
     		<style>
+			#organizationSwitchHolder{
+				text-align:center;
+			}
+			
 			#organizationSwitch{
 				color:#666;
 				background:#eee;
@@ -64,7 +68,7 @@
 				background:transparent;
 				display:inline-block;
 				text-align:center;
-				width:70px;
+				width:100px;
 			}
 			
 			#organizationSwitch button:last-of-type{
@@ -374,9 +378,11 @@
 				<h2>Reports</h2>
 				<!--<div class="tagline"></div>-->
 				<div class="content">
-					<div id="organizationSwitch">
-						<button id="organizeByYearSwitchButton" class="active" onclick="switchOrganizationTo('year');">By Year</button>
-						<button id="organizeBySiteSwitchButton" onclick="switchOrganizationTo('site');">By Site</button>
+					<div id="organizationSwitchHolder">
+						<div id="organizationSwitch">
+							<button id="organizeByYearSwitchButton" class="active" onclick="switchOrganizationTo('year');">By Year</button>
+							<button id="organizeBySiteSwitchButton" onclick="switchOrganizationTo('site');">By Site</button>
+						</div>
 					</div>
 					<div id="reports">
 						<div id="reportsLoading">
