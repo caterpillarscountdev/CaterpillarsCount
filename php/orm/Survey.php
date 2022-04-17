@@ -186,10 +186,18 @@ class Survey
 		$groupBy = "";
 		
 		$arthropodSearch = trim($filters["arthropod"]);
-		if(strlen($arthropodSearch) > 0){
+		$minArthropodLength = intval($filters["minArthropodLength"]);
+		if(strlen($arthropodSearch) > 0 || $minArthropodLength > 0){
 			$baseTable = "`ArthropodSighting` JOIN `Survey` ON ArthropodSighting.SurveyFK = Survey.ID";
-			$additionalSQL .= " AND (ArthropodSighting.OriginalGroup='" . $arthropodSearch . "' OR ArthropodSighting.UpdatedGroup='" . $arthropodSearch . "')";
 			$groupBy = " GROUP BY ArthropodSighting.SurveyFK";
+		}
+		
+		if($minArthropodLength > 0){
+			$additionalSQL .= " AND ArthropodSighting.Length>='" . $minArthropodLength . "'";
+		}
+		
+		if(strlen($arthropodSearch) > 0){
+			$additionalSQL .= " AND (ArthropodSighting.OriginalGroup='" . $arthropodSearch . "' OR ArthropodSighting.UpdatedGroup='" . $arthropodSearch . "')";
 		}
 		
 		$userSearch = trim($filters["user"]);
