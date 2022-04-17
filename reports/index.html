@@ -104,7 +104,10 @@
 				font-family:'Roboto Slab', serif;
 				margin-bottom:30px;
 				overflow:hidden;
-				border:2px solid rgb(238, 238, 238);
+				border-left:2px solid rgb(238, 238, 238);
+				border-right:2px solid rgb(238, 238, 238);
+				border-top:2px solid rgb(238, 238, 238);
+				border-bottom:4px solid rgb(238, 238, 238);
 			}
 			
 			.folderSection:last-of-type{
@@ -254,7 +257,7 @@
 				$(".folder.active").stop().animate({backgroundColor: "transparent", color:"#555"}, 200);
 				var activeFolderSection = $(".folder.active").parent();
 				if(activeFolderSection.length > 0){
-					activeFolderSection.css({borderLeft:"2px solid rgb(238, 238, 238)", borderRight:"2px solid rgb(238, 238, 238)", borderTop:"2px solid rgb(238, 238, 238)", borderBottom:"3px solid rgb(238, 238, 238)"});
+					activeFolderSection.css({borderLeft:"2px solid rgb(238, 238, 238)", borderRight:"2px solid rgb(238, 238, 238)", borderTop:"2px solid rgb(238, 238, 238)", borderBottom:"4px solid rgb(238, 238, 238)"});
 				}
 				var activeFiles = $(".folder.active").parent().find(".files");
 				if(activeFiles.length > 0){
