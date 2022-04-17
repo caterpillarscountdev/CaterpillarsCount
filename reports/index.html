@@ -169,6 +169,7 @@
 				}
 				
 				years.sort();
+				years.reverse();
 				
 				var htmlToAdd = "";
 				for(var i = 0; i < years.length; i++){
@@ -221,7 +222,7 @@
 					var files = reportsBySite[sites[i]];
 					
 					files.sort(function(a, b){
-						return a[0] - b[0];
+						return b[0] - a[0];
 					});
 					
 					htmlToAdd += "<div class=\"folderSection\">";
