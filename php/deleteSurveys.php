@@ -15,19 +15,7 @@
 		for($i = 0; $i < count($userSites); $i++){
 			$userSiteIDs[] = $userSites[$i]->getID();
 		}
-	
-		/*
-		if($selected == "all"){
-			$surveys = Survey::findSurveysByUser($user, $filters, 0, "max")[1];//9999999999999999999);//this might cause a timeout
-			$selected = array();
-			for($i = 0; $i < count($surveys); $i++){
-				$surveyID = $surveys[$i]->getID() . "";
-				if(!in_array($surveyID, $unselected)){
-					$selected[] = $surveyID;
-				}
-			}
-		}
-		*/
+		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$tryingToDeleteCount = (count($selected) - count($unselected));
 		$selected[] = "-1";
