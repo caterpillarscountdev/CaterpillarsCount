@@ -950,6 +950,11 @@
 					loadingPage = true;
 					$("#resultsPage").css({display:"none"});
 					$(".loading").css({display:"block"});
+					
+					if(!firstLoad){
+						scrollToElement($("#iconBar"));
+					}
+					
 					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)), function(data){
 						//success
 						if(data.indexOf("true|") == 0){
@@ -1025,9 +1030,7 @@
 							else{
 								GLOBALPageNumber = pageNumber;
 							}
-							if(!firstLoad){
-								scrollToElement($("#iconBar"));
-							}
+							
 							GLOBALTotalSurveys = totalSurveys;
 							GLOBALTotalPages = totalPages;
 							updatePageNavigationBar();
@@ -1507,7 +1510,7 @@
 
 			function filter(){
 				if(!loadingPage){
-					var filters = {"user": $('#userSearch')[0].value.trim(), "arthropod": getSelectValue($('#arthropodSearch')), "minArthropodLength": 0, "site": getSelectValue($('#siteSearch .select').eq(0)), "circle": $('#circleSearch')[0].value.trim(), "code": $('#codeSearch')[0].value.trim(), "date": getSelectValue($("#yearFilter")) + "-" + getSelectValue($("#monthFilter")) + "-" + getSelectValue($("#dayFilter"))};
+					var filters = {"user": $('#userSearch')[0].value.trim(), "arthropod": getSelectValue($('#arthropodSearch')), "minArthropodLength": Number($("#minLength").val().replace(/\D/g, "")), "site": getSelectValue($('#siteSearch .select').eq(0)), "circle": $('#circleSearch')[0].value.trim(), "code": $('#codeSearch')[0].value.trim(), "date": getSelectValue($("#yearFilter")) + "-" + getSelectValue($("#monthFilter")) + "-" + getSelectValue($("#dayFilter"))};
 					$("#filtersDropdown button")[0].innerHTML = "<img src=\"../images/rolling.svg\" alt=\"loading...\"/>";
 					loadPage(1, filters);
 					/*
@@ -2731,7 +2734,7 @@
 							<input type="text" id="userSearch" placeholder="John Smith" autocomplete="off"/>
 						</div>
 						<div class="filter">
-							<div class="inputTitle">Arthropod:</div>
+							<div class="inputTitle">Arthropod Group:</div>
 							<div class="select" id="arthropodSearch">
 								<div class="option selected" onclick="selectOption(this);">	<div class="value"></div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
 								<div class="option" onclick="selectOption(this);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
@@ -2749,6 +2752,9 @@
 								<div class="option" onclick="selectOption(this);">		<div class="value">other</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/other.png');"></div>		<div class="text">Other</div></div></div>
 								<div class="option" onclick="selectOption(this);">		<div class="value">unidentified</div>	<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/unidentified.png');"></div>	<div class="text">Unidentified</div></div></div>
 							</div>
+							
+							<div class="inputTitle" style="margin-top:20px;">Min. length (mm): <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Only surveys including at least one arthropod that meets or exceeds this specified minimum length will be included in the results.');"/></div>
+							<input type="number" id="minLength" placeholder="0" onclick="this.select();" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');"/>
 						</div>
 						<div class="filter">
 							<div id="locationFilters" style="max-height:999999px;">
