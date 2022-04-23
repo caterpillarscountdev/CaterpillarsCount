@@ -225,11 +225,12 @@ class ManagerRequest
   	}
 	
 	public static function permanentDeleteAllLooseEnds(){
-		$query = mysqli_query($dbconn, "SELECT `ManagerRequest`.`ID` FROM `ManagerRequest` LEFT JOIN `Site` ON `ManagerRequest`.`SiteFK`=`Site`.`ID` WHERE `Site`.`ID` IS NULL");
+		$query = mysqli_query($dbconn, "SELECT `ManagerRequest`.`ID` FROM `ManagerRequest` LEFT JOIN `Site` ON `ManagerRequest`.`SiteFK`=`Site`.`ID` LEFT JOIN `User` ON `ManagerRequest`.`UserFKOfManager`=`User`.`ID` WHERE `Site`.`ID` IS NULL OR `User`.`ID` IS NULL");
 		$idsToDelete = array();
 		while($row = mysqli_fetch_assoc($query)){
 			$idsToDelete[] = $row["ID"];
 		}
+		
 		if(count($idsToDelete) > 0){
 			mysqli_query($dbconn, "DELETE FROM `ManagerRequest` WHERE `ID` IN ('" . implode("', '", $idsToDelete) . "')");
 		}
