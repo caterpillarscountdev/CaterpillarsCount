@@ -329,6 +329,17 @@ class Plant
 		}
 	}
 	
+	public static function permanentDeleteByIDs($ids)
+	{
+		if(is_array($ids) && count($ids) > 0)
+		{
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			mysqli_query($dbconn, "DELETE FROM `Plant` WHERE `ID` IN ('" . implode("', '", $ids) . "')");
+			mysqli_close($dbconn);
+			return true;
+		}
+	}
+	
 	
 	
 	
