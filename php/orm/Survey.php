@@ -606,6 +606,27 @@ class Survey
 		}
 	}
 	
+	public static function permanentDeleteByIDs($ids)
+	{
+		if(is_array($ids) && count($ids) > 0)
+		{
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			mysqli_query($dbconn, "DELETE FROM `Survey` WHERE `ID` IN ('" . implode("', '", $ids) . "')");
+			mysqli_query($dbconn, "DELETE FROM `ArthropodSighting` WHERE `SurveyFK` IN ('" . implode("', '", $ids) . "');`");
+			mysqli_close($dbconn);
+			return true;
+		}
+	}
+	
+	public static function permanentDeleteAllLooseEnds(){
+		$query = mysqli_query($dbconn, "SELECT `Survey`.`ID` FROM `Survey` LEFT JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`ID` IS NULL;`");
+		$idsToDelete = array();
+		while($row = mysqli_fetch_assoc($query)){
+			$idsToDelete[] = $row["ID"];
+		}
+		self::permanentDeleteByIDs($idsToDelete);
+	}
+	
 	
 	
 	
