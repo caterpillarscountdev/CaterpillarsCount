@@ -388,6 +388,27 @@ class ArthropodSighting
 		}
 	}
 	
+	public static function permanentDeleteByIDs($ids)
+	{
+		if(is_array($ids) && count($ids) > 0)
+		{
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			mysqli_query($dbconn, "DELETE FROM `ArthropodSighting` WHERE `ID` IN ('" . implode("', '", $ids) . "')");
+			mysqli_close($dbconn);
+			return true;
+		}
+	}
+	
+	public static function permanentDeleteAllLooseEnds(){
+		$query = mysqli_query($dbconn, "SELECT `ArthropodSighting`.`ID` FROM `ArthropodSighting` LEFT JOIN `Survey` ON `ArthropodSighting`.`SurveyFK`=`Survey`.`ID` WHERE `Survey`.`ID` IS NULL");
+		mysqli_close($dbconn);
+		$idsToDelete = array();
+		while($row = mysqli_fetch_assoc($query)){
+			$idsToDelete[] = $row["ID"];
+		}
+		self::permanentDeleteByIDs($idsToDelete);
+	}
+	
 	
 	
 	
