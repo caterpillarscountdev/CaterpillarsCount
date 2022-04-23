@@ -340,6 +340,15 @@ class Plant
 		}
 	}
 	
+	public static function permanentDeleteAllLooseEnds(){
+		$query = mysqli_query($dbconn, "SELECT `Plant`.`ID` FROM `Plant` LEFT JOIN `Site` ON `Plant`.`SiteFK`=`Site`.`ID` WHERE `Site`.`ID` IS NULL;`");
+		$idsToDelete = array();
+		while($row = mysqli_fetch_assoc($query)){
+			$idsToDelete[] = $row["ID"];
+		}
+		self::permanentDeleteByIDs($idsToDelete);
+	}
+	
 	
 	
 	
