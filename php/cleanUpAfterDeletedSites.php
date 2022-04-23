@@ -75,5 +75,7 @@
 		mysqli_query($dbconn, "DELETE FROM `TemporaryExpertIdentificationChangeLog` WHERE `ID` IN ('" . implode("', '", $idsToDelete) . "')");
 	}
 
+	mysqli_close($dbconn);
+
 	echo "DONE. <br/><br/>All data from sites that no longer exist has been deleted.";
 ?>
