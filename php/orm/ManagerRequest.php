@@ -39,14 +39,14 @@ class ManagerRequest
 		if($existingManagerRequest === null){
 			mysqli_query($dbconn, "INSERT INTO ManagerRequest (`UserFKOfManager`, `SiteFK`, `Status`) VALUES ('" . $manager->getID() . "', '" . $site->getID() . "', 'Pending')");
 			$id = intval(mysqli_insert_id($dbconn));
-			$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">" . $site->getCreator()->getFullName() . " would like you to be a manager of the \"" . $site->getName() . "\" site in " . $site->getRegion() . ". Please sign in to <a href='https://caterpillarscount.unc.edu/signIn'>caterpillarscount.unc.edu</a> using this email address (" . $manager->getEmail() . ") to approve or deny this request.</div><a href='https://caterpillarscount.unc.edu/signIn'><button style=\"border:0px none transparent;background:#fed136; border-radius:5px;padding:20px 40px;font-size:20px;color:#fff;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;font-weight:bold;cursor:pointer;\">SIGN IN NOW</button></a><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"></div></div>";
+			$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">" . $site->getCreator()->getFullName() . " would like you to be a manager of the \"" . $site->getName() . "\" site in " . $site->getRegion() . ". Please sign in to <a href='https://caterpillarscount.unc.edu/signIn'>caterpillarscount.unc.edu</a> using this email address (" . $manager->getEmail() . ") to approve or deny this request. If you are not prompted to approve this requst when you log in, this request has expired.</div><a href='https://caterpillarscount.unc.edu/signIn'><button style=\"border:0px none transparent;background:#fed136; border-radius:5px;padding:20px 40px;font-size:20px;color:#fff;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;font-weight:bold;cursor:pointer;\">SIGN IN NOW</button></a><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"></div></div>";
 			email($manager->getEmail(), "New Caterpillars Count! site manager request!", $message);
 			mysqli_close($dbconn);
 			return new ManagerRequest($id, $manager, $site, false, "Pending");
 		}
 		else if($existingManagerRequest->getStatus() == "Denied"){
 			mysqli_query($dbconn, "UPDATE ManagerRequest SET `Status`='Pending' WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `SiteFK`='" . $site->getID() . "'");
-			$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">" . $site->getCreator()->getFullName() . " would like you to reconsider being a manager of the \"" . $site->getName() . "\" site in " . $site->getRegion() . ". Please sign in to <a href='https://caterpillarscount.unc.edu/signIn'>caterpillarscount.unc.edu</a> using this email address (" . $manager->getEmail() . ") to approve or deny this request.</div><a href='https://caterpillarscount.unc.edu/signIn'><button style=\"border:0px none transparent;background:#fed136; border-radius:5px;padding:20px 40px;font-size:20px;color:#fff;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;font-weight:bold;cursor:pointer;\">SIGN IN NOW</button></a><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"></div></div>";
+			$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">" . $site->getCreator()->getFullName() . " would like you to reconsider being a manager of the \"" . $site->getName() . "\" site in " . $site->getRegion() . ". Please sign in to <a href='https://caterpillarscount.unc.edu/signIn'>caterpillarscount.unc.edu</a> using this email address (" . $manager->getEmail() . ") to approve or deny this request. If you are not prompted to approve this requst when you log in, this request has expired.</div><a href='https://caterpillarscount.unc.edu/signIn'><button style=\"border:0px none transparent;background:#fed136; border-radius:5px;padding:20px 40px;font-size:20px;color:#fff;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;font-weight:bold;cursor:pointer;\">SIGN IN NOW</button></a><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"></div></div>";
 			email($manager->getEmail(), "New Caterpillars Count! site manager request!", $message);
 			mysqli_close($dbconn);
 			return $existingManagerRequest;
@@ -223,6 +223,18 @@ class ManagerRequest
 			return true;
 		}
   	}
+	
+	public static function permanentDeleteAllLooseEnds(){
+		$query = mysqli_query($dbconn, "SELECT `ManagerRequest`.`ID` FROM `ManagerRequest` LEFT JOIN `Site` ON `ManagerRequest`.`SiteFK`=`Site`.`ID` WHERE `Site`.`ID` IS NULL");
+		$idsToDelete = array();
+		while($row = mysqli_fetch_assoc($query)){
+			$idsToDelete[] = $row["ID"];
+		}
+		if(count($idsToDelete) > 0){
+			mysqli_query($dbconn, "DELETE FROM `ManagerRequest` WHERE `ID` IN ('" . implode("', '", $idsToDelete) . "')");
+		}
+		mysqli_close($dbconn);
+	}
 	
 	//validity ensurance
 	public static function validManager($dbconn, $manager, $site){
