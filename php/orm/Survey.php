@@ -619,6 +619,7 @@ class Survey
 	}
 	
 	public static function permanentDeleteAllLooseEnds(){
+		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `Survey`.`ID` FROM `Survey` LEFT JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`ID` IS NULL");
 		mysqli_close($dbconn);
 		$idsToDelete = array();
