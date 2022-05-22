@@ -1,5 +1,6 @@
 <?php
 	require_once("orm/Plant.php");
+	require_once("orm/resources/mailing.php");
 	
 	function rp($search, $replace, $subject){
 		return str_replace($search, $replace, $subject);
@@ -26,7 +27,7 @@
 		$token = json_decode(curl_exec($ch), true)["access_token"];
 		curl_close ($ch);
 		
-mail("plocharczykweb@gmail.com", "1", "[" . json_encode($token) . "]");
+email("plocharczykweb@gmail.com", "1", "[" . json_encode($token) . "]");
 		
 		//CREATE OBSERVATION
 		$plant = Plant::findByCode($plantCode);
@@ -105,7 +106,7 @@ mail("plocharczykweb@gmail.com", "1", "[" . json_encode($token) . "]");
 		$observation = json_decode(curl_exec($ch), true)[0];
 		curl_close ($ch);
 		
-mail("plocharczykweb@gmail.com", "1", "[" . json_encode($observation) . "]");
+email("plocharczykweb@gmail.com", "1", "[" . json_encode($observation) . "]");
 		
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
