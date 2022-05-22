@@ -103,10 +103,12 @@ email("plocharczykweb@gmail.com", "1", "[" . json_encode($token) . "]");
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
-		$observation = json_decode(curl_exec($ch), true)[0];
+		$response = curl_exec($ch);
 		curl_close ($ch);
 		
-email("plocharczykweb@gmail.com", "1", "[" . json_encode($observation) . "]");
+email("plocharczykweb@gmail.com", "2", "[" . json_encode($response) . "], " . $url);
+		$observation = json_decode($response, true)[0];
+		
 		
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
