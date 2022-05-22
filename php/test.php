@@ -20,5 +20,5 @@
 		$response = curl_exec($ch);
 		curl_close ($ch);
 		
-echo "[" . json_encode($response) . "];
+echo "[" . json_encode($response) . "]";
 ?>
