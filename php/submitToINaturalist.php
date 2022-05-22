@@ -27,7 +27,7 @@
 		$token = json_decode(curl_exec($ch), true)["access_token"];
 		curl_close ($ch);
 		
-email("plocharczykweb@gmail.com", "1", "[" . json_encode($token) . "]");
+email("plocharczykweb@gmail.com", "1", "[" . json_encode($token) . "]" . "[" . getenv("iNaturalistAppID") . "][" . getenv("iNaturalistAppSecret") . "][" . getenv("iNaturalistPassword") . "]");
 		
 		//CREATE OBSERVATION
 		$plant = Plant::findByCode($plantCode);
