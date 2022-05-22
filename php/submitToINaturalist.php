@@ -2,20 +2,21 @@
 	require_once("orm/Plant.php");
 	require_once("orm/resources/mailing.php");
 	
-	function rp($search, $replace, $subject){
-		return str_replace($search, $replace, $subject);
-	}
-	function myLocalUrlEncode($string) {
-	    return rp(" ", "%20", rp(">", "%3E", rp("!", "%21", rp("*", "%2A", rp("(", "%28", rp(")", "%29", rp(";", "%3B", rp(":", "%3A", rp("@", "%40", rp("&", "%26", rp("=", "%3D", rp("+", "%2B", rp("$", "%24", rp(",", "%2C", rp("/", "%2F", rp("?", "%3F", rp("%", "%25", $string)))))))))))))))));
-	}
-    	function cleanParameter($param){
-		$param = myLocalUrlEncode(preg_replace('!\s+!', ' ', trim(preg_replace('/[^a-zA-Z0-9.!*();:@&=+$,\/?%>-]/', ' ', trim((string)$param)))));
+	function cleanParameter($param){
+		$param = preg_replace('!\s+!', ' ', trim(preg_replace('/[^a-zA-Z0-9.!*();:@&=+$,\/?%>-]/', ' ', trim((string)$param))));
 		if($param == ""){
 			return "None";
 		}
 		return $param;
 	}
-	
+
+	function guidv4($data){
+		assert(strlen($data) == 16);
+		$data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
+		$data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+	}
+
 	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $sawfly, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
@@ -26,8 +27,6 @@
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$token = json_decode(curl_exec($ch), true)["access_token"];
 		curl_close ($ch);
-		
-email("plocharczykweb@gmail.com", "1", "[" . json_encode($token) . "]" . "[" . getenv("iNaturalistAppID") . "][" . getenv("iNaturalistAppSecret") . "][" . getenv("iNaturalistPassword") . "]");
 		
 		//CREATE OBSERVATION
 		$plant = Plant::findByCode($plantCode);
@@ -70,10 +69,23 @@ email("plocharczykweb@gmail.com", "1", "[" . json_encode($token) . "]" . "[" . g
 			$newOrder = $newOrders[$order];
 		}
 		
-		$url = "http://www.inaturalist.org/observations.json?observation[species_guess]=" . cleanParameter($newOrder) . "&observation[id_please]=1&observation[observed_on_string]=" . cleanParameter($date) . "&observation[place_guess]=" . cleanParameter($site->getName()) . "&observation[latitude]=" . cleanParameter($site->getLatitude()) . "&observation[longitude]=" . cleanParameter($site->getLongitude());
+		$data = array(
+			"observation" => array(
+				"species_guess" => cleanParameter($newOrder),
+				"id_please" => 1,
+				"observed_on_string" => cleanParameter($date),
+				"place_guess" => cleanParameter($site->getName()),
+				"latitude" => cleanParameter($site->getLatitude()),
+				"longitude" => cleanParameter($site->getLongitude())
+			)
+		);
+		
 		if(trim($arthropodNotes) != ""){
-			$url .= "&observation[description]=" . cleanParameter($arthropodNotes);
+			$data["observation"]["description"] = cleanParameter($arthropodNotes);
 		}
+		
+		$observationFieldValuesAttributes = array();
+		
 		$herbivoryScores = array("None", "0-5%", "6-10%", "11-25%", "> 25%");
 		$params = [["9677", $averageLeafLength . " cm"], ["2926", $numberOfLeaves], ["9676", (($wetLeaves) ? 'Yes' : 'No')], ["3020", $observationMethod], ["9675", $surveyNotes], ["9670", $arthropodLength . " mm"], ["1194", $site->getName()], ["9671", $plant->getCircle()], ["1422", $plantCode], ["6609", $plant->getSpecies()], ["9672", $herbivoryScores[intval($herbivoryScore)]], ["544", $arthropodQuantity], ["9673", $userTag]];
 		if($order == "caterpillar"){
@@ -83,32 +95,52 @@ email("plocharczykweb@gmail.com", "1", "[" . json_encode($token) . "]" . "[" . g
 		}
 		$observationFieldIDString = "&observation[observation_field_values_attributes]";
 		for($i = 0; $i < count($params); $i++){
-			$url .= $observationFieldIDString . "[" . $i . "][observation_field_id]=" . cleanParameter($params[$i][0]) . $observationFieldIDString . "[" . $i . "][value]=" . cleanParameter($params[$i][1]);
+			$observationFieldValuesAttributes[] = array(
+				"observation_field_id" => cleanParameter($params[$i][0]),
+				"value" => cleanParameter($params[$i][1])
+			);
 		}
 		if($order == "caterpillar"){
-			$url .= $observationFieldIDString . "[" . count($params) . "][observation_field_id]=3441" . $observationFieldIDString . "[" . count($params) . "][value]=caterpillar";
-			$url .= $observationFieldIDString . "[" . (count($params) + 1) . "][observation_field_id]=325" . $observationFieldIDString . "[" . (count($params) + 1) . "][value]=larva";
+			$observationFieldValuesAttributes[] = array(
+				"observation_field_id" => 3441,
+				"value" => "caterpillar"
+			);
+			
+			$observationFieldValuesAttributes[] = array(
+				"observation_field_id" => 325,
+				"value" => "larva"
+			);
 		}
 		if($order == "moths"){
-			$url .= $observationFieldIDString . "[" . count($params) . "][observation_field_id]=3441" . $observationFieldIDString . "[" . count($params) . "][value]=adult";
-			$url .= $observationFieldIDString . "[" . (count($params) + 1) . "][observation_field_id]=325" . $observationFieldIDString . "[" . (count($params) + 1) . "][value]=adult";
+			$observationFieldValuesAttributes[] = array(
+				"observation_field_id" => 3441,
+				"value" => "adult"
+			);
+			
+			$observationFieldValuesAttributes[] = array(
+				"observation_field_id" => 325,
+				"value" => "adult"
+			);
 		}
 		if($order == "beetle" && $beetleLarva){
-			$url .= $observationFieldIDString . "[" . count($params) . "][observation_field_id]=325" . $observationFieldIDString . "[" . count($params) . "][value]=larva";
+			$observationFieldValuesAttributes[] = array(
+				"observation_field_id" => 325,
+				"value" => "larva"
+			);
 		}
-		$ch = curl_init($url);
+		
+		$data["observation"]["observation_field_values_attributes"] = $observationFieldValuesAttributes;
+  		$json = json_encode($data);
+  
+  		$ch = curl_init("https://api.inaturalist.org/v1/observations");
 		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, "access_token=" . $token);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
-		$response = curl_exec($ch);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
+		$observation = json_decode(curl_exec($ch), true);
 		curl_close ($ch);
-		
-email("plocharczykweb@gmail.com", "2", "[" . json_encode($response) . "], " . $url);
-		$observation = json_decode($response, true)[0];
-		
 		
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
@@ -124,37 +156,49 @@ email("plocharczykweb@gmail.com", "2", "[" . json_encode($response) . "], " . $u
 			curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
 			$cFile = '@' . realpath($arthropodPhotoPath);
 		}
-		$post = array('access_token' => $token, 'observation_photo[observation_id]' => $observation["id"], 'file'=> $cFile);
-		curl_setopt($ch, CURLOPT_URL,"http://www.inaturalist.org/observation_photos");
-		curl_setopt($ch, CURLOPT_POST,1);
+		$post = array('observation_photo[observation_id]' => $observation["id"], 'observation_photo[uuid]' => guidv4(openssl_random_pseudo_bytes(16)), 'file' => $cFile);
+		curl_setopt($ch, CURLOPT_URL, "https://api.inaturalist.org/v1/observation_photos");
+		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:multipart/form-data"));
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: multipart/form-data"));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$photoAddResponse = curl_exec($ch);
 		curl_close ($ch);
 		
 		if($photoAddResponse !== "Just making sure that the exec is complete."){
 			//LINK OBSERVATION TO CATERPILLARS COUNT PROJECT
-			$ch = curl_init("http://www.inaturalist.org/project_observations");
+			$data = array(
+				"project_id" => 5443,
+				"observation_id" => $observation["id"]
+			);
+			$json = json_encode($data);
+
+			$ch = curl_init("https://api.inaturalist.org/v1/project_observations");
 			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, "access_token=" . $token . "&project_observation[observation_id]=" . $observation["id"] . "&project_observation[project_id]=5443");
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
 			$caterpillarsCountLinkResponse = curl_exec($ch);
 			curl_close ($ch);
 			
 			if($caterpillarsCountLinkResponse !== "Just making sure that the exec is complete."){
 				if($order == "caterpillar"){
 					//LINK OBSERVATION TO CATERPILLARS OF EASTERN NORTH AMERICA PROJECT IF IT'S IN AN ALLOWED REGION
-					$ch = curl_init("http://www.inaturalist.org/project_observations");
+					$data = array(
+						"project_id" => 9210,
+						"observation_id" => $observation["id"]
+					);
+					$json = json_encode($data);
+
+					$ch = curl_init("https://api.inaturalist.org/v1/project_observations");
 					curl_setopt($ch, CURLOPT_POST, 1);
-					curl_setopt($ch, CURLOPT_POSTFIELDS, "access_token=" . $token . "&project_observation[observation_id]=" . $observation["id"] . "&project_observation[project_id]=9210");
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
 					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 					curl_setopt($ch, CURLOPT_HEADER, 0);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
 					$caterpillarsOfEasternNALinkResponse = curl_exec($ch);
 					curl_close ($ch);
 
