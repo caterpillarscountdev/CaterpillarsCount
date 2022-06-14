@@ -280,7 +280,7 @@ class Survey
 		return array($totalCount, $surveysArray);
 	}
 	
-	public static findByFlagged(){
+	public static function findByFlagged(){
 		//TODO: write sql to find all flagged surveys/surveyIDs dynamically
 		/*
 		STILL IN PROGRESS: 
