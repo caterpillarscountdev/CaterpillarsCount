@@ -24,7 +24,6 @@ class Survey
 	private $averageNeedleLength;
 	private $linearBranchLength;
 	private $submittedThroughApp;
-	private $arthropodSightings;
 	//TODO: private $reviewedAndApproved;
 	
 	private $deleted;
@@ -338,7 +337,7 @@ class Survey
 	
 	public function getArthropodSightings() {
 		if($this->deleted){return null;}
-		return $this->arthropodSightings === null ? ArthropodSighting::findArthropodSightingsBySurvey($this) : $this->arthropodSightings;
+		return ArthropodSighting::findArthropodSightingsBySurvey($this);
 	}
 	
 	public function getPlantSpecies() {
@@ -381,6 +380,7 @@ class Survey
 		return intval($this->averageNeedleLength) > -1;
 	}
 	
+	/*
 	private static function getFlaggingRules(){
 		return array(
 			"minSafeLeaves" => 5,
@@ -588,6 +588,7 @@ class Survey
 		
 		return $flags;
 	}
+	*/
 	
 //SETTERS
 	public function setPlant($plant){
