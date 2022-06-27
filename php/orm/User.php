@@ -167,7 +167,13 @@ class User
 	}
 	
 	public static function findUsersByIDs($userIDs){
-		$userIDs[] = -1;//make sure it's not empty
+		if(count($userIDs) == 0){
+			return array();
+		}
+		
+		for($i = 0; $i < count($userIDs); $i++){
+			$userIDs[$i] = intval($userIDs[$i]);
+		}
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `User` WHERE ID IN (" . implode(",", $userIDs) . ")");
