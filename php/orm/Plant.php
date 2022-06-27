@@ -146,27 +146,37 @@ class Plant
 	}
 	
 	public static function findPlantsByIDs($plantIDs){
-		$plantIDs[] = -1;//make sure it's not empty
+		if(count($plantIDs) == 0){
+			return array();
+		}
+		
+		for($i = 0; $i < count($plantIDs); $i++){
+			$plantIDs[$i] = intval($plantIDs[$i]);
+		}
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `ID` IN (" . implode(",", $plantIDs) . ")");
 		mysqli_close($dbconn);
 		
-		$siteFKs = array();
+		//get associated sites
+		$associatedSiteFKs = array();
 		while($plantRow = mysqli_fetch_assoc($query)){
-			$siteFKs[] = $plantRow["SiteFK"];
+			$associatedSiteFKs[$plantRow["SiteFK"]] = 1;
 		}
-		$sites = Site::findSitesByIDs($siteFKs);
-		$sitesByID = array();
-		for($i = 0; $i < count($sites); $i++){
-			$sitesByID[$sites[$i]->getID()] = $sites[$i];
+		$associatedSiteFKs = array_keys($associatedSiteFKs);
+		
+		$associatedSitesBySiteFK = array();
+		$associatedSites = Site::findSitesByIDs($associatedSiteFKs);
+		for($i = 0; $i < count($associatedSites); $i++){
+			$associatedSitesBySiteFK[$associatedSites[$i]->getID()] = $associatedSites[$i];
 		}
 		
+		//make plant objects
 		$plantsArray = array();
 		mysqli_data_seek($query, 0);
 		while($plantRow = mysqli_fetch_assoc($query)){
 			$id = $plantRow["ID"];
-			$site = $sitesByID[$plantRow["SiteFK"]];
+			$site = array_key_exists($plantRow["SiteFK"], $associatedSitesBySiteFK) ? $associatedSitesBySiteFK[$plantRow["SiteFK"]] : null;
 			$circle = $plantRow["Circle"];
 			$orientation = $plantRow["Orientation"];
 			$code = $plantRow["Code"];
