@@ -135,7 +135,7 @@ class Survey
 //FINDERS
 	public static function findByID($id) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
+		$id = intval($id);
 		$query = mysqli_query($dbconn, "SELECT * FROM `Survey` WHERE `ID`='$id' LIMIT 1");
 		mysqli_close($dbconn);
 		
@@ -162,6 +162,71 @@ class Survey
 		$submittedThroughApp = $surveyRow["SubmittedThroughApp"];
 		
 		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
+	}
+	
+	public static function findSurveysByIDs($surveyIDs) {
+		if(count($surveyIDs) == 0){
+			return array();
+		}
+		
+		for($i = 0; $i < count($surveyIDs); $i++){
+			$surveyIDs[$i] = intval($surveyIDs[$i]);
+		}
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		$query = mysqli_query($dbconn, "SELECT * FROM `Survey` WHERE `ID` IN ('" . implode("', '", $surveyIDs) . "') LIMIT " . count($surveyIDs));
+		mysqli_close($dbconn);
+		
+		//get associated plants
+		$associatedPlantFKs = array();
+		while($surveyRow = mysqli_fetch_assoc($query)){
+			$associatedPlantFKs[$surveyRow["PlantFK"]] = 1;
+		}
+		$associatedPlantFKs = array_keys($associatedPlantFKs);
+		
+		$associatedPlantsByPlantFK = array();
+		$associatedPlants = Plant::findPlantsByIDs($associatedPlantFKs);
+		for($i = 0; $i < count($associatedPlants); $i++){
+			$associatedPlantsByPlantFK[$associatedPlants[$i]->getID()] = $associatedPlants[$i];
+		}
+		
+		//get associated users
+		$associatedUserFKs = array();
+		mysqli_data_seek($query, 0);
+		while($surveyRow = mysqli_fetch_assoc($query)){
+			$associatedUserFKs[$surveyRow["UserFKOfObserver"]] = 1;
+		}
+		$associatedUserFKs = array_keys($associatedUserFKs);
+		
+		$associatedUsersByUserFK = array();
+		$associatedUsers = User::findUsersByIDs($associatedUserFKs);
+		for($i = 0; $i < count($associatedUsers); $i++){
+			$associatedUsersByUserFK[$associatedUsers[$i]->getID()] = $associatedUsers[$i];
+		}
+		
+		//make survey objects
+		$surveysArray = array();
+		mysqli_data_seek($query, 0);
+		while($surveyRow = mysqli_fetch_assoc($query)){
+			$submissionTimestamp = intval($surveyRow["SubmissionTimestamp"]);
+			$observer = array_key_exists($surveyRow["UserFKOfObserver"], $associatedUsersByUserFK) ? $associatedUsersByUserFK[$surveyRow["UserFKOfObserver"]] : null;
+			$plant = array_key_exists($surveyRow["PlantFK"], $associatedPlantsByPlantFK) ? $associatedPlantsByPlantFK[$surveyRow["PlantFK"]] : null;
+			$localDate = $surveyRow["LocalDate"];
+			$localTime = $surveyRow["LocalTime"];
+			$observationMethod = $surveyRow["ObservationMethod"];
+			$notes = $surveyRow["Notes"];
+			$wetLeaves = $surveyRow["WetLeaves"];
+			$plantSpecies = $surveyRow["PlantSpecies"];
+			$numberOfLeaves = $surveyRow["NumberOfLeaves"];
+			$averageLeafLength = $surveyRow["AverageLeafLength"];
+			$herbivoryScore = $surveyRow["HerbivoryScore"];
+			$averageNeedleLength = $surveyRow["AverageNeedleLength"];
+			$linearBranchLength = $surveyRow["LinearBranchLength"];
+			$submittedThroughApp = $surveyRow["SubmittedThroughApp"];
+
+			$surveysArray[] = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
+		}
+		return $surveysArray;
 	}
 	
 	public static function findSurveysByUser($user, $filters, $start, $limit) {
@@ -281,12 +346,67 @@ class Survey
 	}
 	
 	public static function findByFlagged(){
-		//TODO: write sql to find all flagged surveys/surveyIDs dynamically
-		/*
-		STILL IN PROGRESS: 
-		$flaggingRules = Survey::getFlaggingRules();
-		SELECT * FROM `Survey` JOIN ArthropodSighting ON ArthropodSighting.SurveyFK=Survey.ID WHERE ArthropodSighting.UpdatedSawFly=1 AND ArthropodSighting.Length>50;
-		*/
+		$flaggingRules = self::getFlaggingRules();
+		
+		$arthropodGroupsExcludedFromTotalQuantityCount = array();
+		$rareArthropodGroups = array();
+		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
+			if($flaggingData["excludedFromTotalQuantityCount"]){
+				$arthropodGroupsExcludedFromTotalQuantityCount[] = mysqli_real_escape_string($dbconn, $arthropodGroup);
+			}
+			
+			if($flaggingData["isRare"]){
+				$rareArthropodGroups[] = mysqli_real_escape_string($dbconn, $arthropodGroup);
+			}
+		}
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		
+		$flaggedSurveyIDs = array();
+		
+		//survey flags
+		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`>'-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
+		$query = mysqli_query($dbconn, $sql);
+		while($row = mysqli_fetch_assoc($query)){
+			$flaggedSurveyIDs[$row["ID"]] = 1;
+		}
+		
+		//arthropod flags
+		$sql = "SELECT DISTINCT `SurveyFK` FROM `ArthropodSighting` WHERE (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeQuantity"]) . "'))";
+		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingRules){
+			$sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingRules["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingRules["maxSafeQuantity"]) . "'))";
+		}
+		$query = mysqli_query($dbconn, $sql);
+		while($row = mysqli_fetch_assoc($query)){
+			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
+		}
+		
+		//too many total arthropods (minus specified exclusions) flags
+		$sql = "SELECT `SurveyFK` FROM `ArthropodSighting`" . (count($arthropodGroupsExcludedFromTotalQuantityCount) > 0 ? (" WHERE `UpdatedGroup` NOT IN ('" . implode("', '", $arthropodGroupsExcludedFromTotalQuantityCount) . "')") : "") . " GROUP BY `SurveyFK` HAVING SUM(`Quantity`)>'" . intval($flaggingRules["maxSafeTotalQuantity"]) . "'";
+		$query = mysqli_query($dbconn, $sql);
+		while($row = mysqli_fetch_assoc($query)){
+			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
+		}
+		
+		//too many distinct groups flags
+		$sql = "SELECT `SurveyFK` FROM (SELECT DISTINCT `SurveyFK`, `UpdatedGroup` FROM `ArthropodSighting`) AS `DistinctSurveyGroupTable` GROUP BY `SurveyFK` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeArthropodGroups"]) . "'";
+		$query = mysqli_query($dbconn, $sql);
+		while($row = mysqli_fetch_assoc($query)){
+			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
+		}
+		
+		//too many rare groups flags
+		if(count($rareArthropodGroups) > 0){
+			$sql = "SELECT `SurveyFK` FROM `ArthropodSighting` WHERE `UpdatedGroup` IN ('" . implode("', '", $rareArthropodGroups) . "') GROUP BY `SurveyFK` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeRareArthropodGroups"]) . "'";
+			$query = mysqli_query($dbconn, $sql);
+			while($row = mysqli_fetch_assoc($query)){
+				$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
+			}
+		}
+		
+		mysqli_close($dbconn);
+		
+		return self::findSurveysByIDs(array_keys($flaggedSurveyIDs));
 	}
 
 //GETTERS
@@ -380,7 +500,6 @@ class Survey
 		return intval($this->averageNeedleLength) > -1;
 	}
 	
-	/*
 	private static function getFlaggingRules(){
 		return array(
 			"minSafeLeaves" => 5,
@@ -388,12 +507,12 @@ class Survey
 			"maxSafeLeafLength" => 30,
 			"maxSafeTotalQuantity" => 10,
 			"maxSafeArthropodGroups" => 4,
-			"maxSafeRareArthropodGroups" => 3
-			"sawflyFlaggingRules" = array(
+			"maxSafeRareArthropodGroups" => 3,
+			"sawflyFlaggingRules" => array(
 				"maxSafeLength" => 50,
 				"maxSafeQuantity" => 20
 			),
-			"arthropodGroupFlaggingRules" = array(
+			"arthropodGroupFlaggingRules" => array(
 				"ant" => array(
 					"maxSafeLength" => 17,
 					"maxSafeQuantity" => 50,
@@ -483,7 +602,7 @@ class Survey
 	}
 	
 	public function getFlags(){
-		$flaggingRules = Survey::getFlaggingRules();
+		$flaggingRules = self::getFlaggingRules();
 		
 		//grab flags based on info provided above...
 		$flags = array();
@@ -510,7 +629,7 @@ class Survey
 			//flag lengths
 			$arthropodLength = $arthropodSightings[$i]->getLength();
 			if($isSawfly && $arthropodLength > $flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]){
-				$flags[] = "LONG ARTHROPOD: " . $arthropodLength . "mm exceeds safe \"sawfly\" limit of " . $MAX_SAFE_SAWFLY_LENGTH . "mm.";
+				$flags[] = "LONG ARTHROPOD: " . $arthropodLength . "mm exceeds safe \"sawfly\" limit of " . $flaggingRules["sawflyFlaggingRules"]["maxSafeLength"] . "mm.";
 			}
 			
 			if(array_key_exists($updatedArthropodGroup, $flaggingRules["arthropodGroupFlaggingRules"]) && $arthropodLength > $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"]){
@@ -572,23 +691,22 @@ class Survey
 		$isConifer = $this->isConifer();
 		$numberOfLeaves = $this->getNumberOfLeaves();
 		if(!$isConifer && $numberOfLeaves < $flaggingRules["minSafeLeaves"]){
-			flags[] = "TOO FEW LEAVES: " . $numberOfLeaves . " leaves does not meet safe limit of " . $flaggingRules["minSafeLeaves"] . " leaves.";
+			$flags[] = "TOO FEW LEAVES: " . $numberOfLeaves . " leaves does not meet safe limit of " . $flaggingRules["minSafeLeaves"] . " leaves.";
 		}
 		
 		//flag too many leaves
 		if(!$isConifer && $numberOfLeaves > $flaggingRules["maxSafeLeaves"]){
-			flags[] = "TOO MANY LEAVES: " . $numberOfLeaves . " leaves exceeds safe limit of " . $flaggingRules["maxSafeLeaves"] . " leaves.";
+			$flags[] = "TOO MANY LEAVES: " . $numberOfLeaves . " leaves exceeds safe limit of " . $flaggingRules["maxSafeLeaves"] . " leaves.";
 		}
 		
 		//flag long leaves
 		$averageLeafLength = $this->getAverageLeafLength();
 		if(!$isConifer && $averageLeafLength > $flaggingRules["maxSafeLeafLength"]){
-			flags[] = "LONG LEAVES: " . $averageLeafLength . "cm exceeds safe limit of " . $flaggingRules["maxSafeLeafLength"] . "cm.";
+			$flags[] = "LONG LEAVES: " . $averageLeafLength . "cm exceeds safe limit of " . $flaggingRules["maxSafeLeafLength"] . "cm.";
 		}
 		
 		return $flags;
 	}
-	*/
 	
 //SETTERS
 	public function setPlant($plant){
