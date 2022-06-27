@@ -130,6 +130,59 @@ class ArthropodSighting
 		return new ArthropodSighting($id, $survey, $originalGroup, $updatedGroup, $length, $quantity, $photoURL, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $updatedSawfly, $originalBeetleLarva, $updatedBeetleLarva, $iNaturalistID);
 	}
 	
+	public static function findArthropodSightingsByIDs($arthropodSightingIDs){
+		if(count($arthropodSightingIDs) == 0){
+			return array();
+		}
+		
+		for($i = 0; $i < count($arthropodSightingIDs); $i++){
+			$arthropodSightingIDs[$i] = intval($arthropodSightingIDs[$i]);
+		}
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		$query = mysqli_query($dbconn, "SELECT * FROM `ArthropodSighting` WHERE `ID` IN ('" . implode("', '", $arthropodSightingIDs) . "')");
+		mysqli_close($dbconn);
+		
+		//get associated surveys
+		$associatedSurveyFKs = array();
+		while($arthropodSightingRow = mysqli_fetch_assoc($query)){
+			$associatedSurveyFKs[$arthropodSightingRow["SurveyFK"]] = 1;
+		}
+		$associatedSurveyFKs = array_keys($associatedSurveyFKs);
+		
+		$associatedSurveysBySurveyFK = array();
+		$associatedSurveys = Survey::findSurveysByIDs($associatedSurveyFKs);
+		for($i = 0; $i < count($associatedSurveys); $i++){
+			$associatedSurveysBySurveyFK[$associatedSurveys[$i]->getID()] = $associatedSurveys[$i];
+		}
+		
+		//make arthropodsighting objects
+		$arthropodSightingsArray = array();
+		mysqli_data_seek($query, 0);
+		while($arthropodSightingRow = mysqli_fetch_assoc($query)){
+			$id = $arthropodSightingRow["ID"];
+			$survey = array_key_exists($arthropodSightingRow["SurveyFK"], $associatedSurveysBySurveyFK) ? $associatedSurveysBySurveyFK[$arthropodSightingRow["SurveyFK"]] : null;
+			$originalGroup = $arthropodSightingRow["OriginalGroup"];
+			$updatedGroup = $arthropodSightingRow["UpdatedGroup"];
+			$length = $arthropodSightingRow["Length"];
+			$quantity = $arthropodSightingRow["Quantity"];
+			$photoURL = $arthropodSightingRow["PhotoURL"];
+			$notes = $arthropodSightingRow["Notes"];
+			$pupa = $arthropodSightingRow["Pupa"];
+			$hairy = $arthropodSightingRow["Hairy"];
+			$rolled = $arthropodSightingRow["Rolled"];
+			$tented = $arthropodSightingRow["Tented"];
+			$originalSawfly = $arthropodSightingRow["OriginalSawfly"];
+			$updatedSawfly = $arthropodSightingRow["UpdatedSawfly"];
+			$originalBeetleLarva = $arthropodSightingRow["OriginalBeetleLarva"];
+			$updatedBeetleLarva = $arthropodSightingRow["UpdatedBeetleLarva"];
+			$iNaturalistID = $arthropodSightingRow["INaturalistID"];
+
+			$arthropodSightingsArray[] = new ArthropodSighting($id, $survey, $originalGroup, $updatedGroup, $length, $quantity, $photoURL, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $updatedSawfly, $originalBeetleLarva, $updatedBeetleLarva, $iNaturalistID);
+		}
+		return $arthropodSightingsArray;
+	}
+	
 	public static function findArthropodSightingsBySurvey($survey){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `ArthropodSighting` WHERE `SurveyFK`='" . $survey->getID() . "'");
