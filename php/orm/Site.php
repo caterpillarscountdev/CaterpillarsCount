@@ -198,27 +198,36 @@ class Site
 	}
 	
 	public static function findSitesByIDs($siteIDs){
-		$siteIDs[] = -1;//make sure it's not empty
+		if(count($siteIDs) == 0){
+			return array();
+		}
+		
+		for($i = 0; $i < count($siteIDs); $i++){
+			$siteIDs[$i] = intval($siteIDs[$i]);
+		}
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `ID` IN (" . implode(",", $siteIDs) . ")");
 		mysqli_close($dbconn);
 		
-		$creatorFKs = array();
+		//get associated users
+		$associatedCreatorFKs = array();
 		while($siteRow = mysqli_fetch_assoc($query)){
-			$creatorFKs[] = $siteRow["UserFKOfCreator"];
+			$associatedCreatorFKs[] = $siteRow["UserFKOfCreator"];
 		}
-		$users = User::findUsersByIDs($creatorFKs);
-		$usersByID = array();
-		for($i = 0; $i < count($users); $i++){
-			$usersByID[$users[$i]->getID()] = $users[$i];
+		$associatedCreatorFKs = array_keys($associatedCreatorFKs);
+		
+		$associatedCreatorsByCreatorFK = array();
+		$associatedCreators = User::findUsersByIDs($associatedCreatorFKs);
+		for($i = 0; $i < count($associatedCreators); $i++){
+			$associatedCreatorsByCreatorFK[$associatedCreators[$i]->getID()] = $associatedCreators[$i];
 		}
 		
 		$sitesArray = array();
 		mysqli_data_seek($query, 0);
 		while($siteRow = mysqli_fetch_assoc($query)){
-			$creator = $usersByID[$siteRow["UserFKOfCreator"]];
 			$id = $siteRow["ID"];
+			$creator = array_key_exists($siteRow["UserFKOfCreator"], $associatedCreatorsByCreatorFK) ? $associatedCreatorsByCreatorFK[$siteRow["UserFKOfCreator"]] : null;
 			$name = $siteRow["Name"];
 			$dateEstablished = $siteRow["DateEstablished"];
 			$description = $siteRow["Description"];
