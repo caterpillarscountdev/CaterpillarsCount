@@ -345,7 +345,11 @@ class Survey
 		return array($totalCount, $surveysArray);
 	}
 	
-	public static function findByFlagged($start, $limit){
+	public static function findByFlagged($user, $start, $limit){
+		if(!User::isSuperUser($user)){
+			return array();
+		}
+		
 		$flaggingRules = self::getFlaggingRules();
 		
 		$arthropodGroupsExcludedFromTotalQuantityCount = array();
