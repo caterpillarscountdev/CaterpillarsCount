@@ -9,6 +9,7 @@
 	$salt = $_GET["salt"];
 	$page = $_GET["page"];
 	$filters = json_decode(rawurldecode($_GET["filters"]), true);
+	$inQCMode = filter_var($_GET["inQCMode"], FILTER_VALIDATE_BOOLEAN);
 	$PAGE_LENGTH = 25;
 	
 	$user = User::findBySignInKey($email, $salt);
@@ -17,7 +18,8 @@
 		if($page !== "last"){
 			$start = ((intval($page) - 1) * $PAGE_LENGTH);
 		}
-		$surveys = Survey::findSurveysByUser($user, $filters, $start, $PAGE_LENGTH);
+		
+		$surveys = $inQCMode ? Survey::findByFlagged($user, $start, $PAGE_LENGTH) : Survey::findSurveysByUser($user, $filters, $start, $PAGE_LENGTH);
 		$totalCount = $surveys[0];
 		$totalPages = ceil($totalCount/$PAGE_LENGTH);
 		$surveys = $surveys[1];
