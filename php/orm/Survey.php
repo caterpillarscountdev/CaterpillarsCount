@@ -179,7 +179,7 @@ class Survey
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		
-		$limitSQL = "LIMIT " . count($surveyIDs);
+		$limitSQL = " LIMIT " . count($surveyIDs);
 		if($limit !== null){
 			if($start === null){
 				$limitSQL = " LIMIT " . min($limit, count($surveyIDs));
@@ -189,7 +189,7 @@ class Survey
 			}
 		}
 		
-		$query = mysqli_query($dbconn, "SELECT * FROM `Survey` WHERE `ID` IN ('" . implode("', '", $surveyIDs) . "') " . (in_array($orderBy, $acceptableOrderBys) ? "ORDER BY " . $orderBy . " " : "") . "LIMIT " . count($surveyIDs));
+		$query = mysqli_query($dbconn, "SELECT * FROM `Survey` WHERE `ID` IN ('" . implode("', '", $surveyIDs) . "') " . (in_array($orderBy, $acceptableOrderBys) ? "ORDER BY " . $orderBy . " " : "") . $limitSQL);
 		mysqli_close($dbconn);
 		
 		//get associated plants
