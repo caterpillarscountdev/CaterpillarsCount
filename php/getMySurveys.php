@@ -19,7 +19,7 @@
 			$start = ((intval($page) - 1) * $PAGE_LENGTH);
 		}
 		
-		$surveys = $inQCMode ? Survey::findByFlagged($user, $start, $PAGE_LENGTH) : Survey::findSurveysByUser($user, $filters, $start, $PAGE_LENGTH);
+		$surveys = $inQCMode ? Survey::findSurveysByFlagged($user, $start, $PAGE_LENGTH) : Survey::findSurveysByUser($user, $filters, $start, $PAGE_LENGTH);
 		$totalCount = $surveys[0];
 		$totalPages = ceil($totalCount/$PAGE_LENGTH);
 		$surveys = $surveys[1];
