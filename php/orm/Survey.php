@@ -369,8 +369,6 @@ class Survey
 			}
 		}
 		
-		$dbconn = (new Keychain)->getDatabaseConnection();
-		
 		$flaggedSurveyIDs = array();
 		
 		//survey flags
@@ -411,6 +409,13 @@ class Survey
 			while($row = mysqli_fetch_assoc($query)){
 				$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 			}
+		}
+		
+		//remove example site data
+		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
+		$query = mysqli_query($dbconn, $sql);
+		while($row = mysqli_fetch_assoc($query)){
+			unset($flaggedSurveyIDs[$row["ID"]]);
 		}
 		
 		mysqli_close($dbconn);
