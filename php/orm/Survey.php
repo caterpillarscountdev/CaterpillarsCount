@@ -350,7 +350,7 @@ class Survey
 			return array();
 		}
 		
-		$start = intval($start);
+		$start = $start == "last" ? $start : intval($start);
 		$limit = intval($limit);
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
@@ -425,6 +425,14 @@ class Survey
 		$totalCount = count($flaggedSurveyIDs);
 		
 		sort($flaggedSurveyIDs);
+		
+		if($start === "last"){
+			$start = $totalCount - ($totalCount % intval($limit));
+			if($start == $totalCount && $totalCount > 0){
+				$start = $totalCount - intval($limit);
+			}
+		}
+		
 		$flaggedSurveyIDs = array_slice($flaggedSurveyIDs, $start, $limit);
 		
 		return array($totalCount, self::findSurveysByIDs($flaggedSurveyIDs));
