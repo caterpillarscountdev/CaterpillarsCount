@@ -448,6 +448,10 @@
 				padding-right:20px;
 			}
 			
+			.shownInQCMode{
+				display:none;
+			}
+			
 			.iconButton{
 				display:table;
 				background:#fed136;
@@ -838,8 +842,27 @@
 				});
 			}
 			
-			function enterQCMode(){
-				alert("entering qc mode...");
+			var inQCMode = false;
+			function toggleQCMode(){
+				inQCMode = !inQCMode;
+				
+				if(inQCMode){
+					$("#enterQCModeButtonText").html("Exit QC Mode");
+					$(".hiddenInQcMode").css({display: "none"});
+					$(".shownInQCMode").css({display: "block"});
+				}
+				else{
+					$("#enterQCModeButtonText").html("Enter QC Mode");
+					
+					var hiddenInQcModeElements = $(".hiddenInQcMode");
+					for(var i = 0; i < hiddenInQcModeElements.length; i++){
+						hiddenInQcModeElements[i].style.display = "";
+					}
+					
+					$(".shownInQCMode").css({display: "none"});
+				}
+				
+				loadPage(1, {});
 			}
 			
 			function email(fullName, emailParts){
@@ -978,7 +1001,7 @@
 						scrollToElement($("#iconBar"));
 					}
 					
-					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)), function(data){
+					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)) + "&inQCMode=" + inQCMode, function(data){
 						//success
 						if(data.indexOf("true|") == 0){
 							GLOBALFilters = filters;
@@ -2729,20 +2752,20 @@
 			<div class="panel" style="padding:0px;">
 				<div id="iconBar">
 					<div>
-						<img src="../images/filterIcon.png" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));"/>
-						<img src="../images/delete.png" id="batchDeleteIcon" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
-						<img src="../images/qcIcon.png" id="qcIcon" onclick="closeHeight($('#filtersDropdown'));closeHeight($('#batchDeleteDropdown'));hideCheckboxes();enterQCMode();" style="display:none;"/>
-						<div class="iconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
+						<img src="../images/filterIcon.png" id="filterIcon" class="iconImg hiddenInQcMode" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));"/>
+						<img src="../images/delete.png" id="batchDeleteIcon" class="iconImg hiddenInQcMode" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
+						<img src="../images/qcIcon.png" id="qcIcon" class="iconImg" onclick="closeHeight($('#filtersDropdown'));closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleQCMode();" style="display:none;"/>
+						<div class="iconButton hiddenInQcMode" id="filterIconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
 							<img src="../images/filterIconWhite.png"/>
 							<div>Filter surveys</div>
 						</div>
-						<div class="iconButton" id="batchDeleteIconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
+						<div class="iconButton hiddenInQcMode" id="batchDeleteIconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
 							<img src="../images/deleteWhite.png"/>
 							<div>Batch delete</div>
 						</div>
-						<div class="iconButton" id="qcModeIconButton" onclick="closeHeight($('#filtersDropdown'));closeHeight($('#batchDeleteDropdown'));hideCheckboxes();enterQCMode();" style="display:none;">
+						<div class="iconButton" id="qcModeIconButton" onclick="closeHeight($('#filtersDropdown'));closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleQCMode();" style="display:none;">
 							<img src="../images/qcIconWhite.png"/>
-							<div>Enter QC Mode</div>
+							<div id="enterQCModeButtonText">Enter QC Mode</div>
 						</div>
 						<div class="clearBoth"></div>
 					</div>
@@ -2871,7 +2894,8 @@
 			<div class="panel" style="display:none;"></div>
 			<div class="panel">
 				<h2>Manage My Surveys</h2>
-				<div class="tagline">...all the surveys you've personally submitted, plus all the surveys submitted at any sites you may manage</div>
+				<div class="tagline hiddenInQCMode">...all the surveys you've personally submitted, plus all the surveys submitted at any sites you may manage</div>
+				<div class="tagline shownInQCMode">This page is showing all flagged surveys in need of QC.</div>
 				<div class="content">
 					<div id="sciStarterNotice">If you use <a href="../SciStarter">SciStarter</a>, you can track your participation there too!</div>
 					<div class="loading"><img src="../images/rolling.svg"/></div>
