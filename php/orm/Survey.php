@@ -350,6 +350,9 @@ class Survey
 			return array();
 		}
 		
+		$start = intval($start);
+		$limit = intval($limit);
+		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		
 		$flaggingRules = self::getFlaggingRules();
