@@ -443,7 +443,8 @@
 				float:right;
 				display:none;
 			}
-			#batchDeleteIcon{
+			
+			#batchDeleteIcon, #qcIcon{
 				padding-right:20px;
 			}
 			
@@ -464,9 +465,20 @@
 				float:right;
 			}
 			
-			#batchDeleteIconButton{
+			#batchDeleteIconButton, #qcModeIconButton{
 				margin-right:20px;
+			}
+			
+			#batchDeleteIconButton{
 				background:#ccc;
+			}
+			
+			#qcModeIconButton{
+				background:#36fe57;
+			}
+			
+			#qcModeIconButton, #qcIcon{
+				display:none;
 			}
 			
 			.iconButton>div{
@@ -805,6 +817,8 @@
 		<script>
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
+				
+				showQCButtonIfSuperUser();
 
 				loadFirstPage(true);
 
@@ -818,6 +832,19 @@
 
 				requireLogIn();
 			});
+			
+			function showQCButtonIfSuperUser(){
+				$.get("../php/getIsSuperUser.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+					if(data == "true" && window.localStorage.getItem("email") == "plocharczykweb@gmail.com"){//TODO: remove this specific email condition
+						$("#qcModeIconButton").css({display: "table"});
+						$("#qcIcon").css({display: "block"});
+					}
+				});
+			}
+			
+			function enterQCMode(){
+				alert("entering qc mode...");
+			}
 			
 			function email(fullName, emailParts){
 				var possessiveS = "s";
@@ -2708,6 +2735,7 @@
 					<div>
 						<img src="../images/filterIcon.png" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));"/>
 						<img src="../images/delete.png" id="batchDeleteIcon" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
+						<img src="../images/qcIcon.png" id="qcIcon" onclick="closeHeight($('#filtersDropdown'));closeHeight($('#batchDeleteDropdown'));hideCheckboxes();enterQCMode();"/>
 						<div class="iconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
 							<img src="../images/filterIconWhite.png"/>
 							<div>Filter surveys</div>
@@ -2715,6 +2743,10 @@
 						<div class="iconButton" id="batchDeleteIconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
 							<img src="../images/deleteWhite.png"/>
 							<div>Batch delete</div>
+						</div>
+						<div class="iconButton" id="qcModeIconButton" onclick="closeHeight($('#filtersDropdown'));closeHeight($('#batchDeleteDropdown'));hideCheckboxes();enterQCMode();">
+							<img src="../images/qcIconWhite.png"/>
+							<div>Enter QC Mode</div>
 						</div>
 						<div class="clearBoth"></div>
 					</div>
