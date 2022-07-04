@@ -345,10 +345,12 @@ class Survey
 		return array($totalCount, $surveysArray);
 	}
 	
-	public static function findByFlagged($user, $start, $limit){
+	public static function findSurveysByFlagged($user, $start, $limit){
 		if(!User::isSuperUser($user)){
 			return array();
 		}
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
 		
 		$flaggingRules = self::getFlaggingRules();
 		
@@ -411,10 +413,13 @@ class Survey
 		mysqli_close($dbconn);
 		
 		$flaggedSurveyIDs = array_keys($flaggedSurveyIDs);
+		
+		$totalCount = count($flaggedSurveyIDs);
+		
 		sort($flaggedSurveyIDs);
 		$flaggedSurveyIDs = array_slice($flaggedSurveyIDs, $start, $limit);
 		
-		return self::findSurveysByIDs($flaggedSurveyIDs);
+		return array($totalCount, self::findSurveysByIDs($flaggedSurveyIDs));
 	}
 
 //GETTERS
