@@ -164,7 +164,7 @@ class Survey
 		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
 	}
 	
-	public static function findSurveysByIDs($surveyIDs, $orderBy="") {
+	public static function findSurveysByIDs($surveyIDs, $orderBy="", $start=null, $limit=null) {
 		if(count($surveyIDs) == 0){
 			return array();
 		}
@@ -178,6 +178,17 @@ class Survey
 		);
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
+		
+		$limitSQL = "LIMIT " . count($surveyIDs);
+		if($limit !== null){
+			if($start === null){
+				$limitSQL = " LIMIT " . min($limit, count($surveyIDs));
+			}
+			else{
+				$limitSQL = " LIMIT " . $start . ", " . min($limit, count($surveyIDs));
+			}
+		}
+		
 		$query = mysqli_query($dbconn, "SELECT * FROM `Survey` WHERE `ID` IN ('" . implode("', '", $surveyIDs) . "') " . (in_array($orderBy, $acceptableOrderBys) ? "ORDER BY " . $orderBy . " " : "") . "LIMIT " . count($surveyIDs));
 		mysqli_close($dbconn);
 		
@@ -439,7 +450,7 @@ class Survey
 		
 		$flaggedSurveyIDs = array_slice($flaggedSurveyIDs, $start, $limit);
 		
-		return array($totalCount, self::findSurveysByIDs($flaggedSurveyIDs, "LocalDate DESC, LocalTime DESC"));
+		return array($totalCount, self::findSurveysByIDs($flaggedSurveyIDs, "LocalDate DESC, LocalTime DESC", $start, $limit));
 	}
 
 //GETTERS
