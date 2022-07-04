@@ -345,7 +345,7 @@ class Survey
 		return array($totalCount, $surveysArray);
 	}
 	
-	public static function findByFlagged(){
+	public static function findByFlagged($start, $limit){
 		$flaggingRules = self::getFlaggingRules();
 		
 		$arthropodGroupsExcludedFromTotalQuantityCount = array();
@@ -406,7 +406,11 @@ class Survey
 		
 		mysqli_close($dbconn);
 		
-		return self::findSurveysByIDs(array_keys($flaggedSurveyIDs));
+		$flaggedSurveyIDs = array_keys($flaggedSurveyIDs);
+		sort($flaggedSurveyIDs);
+		$flaggedSurveyIDs = array_slice($flaggedSurveyIDs, $start, $limit);
+		
+		return self::findSurveysByIDs($flaggedSurveyIDs);
 	}
 
 //GETTERS
