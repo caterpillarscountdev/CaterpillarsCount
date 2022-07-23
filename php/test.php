@@ -41,7 +41,13 @@
 
 	$siteID = $plants[0]->getSite()->getID();
 
-	$creatorID = $plants[0]->getSite()->getCreator()->getID();
+	echo "[" . Site::findByID(255)->getCreator()->getID() . "]";
 
-	echo $userCount . "|" . $plantCount . "|" . $siteID . "|" . $creatorID;
+	try{
+		$creatorID = $plants[0]->getSite()->getCreator()->getID();
+		echo "success";
+	}
+	catch(Exception $e){echo "failed";}
+
+	//echo $userCount . "|" . $plantCount . "|" . $siteID . "|" . $creatorID;
 ?>
