@@ -23,7 +23,7 @@
 		try{
 			$userID = $users[$i]->getID();
 			if($userID == 2066 || $userID == 25){
-				$userCount++
+				$userCount++;
 			}
 		}catch(Exception $e){}
 	}
@@ -34,7 +34,7 @@
 		try{
 			$plantID = $plants[$i]->getID();
 			if($plantID == 5663 || $plantID == 5664){
-				$plantCount++
+				$plantCount++;
 			}
 		}catch(Exception $e){}
 	}
