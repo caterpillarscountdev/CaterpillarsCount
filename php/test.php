@@ -39,5 +39,9 @@
 		}catch(Exception $e){}
 	}
 
-	echo $userCount . "|" . $plantCount;
+	$siteID = $plants[0]->getSite()->getID();
+
+	$creatorID = $plants[0]->getSite()->getCreator()->getID();
+
+	echo $userCount . "|" . $plantCount . "|" . $siteID . "|" . $creatorID;
 ?>
