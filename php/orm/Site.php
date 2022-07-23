@@ -213,7 +213,7 @@ class Site
 		//get associated users
 		$associatedCreatorFKs = array();
 		while($siteRow = mysqli_fetch_assoc($query)){
-			$associatedCreatorFKs[] = $siteRow["UserFKOfCreator"];
+			$associatedCreatorFKs[$siteRow["UserFKOfCreator"]] = 1;
 		}
 		$associatedCreatorFKs = array_keys($associatedCreatorFKs);
 		
