@@ -3,18 +3,18 @@
 	require_once("orm/Site.php");
 	require_once("orm/Plant.php");
 
-	$email = $_GET["email"];
-	$salt = $_GET["salt"];
+// 	$email = $_GET["email"];
+// 	$salt = $_GET["salt"];
 	
-	$user = User::findBySignInKey($email, $salt);
-	if(is_object($user) && get_class($user) == "User"){
-    		$site = Site::findByID(255);
-		if(is_object($site) && get_class($site) == "Site"){
-      			die($site->isAuthority($user) ? "IS_AUTHORITY" : "NOT_AUTHORITY");
-    		}
-    		die("NOT A SITE");
-  	}
-	die("NOT A USER");
+// 	$user = User::findBySignInKey($email, $salt);
+// 	if(is_object($user) && get_class($user) == "User"){
+//     		$site = Site::findByID(255);
+// 		if(is_object($site) && get_class($site) == "Site"){
+//       			die($site->isAuthority($user) ? "IS_AUTHORITY" : "NOT_AUTHORITY");
+//     		}
+//     		die("NOT A SITE");
+//   	}
+// 	die("NOT A USER");
 
 
 	$users = User::findUsersByIDs(array(2066, 25));
