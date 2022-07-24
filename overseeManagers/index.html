@@ -236,6 +236,11 @@
 			});
 
 			function email(fullName, emailParts){
+				fullName = decodeQuotesAndBackslashes(fullName);
+				for(var i = 0; i < emailParts.length; i++){
+					emailParts[i] = decodeQuotesAndBackslashes(emailParts[i]);
+				}
+				
 				var possessiveS = "s";
 				if(fullName.length > 0 && fullName[fullName.length - 1] == 's'){
 					possessiveS = "";
@@ -330,7 +335,7 @@
 
 							var htmlToAdd = "";
 							htmlToAdd += "<div id=\"siteCreator" + siteCreator["siteCreatorID"] + "\">";
-							htmlToAdd += 	"<span class=\"highlighted pointer underline\" onclick=\"email('" + siteCreator["fullName"].replace(/'/g, "\\'") + "', ['" + siteCreator["email"].split("@")[0].replace(/'/g, "\\'") + "', '" + siteCreator["email"].split("@")[1].replace(/'/g, "\\'") + "']);\">" + siteCreator["fullName"] + "</span>";
+							htmlToAdd += 	"<span class=\"highlighted pointer underline\" onclick=\"email('" + encodeQuotesAndBackslashes(siteCreator["fullName"]) + "', ['" + encodeQuotesAndBackslashes(siteCreator["email"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(siteCreator["email"].split("@")[1]) + "']);\">" + siteCreator["fullName"] + "</span>";
 							if(window.localStorage.getItem("email") == siteCreator["email"]){
 								htmlToAdd += "<div style=\"padding:5px;border:0px none transparent;background:#ddd;font-size:12px;margin-top:-13px;width:auto;height:auto;cursor:pointer;border-radius:4px;overflow:hidden;\" onclick=\"showResignationPrompt();\">RESIGN</div>";
 							}
@@ -342,7 +347,7 @@
 							var newApprovedManagersArray = [];
 							for(var i = 0; i < managers.length; i++){
 								htmlToAdd += "<div id=\"manager" + managers[i]["managerID"] + "\">";
-								htmlToAdd += 	"<span class=\"highlighted pointer underline\" onclick=\"email('" + managers[i]["fullName"].replace(/'/g, "\\'") + "', ['" + managers[i]["email"].split("@")[0].replace(/'/g, "\\'") + "', '" + managers[i]["email"].split("@")[1].replace(/'/g, "\\'") + "']);\">" + managers[i]["fullName"] + "</span>";
+								htmlToAdd += 	"<span class=\"highlighted pointer underline\" onclick=\"email('" + encodeQuotesAndBackslashes(managers[i]["fullName"]) + "', ['" + encodeQuotesAndBackslashes(managers[i]["email"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(managers[i]["email"].split("@")[1]) + "']);\">" + managers[i]["fullName"] + "</span>";
 								var crownSRC = "../images/crownOutline.png";
 								if(managers[i]["hasCompleteAuthority"]){
 									crownSRC = "../images/crownFilled.png";
@@ -351,10 +356,10 @@
 									htmlToAdd += "<img src=\"" + crownSRC + "\" onclick=\"toggleCreatorPermissions('" + managers[i]["managerID"] + "');\"/>";
 									if(managers[i]["status"] == "Approved"){
 										newApprovedManagersArray[newApprovedManagersArray.length] = managers[i];
-										htmlToAdd += "<div onclick=\"promptConfirm('Are you sure you want to terminate " + managers[i]["fullName"] + "\\'s management position at this site? ', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + managers[i]["managerID"] + "');});\">&times;</div>";
+										htmlToAdd += "<div onclick=\"promptConfirm('Are you sure you want to terminate " + encodeQuotesAndBackslashes(managers[i]["fullName"]) + "\\'s management position at this site? ', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + managers[i]["managerID"] + "');});\">&times;</div>";
 									}
 									else if(managers[i]["status"] == "Pending"){
-										htmlToAdd += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + managers[i]["fullName"] + "\\'s management services at this site? ', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + managers[i]["managerID"] + "');});\">&times;</div>";
+										htmlToAdd += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + encodeQuotesAndBackslashes(managers[i]["fullName"]) + "\\'s management services at this site? ', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + managers[i]["managerID"] + "');});\">&times;</div>";
 									}
 									else{
 										htmlToAdd += " (request denied)<div onclick=\"terminate('" + managers[i]["managerID"] + "');\">&times;</div>";
@@ -470,20 +475,20 @@
 							var crownSRC = "../images/crownOutline.png";
 							if($("#manager" + newManager["managerID"]).length > 0){
 								crownSRC = $("#manager" + newManager["managerID"]).find("img").eq(0)[0].src;
-								var innerHTMLToReplaceWith = "<span class=\"highlighted pointer underline\" onclick=\"email('" + newManager["fullName"].replace(/'/g, "\\'") + "', ['" + newManager["email"].split("@")[0].replace(/'/g, "\\'") + "', '" + newManager["email"].split("@")[1].replace(/'/g, "\\'") + "']);\">" + newManager["fullName"] + "</span>";
+								var innerHTMLToReplaceWith = "<span class=\"highlighted pointer underline\" onclick=\"email('" + encodeQuotesAndBackslashes(newManager["fullName"]) + "', ['" + encodeQuotesAndBackslashes(newManager["email"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(newManager["email"].split("@")[1]) + "']);\">" + newManager["fullName"] + "</span>";
 								innerHTMLToReplaceWith += "<img src=\"" + crownSRC + "\" onclick=\"toggleCreatorPermissions('" + newManager["managerID"] + "');\"/>";
-								innerHTMLToReplaceWith += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + newManager["fullName"] + "\\'s management services at this site?', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + newManager["managerID"] + "');});\">&times;</div>";
+								innerHTMLToReplaceWith += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + encodeQuotesAndBackslashes(newManager["fullName"]) + "\\'s management services at this site?', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + newManager["managerID"] + "');});\">&times;</div>";
 								$("#manager" + newManager["managerID"])[0].innerHTML = innerHTMLToReplaceWith;
 							}
 							else{
 								var htmlToAdd = "<div id=\"manager" + newManager["managerID"] + "\">";
-								htmlToAdd += "<span class=\"highlighted pointer underline\" onclick=\"email('" + newManager["fullName"].replace(/'/g, "\\'") + "', ['" + newManager["email"].split("@")[0].replace(/'/g, "\\'") + "', '" + newManager["email"].split("@")[1].replace(/'/g, "\\'") + "']);\">" + newManager["fullName"] + "</span>";
+								htmlToAdd += "<span class=\"highlighted pointer underline\" onclick=\"email('" + encodeQuotesAndBackslashes(newManager["fullName"]) + "', ['" + encodeQuotesAndBackslashes(newManager["email"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(newManager["email"].split("@")[1]) + "']);\">" + newManager["fullName"] + "</span>";
 								htmlToAdd += "<img src=\"" + crownSRC + "\" onclick=\"toggleCreatorPermissions('" + newManager["managerID"] + "');\"/>";
-								htmlToAdd += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + newManager["fullName"] + "\\'s management services at this site?', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + newManager["managerID"] + "');});\">&times;</div>";
+								htmlToAdd += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + encodeQuotesAndBackslashes(newManager["fullName"]) + "\\'s management services at this site?', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + newManager["managerID"] + "');});\">&times;</div>";
 								htmlToAdd += "</div>";
 								$("#managers").append(htmlToAdd);
 							}
-							queueNotice("confirmation", "You have requested " + newManager["fullName"] + "'s services as a manager for this site. Please keep in mind that " + newManager["fullName"].split(" ")[0] + " must approve this request before actually becoming an active manager for the site.");
+							queueNotice("confirmation", "You have requested " + encodeQuotesAndBackslashes(newManager["fullName"]) + "'s services as a manager for this site. Please keep in mind that " + encodeQuotesAndBackslashes(newManager["fullName"].split(" ")[0]) + " must approve this request before actually becoming an active manager for the site.");
 						}
 						else{
 							var loadManagersError = this.responseText.replace("false|", "");
