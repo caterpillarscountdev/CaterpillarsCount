@@ -1,6 +1,8 @@
 var noticeQueue = [];
 			var showingQueue = false;
 			function queueNotice(type, message){
+				message = decodeQuotesAndBackslashes(message);
+				
 				for(var i = 0; i < noticeQueue.length; i++){
 					if(noticeQueue[i][0] == type && noticeQueue[i][1] == message){
 						//if its already in the queue
@@ -81,6 +83,10 @@ var noticeQueue = [];
 			}
 			
 			function promptConfirm(message, cancelMessage, confirmMessage, cancelFunction, confirmFunction){
+				message = decodeQuotesAndBackslashes(message);
+				cancelMessage = decodeQuotesAndBackslashes(cancelMessage);
+				confirmMessage = decodeQuotesAndBackslashes(confirmMessage);
+				
 				if(cancelMessage == ""){cancelMessage = "cancel";}
 				if(confirmMessage == ""){cancelMessage = "ok";}
 				cancelMessage = cancelMessage.charAt(0).toUpperCase() + cancelMessage.substring(1);
@@ -112,7 +118,7 @@ var noticeQueue = [];
 			}
 
 			function decodeQuotesAndBackslashes(str){
-				return str.replace(/0,da~DB-!#4E@O*GHbackslash/g, "\\").replace(/0,da~DB-!#4E@O*GHquote/g, "\"").replace(/0,da~DB-!#4E@O*GHapostrophe/g, "'");
+				return str.replace(/0,da~DB-!#4E@O\*GHbackslash/g, "\\").replace(/0,da~DB-!#4E@O\*GHquote/g, "\"").replace(/0,da~DB-!#4E@O\*GHapostrophe/g, "'");
 			}
 			
 			
