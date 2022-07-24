@@ -106,6 +106,14 @@ var noticeQueue = [];
 					buttonElement.innerHTML = defaultInnerHTML;
 				}
 			}
+
+			function encodeQuotesAndBackslashes(str){
+				return str.replace(/\\/g, "0,da~DB-!#4E@O*GHbackslash").replace(/"/g, "0,da~DB-!#4E@O*GHquote").replace(/'/g, "0,da~DB-!#4E@O*GHapostrophe");
+			}
+
+			function decodeQuotesAndBackslashes(str){
+				return str.replace(/0,da~DB-!#4E@O*GHbackslash/g, "\\").replace(/0,da~DB-!#4E@O*GHquote/g, "\"").replace(/0,da~DB-!#4E@O*GHapostrophe/g, "'");
+			}
 			
 			
 			
