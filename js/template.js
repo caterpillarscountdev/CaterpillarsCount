@@ -129,7 +129,7 @@
 			}
 
 			function decodeQuotesAndBackslashes(str){
-				return str.replace(/0,da~DB-!#4E@O*GHbackslash/g, "\\").replace(/0,da~DB-!#4E@O*GHquote/g, "\"").replace(/0,da~DB-!#4E@O*GHapostrophe/g, "'");
+				return str.replace(/0,da~DB-!#4E@O\*GHbackslash/g, "\\").replace(/0,da~DB-!#4E@O\*GHquote/g, "\"").replace(/0,da~DB-!#4E@O\*GHapostrophe/g, "'");
 			}
 			
 			
