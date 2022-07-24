@@ -866,12 +866,17 @@
 			}
 			
 			function email(fullName, emailParts){
+				fullName = decodeQuotesAndBackslashes(fullName);
+				for(var i =0; i < emailParts.length; i++){
+					emailParts[i] = decodeQuotesAndBackslashes(emailParts[i]);
+				}
+				
 				var possessiveS = "s";
 				if(fullName.length > 0 && fullName[fullName.length - 1] == 's'){
 					possessiveS = "";
 				}
 				if(getDeviceType() == "desktop"){
-					promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join("@") + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput')[0].select();\"/>", "Never mind.", "Copy to clipboard!", function(){}, function(){
+					promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join("@").replace() + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput')[0].select();\"/>", "Never mind.", "Copy to clipboard!", function(){}, function(){
 						$('.promptInput')[0].outerHTML = $('.promptInput')[0].outerHTML;
 						$('.promptInput')[0].select();
 						var copied = true;
@@ -1093,24 +1098,24 @@
 								}
 								htmlToAdd += "\" id=\"" + surveys[i]["id"] + "\">";
 								htmlToAdd += 	"<div class=\"headInfo\">";
-								htmlToAdd +=		"<div class=\"underline pointer\" onclick=\"email('" + surveys[i]["observerFullName"].replace(/'/g, "\\'") + "', ['" + surveys[i]["observerEmail"].split("@")[0].replace(/'/g, "\\'") + "', '" + surveys[i]["observerEmail"].split("@")[1].replace(/'/g, "\\'") + "']);\">" + surveys[i]["observerFullName"] + "</div>";
+								htmlToAdd +=		"<div class=\"underline pointer\" onclick=\"email('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']);\">" + surveys[i]["observerFullName"] + "</div>";
 								htmlToAdd +=	"</div>";
 								htmlToAdd += 	"<div class=\"siteInfo\" style=\"background:" + surveys[i]["color"] + ";\"><div class=\"editable\" style=\"font-weight:bold;text-transform:uppercase;\" oninput=\"populatePlant(this);\">" + surveys[i]["plantCode"] + "</div><span class=\"plantCodeData\">: <a href=\"https://www.google.com/maps/search/?api=1&query=" + surveys[i]["siteCoordinates"] + "\" target=\"_blank\">" + surveys[i]["siteName"] + " (" + surveys[i]["siteRegion"] + ")</a>, Circle " + surveys[i]["circle"] + ", " + surveys[i]["plantSpecies"] + "</span><div class=\"date\" style=\"display:none;\">" + getReadableDate(surveys[i]["localDate"]) + "</div><div class=\"time\"><div class=\"editable\" onblur=\"forceTime(this);\">" + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "</div></div><div class=\"options\"><div";
 								if($("#batchDeleteDropdown")[0].style.maxHeight != "" && $("#batchDeleteDropdown")[0].style.maxHeight != "0px"){
-									htmlToAdd += " style=\"display:none;\"><img src=\"../images/editWhite.png\" style=\"height:12px;padding-top:1px;\" onclick=\"editSurvey(" + surveys[i]["id"] + ");\"/></div><div style=\"display:none;\"><img src=\"../images/deleteWhite.png\" style=\"height:13px;\" onclick=\"promptConfirm('Are you sure you want to delete " + surveys[i]["observerFullName"] + "\\'s " + surveys[i]["plantCode"] + " survey from " + getReadableDate(surveys[i]["localDate"]) + " at " + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "? You will not be able to undo this action.', 'Never mind.', 'Yes, I am sure!', function(){}, function(){deleteSurvey(" + surveys[i]["id"] + ");});\"/></div><div><div class=\"checkboxHolder\" style=\"display:block;\"><div class=\"checkbox"
+									htmlToAdd += " style=\"display:none;\"><img src=\"../images/editWhite.png\" style=\"height:12px;padding-top:1px;\" onclick=\"editSurvey(" + surveys[i]["id"] + ");\"/></div><div style=\"display:none;\"><img src=\"../images/deleteWhite.png\" style=\"height:13px;\" onclick=\"promptConfirm('Are you sure you want to delete " + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "\\'s " + surveys[i]["plantCode"] + " survey from " + getReadableDate(surveys[i]["localDate"]) + " at " + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "? You will not be able to undo this action.', 'Never mind.', 'Yes, I am sure!', function(){}, function(){deleteSurvey(" + surveys[i]["id"] + ");});\"/></div><div><div class=\"checkboxHolder\" style=\"display:block;\"><div class=\"checkbox"
 									if(isSelected(surveys[i]["id"])){
 										htmlToAdd += " checked";
 									}
 								}
 								else{
-									htmlToAdd += "><img src=\"../images/editWhite.png\" style=\"height:12px;padding-top:1px;\" onclick=\"editSurvey(" + surveys[i]["id"] + ");\"/></div><div><img src=\"../images/deleteWhite.png\" style=\"height:13px;\" onclick=\"promptConfirm('Are you sure you want to delete " + surveys[i]["observerFullName"] + "\\'s " + surveys[i]["plantCode"] + " survey from " + getReadableDate(surveys[i]["localDate"]) + " at " + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "? You will not be able to undo this action.', 'Never mind.', 'Yes, I am sure!', function(){}, function(){deleteSurvey(" + surveys[i]["id"] + ");});\"/></div><div><div class=\"checkboxHolder\"><div class=\"checkbox"
+									htmlToAdd += "><img src=\"../images/editWhite.png\" style=\"height:12px;padding-top:1px;\" onclick=\"editSurvey(" + surveys[i]["id"] + ");\"/></div><div><img src=\"../images/deleteWhite.png\" style=\"height:13px;\" onclick=\"promptConfirm('Are you sure you want to delete " + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "\\'s " + surveys[i]["plantCode"] + " survey from " + getReadableDate(surveys[i]["localDate"]) + " at " + getTwelveHourTime(surveys[i]["localTime"].substring(0, (surveys[i]["localTime"].length - 3))) + "? You will not be able to undo this action.', 'Never mind.', 'Yes, I am sure!', function(){}, function(){deleteSurvey(" + surveys[i]["id"] + ");});\"/></div><div><div class=\"checkboxHolder\"><div class=\"checkbox"
 								}
 								htmlToAdd +=	"\" onclick=\"toggleCheckbox($(this));toggleSelected($(this), " + surveys[i]["id"] + ");\"></div></div></div></div></div>";
 								htmlToAdd += 	"<div class=\"surveyInfo\">";
 								htmlToAdd += 		"<div>";
 								htmlToAdd += 			"<div>";
 								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/userIcon.png');\"></div>";
-								htmlToAdd += 				"<div class=\"underline pointer\" onclick=\"email('" + surveys[i]["observerFullName"].replace(/'/g, "\\'") + "', ['" + surveys[i]["observerEmail"].split("@")[0].replace(/'/g, "\\'") + "', '" + surveys[i]["observerEmail"].split("@")[1].replace(/'/g, "\\'") + "']);\">" + surveys[i]["observerFullName"] + "</div>";
+								htmlToAdd += 				"<div class=\"underline pointer\" onclick=\"email('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']);\">" + surveys[i]["observerFullName"] + "</div>";
 								htmlToAdd +=			"</div>";
 								htmlToAdd += 			"<div>";
 								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/" + surveys[i]["observaionMethod"].replace(/ /g, "").replace(surveys[i]["observaionMethod"][0], surveys[i]["observaionMethod"][0].toLowerCase()) + ".png');\"></div>";
