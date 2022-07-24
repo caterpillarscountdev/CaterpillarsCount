@@ -38,11 +38,11 @@
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
-		<script src="../js/template.js?v=1"></script>
+		<script src="../js/template.js?v=3"></script>
 		<script>
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-				document.getElementById('googleForum').src = 'https://groups.google.com/forum/embed/?place=forum/caterpillars-count&showsearch=true&showpopout=true&showtabs=false&parenturl=' + encodeURIComponent(window.location.href);
+				//REMOVED BECAUSE IT NO LONGER WORKS: document.getElementById('googleForum').src = 'https://groups.google.com/forum/embed/?place=forum/caterpillars-count&showsearch=true&showpopout=true&showtabs=false&parenturl=' + encodeURIComponent(window.location.href);
 			});
 
 			function trackDownload(downloadedFileURL){
@@ -70,12 +70,6 @@
 
 			h3:first-of-type{
 				margin-top:20px;
-			}
-
-			#googleForum{
-				width:100%;
-				border:0px none transparent;
-				height:800px;
 			}
 		</style>
 	</head>
@@ -225,13 +219,6 @@
 					<p class="leftText scrollAnimationElement fadeInOnScroll">Leaves flush, insects wake,</p>
 					<p class="leftText scrollAnimationElement fadeInOnScroll">Birds return from distant lands</p>
 					<p class="leftText scrollAnimationElement fadeInOnScroll">Right on cue. Or not?</p>
-				</div>
-			</div>
-			<div class="panel">
-				<h2>Google Forum</h2>
-				<div class="tagline">Have a question not addressed above? Search the Google Forum below, or post a New Question.</div>
-				<div class="content">
-					<iframe id="googleForum"></iframe>
 				</div>
 			</div>
 		</main>
