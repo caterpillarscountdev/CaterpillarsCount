@@ -496,7 +496,7 @@ class Survey
 		*/
 		//too many rare groups flags
 		if(count($rareArthropodGroups) > 0){
-			$sql = "SELECT `SurveyFK` FROM `ArthropodSighting` WHERE `UpdatedGroup` IN ('" . implode("', '", $rareArthropodGroups) . "') GROUP BY `SurveyFK`, `UpdatedGroup` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeRareArthropodGroups"]) . "'";
+			$sql = "SELECT `SurveyFK` FROM `ArthropodSighting` WHERE `UpdatedGroup` IN ('" . implode("', '", $rareArthropodGroups) . "') GROUP BY `SurveyFK` HAVING COUNT(DISTINCT `UpdatedGroup`)>'" . intval($flaggingRules["maxSafeRareArthropodGroups"]) . "'";
 			$query = mysqli_query($dbconn, $sql);
 			while($row = mysqli_fetch_assoc($query)){
 				$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
