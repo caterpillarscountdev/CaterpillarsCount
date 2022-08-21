@@ -360,6 +360,61 @@ class Survey
 		return array($totalCount, $surveysArray);
 	}
 	
+	public static function getTest(){
+		if(!User::isSuperUser($user)){
+			return array();
+		}
+		
+		$start = $start == "last" ? $start : intval($start);
+		$limit = intval($limit);
+		
+		$dbconn = (new Keychain)->getDatabaseConnection();
+		
+		$flaggingRules = self::getFlaggingRules();
+		
+		$arthropodGroupsExcludedFromTotalQuantityCount = array();
+		$rareArthropodGroups = array();
+		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
+			if($flaggingData["excludedFromTotalQuantityCount"]){
+				$arthropodGroupsExcludedFromTotalQuantityCount[] = mysqli_real_escape_string($dbconn, $arthropodGroup);
+			}
+			
+			if($flaggingData["isRare"]){
+				$rareArthropodGroups[] = mysqli_real_escape_string($dbconn, $arthropodGroup);
+			}
+		}
+		
+		$flaggedSurveyIDs = array();
+		
+		//survey flags
+// 		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
+// 		$query = mysqli_query($dbconn, $sql);
+// 		while($row = mysqli_fetch_assoc($query)){
+// 			$flaggedSurveyIDs[$row["ID"]] = 1;
+// 		}
+		
+		//arthropod flags
+		$sql = "SELECT DISTINCT `SurveyFK` FROM `ArthropodSighting` WHERE (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeQuantity"]) . "'))";
+		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingRules){
+			$sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingRules["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingRules["maxSafeQuantity"]) . "'))";
+		}
+		$query = mysqli_query($dbconn, $sql);
+		while($row = mysqli_fetch_assoc($query)){
+			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
+		}
+		
+		//remove example site data
+		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
+		$query = mysqli_query($dbconn, $sql);
+		while($row = mysqli_fetch_assoc($query)){
+			unset($flaggedSurveyIDs[$row["ID"]]);
+		}
+		
+		mysqli_close($dbconn);
+		
+		return $sql . json_encode($flaggedSurveyIDs);
+	}
+	
 	public static function findSurveysByFlagged($user, $start, $limit){
 		if(!User::isSuperUser($user)){
 			return array();
