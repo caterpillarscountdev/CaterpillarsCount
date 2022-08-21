@@ -392,7 +392,7 @@ class Survey
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["ID"]] = 1;
 		}
-		
+		/*
 		//arthropod flags
 		$sql = "SELECT DISTINCT `SurveyFK` FROM `ArthropodSighting` WHERE (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeQuantity"]) . "'))";
 		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingRules){
@@ -424,7 +424,7 @@ class Survey
 			while($row = mysqli_fetch_assoc($query)){
 				$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 			}
-		}
+		}*/
 		
 		//remove example site data
 		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
