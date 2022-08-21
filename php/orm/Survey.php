@@ -715,14 +715,21 @@ class Survey
 			$flags[] = "TOO MANY ARTHROPOD GROUPS: " . $numberOfArthropodGroups . " arthropod groups exceeds safe limit of " . $flaggingRules["maxSafeArthropodGroups"];
 		}
 		
+		$rareArthropodGroupsInSurvey = array();
+		for($i = 0; $i < count($updatedArthropodGroups); $i++){
+			if(in_array($updatedArthropodGroups[$i], $rareArthropodGroups)){
+				$rareArthropodGroupsInSurvey[] = $updatedArthropodGroups[$i];
+			}
+		}
+		
 		//flag too many rare arthropod groups
-		$numberOfRareArthropodGroups = count($rareArthropodGroups);
-		if($numberOfRareArthropodGroups > $flaggingRules["maxSafeRareArthropodGroups"]){
+		$numberOfRareArthropodGroupsInSurvey = count($rareArthropodGroupsInSurvey);
+		if($numberOfRareArthropodGroupsInSurvey > $flaggingRules["maxSafeRareArthropodGroups"]){
 			$groupsClause = "";
-			if($numberOfRareArthropodGroups > 0){
-				$rareGroupsCopy = $rareArthropodGroups;
-				$lastGroup = count($rareGroupsCopy) > 1 ?  "\" and \"" . array_pop($rareGroupsCopy) : "";
-				$groupsClause = " (\"" . implode("\", \"", $rareGroupsCopy) . $lastGroup . "\")";
+			if($numberOfRareArthropodGroupsInSurvey > 0){
+				$rareGroupsInSurveyCopy = $rareArthropodGroupsInSurvey;
+				$lastGroup = count($rareGroupsInSurveyCopy) > 1 ?  "\" and \"" . array_pop($rareGroupsInSurveyCopy) : "";
+				$groupsClause = " (\"" . implode("\", \"", $rareGroupsInSurveyCopy) . $lastGroup . "\")";
 			}
 			$flags[] = "TOO MANY RARE ARTHROPOD GROUPS: " . $numberOfRareArthropodGroups . " rare arthropod groups" . $groupsClause . " exceeds the safe limit of " . $flaggingRules["maxSafeRareArthropodGroups"];
 		}
