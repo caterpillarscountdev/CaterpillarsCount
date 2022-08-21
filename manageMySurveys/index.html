@@ -850,6 +850,8 @@
 					$("#enterQCModeButtonText").html("Exit QC Mode");
 					$(".hiddenInQcMode").css({display: "none"});
 					$(".shownInQCMode").css({display: "block"});
+					
+					loadPage(1, {});
 				}
 				else{
 					$("#enterQCModeButtonText").html("Enter QC Mode");
@@ -860,9 +862,9 @@
 					}
 					
 					$(".shownInQCMode").css({display: "none"});
+					
+					loadFirstPage(false);
 				}
-				
-				loadPage(1, {});
 			}
 			
 			function email(fullName, emailParts){
