@@ -410,8 +410,8 @@ class Survey
 		
 		//arthropod flags
 		$sql = "SELECT DISTINCT `SurveyFK` FROM `ArthropodSighting` WHERE (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeQuantity"]) . "'))";
-		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingRules){
-			$sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingRules["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingRules["maxSafeQuantity"]) . "'))";
+		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
+			$sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingData["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingData["maxSafeQuantity"]) . "'))";
 		}
 		$query = mysqli_query($dbconn, $sql);
 		$sqls[] = $sql;
@@ -501,8 +501,8 @@ class Survey
 		
 		//arthropod flags
 		$sql = "SELECT DISTINCT `SurveyFK` FROM `ArthropodSighting` WHERE (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeQuantity"]) . "'))";
-		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingRules){
-			$sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingRules["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingRules["maxSafeQuantity"]) . "'))";
+		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
+			$sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingData["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingData["maxSafeQuantity"]) . "'))";
 		}
 		$query = mysqli_query($dbconn, $sql);
 		while($row = mysqli_fetch_assoc($query)){
