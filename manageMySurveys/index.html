@@ -1425,7 +1425,7 @@
 								}
 								htmlToAdd += "</div>";
 								
-								htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><button onclick=\"editSurvey(" + surveys[i]["id"] + ");\">Edit</button><button onclick=\"approveSurvey(" + surveys[i]["id"] + ");\">Approve</button></div></div>") : "";
+								htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><button onclick=\"editSurvey(" + surveys[i]["id"] + ");\">Edit</button><button onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ");\">Approve</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
@@ -1988,6 +1988,12 @@
 				$("#" + id + " .beetleOption").off("click");
 				$("#" + id + " .beetleOption").click(function(){
 					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+			}
+			
+			function askToApproveSurvey(id){
+				promptConfirm("Are you sure you want to approve this survey? It won't show up as being flagged again unless someone edits it.", 'Never mind.', 'Yes, I am sure!', function(){}, function(){
+					approveSurvey(id);
 				});
 			}
 			
