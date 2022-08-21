@@ -360,7 +360,7 @@ class Survey
 		return array($totalCount, $surveysArray);
 	}
 	
-	public static function getTest(){
+	public static function getTest($user){
 		if(!User::isSuperUser($user)){
 			return array();
 		}
