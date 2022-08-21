@@ -418,6 +418,9 @@ class Survey
 		
 		$totalCount = count($flaggedSurveyIDs);
 		
+		$start = 0;
+		$limit = 25;
+		
 		if($start === "last"){
 			$start = $totalCount - ($totalCount % intval($limit));
 			if($start == $totalCount && $totalCount > 0){
