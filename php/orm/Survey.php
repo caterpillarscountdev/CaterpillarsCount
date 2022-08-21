@@ -24,7 +24,7 @@ class Survey
 	private $averageNeedleLength;
 	private $linearBranchLength;
 	private $submittedThroughApp;
-	//TODO: private $reviewedAndApproved;
+	private $reviewedAndApproved;
 	
 	private $deleted;
 
@@ -51,6 +51,7 @@ class Survey
 		$averageNeedleLength = $isConifer ? self::validAverageNeedleLength($dbconn, $averageNeedleLength) : -1;
 		$linearBranchLength = $isConifer ? self::validLinearBranchLength($dbconn, $linearBranchLength) : -1;
 		$submittedThroughApp = filter_var($submittedThroughApp, FILTER_VALIDATE_BOOLEAN);
+		$reviewedAndApproved = false;
 		
 		
 		$failures = "";
@@ -100,7 +101,7 @@ class Survey
 		if($plant->getSite()->getName() == "Example Site"){
 			$needToSendToSciStarter = 0;
 		}
-		mysqli_query($dbconn, "INSERT INTO Survey (`SubmissionTimestamp`, `UserFKOfObserver`, `PlantFK`, `LocalDate`, `LocalTime`, `ObservationMethod`, `Notes`, `WetLeaves`, `PlantSpecies`, `NumberOfLeaves`, `AverageLeafLength`, `HerbivoryScore`, `AverageNeedleLength`, `LinearBranchLength`, `SubmittedThroughApp`, `NeedToSendToSciStarter`) VALUES ('" . $submissionTimestamp . "', '" . $observer->getID() . "', '" . $plant->getID() . "', '$localDate', '$localTime', '$observationMethod', '$notes', '$wetLeaves', '$plantSpecies', '$numberOfLeaves', '$averageLeafLength', '$herbivoryScore', '$averageNeedleLength', '$linearBranchLength', '$submittedThroughApp', '$needToSendToSciStarter')");
+		mysqli_query($dbconn, "INSERT INTO Survey (`SubmissionTimestamp`, `UserFKOfObserver`, `PlantFK`, `LocalDate`, `LocalTime`, `ObservationMethod`, `Notes`, `WetLeaves`, `PlantSpecies`, `NumberOfLeaves`, `AverageLeafLength`, `HerbivoryScore`, `AverageNeedleLength`, `LinearBranchLength`, `SubmittedThroughApp`, `NeedToSendToSciStarter`, `ReviewedAndApproved`) VALUES ('" . $submissionTimestamp . "', '" . $observer->getID() . "', '" . $plant->getID() . "', '$localDate', '$localTime', '$observationMethod', '$notes', '$wetLeaves', '$plantSpecies', '$numberOfLeaves', '$averageLeafLength', '$herbivoryScore', '$averageNeedleLength', '$linearBranchLength', '$submittedThroughApp', '$needToSendToSciStarter', '$reviewedAndApproved')");
 		$id = intval(mysqli_insert_id($dbconn));
 		mysqli_close($dbconn);
 		
@@ -108,9 +109,9 @@ class Survey
 			$plant->getSite()->setDateEstablished($localDate);
 		}
 		
-		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
+		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved);
 	}
-	private function __construct($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp) {
+	private function __construct($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved) {
 		$this->id = intval($id);
 		$this->submissionTimestamp = intval($submissionTimestamp);
 		$this->observer = $observer;
@@ -128,6 +129,7 @@ class Survey
 		$this->linearBranchLength = intval($linearBranchLength);
 		$this->submittedThroughApp = $submittedThroughApp;
 		$this->arthropodSightings = null;
+		$this->reviewedAndApproved = filter_var($reviewedAndApproved, FILTER_VALIDATE_BOOLEAN);
 		
 		$this->deleted = false;
 	}
@@ -160,8 +162,9 @@ class Survey
 		$averageNeedleLength = $surveyRow["AverageNeedleLength"];
 		$linearBranchLength = $surveyRow["LinearBranchLength"];
 		$submittedThroughApp = $surveyRow["SubmittedThroughApp"];
+		$reviewedAndApproved = $surveyRow["ReviewedAndApproved"];
 		
-		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
+		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved);
 	}
 	
 	public static function findSurveysByIDs($surveyIDs, $orderBy="", $start=null, $limit=null) {
@@ -239,8 +242,9 @@ class Survey
 			$averageNeedleLength = $surveyRow["AverageNeedleLength"];
 			$linearBranchLength = $surveyRow["LinearBranchLength"];
 			$submittedThroughApp = $surveyRow["SubmittedThroughApp"];
+			$reviewedAndApproved = $surveyRow["ReviewedAndApproved"];
 
-			$surveysArray[] = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
+			$surveysArray[] = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved);
 		}
 		return $surveysArray;
 	}
@@ -353,117 +357,13 @@ class Survey
 			$averageNeedleLength = $surveyRow["AverageNeedleLength"];
 			$linearBranchLength = $surveyRow["LinearBranchLength"];
 			$submittedThroughApp = $surveyRow["SubmittedThroughApp"];
+			$reviewedAndApproved = $surveyRow["ReviewedAndApproved"];
 			
-			$survey = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
+			$survey = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved);
 			
 			array_push($surveysArray, $survey);
 		}
 		return array($totalCount, $surveysArray);
-	}
-	
-	public static function getTest($user){
-		if(!User::isSuperUser($user)){
-			return array();
-		}
-		
-		$start = 0;
-		$limit = 25;
-		
-		$dbconn = (new Keychain)->getDatabaseConnection();
-		
-		$flaggingRules = self::getFlaggingRules();
-		
-		$arthropodGroupsExcludedFromTotalQuantityCount = array();
-		$rareArthropodGroups = array();
-		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
-			if($flaggingData["excludedFromTotalQuantityCount"]){
-				$arthropodGroupsExcludedFromTotalQuantityCount[] = mysqli_real_escape_string($dbconn, $arthropodGroup);
-			}
-			
-			if($flaggingData["isRare"]){
-				$rareArthropodGroups[] = mysqli_real_escape_string($dbconn, $arthropodGroup);
-			}
-		}
-		
-		$flaggedSurveyIDs = array();
-		
-		$results = array(
-			"survey flags" => array(),
-			"arthropod flags" => array(),
-			"too many total arthropods minus specified exclusions flags" => array(),
-			"too many distinct groups flags" => array(),
-			"too many rare groups flags" => array(),
-			"final" => array()
-		);
-		
-		$sqls = array();
-		
-		//survey flags
-		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
-		$query = mysqli_query($dbconn, $sql);
-		$sqls[] = $sql;
-		while($row = mysqli_fetch_assoc($query)){
-			$flaggedSurveyIDs[$row["ID"]] = 1;
-			
-			$results["survey flags"][] = $row["ID"];
-		}
-		
-		//arthropod flags
-		$sql = "SELECT DISTINCT `SurveyFK` FROM `ArthropodSighting` WHERE (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeQuantity"]) . "'))";
-		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
-			$sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingData["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingData["maxSafeQuantity"]) . "'))";
-		}
-		$query = mysqli_query($dbconn, $sql);
-		$sqls[] = $sql;
-		while($row = mysqli_fetch_assoc($query)){
-			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-			
-			$results["arthropod flags"][] = $row["SurveyFK"];
-		}
-		
-		//too many total arthropods (minus specified exclusions) flags
-		$sql = "SELECT `SurveyFK` FROM `ArthropodSighting`" . (count($arthropodGroupsExcludedFromTotalQuantityCount) > 0 ? (" WHERE `UpdatedGroup` NOT IN ('" . implode("', '", $arthropodGroupsExcludedFromTotalQuantityCount) . "')") : "") . " GROUP BY `SurveyFK` HAVING SUM(`Quantity`)>'" . intval($flaggingRules["maxSafeTotalQuantity"]) . "'";
-		$query = mysqli_query($dbconn, $sql);
-		$sqls[] = $sql;
-		while($row = mysqli_fetch_assoc($query)){
-			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-			
-			$results["too many total arthropods minus specified exclusions flags"][] = $row["SurveyFK"];
-		}
-		
-		//too many distinct groups flags
-		$sql = "SELECT `SurveyFK` FROM (SELECT DISTINCT `SurveyFK`, `UpdatedGroup` FROM `ArthropodSighting`) AS `DistinctSurveyGroupTable` GROUP BY `SurveyFK` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeArthropodGroups"]) . "'";
-		$query = mysqli_query($dbconn, $sql);
-		$sqls[] = $sql;
-		while($row = mysqli_fetch_assoc($query)){
-			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-			
-			$results["too many distinct groups flags"][] = $row["SurveyFK"];
-		}
-		
-		//too many rare groups flags
-		if(count($rareArthropodGroups) > 0){
-			$sql = "SELECT `SurveyFK` FROM `ArthropodSighting` WHERE `UpdatedGroup` IN ('" . implode("', '", $rareArthropodGroups) . "') GROUP BY SurveyFK HAVING COUNT(DISTINCT (CONCAT(`SurveyFK`, `UpdatedGroup`)))>'" . intval($flaggingRules["maxSafeRareArthropodGroups"]) . "'";
-		$sqls[] = $sql;
-			$query = mysqli_query($dbconn, $sql);
-			while($row = mysqli_fetch_assoc($query)){
-				$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-				
-				$results["too many rare groups flags"][] = $row["SurveyFK"];
-			}
-		}
-		
-		//remove example site data
-		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
-		$query = mysqli_query($dbconn, $sql);
-		$sqls[] = $sql;
-		while($row = mysqli_fetch_assoc($query)){
-			unset($flaggedSurveyIDs[$row["ID"]]);
-		}
-		
-		$results["final"] = $flaggedSurveyIDs;
-		
-		return json_encode($flaggingRules) . "|||||||||||||" . json_encode($sqls) . "||||||||||||||" . json_encode($results);
 	}
 	
 	public static function findSurveysByFlagged($user, $start, $limit){
@@ -534,6 +434,13 @@ class Survey
 		
 		//remove example site data
 		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
+		$query = mysqli_query($dbconn, $sql);
+		while($row = mysqli_fetch_assoc($query)){
+			unset($flaggedSurveyIDs[$row["ID"]]);
+		}
+		
+		//remove approved survey data
+		$sql = "SELECT `ID` FROM `Survey` WHERE `ReviewedAndApproved`='1'";
 		$query = mysqli_query($dbconn, $sql);
 		while($row = mysqli_fetch_assoc($query)){
 			unset($flaggedSurveyIDs[$row["ID"]]);
@@ -644,6 +551,11 @@ class Survey
 	public function isConifer(){
 		if($this->deleted){return null;}
 		return intval($this->averageNeedleLength) > -1;
+	}
+	
+	public function getReviewedAndApproved(){
+		if($this->deleted){return null;}
+		return filter_var($this->reviewedAndApproved, FILTER_VALIDATE_BOOLEAN);
 	}
 	
 	private static function getFlaggingRules(){
@@ -1076,6 +988,18 @@ class Survey
 				return true;
 			}
 			mysqli_close($dbconn);
+		}
+		return false;
+	}
+	
+	public function setReviewedAndApproved($reviewedAndApproved){
+		if(!$this->deleted){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			$reviewedAndApproved = filter_var($reviewedAndApproved, FILTER_VALIDATE_BOOLEAN);
+			mysqli_query($dbconn, "UPDATE Survey SET ReviewedAndApproved='$reviewedAndApproved' WHERE ID='" . $this->id . "'");
+			mysqli_close($dbconn);
+			$this->reviewedAndApproved = $reviewedAndApproved;
+			return true;
 		}
 		return false;
 	}
