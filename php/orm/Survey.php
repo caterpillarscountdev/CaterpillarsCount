@@ -387,7 +387,7 @@ class Survey
 		$flaggedSurveyIDs = array();
 		
 		//survey flags
-		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`>'-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
+		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
 		$query = mysqli_query($dbconn, $sql);
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["ID"]] = 1;
