@@ -862,7 +862,7 @@
 			
 			function showQCButtonIfSuperUser(){
 				$.get("../php/getIsSuperUser.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
-					if(data == "true" && window.localStorage.getItem("email") == "plocharczykweb@gmail.com"){//TODO: remove this specific email condition
+					if(data == "true"){
 						$("#qcModeIconButton")[0].style.display = "";
 						$("#qcIcon")[0].style.display = "";
 					}
@@ -1033,7 +1033,7 @@
 					loadingPage = true;
 					$("#resultsPage").css({display:"none"});
 					$(".loading").css({display:"block"});
-					
+					console.log("FIRSTLOAD:", firstLoad);
 					if(!firstLoad){
 						scrollToElement($("#iconBar"));
 					}
