@@ -732,31 +732,29 @@
 			}
 			
 			main .panel .flags{
-				background: #f8d7da;
-				padding: 10px;
-				border-radius: 5px;
-				margin:-15px 0px 35px 0px;
-			}
-			
-			main .panel .flags ul{
-				color:inherit;
+				background:#f8d7da;
+				padding:10px;
+				border-radius:5px;
+				margin:-13px 0px 80px 0px;
 			}
 			
 			main .panel .flags ul li{
-				color:inherit;
+				font-size:14px;
+				color:#721c24;
+				list-style-type:disc;
 			}
 			
 			main .panel .flags .flagButtons{
-				padding-top: 10px;
-				text-align: right;
+				padding-top:10px;
+				text-align:right;
 			}
 			
 			main .panel .flags .flagButtons button{
-				background: #721c24;
-				font-size: 13px;
-				padding: 10px;
-				margin: 0px 0px 0px 5px;
-				display: inline-block;
+				background:#721c24;
+				font-size:13px;
+				padding:10px;
+				margin:0px 0px 0px 5px;
+				display:inline-block;
 			}
 
 			@media screen and (max-width: 900px) {
@@ -1427,7 +1425,7 @@
 								}
 								htmlToAdd += "</div>";
 								
-								htmlToAdd += inQCMode ? ("<div class=\"flags\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><button onclick=\"editSurvey(" + surveys[i]["id"] + ");\">Edit</button><button onclick=\"approveSurvey(" + surveys[i]["id"] + ");\">Approve</button></div></div>") : "";
+								htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><button onclick=\"editSurvey(" + surveys[i]["id"] + ");\">Edit</button><button onclick=\"approveSurvey(" + surveys[i]["id"] + ");\">Approve</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
@@ -1869,6 +1867,9 @@
 				$(".survey").stop().css({overflow:"hidden", maxHeight:"1000px"});
 				$(".survey").animate({maxHeight:"0px", marginBottom:"0px"}, 300);
 				$("#" + id).stop().css({overflow:"visible", maxHeight:""});
+				
+				//hide unnecessary flag stuff
+				$(".flags:not([data-associated-survey='" + id + "']), .flagButtons").css({display:"none"});
 
 				//hide page nav
 				$("#pageNav").fadeOut(0);
@@ -1987,6 +1988,34 @@
 				$("#" + id + " .beetleOption").off("click");
 				$("#" + id + " .beetleOption").click(function(){
 					this.className = this.className.replace("false", "temp").replace("true", "false").replace("temp", "true");
+				});
+			}
+			
+			function approveSurvey(id){
+				$('.loading').fadeIn(0);
+				$('#surveys').fadeOut(0);
+				closeHeight($('#editExtras'));
+				
+				$.get("../php/approveSurvey.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+					//success
+					if(data.indexOf("true|") == 0){
+						reloadPage();
+					}
+					else{
+						$('.loading').fadeOut(0);
+						$('#surveys').fadeIn(0);
+						openHeight($('#editExtras'));
+						
+						queueNotice("error", data.replace("false|", ""));
+					}
+				})
+				.fail(function(){
+					//error
+					$('.loading').fadeOut(0);
+					$('#surveys').fadeIn(0);
+					openHeight($('#editExtras'));
+					
+					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
 				});
 			}
 
@@ -2938,7 +2967,7 @@
 				<div class="tagline hiddenInQCMode">...all the surveys you've personally submitted, plus all the surveys submitted at any sites you may manage</div>
 				<div class="tagline shownInQCMode">This page is showing all flagged surveys in need of QC.</div>
 				<div class="content">
-					<div id="sciStarterNotice">If you use <a href="../SciStarter">SciStarter</a>, you can track your participation there too!</div>
+					<div id="sciStarterNotice" class="hiddenInQcMode">If you use <a href="../SciStarter">SciStarter</a>, you can track your participation there too!</div>
 					<div class="loading"><img src="../images/rolling.svg"/></div>
 					<div id="resultsPage">
 						<div id="surveys"></div>
