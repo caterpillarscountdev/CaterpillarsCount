@@ -414,7 +414,23 @@ class Survey
 		
 		mysqli_close($dbconn);
 		
-		return $testSQL . json_encode($flaggedSurveyIDs);
+		$flaggedSurveyIDs = array_keys($flaggedSurveyIDs);
+		
+		$totalCount = count($flaggedSurveyIDs);
+		
+		if($start === "last"){
+			$start = $totalCount - ($totalCount % intval($limit));
+			if($start == $totalCount && $totalCount > 0){
+				$start = $totalCount - intval($limit);
+			}
+		}
+		
+		$res = "";
+		$surveys = self::findSurveysByIDs($flaggedSurveyIDs, "LocalDate DESC, LocalTime DESC", $start, $limit);
+		for($i = 0; $i < count($surveys); $i++){
+			$res .= $surveys[$i]->getID() . " | ";
+		}
+		return $res;
 	}
 	
 	public static function findSurveysByFlagged($user, $start, $limit){
