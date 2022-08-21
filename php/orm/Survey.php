@@ -462,13 +462,13 @@ class Survey
 		}
 		
 		$flaggedSurveyIDs = array();
-		
+		/*
 		//survey flags
-// 		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
-// 		$query = mysqli_query($dbconn, $sql);
-// 		while($row = mysqli_fetch_assoc($query)){
-// 			$flaggedSurveyIDs[$row["ID"]] = 1;
-// 		}
+		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
+		$query = mysqli_query($dbconn, $sql);
+		while($row = mysqli_fetch_assoc($query)){
+			$flaggedSurveyIDs[$row["ID"]] = 1;
+		}
 		
 		//arthropod flags
 		$sql = "SELECT DISTINCT `SurveyFK` FROM `ArthropodSighting` WHERE (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeQuantity"]) . "'))";
@@ -479,14 +479,14 @@ class Survey
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 		}
-		/*
+		*/
 		//too many total arthropods (minus specified exclusions) flags
 		$sql = "SELECT `SurveyFK` FROM `ArthropodSighting`" . (count($arthropodGroupsExcludedFromTotalQuantityCount) > 0 ? (" WHERE `UpdatedGroup` NOT IN ('" . implode("', '", $arthropodGroupsExcludedFromTotalQuantityCount) . "')") : "") . " GROUP BY `SurveyFK` HAVING SUM(`Quantity`)>'" . intval($flaggingRules["maxSafeTotalQuantity"]) . "'";
 		$query = mysqli_query($dbconn, $sql);
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 		}
-		
+		/*
 		//too many distinct groups flags
 		$sql = "SELECT `SurveyFK` FROM (SELECT DISTINCT `SurveyFK`, `UpdatedGroup` FROM `ArthropodSighting`) AS `DistinctSurveyGroupTable` GROUP BY `SurveyFK` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeArthropodGroups"]) . "'";
 		$query = mysqli_query($dbconn, $sql);
