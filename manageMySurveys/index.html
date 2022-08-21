@@ -2000,7 +2000,6 @@
 			function approveSurvey(id){
 				$('.loading').fadeIn(0);
 				$('#surveys').fadeOut(0);
-				closeHeight($('#editExtras'));
 				
 				$.get("../php/approveSurvey.php?surveyID=" + id + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
 					//success
@@ -2010,7 +2009,6 @@
 					else{
 						$('.loading').fadeOut(0);
 						$('#surveys').fadeIn(0);
-						openHeight($('#editExtras'));
 						
 						queueNotice("error", data.replace("false|", ""));
 					}
@@ -2019,7 +2017,6 @@
 					//error
 					$('.loading').fadeOut(0);
 					$('#surveys').fadeIn(0);
-					openHeight($('#editExtras'));
 					
 					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
 				});
