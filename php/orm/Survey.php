@@ -486,14 +486,14 @@ class Survey
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 		}
-		*/
+		
 		//too many distinct groups flags
 		$sql = "SELECT `SurveyFK` FROM (SELECT DISTINCT `SurveyFK`, `UpdatedGroup` FROM `ArthropodSighting`) AS `DistinctSurveyGroupTable` GROUP BY `SurveyFK` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeArthropodGroups"]) . "'";
 		$query = mysqli_query($dbconn, $sql);
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 		}
-		/*
+		*/
 		//too many rare groups flags
 		if(count($rareArthropodGroups) > 0){
 			$sql = "SELECT `SurveyFK` FROM `ArthropodSighting` WHERE `UpdatedGroup` IN ('" . implode("', '", $rareArthropodGroups) . "') GROUP BY `SurveyFK` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeRareArthropodGroups"]) . "'";
@@ -501,7 +501,7 @@ class Survey
 			while($row = mysqli_fetch_assoc($query)){
 				$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 			}
-		}*/
+		}
 		
 		//remove example site data
 		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
