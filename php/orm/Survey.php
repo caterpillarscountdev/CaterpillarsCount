@@ -463,7 +463,7 @@ class Survey
 		
 		$results["final"] = $flaggedSurveyIDs;
 		
-		return json_encode($sqls) . "||||||||||||||" . json_encode($results);
+		return json_encode($flaggingRules) . "|||||||||||||" . json_encode($sqls) . "||||||||||||||" . json_encode($results);
 	}
 	
 	public static function findSurveysByFlagged($user, $start, $limit){
