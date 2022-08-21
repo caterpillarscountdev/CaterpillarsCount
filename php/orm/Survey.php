@@ -361,82 +361,6 @@ class Survey
 		return array($totalCount, $surveysArray);
 	}
 	
-	public static function getTest($user){
-		if(!User::isSuperUser($user)){
-			return array();
-		}
-		
-		$start = $start == "last" ? $start : intval($start);
-		$limit = intval($limit);
-		
-		$dbconn = (new Keychain)->getDatabaseConnection();
-		
-		$flaggingRules = self::getFlaggingRules();
-		
-		$arthropodGroupsExcludedFromTotalQuantityCount = array();
-		$rareArthropodGroups = array();
-		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
-			if($flaggingData["excludedFromTotalQuantityCount"]){
-				$arthropodGroupsExcludedFromTotalQuantityCount[] = mysqli_real_escape_string($dbconn, $arthropodGroup);
-			}
-			
-			if($flaggingData["isRare"]){
-				$rareArthropodGroups[] = mysqli_real_escape_string($dbconn, $arthropodGroup);
-			}
-		}
-		
-		$flaggedSurveyIDs = array();
-		
-		//survey flags
-// 		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
-// 		$query = mysqli_query($dbconn, $sql);
-// 		while($row = mysqli_fetch_assoc($query)){
-// 			$flaggedSurveyIDs[$row["ID"]] = 1;
-// 		}
-		
-		//arthropod flags
-		$sql = "SELECT DISTINCT `SurveyFK` FROM `ArthropodSighting` WHERE (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeQuantity"]) . "'))";
-		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingRules){
-			$sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingRules["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingRules["maxSafeQuantity"]) . "'))";
-		}
-		$query = mysqli_query($dbconn, $sql);
-		while($row = mysqli_fetch_assoc($query)){
-			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-		}
-		
-		$testSQL = $sql;
-		
-		//remove example site data
-		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
-		$query = mysqli_query($dbconn, $sql);
-		while($row = mysqli_fetch_assoc($query)){
-			unset($flaggedSurveyIDs[$row["ID"]]);
-		}
-		
-		mysqli_close($dbconn);
-		
-		$flaggedSurveyIDs = array_keys($flaggedSurveyIDs);
-		
-		$totalCount = count($flaggedSurveyIDs);
-		
-		$start = 0;
-		$limit = 25;
-		
-		if($start === "last"){
-			$start = $totalCount - ($totalCount % intval($limit));
-			if($start == $totalCount && $totalCount > 0){
-				$start = $totalCount - intval($limit);
-			}
-		}
-		
-		$res = "";
-		$surveys = self::findSurveysByIDs($flaggedSurveyIDs, "LocalDate DESC, LocalTime DESC", $start, $limit);
-		for($i = 0; $i < count($surveys); $i++){
-			$res .= $surveys[$i]->getID() . " | ";
-		}
-		return "surveys: " . count($surveys) . " - " . $res;
-	}
-	
 	public static function findSurveysByFlagged($user, $start, $limit){
 		if(!User::isSuperUser($user)){
 			return array();
@@ -462,7 +386,7 @@ class Survey
 		}
 		
 		$flaggedSurveyIDs = array();
-		/*
+		
 		//survey flags
 		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
 		$query = mysqli_query($dbconn, $sql);
@@ -493,7 +417,7 @@ class Survey
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 		}
-		*/
+		
 		//too many rare groups flags
 		if(count($rareArthropodGroups) > 0){
 			$sql = "SELECT `SurveyFK` FROM `ArthropodSighting` WHERE `UpdatedGroup` IN ('" . implode("', '", $rareArthropodGroups) . "') GROUP BY SurveyFK HAVING COUNT(DISTINCT (CONCAT(`SurveyFK`, `UpdatedGroup`)))>'" . intval($flaggingRules["maxSafeRareArthropodGroups"]) . "'";
