@@ -1428,7 +1428,9 @@
 							}
 							
 							if(!firstLoad){
-								scrollToElement($("#surveys"));
+								setTimeout(function(){
+									scrollToElement($("#surveys"));
+								}, 100);
 							}
 						}
 						else{
