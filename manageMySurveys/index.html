@@ -2002,7 +2002,7 @@
 				$('#surveys').fadeOut(0);
 				closeHeight($('#editExtras'));
 				
-				$.get("../php/approveSurvey.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+				$.get("../php/approveSurvey.php?surveyID=" + id + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						reloadPage();
