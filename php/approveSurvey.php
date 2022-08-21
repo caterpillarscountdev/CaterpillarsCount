@@ -2,9 +2,9 @@
 	require_once('orm/User.php');
 	require_once('orm/Survey.php');
 
-	$email = $_POST["email"];
-	$salt = $_POST["salt"];
-	$surveyID = $_POST["surveyID"];
+	$email = $_GET["email"];
+	$salt = $_GET["salt"];
+	$surveyID = $_GET["surveyID"];
 
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
