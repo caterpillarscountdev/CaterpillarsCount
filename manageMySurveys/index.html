@@ -1033,10 +1033,6 @@
 					loadingPage = true;
 					$("#resultsPage").css({display:"none"});
 					$(".loading").css({display:"block"});
-					console.log("FIRSTLOAD:", firstLoad);
-					if(!firstLoad){
-						scrollToElement($("#iconBar"));
-					}
 					
 					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)) + "&inQCMode=" + inQCMode, function(data){
 						//success
@@ -1429,6 +1425,10 @@
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
+							}
+							
+							if(!firstLoad){
+								scrollToElement($("#iconBar"));
 							}
 						}
 						else{
