@@ -396,9 +396,12 @@ class Survey
 			"final" => array()
 		);
 		
+		$sqls = array();
+		
 		//survey flags
 		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
 		$query = mysqli_query($dbconn, $sql);
+		$sqls[] = $sql;
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["ID"]] = 1;
 			
@@ -411,6 +414,7 @@ class Survey
 			$sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingRules["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingRules["maxSafeQuantity"]) . "'))";
 		}
 		$query = mysqli_query($dbconn, $sql);
+		$sqls[] = $sql;
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 			
@@ -420,6 +424,7 @@ class Survey
 		//too many total arthropods (minus specified exclusions) flags
 		$sql = "SELECT `SurveyFK` FROM `ArthropodSighting`" . (count($arthropodGroupsExcludedFromTotalQuantityCount) > 0 ? (" WHERE `UpdatedGroup` NOT IN ('" . implode("', '", $arthropodGroupsExcludedFromTotalQuantityCount) . "')") : "") . " GROUP BY `SurveyFK` HAVING SUM(`Quantity`)>'" . intval($flaggingRules["maxSafeTotalQuantity"]) . "'";
 		$query = mysqli_query($dbconn, $sql);
+		$sqls[] = $sql;
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 			
@@ -429,6 +434,7 @@ class Survey
 		//too many distinct groups flags
 		$sql = "SELECT `SurveyFK` FROM (SELECT DISTINCT `SurveyFK`, `UpdatedGroup` FROM `ArthropodSighting`) AS `DistinctSurveyGroupTable` GROUP BY `SurveyFK` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeArthropodGroups"]) . "'";
 		$query = mysqli_query($dbconn, $sql);
+		$sqls[] = $sql;
 		while($row = mysqli_fetch_assoc($query)){
 			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 			
@@ -438,6 +444,7 @@ class Survey
 		//too many rare groups flags
 		if(count($rareArthropodGroups) > 0){
 			$sql = "SELECT `SurveyFK` FROM `ArthropodSighting` WHERE `UpdatedGroup` IN ('" . implode("', '", $rareArthropodGroups) . "') GROUP BY SurveyFK HAVING COUNT(DISTINCT (CONCAT(`SurveyFK`, `UpdatedGroup`)))>'" . intval($flaggingRules["maxSafeRareArthropodGroups"]) . "'";
+		$sqls[] = $sql;
 			$query = mysqli_query($dbconn, $sql);
 			while($row = mysqli_fetch_assoc($query)){
 				$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
@@ -449,13 +456,14 @@ class Survey
 		//remove example site data
 		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
 		$query = mysqli_query($dbconn, $sql);
+		$sqls[] = $sql;
 		while($row = mysqli_fetch_assoc($query)){
 			unset($flaggedSurveyIDs[$row["ID"]]);
 		}
 		
 		$results["final"] = $flaggedSurveyIDs;
 		
-		return json_encode($results);
+		return json_encode($sqls) . "||||||||||||||" . json_encode($results);
 	}
 	
 	public static function findSurveysByFlagged($user, $start, $limit){
