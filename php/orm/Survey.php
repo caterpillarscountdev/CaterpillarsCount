@@ -223,6 +223,7 @@ class Survey
 		$surveysArray = array();
 		mysqli_data_seek($query, 0);
 		while($surveyRow = mysqli_fetch_assoc($query)){
+			$id = intval($surveyRow["ID"]);
 			$submissionTimestamp = intval($surveyRow["SubmissionTimestamp"]);
 			$observer = array_key_exists($surveyRow["UserFKOfObserver"], $associatedUsersByUserFK) ? $associatedUsersByUserFK[$surveyRow["UserFKOfObserver"]] : null;
 			$plant = array_key_exists($surveyRow["PlantFK"], $associatedPlantsByPlantFK) ? $associatedPlantsByPlantFK[$surveyRow["PlantFK"]] : null;
