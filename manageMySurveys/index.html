@@ -1392,6 +1392,8 @@
 									htmlToAdd += 	"<div class=\"arthropodSightingsDropdownButtonDiv\" style=\"display:none;\" onclick=\"toggleArthropodSightings(this.parentNode.getElementsByClassName('arthropodSightingsInfo')[0]);\">Show 0 Arthropods Found</div>";
 								}
 								htmlToAdd += "</div>";
+								
+								htmlToAdd += "<div style=\"margin-bottom:40px;\">" + surveys[i]["flags"] + "</div>"
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
