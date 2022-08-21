@@ -843,6 +843,7 @@
 			}
 			
 			var inQCMode = false;
+			var filtersBeforeQCMode = {};
 			function toggleQCMode(){
 				inQCMode = !inQCMode;
 				
@@ -851,6 +852,7 @@
 					$(".hiddenInQcMode").css({display: "none"});
 					$(".shownInQCMode").css({display: "block"});
 					
+					filtersBeforeQCMode = GLOBALFilters;
 					loadPage(1, {});
 				}
 				else{
@@ -863,7 +865,8 @@
 					
 					$(".shownInQCMode").css({display: "none"});
 					
-					loadFirstPage(false);
+					loadPage(1, filtersBeforeQCMode);
+					filtersBeforeQCMode = {};
 				}
 			}
 			
