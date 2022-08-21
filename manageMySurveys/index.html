@@ -1398,7 +1398,7 @@
 								}
 								htmlToAdd += "</div>";
 								
-								htmlToAdd += window.localStorage.getItem("email") == "plocharczykweb@gmail.com" ? ("<div style=\"margin-bottom:40px;\">" + surveys[i]["flags"] + "</div>") : "";
+								htmlToAdd += inQCMode ? ("<div style=\"margin-bottom:40px;\"><p>" + surveys[i]["flags"].join("</p><p>") + "</p><button onclick=\"editSurvey(" + surveys[i]["id"] + ");\">Edit</button><button onclick=\"approveSurvey(" + surveys[i]["id"] + ");\">Approve</button></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
