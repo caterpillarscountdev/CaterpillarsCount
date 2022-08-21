@@ -430,7 +430,7 @@ class Survey
 		for($i = 0; $i < count($surveys); $i++){
 			$res .= $surveys[$i]->getID() . " | ";
 		}
-		return $res;
+		return "surveys: " . count($surveys) . " - "$res;
 	}
 	
 	public static function findSurveysByFlagged($user, $start, $limit){
