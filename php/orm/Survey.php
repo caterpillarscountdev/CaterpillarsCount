@@ -403,6 +403,8 @@ class Survey
 			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
 		}
 		
+		$testSQL = $sql;
+		
 		//remove example site data
 		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
 		$query = mysqli_query($dbconn, $sql);
@@ -412,7 +414,7 @@ class Survey
 		
 		mysqli_close($dbconn);
 		
-		return $sql . json_encode($flaggedSurveyIDs);
+		return $testSQL . json_encode($flaggedSurveyIDs);
 	}
 	
 	public static function findSurveysByFlagged($user, $start, $limit){
