@@ -384,6 +384,7 @@
 				cursor:pointer;
 				background:rgba(0,0,0,0.05);
 				font-size:13px;
+				border-radius:0px 0px 5px 5px;
 			}
 
 			#pageNav{
@@ -728,6 +729,34 @@
 				overflow:hidden;
 				margin:20px 0px;
 				font-family: 'Roboto Slab', serif;
+			}
+			
+			.main .panel .flags{
+				background: #f8d7da;
+				padding: 10px;
+				border-radius: 5px;
+				margin:-15px 0px 35px 0px;
+			}
+			
+			.main .panel .flags ul{
+				color:inherit;
+			}
+			
+			.main .panel .flags ul li{
+				color:inherit;
+			}
+			
+			.main .panel .flags .flagButtons{
+				padding-top: 10px;
+				text-align: right;
+			}
+			
+			.main .panel .flags .flagButtons button{
+				background: #721c24;
+				font-size: 13px;
+				padding: 10px;
+				margin: 0px 0px 0px 5px;
+				display: inline-block;
 			}
 
 			@media screen and (max-width: 900px) {
@@ -1398,7 +1427,7 @@
 								}
 								htmlToAdd += "</div>";
 								
-								htmlToAdd += inQCMode ? ("<div style=\"margin-bottom:40px;\"><p>" + surveys[i]["flags"].join("</p><p>") + "</p><button onclick=\"editSurvey(" + surveys[i]["id"] + ");\">Edit</button><button onclick=\"approveSurvey(" + surveys[i]["id"] + ");\">Approve</button></div>") : "";
+								htmlToAdd += inQCMode ? ("<div class=\"flags\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><button onclick=\"editSurvey(" + surveys[i]["id"] + ");\">Edit</button><button onclick=\"approveSurvey(" + surveys[i]["id"] + ");\">Approve</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
