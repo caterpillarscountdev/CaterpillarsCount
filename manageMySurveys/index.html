@@ -1393,7 +1393,7 @@
 								}
 								htmlToAdd += "</div>";
 								
-								htmlToAdd += "<div style=\"margin-bottom:40px;\">" + surveys[i]["flags"] + "</div>"
+								htmlToAdd += window.localStorage.getItem("email") == "plocharczykweb@gmail.com" ? ("<div style=\"margin-bottom:40px;\">" + surveys[i]["flags"] + "</div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
