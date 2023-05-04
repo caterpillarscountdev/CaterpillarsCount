@@ -1,4 +1,5 @@
 <?php
+        $debuginat = true;
 	require_once("orm/Plant.php");
 	require_once("orm/resources/mailing.php");
 	
@@ -19,13 +20,17 @@
 
 	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $sawfly, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
+		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. init for ID " . $arthropodSightingID . " -->");}
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
+		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. post oauth/token -->");}
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=" . getenv("iNaturalistAppID") . "&client_secret=" . getenv("iNaturalistAppSecret") . "&grant_type=password&username=caterpillarscount&password=" . getenv("iNaturalistPassword"));
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. post set all opts -->");}
 		$token = json_decode(curl_exec($ch), true)["access_token"];
+		if ($debuginat==true) {  echo("<!-- got token  -->");}
 		curl_close ($ch);
 		
 		//CREATE OBSERVATION
