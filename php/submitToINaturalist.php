@@ -1,5 +1,5 @@
 <?php
-        $debuginat = true;
+        
 	require_once("orm/Plant.php");
 	require_once("orm/resources/mailing.php");
 	
@@ -20,6 +20,7 @@
 
 	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $sawfly, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
+		$debuginat = true; // turn all off with this var
 		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. init for ID " . $arthropodSightingID . " -->");}
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
 		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. post oauth/token -->");}
