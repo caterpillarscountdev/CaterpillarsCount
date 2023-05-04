@@ -678,9 +678,7 @@ class User
 		return in_array($email, array(
 			"plocharczykweb@gmail.com",
 			"hurlbert@bio.unc.edu",
-			"gdicecco@live.unc.edu",
-			"ssnell@live.unc.edu",
-			"sarah.yelton@unc.edu"
+			"michael.lee@unc.edu"
 		));
 	}
 
