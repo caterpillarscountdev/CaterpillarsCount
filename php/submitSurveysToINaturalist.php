@@ -11,11 +11,13 @@
 	if(mysqli_num_rows($query) > 0){
 		if(intval(mysqli_fetch_assoc($query)["Processing"]) == 1){
 			mysqli_close($dbconn);
+			echo("<!-- closing because we are already processing cron -->");
 			die();
 		}
 	}
 	else{
 		mysqli_close($dbconn);
+		echo("<!-- closing because no rows need processing -->");
 		die();
 	}
 
