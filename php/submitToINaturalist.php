@@ -137,7 +137,7 @@
 		
 		$data["observation"]["observation_field_values_attributes"] = $observationFieldValuesAttributes;
   		$json = json_encode($data);
-  
+                if ($debuginat==true) {  echo("<!--prepped data before curl api v1 inat obs -->");}
   		$ch = curl_init("https://api.inaturalist.org/v1/observations");
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
@@ -147,14 +147,14 @@
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
 		$observation = json_decode(curl_exec($ch), true);
 		curl_close ($ch);
-		
+		if ($debuginat==true) {  echo("<!--done with curl api v1 inat obs -->");}
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
 		$arthropodPhotoPath = "../images/arthropods/" . $arthropodPhotoURL;
 		if(strpos($arthropodPhotoURL, '/') !== false){
 			$arthropodPhotoPath = "/opt/app-root/src/images/arthropods" . $arthropodPhotoURL;
 		}
-		
+		if ($debuginat==true) {  echo("<!--before image grab -->");}
 		if(function_exists('curl_file_create')){//PHP 5.5+
 			$cFile = curl_file_create($arthropodPhotoPath);
 		}
@@ -162,31 +162,40 @@
 			curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
 			$cFile = '@' . realpath($arthropodPhotoPath);
 		}
+		if ($debuginat==true) {  echo("<!--before array of obs photo  -->");}
 		$post = array('observation_photo[observation_id]' => $observation["id"], 'observation_photo[uuid]' => guidv4(openssl_random_pseudo_bytes(16)), 'file' => $cFile);
+		if ($debuginat==true) {  echo("<!--before v1 obs photo api hit  -->");}
 		curl_setopt($ch, CURLOPT_URL, "https://api.inaturalist.org/v1/observation_photos");
+		if ($debuginat==true) {  echo("<!--after v1 obs photo api hit  -->");}
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: multipart/form-data"));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		if ($debuginat==true) {  echo("<!--before curl_exec photo api  -->");}
 		$photoAddResponse = curl_exec($ch);
+		if ($debuginat==true) {  echo("<!-- curl_exec done  -->");}
 		curl_close ($ch);
 		
 		if($photoAddResponse !== "Just making sure that the exec is complete."){
 			//LINK OBSERVATION TO CATERPILLARS COUNT PROJECT
+			if ($debuginat==true) {  echo("<!-- in just make sure if -->");}
 			$data = array(
 				"project_id" => 5443,
 				"observation_id" => $observation["id"]
 			);
 			$json = json_encode($data);
-
+                        if ($debuginat==true) {  echo("<!-- before v1 api proj obs -->");}
 			$ch = curl_init("https://api.inaturalist.org/v1/project_observations");
+			if ($debuginat==true) {  echo("<!-- after init  -->");}
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
+			if ($debuginat==true) {  echo("<!-- before exec -->");}
 			$caterpillarsCountLinkResponse = curl_exec($ch);
+			if ($debuginat==true) {  echo("<!-- after exec -->");}
 			curl_close ($ch);
 			
 			if($caterpillarsCountLinkResponse !== "Just making sure that the exec is complete."){
