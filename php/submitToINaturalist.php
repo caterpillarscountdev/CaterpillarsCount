@@ -1,4 +1,5 @@
 <?php
+        
 	require_once("orm/Plant.php");
 	require_once("orm/resources/mailing.php");
 	
@@ -19,13 +20,18 @@
 
 	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $sawfly, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
+		$debuginat = false; // turn all debugging comments off with this variable
+		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. init for ID " . $arthropodSightingID . " -->");}
 		$ch = curl_init('https://www.inaturalist.org/oauth/token');
+		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. post oauth/token -->");}
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=" . getenv("iNaturalistAppID") . "&client_secret=" . getenv("iNaturalistAppSecret") . "&grant_type=password&username=caterpillarscount&password=" . getenv("iNaturalistPassword"));
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. post set all opts -->");}
 		$token = json_decode(curl_exec($ch), true)["access_token"];
+		if ($debuginat==true) {  echo("<!-- got token  -->");}
 		curl_close ($ch);
 		
 		//CREATE OBSERVATION
@@ -131,7 +137,7 @@
 		
 		$data["observation"]["observation_field_values_attributes"] = $observationFieldValuesAttributes;
   		$json = json_encode($data);
-  
+                if ($debuginat==true) {  echo("<!--prepped data before curl api v1 inat obs -->");}
   		$ch = curl_init("https://api.inaturalist.org/v1/observations");
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
@@ -141,14 +147,14 @@
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
 		$observation = json_decode(curl_exec($ch), true);
 		curl_close ($ch);
-		
+		if ($debuginat==true) {  echo("<!--done with curl api v1 inat obs -->");}
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
 		$arthropodPhotoPath = "../images/arthropods/" . $arthropodPhotoURL;
 		if(strpos($arthropodPhotoURL, '/') !== false){
 			$arthropodPhotoPath = "/opt/app-root/src/images/arthropods" . $arthropodPhotoURL;
 		}
-		
+		if ($debuginat==true) {  echo("<!--before image grab -->");}
 		if(function_exists('curl_file_create')){//PHP 5.5+
 			$cFile = curl_file_create($arthropodPhotoPath);
 		}
@@ -156,34 +162,44 @@
 			curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
 			$cFile = '@' . realpath($arthropodPhotoPath);
 		}
+		if ($debuginat==true) {  echo("<!--before array of obs photo  -->");}
 		$post = array('observation_photo[observation_id]' => $observation["id"], 'observation_photo[uuid]' => guidv4(openssl_random_pseudo_bytes(16)), 'file' => $cFile);
+		if ($debuginat==true) {  echo("<!--before v1 obs photo api hit  -->");}
 		curl_setopt($ch, CURLOPT_URL, "https://api.inaturalist.org/v1/observation_photos");
+		if ($debuginat==true) {  echo("<!--after v1 obs photo api hit  -->");}
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: multipart/form-data"));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		if ($debuginat==true) {  echo("<!--before curl_exec photo api  -->");}
 		$photoAddResponse = curl_exec($ch);
+		if ($debuginat==true) {  echo("<!-- curl_exec done  -->");}
 		curl_close ($ch);
 		
 		if($photoAddResponse !== "Just making sure that the exec is complete."){
 			//LINK OBSERVATION TO CATERPILLARS COUNT PROJECT
+			if ($debuginat==true) {  echo("<!-- in just make sure if -->");}
 			$data = array(
 				"project_id" => 5443,
 				"observation_id" => $observation["id"]
 			);
 			$json = json_encode($data);
-
+                        if ($debuginat==true) {  echo("<!-- before v1 api proj obs -->");}
 			$ch = curl_init("https://api.inaturalist.org/v1/project_observations");
+			if ($debuginat==true) {  echo("<!-- after init  -->");}
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
+			if ($debuginat==true) {  echo("<!-- before exec -->");}
 			$caterpillarsCountLinkResponse = curl_exec($ch);
+			if ($debuginat==true) {  echo("<!-- after exec -->");}
 			curl_close ($ch);
 			
 			if($caterpillarsCountLinkResponse !== "Just making sure that the exec is complete."){
+				if ($debuginat==true) {  echo("<!-- link response check, inside IF  -->");}
 				if($order == "caterpillar"){
 					//LINK OBSERVATION TO CATERPILLARS OF EASTERN NORTH AMERICA PROJECT IF IT'S IN AN ALLOWED REGION
 					$data = array(
@@ -191,7 +207,7 @@
 						"observation_id" => $observation["id"]
 					);
 					$json = json_encode($data);
-
+                                        if ($debuginat==true) {  echo("<!-- before curl proj obs  -->");}
 					$ch = curl_init("https://api.inaturalist.org/v1/project_observations");
 					curl_setopt($ch, CURLOPT_POST, 1);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
@@ -199,31 +215,44 @@
 					curl_setopt($ch, CURLOPT_HEADER, 0);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
+					if ($debuginat==true) {  echo("<!-- before curl_exec  -->");}
 					$caterpillarsOfEasternNALinkResponse = curl_exec($ch);
+					if ($debuginat==true) {  echo("<!-- post curl_exec  -->");}
 					curl_close ($ch);
 
 					if($caterpillarsOfEasternNALinkResponse !== "Just making sure that the exec is complete."){
+						if ($debuginat==true) {  echo("<!--just making sure again  -->");}
 						//Mark this ArthropodSighting as completed
 						if(is_int($observation["id"]) && $observation["id"] > 0){
+							if ($debuginat==true) {  echo("<!--updating arthropod sighting...  -->");}  
 							mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0', INaturalistID='" . $observation["id"] . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
+							if ($debuginat==true) {  echo("<!--done updating arthropod sighting...  -->");}  
 						}
 						
 						//Mark that we're finished submitting to iNaturalist
+						if ($debuginat==true) {  echo("<!--before update cron status ...  -->");}  
 						$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");
+						if ($debuginat==true) {  echo("<!--after update cron status ...  -->");}  
 					}
 					else{
 						//Mark that we're finished submitting to iNaturalist
+						if ($debuginat==true) {  echo("<!--before update cron status 2 ...  -->");}  
 						$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");
+						if ($debuginat==true) {  echo("<!--after update cron status 2 ...  -->");}  
 					}
 				}
 				else{
 					//Mark this ArthropodSighting as completed and save the INaturalistID to our database
 					if(is_int($observation["id"]) && $observation["id"] > 0){
+						if ($debuginat==true) {  echo("<!--updating arthropod sighting 2 ...  -->");}  
 						mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0', INaturalistID='" . $observation["id"] . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
+						if ($debuginat==true) {  echo("<!--after arthropod sighting 2 ...  -->");}  
 					}
 					
 					//Mark that we're finished submitting to iNaturalist
+					if ($debuginat==true) {  echo("<!--before update cron status 2 ...  -->");}  
 					$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");
+					if ($debuginat==true) {  echo("<!--after update cron status 3 ...  -->");}  
 				}
 			}
 		}
