@@ -344,18 +344,28 @@
 		}
 		
 		$totalDensity = array();
+		$circleNums = array();
 		$query = mysqli_query($dbconn, "SELECT Plant.$plantField, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN 
 		   Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND $extraWhere GROUP BY Plant.$plantField");
 		while($row = mysqli_fetch_assoc($query)){
 			$totalDensity[$row[$plantField]] = floatval($row["ArthropodCount"]);
+		        if ($breakdown=='circle') { //add to circle array
+			  $circleNums[$row[$plantField]] = floatval($row["Circle"]); 
+			}
 		}
 		$query = mysqli_query($dbconn, "SELECT Plant.$plantField, COUNT(*) AS SurveyCount, COUNT(DISTINCT Plant.ID) AS Branches FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID 
 		   WHERE Plant.SiteFK='$siteID' AND $extraWhere GROUP BY Plant.$plantField");
 		while($row = mysqli_fetch_assoc($query)){
 			$totalDensity[$row[$plantField]] = $totalDensity[$row[$plantField]] / floatval($row["SurveyCount"]);
 		}
-		asort($totalDensity, SORT_NUMERIC);
-		$order = array_keys($totalDensity);
+		if ($breakdown=='circle') { //sort by circle number
+		      asort($circleNums, SORT_NUMERIC);
+	              $order = array_keys($circleNums);	
+			
+		} else {  //typical sort
+		      asort($totalDensity, SORT_NUMERIC);
+	              $order = array_keys($totalDensity);
+		}
 		
  		if($comparisonMetric == "occurrence"){
  			$arthropodOccurrencesSet = array();
