@@ -324,7 +324,7 @@
  			die($result);
  		}
  	}
- 	else{//plant species  OR circle
+ 		else{//plant species  OR circle
 		//edit fields to allow more than just Species out of the Plant table
 		$extraWhere = ' (1=1) '; //show everything
 		if ($breakdown=='circle') {
@@ -398,15 +398,7 @@
 				}
 				$arthropodOccurrencesSet[$species . " (" . $branchCount[$species] . ")"] = $arthropodOccurrences;
 			}
- 			uksort($arthropodOccurrencesSet, function($a, $b){
-				global $order;
-				return array_search(substr($b, 0, strrpos($b, " (")), $order) - array_search(substr($a, 0, strrpos($a, " (")), $order);
-			});
-			$result = "true|" . json_encode($arthropodOccurrencesSet);
-			if($HIGH_TRAFFIC_MODE){
-				save($baseFileName, $result);
-			}
- 			die($result);
+ 			$resultSet = $arthropodOccurrencesSet;
  		}
  		else if($comparisonMetric == "absoluteDensity"){
  			$arthropodDensitiesSet = array();
@@ -439,15 +431,7 @@
 				}
 				$arthropodDensitiesSet[$species . " (" . $branchCount[$species] . ")"] = $arthropodDensities;
 			}
- 			uksort($arthropodDensitiesSet, function($a, $b){
-				global $order;
-				return array_search(substr($b, 0, strrpos($b, " (")), $order) - array_search(substr($a, 0, strrpos($a, " (")), $order);
-			});
-			$result = "true|" . json_encode($arthropodDensitiesSet);
-			if($HIGH_TRAFFIC_MODE){
-				save($baseFileName, $result);
-			}
- 			die($result);
+ 			$resultSet = $arthropodDensitiesSet;
  		}
 		else if($comparisonMetric == "meanBiomass"){
 			$meanBiomassesSet = array();
@@ -483,15 +467,7 @@
 				}
 				$meanBiomassesSet[$species . " (" . $branchCount[$species] . ")"] = $meanBiomasses;
 			}
- 			uksort($meanBiomassesSet, function($a, $b){
-				global $order;
-				return array_search(substr($b, 0, strrpos($b, " (")), $order) - array_search(substr($a, 0, strrpos($a, " (")), $order);
-			});
-			$result = "true|" . json_encode($meanBiomassesSet);
-			if($HIGH_TRAFFIC_MODE){
-				save($baseFileName, $result);
-			}
- 			die($result);
+ 			$resultSet = $meanBiomassesSet;
 		}
  		else{//relative proportion
 			$arthropodRelativeProportionsSet = array();
@@ -525,15 +501,21 @@
 				}
 				$arthropodRelativeProportionsSet[$species . " (" . $branchCount[$species] . ")"] = $arthropodRelativeProportions;
 			}
- 			uksort($arthropodRelativeProportionsSet, function($a, $b){
+ 			$resultSet = $arthropodRelativeProportionsSet;
+		
+ 		}
+		
+		if (!empty($resultSet)) {
+		  uksort($resultSet, function($a, $b){
 				global $order;
 				return array_search(substr($b, 0, strrpos($b, " (")), $order) - array_search(substr($a, 0, strrpos($a, " (")), $order);
 			});
-			$result = "true|" . json_encode($arthropodRelativeProportionsSet);
+			$result = "true|" . json_encode($resultSet);
 			if($HIGH_TRAFFIC_MODE){
 				save($baseFileName, $result);
 			}
  			die($result);
- 		}
+		}
+		
  	}
  ?>
