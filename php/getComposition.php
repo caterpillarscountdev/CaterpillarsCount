@@ -326,7 +326,7 @@
  	}
  	else{//plant species  OR circle
 		//edit fields to allow more than just Species out of the Plant table
-		if ($breakdown=='Circle') {
+		if ($breakdown=='circle') {
 		  $plantField = 'Circle';  
 		} else {
 		  $plantField = 'Species';	
