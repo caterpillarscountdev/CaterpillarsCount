@@ -504,18 +504,21 @@
  			$resultSet = $arthropodRelativeProportionsSet;
 		
  		}
-		
 		if (!empty($resultSet)) {
-		  uksort($resultSet, function($a, $b){
+		    uksort($resultSet, function($a, $b){
 				global $order;
 				return array_search(substr($b, 0, strrpos($b, " (")), $order) - array_search(substr($a, 0, strrpos($a, " (")), $order);
 			});
+			if ($breakdown=='circle'){
+			   $resultSet=  array_reverse($resultSet);
+		        }
 			$result = "true|" . json_encode($resultSet);
 			if($HIGH_TRAFFIC_MODE){
 				save($baseFileName, $result);
 			}
  			die($result);
-		}
+		  
+	       } //non-empty result set
 		
  	}
  ?>
