@@ -720,41 +720,44 @@ class Survey
 		}
 		
 		//flag too many total arthropods (minus groups we've specifically excluded)
-		if($totalQuantityExcludingSpecifiedArthropodGroups > $flaggingRules["maxSafeTotalQuantity"]){
-			$excludingClause = "";
-			if(count($arthropodGroupsExcludedFromTotalQuantityCount) > 0){
-				$excludedGroupsCopy = $arthropodGroupsExcludedFromTotalQuantityCount;
-				$lastGroup = count($excludedGroupsCopy) > 1 ?  "\" and \"" . array_pop($excludedGroupsCopy) : "";
-				$excludingClause = " (excluding \"" . implode("\", \"", $excludedGroupsCopy) . $lastGroup . "\")";
-			}
-			
-			$flags[] = "TOO MANY ARTHROPODS: " . $totalQuantityExcludingSpecifiedArthropodGroups . " total arthropods" . $excludingClause . " exceeds safe limit of " .  $flaggingRules["maxSafeTotalQuantity"] . ".";
-		}
+		// removed 6/1/2023
+		// if($totalQuantityExcludingSpecifiedArthropodGroups > $flaggingRules["maxSafeTotalQuantity"]){
+		// 	$excludingClause = "";
+		// 	if(count($arthropodGroupsExcludedFromTotalQuantityCount) > 0){
+		// 		$excludedGroupsCopy = $arthropodGroupsExcludedFromTotalQuantityCount;
+		// 		$lastGroup = count($excludedGroupsCopy) > 1 ?  "\" and \"" . array_pop($excludedGroupsCopy) : "";
+		// 		$excludingClause = " (excluding \"" . implode("\", \"", $excludedGroupsCopy) . $lastGroup . "\")";
+		// 	}
+                //  
+		// 	$flags[] = "TOO MANY ARTHROPODS: " . $totalQuantityExcludingSpecifiedArthropodGroups . " total arthropods" . $excludingClause . " exceeds safe limit of " .  $flaggingRules["maxSafeTotalQuantity"] . ".";
+		// }
 		
 		//flag too many arthropod groups
-		$numberOfArthropodGroups = count($updatedArthropodGroups);
-		if($numberOfArthropodGroups > $flaggingRules["maxSafeArthropodGroups"]){
-			$flags[] = "TOO MANY ARTHROPOD GROUPS: " . $numberOfArthropodGroups . " arthropod groups exceeds safe limit of " . $flaggingRules["maxSafeArthropodGroups"];
-		}
-		
-		$rareArthropodGroupsInSurvey = array();
-		for($i = 0; $i < count($updatedArthropodGroups); $i++){
-			if(in_array($updatedArthropodGroups[$i], $rareArthropodGroups)){
-				$rareArthropodGroupsInSurvey[] = $updatedArthropodGroups[$i];
-			}
-		}
+		// removed 6/1/2023
+		// $numberOfArthropodGroups = count($updatedArthropodGroups);
+		// if($numberOfArthropodGroups > $flaggingRules["maxSafeArthropodGroups"]){
+		// 	$flags[] = "TOO MANY ARTHROPOD GROUPS: " . $numberOfArthropodGroups . " arthropod groups exceeds safe limit of " . $flaggingRules["maxSafeArthropodGroups"];
+		// }
+		// removed 6/1/2023
+		// $rareArthropodGroupsInSurvey = array();
+		// for($i = 0; $i < count($updatedArthropodGroups); $i++){
+		// 	if(in_array($updatedArthropodGroups[$i], $rareArthropodGroups)){
+		// 		$rareArthropodGroupsInSurvey[] = $updatedArthropodGroups[$i];
+		// 	}
+		// }
 		
 		//flag too many rare arthropod groups
-		$numberOfRareArthropodGroupsInSurvey = count($rareArthropodGroupsInSurvey);
-		if($numberOfRareArthropodGroupsInSurvey > $flaggingRules["maxSafeRareArthropodGroups"]){
-			$groupsClause = "";
-			if($numberOfRareArthropodGroupsInSurvey > 0){
-				$rareGroupsInSurveyCopy = $rareArthropodGroupsInSurvey;
-				$lastGroup = count($rareGroupsInSurveyCopy) > 1 ?  "\" and \"" . array_pop($rareGroupsInSurveyCopy) : "";
-				$groupsClause = " (\"" . implode("\", \"", $rareGroupsInSurveyCopy) . $lastGroup . "\")";
-			}
-			$flags[] = "TOO MANY RARE ARTHROPOD GROUPS: " . $numberOfRareArthropodGroups . " rare arthropod groups" . $groupsClause . " exceeds the safe limit of " . $flaggingRules["maxSafeRareArthropodGroups"];
-		}
+		// removed 6/1/2023
+		// $numberOfRareArthropodGroupsInSurvey = count($rareArthropodGroupsInSurvey);
+		// if($numberOfRareArthropodGroupsInSurvey > $flaggingRules["maxSafeRareArthropodGroups"]){
+		// 	$groupsClause = "";
+		// 	if($numberOfRareArthropodGroupsInSurvey > 0){
+		// 		$rareGroupsInSurveyCopy = $rareArthropodGroupsInSurvey;
+		// 		$lastGroup = count($rareGroupsInSurveyCopy) > 1 ?  "\" and \"" . array_pop($rareGroupsInSurveyCopy) : "";
+		// 		$groupsClause = " (\"" . implode("\", \"", $rareGroupsInSurveyCopy) . $lastGroup . "\")";
+		// 	}
+		// 	$flags[] = "TOO MANY RARE ARTHROPOD GROUPS: " . $numberOfRareArthropodGroups . " rare arthropod groups" . $groupsClause . " exceeds the safe limit of " . $flaggingRules["maxSafeRareArthropodGroups"];
+		// } 
 		
 		//flag too few leaves
 		$isConifer = $this->isConifer();
