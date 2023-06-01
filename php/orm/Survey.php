@@ -559,13 +559,14 @@ class Survey
 	}
 	
 	private static function getFlaggingRules(){
+                        // the following removed from the returned array 6/1/2023
+		        // "maxSafeTotalQuantity" => 10,
+			// "maxSafeArthropodGroups" => 4,
+			// "maxSafeRareArthropodGroups" => 3,
 		return array(
 			"minSafeLeaves" => 5,
 			"maxSafeLeaves" => 400,
 			"maxSafeLeafLength" => 30,
-			"maxSafeTotalQuantity" => 10,
-			"maxSafeArthropodGroups" => 4,
-			"maxSafeRareArthropodGroups" => 3,
 			"sawflyFlaggingRules" => array(
 				"maxSafeLength" => 50,
 				"maxSafeQuantity" => 20
