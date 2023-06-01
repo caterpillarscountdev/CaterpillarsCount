@@ -510,7 +510,15 @@
 				return array_search(substr($b, 0, strrpos($b, " (")), $order) - array_search(substr($a, 0, strrpos($a, " (")), $order);
 			});
 			if ($breakdown=='circle'){
-			   $resultSet=  array_reverse($resultSet);
+				// if breakdown is cicle, we want to sort ascending and also remove () from keys	 
+				$resultSet=  array_reverse($resultSet);
+				$resultSetCircle = array();
+				$resultKeys = array_keys($resultSet);
+				foreach($resultKeys as $onekey) {
+					$resultSetCircle[substr($onekey, 0, strrpos($onekey, " ("))] = $resultSet[$onekey];
+				}
+				//swap to new array
+			   	$resultSet = $resultSetCircle;
 		        }
 			$result = "true|" . json_encode($resultSet);
 			if($HIGH_TRAFFIC_MODE){
