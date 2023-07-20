@@ -2307,6 +2307,7 @@
 
 				var arthropodData = [];
 				var arthropodSightings = $("#" + id + " .arthropodSighting");
+				console.log('arthropodSightings array is of length ' + arthropodSightings.length);
 				for(var i = 0; i < arthropodSightings.length; i++){
 					var arthropodSightingID = Number(arthropodSightings[i].id);
 					var quantity = Number(arthropodSightings.eq(i).find(".editable")[0].innerHTML);
