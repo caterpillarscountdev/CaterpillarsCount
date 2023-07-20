@@ -48,9 +48,6 @@ class ArthropodSighting
 		
 		$failures = "";
 
-                // temp: add to see if length is being set this far
-                $failures = "attempting to set length to " . $length;
-		
 		if($originalGroup === false){
 			$originalGroup = "Invalid arthropod group";
 			$failures .= "Invalid arthropod group. ";
