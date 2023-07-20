@@ -23,14 +23,19 @@
 	$isConifer = intval($numberOfLeaves) == -1;
 
 	function explainError($fileError){
-		if($fileError == UPLOAD_ERR_INI_SIZE){return 'The uploaded file exceeds the upload_max_filesize directive in php.ini. ';}
-		if($fileError == UPLOAD_ERR_FORM_SIZE){return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form. ';}
-		if($fileError == UPLOAD_ERR_PARTIAL){return 'The uploaded file was only partially uploaded. ';}
-		if($fileError == UPLOAD_ERR_NO_FILE){return 'No file was uploaded. ';}
-		if($fileError == UPLOAD_ERR_NO_TMP_DIR){return 'Missing a temporary folder. Introduced in PHP 5.0.3. ';}
-		if($fileError == UPLOAD_ERR_CANT_WRITE){return 'Failed to write file to disk. Introduced in PHP 5.1.0. ';}
-		if($fileError == UPLOAD_ERR_EXTENSION){return 'A PHP extension stopped the file upload. PHP does not provide a way to ascertain which extension caused the file upload to stop; examining the list of loaded extensions with phpinfo() may help. Introduced in PHP 5.2.0. ';}
-		return 'Upload unsuccessful. ';
+		$fileErrorText = "";
+		if($fileError == UPLOAD_ERR_INI_SIZE){$fileErrorText =  'The uploaded file exceeds the upload_max_filesize directive in php.ini. ';}
+		if($fileError == UPLOAD_ERR_FORM_SIZE){$fileErrorText =  'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form. ';}
+		if($fileError == UPLOAD_ERR_PARTIAL){$fileErrorText =  'The uploaded file was only partially uploaded. ';}
+		if($fileError == UPLOAD_ERR_NO_FILE){$fileErrorText =  'No file was uploaded. ';}
+		if($fileError == UPLOAD_ERR_NO_TMP_DIR){$fileErrorText =  'Missing a temporary folder. Introduced in PHP 5.0.3. ';}
+		if($fileError == UPLOAD_ERR_CANT_WRITE){$fileErrorText =  'Failed to write file to disk. Introduced in PHP 5.1.0. ';}
+		if($fileError == UPLOAD_ERR_EXTENSION){$fileErrorText =  'A PHP extension stopped the file upload. PHP does not provide a way to ascertain which extension caused the file upload to stop; examining the list of loaded extensions with phpinfo() may help. Introduced in PHP 5.2.0. ';}
+		if (empty($fileErrorText)) {
+			$fileErrorText =  'Upload unsuccessful. ';
+		}
+        log_error($fileErrorText . ' from ' . $fileError);
+		return $fileErrorText;
 	}
 		
 	function attachPhotoToArthropodSighting($file, $arthropodSighting){
