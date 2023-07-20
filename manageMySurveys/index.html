@@ -2309,7 +2309,7 @@
 				var arthropodSightings = $("#" + id + " .arthropodSighting");
 				console.log('arthropodSightings array is of length ' + arthropodSightings.length);
 				for(var i = 0; i < arthropodSightings.length; i++){
-					console.log('arthropodSightings array ' + i + ' ' arthropodSightings[i]);
+					console.log('arthropodSightings array ' + i + ' ' + arthropodSightings[i]);
 					var arthropodSightingID = Number(arthropodSightings[i].id);
 					var quantity = Number(arthropodSightings.eq(i).find(".editable")[0].innerHTML);
 					var length = Number(arthropodSightings.eq(i).find(".editable").eq(1)[0].innerHTML);
