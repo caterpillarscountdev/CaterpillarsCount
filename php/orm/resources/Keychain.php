@@ -28,7 +28,7 @@ class Keychain
 		}
 		else{
 			if (getenv("DEVELOPMENT_INSTANCE") === true) {  
-			  $this->hostPointer = getenv("DEV-CCDB_SERVICE_HOST");	
+			  $this->hostPointer = getenv("DEVCCDB_SERVICE_HOST");	
 			} else {
 			  $this->hostPointer = getenv("CATERPILLARSV2_SERVICE_HOST");
 			}	
