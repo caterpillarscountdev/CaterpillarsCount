@@ -87,7 +87,7 @@
 				$survey->setLocalDate($date);
 				$survey->setLocalTime($time);
 				$survey->setObservationMethod($observationMethod);
-				$survey->setNotes($siteNotes); // fixed to $siteNotes from $notes 7/20/2023 MLee
+				// $survey->setNotes($siteNotes); // this is done below
 				$survey->setWetLeaves($wetLeaves);
 				//$survey->setPlantSpecies($plantSpecies);
 				if($isConifer){
