@@ -34,9 +34,13 @@
 	}
 		
 	function attachPhotoToArthropodSighting($file, $arthropodSighting){
-		if(!is_uploaded_file($file['tmp_name'])){
-			return "File not uploaded. ";
-		}
+		if(!array_key_exists('tmp_name',$file)) { //for php 8.0 we have to check that the key exists
+                     return "File was not uploaded. "; 
+		} else {
+		  if(!is_uploaded_file($file['tmp_name'])){
+		     return "File not uploaded. ";
+		  }
+		}	
 		
 		$fileName = $file['name'];
 		$fileType = $file['type'];
@@ -83,7 +87,7 @@
 				$survey->setLocalDate($date);
 				$survey->setLocalTime($time);
 				$survey->setObservationMethod($observationMethod);
-				$survey->setNotes($notes);
+				$survey->setNotes($siteNotes); // fixed to $siteNotes from $notes 7/20/2023 MLee
 				$survey->setWetLeaves($wetLeaves);
 				//$survey->setPlantSpecies($plantSpecies);
 				if($isConifer){
@@ -117,10 +121,12 @@
 							else{
 								//if we successfully set all editables
 								//add a photo to the arthropod sighting if it exists
-								$attachResult = attachPhotoToArthropodSighting($_FILES['file' . $j], $arthropodSightings[$i]);
-								if($attachResult != "File not uploaded. " && $attachResult !== true){
-									$failures .= "Photo #" . $j . ": " . strval($attachResult);
-								}
+								if (array_key_exists('file' . $j, $_FILES)) { 
+								  $attachResult = attachPhotoToArthropodSighting($_FILES['file' . $j], $arthropodSightings[$i]);
+								  if($attachResult != "File not uploaded. " && $attachResult !== true){
+								  	$failures .= "Photo #" . $j . ": " . strval($attachResult);
+								  }
+								}	
 							}
 						}
 					}
