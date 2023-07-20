@@ -27,7 +27,7 @@ class Keychain
 			$this->extraPaths = $pathComponents[2];
 		}
 		else{
-			if (getent("DEVELOPMENT_INSTANCE") === true) {  
+			if (getenv("DEVELOPMENT_INSTANCE") === true) {  
 			  $this->hostPointer = getenv("DEV-CCDB_SERVICE_HOST");	
 			} else {
 			  $this->hostPointer = getenv("CATERPILLARSV2_SERVICE_HOST");
