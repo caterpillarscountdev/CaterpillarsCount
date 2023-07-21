@@ -443,7 +443,7 @@ class Survey
 		}
 		
 		//remove approved survey data
-		$sql = "SELECT `ID` FROM `Survey` WHERE `ReviewedAndApproved`='1'";
+		$sql = "SELECT `ID` FROM `Survey` WHERE `ReviewedAndApproved`>0"; // changed this to allow 1,2,3 as values to remove, but why pull in data and then remove?  Why not just remove from first set?
 		$query = mysqli_query($dbconn, $sql);
 		while($row = mysqli_fetch_assoc($query)){
 			unset($flaggedSurveyIDs[$row["ID"]]);
@@ -999,11 +999,13 @@ class Survey
 		return false;
 	}
 	
-	public function setReviewedAndApproved($reviewedAndApproved){
+	public function setReviewedAndApproved($reviewedAndApproved, $qccomment){
 		if(!$this->deleted){
 			$dbconn = (new Keychain)->getDatabaseConnection();
-			$reviewedAndApproved = filter_var($reviewedAndApproved, FILTER_VALIDATE_BOOLEAN);
-			mysqli_query($dbconn, "UPDATE Survey SET ReviewedAndApproved='$reviewedAndApproved' WHERE ID='" . $this->id . "'");
+			$reviewedAndApproved = filter_var($reviewedAndApproved, FILTER_VALIDATE_INT);
+			mysqli_query($dbconn, "UPDATE Survey SET `ReviewedAndApproved`='$reviewedAndApproved', `QCComment`='" . 
+			mysqli_real_escape_string($dbconn, $qccomment)
+			. "' WHERE ID='" . $this->id . "'");
 			mysqli_close($dbconn);
 			$this->reviewedAndApproved = $reviewedAndApproved;
 			return true;

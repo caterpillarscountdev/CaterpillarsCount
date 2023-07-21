@@ -738,7 +738,7 @@
 				margin:-13px 0px 80px 0px;
 			}
 			
-			main .panel .flags ul li{
+			main .panel .flags ul li, main .panel .flags span {
 				font-size:14px;
 				color:#721c24;
 				list-style-type:disc;
@@ -1421,7 +1421,7 @@
 								}
 								htmlToAdd += "</div>";
 								
-								htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><button onclick=\"editSurvey(" + surveys[i]["id"] + ");\">Edit</button><button onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ");\">Approve</button></div></div>") : "";
+								htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><span>QC Comments (optional, choose item in list or write anything): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Approve</button><button onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",2,this);\">? I'm not sure</button><button onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; REJECT SURVEY</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
@@ -1993,17 +1993,36 @@
 				});
 			}
 			
-			function askToApproveSurvey(id){
-				promptConfirm("Are you sure you want to approve this survey? It won't show up as being flagged again unless someone edits it.", 'Never mind.', 'Yes, I am sure!', function(){}, function(){
-					approveSurvey(id);
+			function askToApproveSurvey(id, approvedLevel, buttonEl){
+			    // ask user if they want to update approvedlevel
+				// buttonEl is button they pushed and is used to find qc comments just before
+				var verbToUser = "";
+				if (approvedLevel == 1) {
+				   verbToUser = "approve";
+				} 
+				if (approvedLevel == 2) {
+				   verbToUser = "say you're not sure";
+				} 
+				if (approvedLevel == 3) {
+				   verbToUser = "REJECT";
+				} 
+				var qccomment = $(buttonEl).parent().prev().children('.qccomment')[0].value;
+                var qcNoteToUser = "";
+				if (qccomment.length >0) {
+				  qcNoteToUser = "You have specified a QC Comment.";
+				} else {
+				  qcNoteToUser = "You have not specified a QC Comment, but they are optional.  Press 'Never mind.' if you want to go back and add a comment.";
+				}
+				promptConfirm("Are you sure you want to **" + verbToUser + "** this survey? It won't show up as being flagged again unless someone edits it. " + qcNoteToUser, 'Never mind.', 'Yes, I am sure!', function(){}, function(){
+					approveSurvey(id, approvedLevel, qccomment);
 				});
 			}
 			
-			function approveSurvey(id){
+			function approveSurvey(id, approvedLevel, qccomment){
 				$('.loading').fadeIn(0);
 				$('#surveys').fadeOut(0);
 				
-				$.get("../php/approveSurvey.php?surveyID=" + id + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+				$.get("../php/approveSurvey.php?surveyID=" + id + "&approvedLevel=" + approvedLevel + "&qccomment=" + encodeURIComponent(qccomment) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						reloadPage();
@@ -2886,6 +2905,16 @@
 							
 							<div class="inputTitle" style="margin-top:20px;">Min. length (mm): <img src="../images/question.png" style="float:right;height:18px;cursor:pointer;opacity:.2;" onclick="queueNotice('alert', 'Only surveys including at least one arthropod that meets or exceeds this specified minimum length will be included in the results.');"/></div>
 							<input type="number" id="minLength" placeholder="0" onclick="this.select();" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');"/>
+						</div>
+						<div class="filter">
+						  <datalist id='qccomment'>
+						    <option>seems plausible</option>
+							<option>seems reasonable</option>
+							<option>abnormal, but verified</option>
+							<option>far too many</option>
+							<option>far too long</option>
+							<option>type of insect is only good data</option>
+						  </datalist>
 						</div>
 						<div class="filter">
 							<div id="locationFilters" style="max-height:999999px;">
