@@ -1,5 +1,7 @@
 <?php
 
+require_once('resources/Customfunctions.php');
+require_once('resources/Customlogging.php');
 require_once('resources/Keychain.php');
 require_once('Survey.php');
 
@@ -38,16 +40,16 @@ class ArthropodSighting
 		$length = self::validLength($dbconn, $length);
 		$quantity = self::validQuantity($dbconn, $quantity);
 		$notes = self::validNotes($dbconn, $notes);
-		$pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN);
-		$hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
-		$rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
-		$tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
-		$originalSawfly = filter_var($originalSawfly, FILTER_VALIDATE_BOOLEAN);
-		$originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+		$pupa = custom_filter_var_bool($pupa);
+		$hairy = custom_filter_var_bool($hairy);
+		$rolled = custom_filter_var_bool($rolled);
+		$tented = custom_filter_var_bool($tented);
+		$originalSawfly = custom_filter_var_bool($originalSawfly);
+		$originalBeetleLarva = custom_filter_var_bool($originalBeetleLarva);
 		
 		
 		$failures = "";
-		
+
 		if($originalGroup === false){
 			$originalGroup = "Invalid arthropod group";
 			$failures .= "Invalid arthropod group. ";
@@ -84,14 +86,14 @@ class ArthropodSighting
 		$this->quantity = intval($quantity);
 		$this->photoURL = $photoURL;
 		$this->notes = $notes;
-		$this->pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN);
-		$this->hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
-		$this->rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
-		$this->tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
-		$this->originalSawfly = filter_var($originalSawfly, FILTER_VALIDATE_BOOLEAN);
-		$this->updatedSawfly = filter_var($updatedSawfly, FILTER_VALIDATE_BOOLEAN);
-		$this->originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
-		$this->updatedBeetleLarva = filter_var($updatedBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+		$this->pupa = custom_filter_var_bool($pupa);
+		$this->hairy = custom_filter_var_bool($hairy);
+		$this->rolled = custom_filter_var_bool($rolled);
+		$this->tented = custom_filter_var_bool($tented);
+		$this->originalSawfly = custom_filter_var_bool($originalSawfly);
+		$this->updatedSawfly = custom_filter_var_bool($updatedSawfly);
+		$this->originalBeetleLarva = custom_filter_var_bool($originalBeetleLarva);
+		$this->updatedBeetleLarva = custom_filter_var_bool($updatedBeetleLarva);
 		$this->iNaturalistID = intval($iNaturalistID);
 		
 		$this->deleted = false;
@@ -293,42 +295,42 @@ class ArthropodSighting
 	
 	public function getPupa() {
 		if($this->deleted){return null;}
-		return filter_var($this->pupa, FILTER_VALIDATE_BOOLEAN);
+		return custom_filter_var_bool($this->pupa);
 	}
 	
 	public function getHairy() {
 		if($this->deleted){return null;}
-		return filter_var($this->hairy, FILTER_VALIDATE_BOOLEAN);
+		return custom_filter_var_bool($this->hairy);
 	}
 	
 	public function getRolled() {
 		if($this->deleted){return null;}
-		return filter_var($this->rolled, FILTER_VALIDATE_BOOLEAN);
+		return custom_filter_var_bool($this->rolled);
 	}
 	
 	public function getTented() {
 		if($this->deleted){return null;}
-		return filter_var($this->tented, FILTER_VALIDATE_BOOLEAN);
+		return custom_filter_var_bool($this->tented);
 	}
 	
 	public function getOriginalSawfly() {
 		if($this->deleted){return null;}
-		return filter_var($this->originalSawfly, FILTER_VALIDATE_BOOLEAN);
+		return custom_filter_var_bool($this->originalSawfly);
 	}
 	
 	public function getUpdatedSawfly() {
 		if($this->deleted){return null;}
-		return filter_var($this->updatedSawfly, FILTER_VALIDATE_BOOLEAN);
+		return custom_filter_var_bool($this->updatedSawfly);
 	}
 	
 	public function getOriginalBeetleLarva() {
 		if($this->deleted){return null;}
-		return filter_var($this->originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+		return custom_filter_var_bool($this->originalBeetleLarva);
 	}
 	
 	public function getUpdatedBeetleLarva() {
 		if($this->deleted){return null;}
-		return filter_var($this->updatedBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+		return custom_filter_var_bool($this->updatedBeetleLarva);
 	}
 	
 	public function getINaturalistID() {
@@ -362,21 +364,34 @@ class ArthropodSighting
 		return false;
 	}
 	
+	
 	public function setAllEditables($originalGroup, $length, $quantity, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva){
+		$temp_debug_level = 1; //temp debugging enabled if >=1 
+		if ($temp_debug_level>0) { custom_error_log('setAllEditables>init');}
 		if(!$this->deleted)
 		{
 			$dbconn = (new Keychain)->getDatabaseConnection();
-			
+            if ($temp_debug_level>0) { custom_error_log('setAllEditables> have dbconn');} 
 			$originalGroup = self::validGroup($dbconn, $originalGroup);
 			$length = self::validLength($dbconn, $length);
 			$quantity = self::validQuantity($dbconn, $quantity);
 			$notes = self::validNotes($dbconn, $notes);
-			$pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN);
-			$hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
-			$rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
-			$tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
-			$originalSawfly = filter_var($originalSawfly, FILTER_VALIDATE_BOOLEAN);
-			$originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+			if ($temp_debug_level>0) {
+				custom_error_log('setAllEditables> pupa pre filter >' . $pupa . '< is empty? ' . empty($pupa) . ' is null? ' . is_null($pupa) . ' done.');
+			}
+			//$pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+			//if ($temp_debug_level>0) {
+			//	custom_error_log('setAllEditables> pupa after filter >' . $pupa . '< is empty? ' . empty($pupa) . ' is null? ' . is_null($pupa) . ' done.');
+			//}
+			$pupa = custom_filter_var_bool($pupa);
+			if ($temp_debug_level>0) {
+				custom_error_log('setAllEditables> pupa after second filter >' . $pupa . '< is empty? ' . empty($pupa) . ' is null? ' . is_null($pupa) . ' done.');
+			}
+			$hairy = custom_filter_var_bool($hairy);
+			$rolled = custom_filter_var_bool($rolled);
+			$tented = custom_filter_var_bool($tented);
+			$originalSawfly = custom_filter_var_bool($originalSawfly);
+			$originalBeetleLarva = custom_filter_var_bool($originalBeetleLarva);
 			
 			$failures = "";
 		
@@ -397,31 +412,44 @@ class ArthropodSighting
 			if($failures != ""){
 				return $failures;
 			}
-			
+			if ($temp_debug_level>0) { custom_error_log('setAllEditables> past failures');} 
 			$updatedGroup = $originalGroup;
 			$updatedSawfly = $originalSawfly;
 			$updatedBeetleLarva = $originalBeetleLarva;
 			$query = mysqli_query($dbconn, "SELECT `StandardGroup`, `SawflyUpdated`, `BeetleLarvaUpdated` FROM `ExpertIdentification` WHERE `ArthropodSightingFK`='" . $this->id . "'");
 			if(mysqli_num_rows($query) > 0){
+				if ($temp_debug_level>0) { custom_error_log('setAllEditables> have rows in query 1');} 
 				$row = mysqli_fetch_assoc($query);
 				$updatedGroup = $row["StandardGroup"];
 				$updatedSawfly = $row["SawflyUpdated"];
 				$updatedBeetleLarva = $row["BeetleLarvaUpdated"];
 			}
 			
-			mysqli_query($dbconn, "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `UpdatedGroup`='$updatedGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Pupa`='$pupa', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `UpdatedSawfly`='$updatedSawfly', `OriginalBeetleLarva`='$originalBeetleLarva', `UpdatedBeetleLarva`='$updatedBeetleLarva' WHERE ID='" . $this->id . "'");
+			$as_result = mysqli_query($dbconn, "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `UpdatedGroup`='$updatedGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Pupa`='$pupa', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `UpdatedSawfly`='$updatedSawfly', `OriginalBeetleLarva`='$originalBeetleLarva', `UpdatedBeetleLarva`='$updatedBeetleLarva' WHERE ID='" . $this->id . "'");
+			
+			if ($temp_debug_level>0) { custom_error_log('setAllEditables> done with query 2 for id ' . $this->id );
+			  custom_error_log('ran ' . "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `UpdatedGroup`='$updatedGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Pupa`='$pupa', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `UpdatedSawfly`='$updatedSawfly', `OriginalBeetleLarva`='$originalBeetleLarva', `UpdatedBeetleLarva`='$updatedBeetleLarva' WHERE ID='" . $this->id . "'");
+			  custom_error_log('Pupa is now >' . $pupa . '<');
+			} 
+			
+			if (!($as_result===true)) {
+				$failures = 'SQL failed';
+				mysqli_close($dbconn);
+				return $failures;
+			}
+			
 			mysqli_close($dbconn);
 
 			$this->originalGroup = $originalGroup;
 			$this->length = $length;
 			$this->quantity = $quantity;
 			$this->notes = $notes;
-			$this->pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN);
-			$this->hairy = filter_var($hairy, FILTER_VALIDATE_BOOLEAN);
-			$this->rolled = filter_var($rolled, FILTER_VALIDATE_BOOLEAN);
-			$this->tented = filter_var($tented, FILTER_VALIDATE_BOOLEAN);
-			$this->originalSawfly = filter_var($originalSawfly, FILTER_VALIDATE_BOOLEAN);
-			$this->originalBeetleLarva = filter_var($originalBeetleLarva, FILTER_VALIDATE_BOOLEAN);
+			$this->pupa = custom_filter_var_bool($pupa);
+			$this->hairy = custom_filter_var_bool($hairy);
+			$this->rolled = custom_filter_var_bool($rolled);
+			$this->tented = custom_filter_var_bool($tented);
+			$this->originalSawfly = custom_filter_var_bool($originalSawfly);
+			$this->originalBeetleLarva = custom_filter_var_bool($originalBeetleLarva);
 
 			return true;
 		}

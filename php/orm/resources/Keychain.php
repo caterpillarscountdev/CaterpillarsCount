@@ -27,7 +27,11 @@ class Keychain
 			$this->extraPaths = $pathComponents[2];
 		}
 		else{
-			$this->hostPointer = getenv("CATERPILLARSV2_SERVICE_HOST");
+			if (getenv("DEVELOPMENT_INSTANCE") == 1) {  
+			  $this->hostPointer = getenv("DEVCCDB_SERVICE_HOST");	
+			} else {
+			  $this->hostPointer = getenv("CATERPILLARSV2_SERVICE_HOST");
+			}	
 			$this->hostUsername = getenv("HOST_USERNAME");
 			$this->hostPassword = getenv("HOST_PASSWORD");
 			$this->databaseName = getenv("DATABASE_NAME");

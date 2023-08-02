@@ -410,27 +410,30 @@ class Survey
 		}
 		
 		//too many total arthropods (minus specified exclusions) flags
-		$sql = "SELECT `SurveyFK` FROM `ArthropodSighting`" . (count($arthropodGroupsExcludedFromTotalQuantityCount) > 0 ? (" WHERE `UpdatedGroup` NOT IN ('" . implode("', '", $arthropodGroupsExcludedFromTotalQuantityCount) . "')") : "") . " GROUP BY `SurveyFK` HAVING SUM(`Quantity`)>'" . intval($flaggingRules["maxSafeTotalQuantity"]) . "'";
-		$query = mysqli_query($dbconn, $sql);
-		while($row = mysqli_fetch_assoc($query)){
-			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-		}
+		// removed 6/1/2023
+		// $sql = "SELECT `SurveyFK` FROM `ArthropodSighting`" . (count($arthropodGroupsExcludedFromTotalQuantityCount) > 0 ? (" WHERE `UpdatedGroup` NOT IN ('" . implode("', '", $arthropodGroupsExcludedFromTotalQuantityCount) . "')") : "") . " GROUP BY `SurveyFK` HAVING SUM(`Quantity`)>'" . intval($flaggingRules["maxSafeTotalQuantity"]) . "'";
+		// $query = mysqli_query($dbconn, $sql);
+		// while($row = mysqli_fetch_assoc($query)){
+		// 	$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
+		// }
 		
 		//too many distinct groups flags
-		$sql = "SELECT `SurveyFK` FROM (SELECT DISTINCT `SurveyFK`, `UpdatedGroup` FROM `ArthropodSighting`) AS `DistinctSurveyGroupTable` GROUP BY `SurveyFK` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeArthropodGroups"]) . "'";
-		$query = mysqli_query($dbconn, $sql);
-		while($row = mysqli_fetch_assoc($query)){
-			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-		}
+		// removed 6/1/2023
+		// $sql = "SELECT `SurveyFK` FROM (SELECT DISTINCT `SurveyFK`, `UpdatedGroup` FROM `ArthropodSighting`) AS `DistinctSurveyGroupTable` GROUP BY `SurveyFK` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeArthropodGroups"]) . "'";
+		// $query = mysqli_query($dbconn, $sql);
+		// while($row = mysqli_fetch_assoc($query)){
+		// 	$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
+		// }
 		
 		//too many rare groups flags
-		if(count($rareArthropodGroups) > 0){
-			$sql = "SELECT `SurveyFK` FROM `ArthropodSighting` WHERE `UpdatedGroup` IN ('" . implode("', '", $rareArthropodGroups) . "') GROUP BY SurveyFK HAVING COUNT(DISTINCT (CONCAT(`SurveyFK`, `UpdatedGroup`)))>'" . intval($flaggingRules["maxSafeRareArthropodGroups"]) . "'";
-			$query = mysqli_query($dbconn, $sql);
-			while($row = mysqli_fetch_assoc($query)){
-				$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-			}
-		}
+		// removed 6/1/2023
+		// if(count($rareArthropodGroups) > 0){
+		// 	$sql = "SELECT `SurveyFK` FROM `ArthropodSighting` WHERE `UpdatedGroup` IN ('" . implode("', '", $rareArthropodGroups) . "') GROUP BY SurveyFK HAVING COUNT(DISTINCT (CONCAT(`SurveyFK`, `UpdatedGroup`)))>'" . intval($flaggingRules["maxSafeRareArthropodGroups"]) . "'";
+		// 	$query = mysqli_query($dbconn, $sql);
+		// 	while($row = mysqli_fetch_assoc($query)){
+		// 		$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
+		// 	}
+		// }
 		
 		//remove example site data
 		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
@@ -440,7 +443,7 @@ class Survey
 		}
 		
 		//remove approved survey data
-		$sql = "SELECT `ID` FROM `Survey` WHERE `ReviewedAndApproved`='1'";
+		$sql = "SELECT `ID` FROM `Survey` WHERE `ReviewedAndApproved`>0"; // changed this to allow 1,2,3 as values to remove, but why pull in data and then remove?  Why not just remove from first set?
 		$query = mysqli_query($dbconn, $sql);
 		while($row = mysqli_fetch_assoc($query)){
 			unset($flaggedSurveyIDs[$row["ID"]]);
@@ -559,13 +562,14 @@ class Survey
 	}
 	
 	private static function getFlaggingRules(){
+                        // the following removed from the returned array 6/1/2023
+		        // "maxSafeTotalQuantity" => 10,
+			// "maxSafeArthropodGroups" => 4,
+			// "maxSafeRareArthropodGroups" => 3,
 		return array(
 			"minSafeLeaves" => 5,
 			"maxSafeLeaves" => 400,
 			"maxSafeLeafLength" => 30,
-			"maxSafeTotalQuantity" => 10,
-			"maxSafeArthropodGroups" => 4,
-			"maxSafeRareArthropodGroups" => 3,
 			"sawflyFlaggingRules" => array(
 				"maxSafeLength" => 50,
 				"maxSafeQuantity" => 20
@@ -716,41 +720,44 @@ class Survey
 		}
 		
 		//flag too many total arthropods (minus groups we've specifically excluded)
-		if($totalQuantityExcludingSpecifiedArthropodGroups > $flaggingRules["maxSafeTotalQuantity"]){
-			$excludingClause = "";
-			if(count($arthropodGroupsExcludedFromTotalQuantityCount) > 0){
-				$excludedGroupsCopy = $arthropodGroupsExcludedFromTotalQuantityCount;
-				$lastGroup = count($excludedGroupsCopy) > 1 ?  "\" and \"" . array_pop($excludedGroupsCopy) : "";
-				$excludingClause = " (excluding \"" . implode("\", \"", $excludedGroupsCopy) . $lastGroup . "\")";
-			}
-			
-			$flags[] = "TOO MANY ARTHROPODS: " . $totalQuantityExcludingSpecifiedArthropodGroups . " total arthropods" . $excludingClause . " exceeds safe limit of " .  $flaggingRules["maxSafeTotalQuantity"] . ".";
-		}
+		// removed 6/1/2023
+		// if($totalQuantityExcludingSpecifiedArthropodGroups > $flaggingRules["maxSafeTotalQuantity"]){
+		// 	$excludingClause = "";
+		// 	if(count($arthropodGroupsExcludedFromTotalQuantityCount) > 0){
+		// 		$excludedGroupsCopy = $arthropodGroupsExcludedFromTotalQuantityCount;
+		// 		$lastGroup = count($excludedGroupsCopy) > 1 ?  "\" and \"" . array_pop($excludedGroupsCopy) : "";
+		// 		$excludingClause = " (excluding \"" . implode("\", \"", $excludedGroupsCopy) . $lastGroup . "\")";
+		// 	}
+                //  
+		// 	$flags[] = "TOO MANY ARTHROPODS: " . $totalQuantityExcludingSpecifiedArthropodGroups . " total arthropods" . $excludingClause . " exceeds safe limit of " .  $flaggingRules["maxSafeTotalQuantity"] . ".";
+		// }
 		
 		//flag too many arthropod groups
-		$numberOfArthropodGroups = count($updatedArthropodGroups);
-		if($numberOfArthropodGroups > $flaggingRules["maxSafeArthropodGroups"]){
-			$flags[] = "TOO MANY ARTHROPOD GROUPS: " . $numberOfArthropodGroups . " arthropod groups exceeds safe limit of " . $flaggingRules["maxSafeArthropodGroups"];
-		}
-		
-		$rareArthropodGroupsInSurvey = array();
-		for($i = 0; $i < count($updatedArthropodGroups); $i++){
-			if(in_array($updatedArthropodGroups[$i], $rareArthropodGroups)){
-				$rareArthropodGroupsInSurvey[] = $updatedArthropodGroups[$i];
-			}
-		}
+		// removed 6/1/2023
+		// $numberOfArthropodGroups = count($updatedArthropodGroups);
+		// if($numberOfArthropodGroups > $flaggingRules["maxSafeArthropodGroups"]){
+		// 	$flags[] = "TOO MANY ARTHROPOD GROUPS: " . $numberOfArthropodGroups . " arthropod groups exceeds safe limit of " . $flaggingRules["maxSafeArthropodGroups"];
+		// }
+		// removed 6/1/2023
+		// $rareArthropodGroupsInSurvey = array();
+		// for($i = 0; $i < count($updatedArthropodGroups); $i++){
+		// 	if(in_array($updatedArthropodGroups[$i], $rareArthropodGroups)){
+		// 		$rareArthropodGroupsInSurvey[] = $updatedArthropodGroups[$i];
+		// 	}
+		// }
 		
 		//flag too many rare arthropod groups
-		$numberOfRareArthropodGroupsInSurvey = count($rareArthropodGroupsInSurvey);
-		if($numberOfRareArthropodGroupsInSurvey > $flaggingRules["maxSafeRareArthropodGroups"]){
-			$groupsClause = "";
-			if($numberOfRareArthropodGroupsInSurvey > 0){
-				$rareGroupsInSurveyCopy = $rareArthropodGroupsInSurvey;
-				$lastGroup = count($rareGroupsInSurveyCopy) > 1 ?  "\" and \"" . array_pop($rareGroupsInSurveyCopy) : "";
-				$groupsClause = " (\"" . implode("\", \"", $rareGroupsInSurveyCopy) . $lastGroup . "\")";
-			}
-			$flags[] = "TOO MANY RARE ARTHROPOD GROUPS: " . $numberOfRareArthropodGroups . " rare arthropod groups" . $groupsClause . " exceeds the safe limit of " . $flaggingRules["maxSafeRareArthropodGroups"];
-		}
+		// removed 6/1/2023
+		// $numberOfRareArthropodGroupsInSurvey = count($rareArthropodGroupsInSurvey);
+		// if($numberOfRareArthropodGroupsInSurvey > $flaggingRules["maxSafeRareArthropodGroups"]){
+		// 	$groupsClause = "";
+		// 	if($numberOfRareArthropodGroupsInSurvey > 0){
+		// 		$rareGroupsInSurveyCopy = $rareArthropodGroupsInSurvey;
+		// 		$lastGroup = count($rareGroupsInSurveyCopy) > 1 ?  "\" and \"" . array_pop($rareGroupsInSurveyCopy) : "";
+		// 		$groupsClause = " (\"" . implode("\", \"", $rareGroupsInSurveyCopy) . $lastGroup . "\")";
+		// 	}
+		// 	$flags[] = "TOO MANY RARE ARTHROPOD GROUPS: " . $numberOfRareArthropodGroups . " rare arthropod groups" . $groupsClause . " exceeds the safe limit of " . $flaggingRules["maxSafeRareArthropodGroups"];
+		// } 
 		
 		//flag too few leaves
 		$isConifer = $this->isConifer();
@@ -992,11 +999,13 @@ class Survey
 		return false;
 	}
 	
-	public function setReviewedAndApproved($reviewedAndApproved){
+	public function setReviewedAndApproved($reviewedAndApproved, $qccomment){
 		if(!$this->deleted){
 			$dbconn = (new Keychain)->getDatabaseConnection();
-			$reviewedAndApproved = filter_var($reviewedAndApproved, FILTER_VALIDATE_BOOLEAN);
-			mysqli_query($dbconn, "UPDATE Survey SET ReviewedAndApproved='$reviewedAndApproved' WHERE ID='" . $this->id . "'");
+			$reviewedAndApproved = filter_var($reviewedAndApproved, FILTER_VALIDATE_INT);
+			mysqli_query($dbconn, "UPDATE Survey SET `ReviewedAndApproved`='$reviewedAndApproved', `QCComment`='" . 
+			mysqli_real_escape_string($dbconn, $qccomment)
+			. "' WHERE ID='" . $this->id . "'");
 			mysqli_close($dbconn);
 			$this->reviewedAndApproved = $reviewedAndApproved;
 			return true;

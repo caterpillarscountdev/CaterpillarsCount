@@ -1,7 +1,10 @@
 <?php
+    require_once('orm/resources/Customlogging.php');
 	require_once('orm/User.php');
 	require_once('orm/Plant.php');
 	require_once('orm/Survey.php');
+	
+	$temp_debug_level = 1;
 	
 	$email = $_POST["email"];
 	$salt = $_POST["salt"];
@@ -23,20 +26,29 @@
 	$isConifer = intval($numberOfLeaves) == -1;
 
 	function explainError($fileError){
-		if($fileError == UPLOAD_ERR_INI_SIZE){return 'The uploaded file exceeds the upload_max_filesize directive in php.ini. ';}
-		if($fileError == UPLOAD_ERR_FORM_SIZE){return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form. ';}
-		if($fileError == UPLOAD_ERR_PARTIAL){return 'The uploaded file was only partially uploaded. ';}
-		if($fileError == UPLOAD_ERR_NO_FILE){return 'No file was uploaded. ';}
-		if($fileError == UPLOAD_ERR_NO_TMP_DIR){return 'Missing a temporary folder. Introduced in PHP 5.0.3. ';}
-		if($fileError == UPLOAD_ERR_CANT_WRITE){return 'Failed to write file to disk. Introduced in PHP 5.1.0. ';}
-		if($fileError == UPLOAD_ERR_EXTENSION){return 'A PHP extension stopped the file upload. PHP does not provide a way to ascertain which extension caused the file upload to stop; examining the list of loaded extensions with phpinfo() may help. Introduced in PHP 5.2.0. ';}
-		return 'Upload unsuccessful. ';
+		$fileErrorText = "";
+		if($fileError == UPLOAD_ERR_INI_SIZE){$fileErrorText =  'The uploaded file exceeds the upload_max_filesize directive in php.ini. ';}
+		if($fileError == UPLOAD_ERR_FORM_SIZE){$fileErrorText =  'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form. ';}
+		if($fileError == UPLOAD_ERR_PARTIAL){$fileErrorText =  'The uploaded file was only partially uploaded. ';}
+		if($fileError == UPLOAD_ERR_NO_FILE){$fileErrorText =  'No file was uploaded. ';}
+		if($fileError == UPLOAD_ERR_NO_TMP_DIR){$fileErrorText =  'Missing a temporary folder. Introduced in PHP 5.0.3. ';}
+		if($fileError == UPLOAD_ERR_CANT_WRITE){$fileErrorText =  'Failed to write file to disk. Introduced in PHP 5.1.0. ';}
+		if($fileError == UPLOAD_ERR_EXTENSION){$fileErrorText =  'A PHP extension stopped the file upload. PHP does not provide a way to ascertain which extension caused the file upload to stop; examining the list of loaded extensions with phpinfo() may help. Introduced in PHP 5.2.0. ';}
+		if (empty($fileErrorText)) {
+			$fileErrorText =  'Upload unsuccessful. ';
+		}
+        custom_error_log($fileErrorText . ' from ' . $fileError);
+		return $fileErrorText;
 	}
 		
 	function attachPhotoToArthropodSighting($file, $arthropodSighting){
-		if(!is_uploaded_file($file['tmp_name'])){
-			return "File not uploaded. ";
-		}
+		if(!array_key_exists('tmp_name',$file)) { //for php 8.0 we have to check that the key exists
+                     return "File was not uploaded. "; 
+		} else {
+		  if(!is_uploaded_file($file['tmp_name'])){
+		     return "File not uploaded. ";
+		  }
+		}	
 		
 		$fileName = $file['name'];
 		$fileType = $file['type'];
@@ -83,7 +95,7 @@
 				$survey->setLocalDate($date);
 				$survey->setLocalTime($time);
 				$survey->setObservationMethod($observationMethod);
-				$survey->setNotes($notes);
+				// $survey->setNotes($siteNotes); // this is done below
 				$survey->setWetLeaves($wetLeaves);
 				//$survey->setPlantSpecies($plantSpecies);
 				if($isConifer){
@@ -106,7 +118,9 @@
 					for($j = 0; $j < count($arthropodData); $j++){
 						if(strval($arthropodSightings[$i]->getID()) == strval($arthropodData[$j][0])){
 							$existingArthropodSightingIDs[] = strval($arthropodData[$j][0]);
-							
+							if ($temp_debug_level>0) {
+                               custom_error_log('about to set all editables');
+		                    }			
 							$updateResult = $arthropodSightings[$i]->setAllEditables($arthropodData[$j][1], $arthropodData[$j][2], $arthropodData[$j][3], $arthropodData[$j][4], $arthropodData[$j][5], $arthropodData[$j][6], $arthropodData[$j][7], $arthropodData[$j][8], $arthropodData[$j][9], $arthropodData[$j][10]);
 							if($updateResult === false){
 								$failures .= "Could not locate " . $arthropodData[$j][1] . " sighting record. ";
@@ -117,10 +131,12 @@
 							else{
 								//if we successfully set all editables
 								//add a photo to the arthropod sighting if it exists
-								$attachResult = attachPhotoToArthropodSighting($_FILES['file' . $j], $arthropodSightings[$i]);
-								if($attachResult != "File not uploaded. " && $attachResult !== true){
-									$failures .= "Photo #" . $j . ": " . strval($attachResult);
-								}
+								if (array_key_exists('file' . $j, $_FILES)) { 
+								  $attachResult = attachPhotoToArthropodSighting($_FILES['file' . $j], $arthropodSightings[$i]);
+								  if($attachResult != "File not uploaded. " && $attachResult !== true){
+								  	$failures .= "Photo #" . $j . ": " . strval($attachResult);
+								  }
+								}	
 							}
 						}
 					}
