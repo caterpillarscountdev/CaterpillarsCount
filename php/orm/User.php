@@ -70,7 +70,9 @@ class User
 		mysqli_query($dbconn, "INSERT INTO User (`FirstName`, `LastName`, `DesiredEmail`, `Salt`, `SaltedPasswordHash`) VALUES ('$firstName', '$lastName', '$desiredEmail', '$salt', '$saltedPasswordHash')");
 		$id = intval(mysqli_insert_id($dbconn));
 		mysqli_close($dbconn);
-
+		if ($id ===0) {
+			return 'Did not add a user to the database successfully for ' . $desiredEmail;
+		}
 		return new User($id, $firstName, $lastName, $desiredEmail, "", $salt, $saltedPasswordHash, false, "");
 	}
 	private function __construct($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID) {

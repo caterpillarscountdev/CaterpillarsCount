@@ -898,6 +898,71 @@
 				}
 			}
 			
+			function emailSurveyContributor(fullName, emailParts, surveyid) {
+			    // send email to user from the site to ask about info
+				var fullName = decodeQuotesAndBackslashes(fullName);
+				for(var i =0; i < emailParts.length; i++){
+					emailParts[i] = decodeQuotesAndBackslashes(emailParts[i]);
+				}
+				var emailaddress = emailParts.join("@");
+				//alert("magic happens to email " + emailaddress  + ' for ID ' + surveyid);
+				// get the stuff that should be in the text of the email:
+				// date of survey:
+				//var surveyDateEls = $('#' + surveyid).find('div.siteInfo div.date');
+				//var surveyDate = "(unknown date)";
+				//if (surveyDateEls.length>0) {
+				//  surveyDate = surveyDateEls[0].innerHTML;
+				//}
+				var mainData = $('#' + surveyid);
+				var surveyPlaceEls = mainData.find('div.siteInfo');
+			    var surveyPlace = "(unknown survey place)";
+				if (surveyPlaceEls.length>0) {
+				  surveyPlace = surveyPlaceEls[0].textContent.replace(/(January|February|March|April|May|June|July|August|September|October|November|December)/," @ $1").replace(/([0-9][0-9]?:[0-9][0-9])/," $1");
+				}
+				
+				//alert('place is ' + surveyPlace);
+				
+				var qcissues = $('#' + surveyid).next().find("ul").prop('outerHTML');
+				//alert('have ' + qcissues.length); 
+				
+				
+				var emailBody = 'Hi '  + fullName + ', <br/><br/>' +
+				     'There was a QC issue with some data you submitted.  Could you please <a href="https://caterpillarscount.unc.edu/manageMySurveys/">check the site data</a> for issues below and let us know if this looks correct, ' +
+					 ' or if there is some simple fix for the data?<br/><br/>' +
+					 surveyPlace  + '<br/><br/>' +
+					 qcissues  + '<br/><br/>' +
+                     'Thanks!<br/>The Caterpillars Count team' ;
+					 
+				promptConfirm('Send this email to ' +  emailaddress + '?<hr/>' + emailBody, "No, cancel", "Send Email!", function(){}, 
+				  function(){
+				    // alert('sending')
+						$.post("../php/emailUserAskSurvey.php", {email: (window.localStorage.getItem("email")), 
+						      salt: window.localStorage.getItem("salt"), emailto:(emailaddress), emailmessage:(emailBody)},function(data){
+						//success
+						if(data.indexOf("true|") == 0){
+							queueNotice("confirmation", "Email sent!");
+						}
+						else{
+							// $('.loading').fadeOut(0);
+							// $('#surveys').fadeIn(0);
+							
+							queueNotice("error", data.replace("false|", ""));
+						}
+					})
+					.fail(function(){
+						//error
+						//$('.loading').fadeOut(0);
+						//$('#surveys').fadeIn(0);
+						
+						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+					});
+					
+					
+					})
+				  ;
+				
+			}
+			
 			function email(fullName, emailParts){
 				fullName = decodeQuotesAndBackslashes(fullName);
 				for(var i =0; i < emailParts.length; i++){
@@ -1422,7 +1487,7 @@
 								}
 								htmlToAdd += "</div>";
 								
-								htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><span>QC Comments (optional, choose item in list or write anything): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button if the values are correct in your opinion, even if out of standard range\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Approve</button><button class='hint--bottom' data-hint=\"Click this button if you aren't sure if the data are right or wrong but that's all you can say.  You don't want to see this again.\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",2,this);\">? I'm not sure</button><button class='hint--bottom' data-hint=\"Click this button to remove the entire survey because it's invalid or has errors\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; REJECT SURVEY</button></div></div>") : "";
+								htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><span>QC Comments (optional, choose item in list or write anything): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Click this button if the values are correct in your opinion, even if out of standard range\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Approve</button><button class='hint--bottom' data-hint=\"Click this button if you aren't sure if the data are right or wrong but that's all you can say.  You don't want to see this again.\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",2,this);\">? I'm not sure</button><button class='hint--bottom' data-hint=\"Click this button to remove the entire survey because it's invalid or has errors\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; REJECT SURVEY</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;

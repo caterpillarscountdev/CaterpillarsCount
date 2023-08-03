@@ -1,8 +1,9 @@
 <?php
 	require_once('vendor/autoload.php');
+	require_once('Customlogging.php');
 	
 	function email($to, $subject, $body, $attachments=array()){
-		
+		// custom_error_log("email() init " . $to . ' ' . $subject);
 		$mail = new PHPMailer;
 		$mail->IsSMTP();
 		$mail->Host = 'relay.unc.edu';
@@ -21,8 +22,10 @@
 		$mail->AltBody = strip_tags($body);
 
 		if($mail->send()){
+			//custom_error_log("email() send()  was successful");
 	   		return true;
 	  	} 
+		custom_error_log("Mailer Error: " . $mail->ErrorInfo);
 	  	return false;//"Mailer Error: " . $mail->ErrorInfo;
 	}
 
