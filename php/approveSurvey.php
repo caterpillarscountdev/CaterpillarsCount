@@ -1,12 +1,12 @@
 <?php
 	require_once('orm/User.php');
 	require_once('orm/Survey.php');
-
-	$email = $_GET["email"];
-	$salt = $_GET["salt"];
-	$surveyID = $_GET["surveyID"];
-	$approvedLevel = $_GET["approvedLevel"];
-	$qccomment = $_GET["qccomment"];
+    require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$email = custgetparam("email"); // new function to simplify handling if param exists or not for php 8
+	$salt = custgetparam("salt");
+	$surveyID = custgetparam("surveyID");
+	$approvedLevel = custgetparam("approvedLevel");
+	$qccomment = custgetparam("qccomment");
     if (!empty($approvedLevel)) {
 		$user = User::findBySignInKey($email, $salt);
 		if(is_object($user) && get_class($user) == "User"){

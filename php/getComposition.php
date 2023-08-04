@@ -2,10 +2,10 @@
  	require_once('orm/resources/Keychain.php');
 	require_once('resultMemory.php');
 	require_once('tools/biomassCalculator.php');
-   
- 	$siteIDs = json_decode($_GET["siteIDs"]);
- 	$breakdown = $_GET["breakdown"]; //site, year, plant species, none
- 	$comparisonMetric = $_GET["comparisonMetric"]; //occurrence, absoluteDensity, relativeProportion, meanBiomass
+    require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8   
+ 	$siteIDs = json_decode(custgetparam("siteIDs"));
+ 	$breakdown = custgetparam("breakdown"); //site, year, plant species, none
+ 	$comparisonMetric = custgetparam("comparisonMetric"); //occurrence, absoluteDensity, relativeProportion, meanBiomass
 	$HIGH_TRAFFIC_MODE = true;
 	$SAVE_TIME_LIMIT = 15 * 60;
    
@@ -26,8 +26,11 @@
  		"other" => "Other",
  		"unidentified" => "Unidentified"
  	);
- 	$siteID = intval($siteIDs[0]);
-   
+	if (is_array($siteIDs)) {
+ 	  $siteID = intval($siteIDs[0]);
+    } else {
+	  $siteID = null; //define value in case no siteIDs passed (rare) but then blocks error messages	
+	}
  	if($breakdown == "site" || $breakdown == "none"){
  		//get percents
  		$arthropodPercents = array();

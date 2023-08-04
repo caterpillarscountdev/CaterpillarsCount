@@ -1,19 +1,18 @@
 <?php
 	header('Access-Control-Allow-Origin: *');
-	
 	require_once('orm/User.php');
-	
-	$email = $_GET["email"];
-	$salt = $_GET["salt"];
-	$siteName = $_GET["siteName"];
-	$description = $_GET["description"];
-	$url = $_GET["url"];
-	$latitude = $_GET["latitude"];
-	$longitude = $_GET["longitude"];
-	$zoom = $_GET["zoom"];
-	$plantCount = intval($_GET["plantCount"]);
-	$sitePassword = $_GET["sitePassword"];
-	$public = $_GET["public"];
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$email = custgetparam("email");
+	$salt = custgetparam("salt");
+	$siteName = custgetparam("siteName");
+	$description = custgetparam("description");
+	$url = custgetparam("url");
+	$latitude = custgetparam("latitude");
+	$longitude = custgetparam("longitude");
+	$zoom = custgetparam("zoom");
+	$plantCount = intval(custgetparam("plantCount"));
+	$sitePassword = custgetparam("sitePassword");
+	$public = custgetparam("public");
 	
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){

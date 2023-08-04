@@ -1,6 +1,7 @@
 <?php
-  $offset = intval($_GET["offset"]);
-  $limit = intval($_GET["limit"]);
+  require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+  $offset = intval(custgetparam("offset"));
+  $limit = intval(custgetparam("limit"));
   
   $usedPhotoHashes = array();
   $photoHashes = array();

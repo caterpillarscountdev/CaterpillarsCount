@@ -4,10 +4,10 @@
 	require_once('orm/resources/Keychain.php');
 	require_once('orm/User.php');
 	require_once('orm/Site.php');
-	
-	$email = $_GET["email"];
-	$salt = $_GET["salt"];
-	$start = intval($_GET["start"]);
+    require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8	
+	$email = custgetparam("email");
+	$salt = custgetparam("salt");
+	$start = intval(custgetparam("start"));
 	$LIMIT = 500;
 	
 	$user = User::findBySignInKey($email, $salt);

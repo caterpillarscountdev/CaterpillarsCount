@@ -2,15 +2,15 @@
 	require_once('orm/resources/Keychain.php');
 	require_once('resultMemory.php');
 	require_once('tools/biomassCalculator.php');
-	
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
 	$HIGH_TRAFFIC_MODE = true;
 	$SAVE_TIME_LIMIT = 15 * 60;
 
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
-  	$lines = json_decode($_GET["lines"], true);
-  	$startMonth = intval($_GET["startMonth"]);
-  	$endMonth = intval($_GET["endMonth"]);
+  	$lines = json_decode(custgetparam("lines"), true);
+  	$startMonth = intval(custgetparam("startMonth"));
+  	$endMonth = intval(custgetparam("endMonth"));
 	
 	$readableArthropods = array(
 		"%" => "All arthropods",
@@ -31,7 +31,8 @@
 	);
   
   	$weightedLines = array();
-  	for($i = 0; $i < count($lines); $i++){
+  	if (is_array($lines)) {
+	for($i = 0; $i < count($lines); $i++){
 		$siteID = intval($lines[$i]["siteID"]);
 		$query = mysqli_query($dbconn, "SELECT `Name` FROM `Site` WHERE `ID`='$siteID' LIMIT 1");
 		if(mysqli_num_rows($query) == 0){
@@ -99,7 +100,11 @@
 			save($baseFileName, json_encode($dateWeights));
 		}
     		$weightedLines[$readableArthropods[$arthropod] . " at " . $siteName] = $dateWeights;
-  	}
+  	}  // end for loop
+	} // is array
+	else {
+		die("false|no lines specified");
+	}
   	mysqli_close($dbconn);
   	die("true|" . json_encode($weightedLines));//in the form of: [LABEL: [[YEAR, OCCURRENCE, DENSITY, MEAN BIOMASS]]] //example: ["All arthropods at Example Site": [[2018, 30, 2.51, 9.7], [2019, 25, 3.1, 25.2]], [[2020, 21.3, 0.12, 7.7], [2021, 70, 0.7, 3.12]]]
 ?>

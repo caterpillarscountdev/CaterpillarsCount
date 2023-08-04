@@ -3,10 +3,11 @@
 	
 	require_once("orm/User.php");
 	require_once('orm/resources/Customlogging.php');
-	$firstName = $_GET["firstName"];
-	$lastName = $_GET["lastName"];
-	$email = $_GET["email"];
-	$password = $_GET["password"];
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$firstName = custgetparam("firstName");
+	$lastName = custgetparam("lastName");
+	$email = custgetparam("email");
+	$password = custgetparam("password");
 	
 	//custom_error_log("signUp.php init ");
 	

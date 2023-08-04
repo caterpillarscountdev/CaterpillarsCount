@@ -3,10 +3,10 @@
 	
 	require_once('orm/User.php');
 	require_once('orm/Plant.php');
-	
-	$email = $_POST["email"];
-	$salt = $_POST["salt"];
-	$plantData = json_decode($_POST["plantData"]);
+    require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8	
+	$email = custgetparam("email");
+	$salt = custgetparam("salt");
+	$plantData = json_decode(custgetparam("plantData"));
 	
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){

@@ -1,9 +1,10 @@
 <?php
 	header('Access-Control-Allow-Origin: *');
-	
-	$latitude = $_GET["latitude"];
-	$longitude = $_GET["longitude"];
-	$zoom = $_GET["zoom"];
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8   
+
+	$latitude = custgetparam("latitude");
+	$longitude = custgetparam("longitude");
+	$zoom = custgetparam("zoom");
 	
 	$imgurl = "http://maps.googleapis.com/maps/api/staticmap?center=" . $latitude . "," . $longitude . "&zoom=" . $zoom . "&size=99x99&maptype=roadmap&sensor=false&style=element:labels|visibility:off&style=element:geometry.stroke|visibility:off&style=feature:landscape|element:geometry|saturation:-100&style=feature:water|saturation:-100|invert_lightness:true";
 	$pathname = "../images/map/lastCall.png";

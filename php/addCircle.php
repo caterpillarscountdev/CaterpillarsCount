@@ -3,10 +3,10 @@
 	
 	require_once('orm/User.php');
 	require_once('orm/Plant.php');
-	
-	$email = $_GET["email"];
-	$salt = $_GET["salt"];
-	$samplePlantCode = $_GET["samplePlantCode"];
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$email = custgetparam("email"); 
+	$salt = custgetparam("salt");
+	$samplePlantCode = custgetparam("samplePlantCode");
 	$appVersion = intval(preg_replace("/[^0-9]/", "", isset($_GET["appVersion"]) ? $_GET["appVersion"] : "0"));
   
 	$plant = Plant::findByCode($samplePlantCode);

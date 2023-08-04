@@ -1,7 +1,8 @@
 <?php
 	header('Access-Control-Allow-Origin: *');
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
 	
-	$id = intval($_GET["id"]);
+	$id = intval(custgetparam("id"));
 	
 	function shortIdToCode($id){
 		$chars = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
@@ -35,7 +36,8 @@
 		//then, return the full code
 		return $code;
 	}
-	
-	echo shortIdToCode($id) . "<br/>";
-	echo "<button onclick=\"window.location = 'idToCode.php?id=" . ($id + 1) . "';\">go</button>";
+	if (!empty($id)) {
+		echo shortIdToCode($id) . "<br/>";
+		echo "<button onclick=\"window.location = 'idToCode.php?id=" . ($id + 1) . "';\">go</button>";
+	}
 ?>

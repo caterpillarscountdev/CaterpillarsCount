@@ -1,8 +1,8 @@
 <?php
     require('tools/fpdf/fpdf.php');
     require_once("orm/Site.php");
-	
-	$siteID = $_GET["q"];
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$siteID = custgetparam("q");
 	$site = Site::findByID($siteID);
     
     class PDF extends FPDF{

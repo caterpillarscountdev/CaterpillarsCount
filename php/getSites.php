@@ -2,22 +2,23 @@
 	require_once('orm/resources/Keychain.php');
 	require_once('resultMemory.php');
 	require_once('tools/biomassCalculator.php');
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
 	$cron = true;
 	if(isset($_GET["cron"]) && !empty($_GET["cron"])){
 		$cron = filter_var($_GET["cron"], FILTER_VALIDATE_BOOLEAN);
 	}
 	
 	$dbconn = (new Keychain)->getDatabaseConnection();
-	$includeWetLeaves = filter_var($_GET["includeWetLeaves"], FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
-	$comparisonMetric = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($_GET["comparisonMetric"])));
-	$observationMethod = mysqli_real_escape_string($dbconn, htmlentities($_GET["observationMethod"]));
-	$monthStart = sprintf('%02d', intval($_GET["monthStart"]));
-	$monthEnd = sprintf('%02d', intval($_GET["monthEnd"]));
-	$yearStart = intval($_GET["yearStart"]);
-	$yearEnd = intval($_GET["yearEnd"]);
-	$arthropod = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($_GET["arthropod"])));//% if all
-	$minSize = intval($_GET["minSize"]);
-	$plantSpecies = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode($_GET["plantSpecies"])));//% if all
+	$includeWetLeaves = filter_var(custgetparam("includeWetLeaves"), FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+	$comparisonMetric = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode(custgetparam("comparisonMetric"))));
+	$observationMethod = mysqli_real_escape_string($dbconn, htmlentities(custgetparam("observationMethod")));
+	$monthStart = sprintf('%02d', intval(custgetparam("monthStart")));
+	$monthEnd = sprintf('%02d', intval(custgetparam("monthEnd")));
+	$yearStart = intval(custgetparam("yearStart"));
+	$yearEnd = intval(custgetparam("yearEnd"));
+	$arthropod = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode(custgetparam("arthropod"))));//% if all
+	$minSize = intval(custgetparam("minSize"));
+	$plantSpecies = mysqli_real_escape_string($dbconn, htmlentities(rawurldecode(custgetparam("plantSpecies"))));//% if all
 	if($cron){
 		$includeWetLeaves = 1;
 		$comparisonMetric = "occurrence";

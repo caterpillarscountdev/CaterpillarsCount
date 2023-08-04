@@ -1,11 +1,11 @@
 <?php
   require_once('orm/User.php');
 	require_once('orm/Plant.php');
-	
-	$email = $_GET["email"];
-	$salt = $_GET["salt"];
-	$code = $_GET["code"];
-	$password = $_GET["password"];
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$email = custgetparam("email");
+	$salt = custgetparam("salt");
+	$code = custgetparam("code");
+	$password = custgetparam("password");
   
   $user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){

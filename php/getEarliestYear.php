@@ -1,8 +1,9 @@
 <?php
 	require_once('orm/resources/Keychain.php');
 	require_once('resultMemory.php');
+    require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8   
 
-	$siteID = $_GET["siteID"];
+	$siteID = custgetparam("siteID");
 
 	$HIGH_TRAFFIC_MODE = true;
 	$SAVE_TIME_LIMIT = 60;
