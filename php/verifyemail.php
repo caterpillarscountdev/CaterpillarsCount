@@ -1,8 +1,9 @@
 <?php
 	require_once('orm/User.php');
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
 	$confirmed = "false";
 	
-	$confirmation = $_GET["confirmation"];
+	$confirmation = custgetparam("confirmation");
 	$hashedEmail = substr($confirmation, 0, strrpos($confirmation, "c"));
 	$numericPortion = (intval(str_replace($hashedEmail . "c", "", $confirmation))/7);
 	$id = substr((intval(str_replace($hashedEmail . "c", "", $confirmation))/7), 0, strlen((intval(str_replace($hashedEmail . "c", "", $confirmation))/7)) - 4);
@@ -98,6 +99,7 @@
 				<p>Something went wrong, and your Caterpillars Count! account's email has NOT been verified!</p>
 			</div>
 		</div>
+		<div class="main">Back to <a href="/">Caterpillars Count!</a></div>
 		<script>
 			if(<?php echo $confirmed ?>){
 				document.getElementById("success").style.display = "block";

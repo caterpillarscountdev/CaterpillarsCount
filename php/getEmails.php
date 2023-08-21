@@ -1,9 +1,10 @@
 <?php
   require_once('orm/resources/Keychain.php');
 	require_once('orm/User.php');
-	
-	$email = rawurldecode($_GET["email"]);
-	$salt = $_GET["salt"];
+    require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8   
+
+	$email = rawurldecode(custgetparam("email"));
+	$salt = custgetparam("salt");
 	
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){

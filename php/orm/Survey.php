@@ -999,16 +999,23 @@ class Survey
 		return false;
 	}
 	
-	public function setReviewedAndApproved($reviewedAndApproved, $qccomment){
+	public function setReviewedAndApproved($reviewedAndApproved, $qccomment = ""){
 		if(!$this->deleted){
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$reviewedAndApproved = filter_var($reviewedAndApproved, FILTER_VALIDATE_INT);
-			mysqli_query($dbconn, "UPDATE Survey SET `ReviewedAndApproved`='$reviewedAndApproved', `QCComment`='" . 
-			mysqli_real_escape_string($dbconn, $qccomment)
-			. "' WHERE ID='" . $this->id . "'");
-			mysqli_close($dbconn);
-			$this->reviewedAndApproved = $reviewedAndApproved;
-			return true;
+			if ($reviewedAndApproved ===0 or $reviewedAndApproved>0) { //either update to 0 or update to something >0 , null and "" filtered out
+				if (empty($qccomment)) {
+				  //only update ReviewedAndApproved	 
+				  mysqli_query($dbconn, "UPDATE Survey SET `ReviewedAndApproved`='$reviewedAndApproved' WHERE ID='" . $this->id . "'");	
+				} else {
+				  mysqli_query($dbconn, "UPDATE Survey SET `ReviewedAndApproved`='$reviewedAndApproved', `QCComment`='" . 
+				  mysqli_real_escape_string($dbconn, $qccomment)
+					. "' WHERE ID='" . $this->id . "'");
+				}
+				mysqli_close($dbconn);
+				$this->reviewedAndApproved = $reviewedAndApproved;
+				return true;
+			}
 		}
 		return false;
 	}

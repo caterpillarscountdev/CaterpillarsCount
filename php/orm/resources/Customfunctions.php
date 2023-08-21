@@ -9,5 +9,29 @@ function custom_filter_var_bool($checkvar) {
            return 0;
 		}			
 	}
+
+
+
+  //wrapper to allow getting items from array without checking for key existence each time 	  
+  function getarrayitem($arr, $key_to_get) {
+	 if (array_key_exists($key_to_get, $arr)) {
+        return($arr[$key_to_get]);
+	 } else {
+        return(null);
+	 }		 
+  }
+
+
+  //wrapper to allow getting params to check if they are present and setting to null otherwise 	  
+  function custgetparam($paramname) {
+	 if (isset($_POST[$paramname])) {
+        return(trim($_POST[$paramname]));
+	 }   	
+	 if (isset($_GET[$paramname])) {
+        return(trim($_GET[$paramname]));
+	 } 
+     return (null);
+  }
+
 	
 ?>

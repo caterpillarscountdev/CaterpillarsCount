@@ -4,12 +4,12 @@
 	require_once('orm/Site.php');
 	require_once('orm/ArthropodSighting.php');
 	require_once('orm/resources/Keychain.php');
-	
-	$email = $_GET["email"];
-	$salt = $_GET["salt"];
-	$page = $_GET["page"];
-	$filters = json_decode(rawurldecode($_GET["filters"]), true);
-	$inQCMode = filter_var($_GET["inQCMode"], FILTER_VALIDATE_BOOLEAN);
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$email = custgetparam("email");
+	$salt = custgetparam("salt");
+	$page = custgetparam("page");
+	$filters = json_decode(rawurldecode(custgetparam("filters")), true);
+	$inQCMode = filter_var(custgetparam("inQCMode"), FILTER_VALIDATE_BOOLEAN);
 	$PAGE_LENGTH = 25;
 	
 	$user = User::findBySignInKey($email, $salt);

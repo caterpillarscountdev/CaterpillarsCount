@@ -3,12 +3,13 @@
 	
 	require_once('orm/User.php');
 	require_once('orm/Site.php');
-	
-  	$siteID = $_GET["siteID"];
-  	$managerID = $_GET["managerID"];
-  	$demotedPosition = $_GET["demotedPosition"]; //"unaffiliated", "highManagement", or "lowManagement"
-	$email = $_GET["email"];
-	$salt = $_GET["salt"];
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+  	
+	$siteID = custgetparam("siteID");
+  	$managerID = custgetparam("managerID");
+  	$demotedPosition = custgetparam("demotedPosition"); //"unaffiliated", "highManagement", or "lowManagement"
+	$email = custgetparam("email");
+	$salt = custgetparam("salt");
 	
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){

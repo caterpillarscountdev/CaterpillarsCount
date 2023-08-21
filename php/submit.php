@@ -5,23 +5,23 @@
 	require_once('orm/Plant.php');
 	require_once('orm/Survey.php');
 	
-	$email = $_POST["email"];
-	$salt = $_POST["salt"];
-	$plantCode = $_POST["plantCode"];
-	$sitePassword = $_POST["sitePassword"];
-	$date = $_POST["date"];
-	$time = $_POST["time"];
-	$observationMethod = $_POST["observationMethod"];
-	$siteNotes = $_POST["siteNotes"];			//String
-	$wetLeaves = $_POST["wetLeaves"];			//"true" or "false"
-	$arthropodData = json_decode($_POST["arthropodData"]);		//JSON
-	$plantSpecies = $_POST["plantSpecies"];
-	$numberOfLeaves = $_POST["numberOfLeaves"];		//number
-	$averageLeafLength = $_POST["averageLeafLength"];	//number
-	$herbivoryScore = $_POST["herbivoryScore"];
+	$email = custgetparam("email");
+	$salt = custgetparam("salt");
+	$plantCode = custgetparam("plantCode");
+	$sitePassword = custgetparam("sitePassword");
+	$date = custgetparam("date");
+	$time = custgetparam("time");
+	$observationMethod = custgetparam("observationMethod");
+	$siteNotes = custgetparam("siteNotes");			//String
+	$wetLeaves = custgetparam("wetLeaves");			//"true" or "false"
+	$arthropodData = json_decode(custgetparam("arthropodData"));		//JSON
+	$plantSpecies = custgetparam("plantSpecies");
+	$numberOfLeaves = custgetparam("numberOfLeaves");		//number
+	$averageLeafLength = custgetparam("averageLeafLength");	//number
+	$herbivoryScore = custgetparam("herbivoryScore");
 	$averageNeedleLength = array_key_exists("averageNeedleLength", $_POST) ? $_POST["averageNeedleLength"] : -1;
 	$linearBranchLength = array_key_exists("linearBranchLength", $_POST) ? $_POST["linearBranchLength"] : -1;
-	$submittedThroughApp = $_POST["submittedThroughApp"];
+	$submittedThroughApp = custgetparam("submittedThroughApp");
 	
 	function explainError($fileError){
 		if($fileError == UPLOAD_ERR_INI_SIZE){return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';}

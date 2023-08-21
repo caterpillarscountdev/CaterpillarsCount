@@ -2,8 +2,8 @@
 	require_once('orm/resources/Keychain.php');
 	require_once('orm/User.php');
 	require_once('resultMemory.php');
-	
-	$siteID = intval($_GET["siteID"]);
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$siteID = intval(custgetparam("siteID"));
 	$cron = true;
 	if(isset($_GET["cron"]) && !empty($_GET["cron"])){
 		$cron = filter_var($_GET["cron"], FILTER_VALIDATE_BOOLEAN);

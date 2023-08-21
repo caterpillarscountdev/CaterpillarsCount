@@ -1,12 +1,12 @@
 <?php
 	require_once('orm/User.php');
 	require_once('orm/Survey.php');
-	
-	$email = $_GET["email"];
-	$salt = $_GET["salt"];
-	$selected = json_decode($_GET["selected"]);
-	$unselected = json_decode($_GET["unselected"]);
-	$filters = json_decode(rawurldecode($_GET["filters"]), true);
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$email = custgetparam("email");
+	$salt = custgetparam("salt");
+	$selected = json_decode(custgetparam("selected"));
+	$unselected = json_decode(custgetparam("unselected"));
+	$filters = json_decode(rawurldecode(custgetparam("filters")), true);
 
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){

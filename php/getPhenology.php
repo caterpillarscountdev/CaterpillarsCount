@@ -2,13 +2,13 @@
 	require_once('orm/resources/Keychain.php');
 	require_once('resultMemory.php');
 	require_once('tools/biomassCalculator.php');
-	
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
 	$HIGH_TRAFFIC_MODE = true;
 	$SAVE_TIME_LIMIT = 15 * 60;
 
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
-  	$lines = json_decode($_GET["lines"], true);
+  	$lines = json_decode(custgetparam("lines"), true);
 	$readableArthropods = array(
 		"%" => "All arthropods",
 		"ant" => "Ants",

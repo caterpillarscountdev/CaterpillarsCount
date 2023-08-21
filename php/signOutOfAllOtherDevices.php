@@ -2,9 +2,9 @@
 	header('Access-Control-Allow-Origin: *');
 	
 	require_once('orm/User.php');
-	
-	$email = $_GET["email"];
-	$password = $_GET["password"];
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$email = custgetparam("email");
+	$password = custgetparam("password");
 	
 	$user = User::findByEmail($email);
 	if(is_object($user) && get_class($user) == "User"){

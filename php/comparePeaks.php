@@ -1,4 +1,5 @@
 <?php
+  // this file probably obsolete as of 8/4/2023 thinks Michael Lee - not in code base.  Fixing issue with $today and $sundayOffset very low priority
   require_once('orm/resources/Keychain.php');
 	require_once("orm/Site.php");
   

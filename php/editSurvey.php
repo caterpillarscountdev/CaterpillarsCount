@@ -3,26 +3,26 @@
 	require_once('orm/User.php');
 	require_once('orm/Plant.php');
 	require_once('orm/Survey.php');
-	
+	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
 	$temp_debug_level = 1;
 	
-	$email = $_POST["email"];
-	$salt = $_POST["salt"];
-	$plantCode = $_POST["plantCode"];
-	$sitePassword = $_POST["sitePassword"];
-	$surveyID = $_POST["surveyID"];
-	$date = $_POST["date"];
-	$time = $_POST["time"];
-	$observationMethod = $_POST["observationMethod"];
-	$siteNotes = $_POST["siteNotes"];			//String
-	$wetLeaves = $_POST["wetLeaves"];			//"true" or "false"
-	$arthropodData = json_decode($_POST["arthropodData"]);		//JSON
-	//$plantSpecies = $_POST["plantSpecies"];
-	$numberOfLeaves = $_POST["numberOfLeaves"];		//number
-	$averageLeafLength = $_POST["averageLeafLength"];	//number
-	$herbivoryScore = $_POST["herbivoryScore"];		//String
-	$averageNeedleLength = $_POST["averageNeedleLength"];
-	$linearBranchLength = $_POST["linearBranchLength"];
+	$email = custgetparam("email");
+	$salt = custgetparam("salt");
+	$plantCode = custgetparam("plantCode");
+	$sitePassword = custgetparam("sitePassword");
+	$surveyID = custgetparam("surveyID");
+	$date = custgetparam("date");
+	$time = custgetparam("time");
+	$observationMethod = custgetparam("observationMethod");
+	$siteNotes = custgetparam("siteNotes");			//String
+	$wetLeaves = custgetparam("wetLeaves");			//"true" or "false"
+	$arthropodData = json_decode(custgetparam("arthropodData"));		//JSON
+	//$plantSpecies = custgetparam("plantSpecies");
+	$numberOfLeaves = custgetparam("numberOfLeaves");		//number
+	$averageLeafLength = custgetparam("averageLeafLength");	//number
+	$herbivoryScore = custgetparam("herbivoryScore");		//String
+	$averageNeedleLength = custgetparam("averageNeedleLength");
+	$linearBranchLength = custgetparam("linearBranchLength");
 	$isConifer = intval($numberOfLeaves) == -1;
 
 	function explainError($fileError){
@@ -90,7 +90,7 @@
 					die("false|For sites that you do not own or manage, you only have 2 weeks after submitting a survey to come back and edit it. You can no longer edit this survey. If you really must edit this survey, ask your site director to do so for you.");
 				}
 				//edit survey
-				$survey->setReviewedAndApproved(false);
+				$survey->setReviewedAndApproved(0);
 				$survey->setPlant($plant);
 				$survey->setLocalDate($date);
 				$survey->setLocalTime($time);
@@ -108,7 +108,7 @@
 					$survey->setHerbivoryScore($herbivoryScore);
 				}
 				$survey->setNotes($siteNotes);
-				$arthropodData = json_decode($_POST["arthropodData"]);		//JSON
+				$arthropodData = json_decode(custgetparam("arthropodData"));		//JSON
 				
 				//update arthropod sightings
 				$arthropodSightings = $survey->getArthropodSightings();

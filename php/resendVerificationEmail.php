@@ -1,8 +1,10 @@
 <?php
   require_once('orm/User.php');
-  
-  $email = $_GET["email"];
-  
+  require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+  $email = custgetparam("email");
+  if (empty($email)) {
+	die("false|No email specified"); 
+  }
   if(User::sendEmailVerificationCodeToEmail($email)){
     die("true|");
   }

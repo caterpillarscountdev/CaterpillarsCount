@@ -3,10 +3,10 @@
 
 	require_once("orm/User.php");
 	require_once("orm/Site.php");
-
-	$email = $_GET["email"];
-	$salt = $_GET["salt"];
-	$siteID = $_GET["siteID"];
+    require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+	$email = custgetparam("email");
+	$salt = custgetparam("salt");
+	$siteID = custgetparam("siteID");
 	
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
