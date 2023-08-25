@@ -63,7 +63,7 @@ class User{
         $port     = "25";
 
         $headers = array(
-        "From"    => "caterpillarscount@gmail.com",
+        "From"    => "caterpillarscount@office.unc.edu",
         "To"      => $email,
         "Subject" => $subject,
         "Content-type" => "text/html"
@@ -273,7 +273,7 @@ class User{
           $server   = "relay.unc.edu";
           $port     = "25";
           $headers = array(
-          "From"    => "caterpillarscount@gmail.com",
+          "From"    => "caterpillarscount@office.unc.edu",
           "To"      => $email,
           "Subject" => $subject,
           "Content-type" => "text/html"

@@ -1,14 +1,16 @@
 <?php
+	
 	require_once('vendor/autoload.php');
 	require_once('Customlogging.php');
 	
 	function email($to, $subject, $body, $attachments=array()){
+		
 		// custom_error_log("email() init " . $to . ' ' . $subject);
 		$mail = new PHPMailer;
 		$mail->IsSMTP();
 		$mail->Host = 'relay.unc.edu';
 
-		$mail->From = "caterpillarscount@gmail.com";
+		$mail->From = "caterpillarscount@office.unc.edu";
 		$mail->FromName = "Caterpillars Count!";
 		$mail->addAddress($to);
 		
@@ -26,7 +28,8 @@
 	   		return true;
 	  	} 
 		custom_error_log("Mailer Error: " . $mail->ErrorInfo);
-	  	return false;//"Mailer Error: " . $mail->ErrorInfo;
+	  	 return false;//"Mailer Error: " . $mail->ErrorInfo;
+	  
 	}
 
 	function emailAndBCCUs($to, $subject, $body, $attachments=array()){
@@ -35,7 +38,7 @@
 		$mail->IsSMTP();
 		$mail->Host = 'relay.unc.edu';
 
-		$mail->From = "caterpillarscount@gmail.com";
+		$mail->From = "caterpillarscount@office.unc.edu";
 		$mail->FromName = "Caterpillars Count!";
 		$mail->addAddress($to);
     		$mail->addBCC('caterpillarscron@gmail.com');
