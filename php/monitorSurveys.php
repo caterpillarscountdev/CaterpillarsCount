@@ -21,6 +21,6 @@
 	}
   
   	if(count($mobileTimeouts) > 0 || count($desktopResubmissions) > 0){
-		email("plocharczykweb@gmail.com", "Duplicate survey detected", "There may have been a timeout or some other error that caused a user to have to submit the same survey twice. The following Survey IDs should be investigated: \n\n\nMOBILE APP:\n" . implode("\n\n", $mobileTimeouts) . "\n\n\nWEBSITE:\n" . implode("\n\n", $desktopResubmissions));
+		email("caterpillarscount@office.unc.edu", "Duplicate survey detected", "There may have been a timeout or some other error that caused a user to have to submit the same survey twice. The following Survey IDs should be investigated: \n\n\nMOBILE APP:\n" . implode("\n\n", $mobileTimeouts) . "\n\n\nWEBSITE:\n" . implode("\n\n", $desktopResubmissions));
   	}
 ?>
