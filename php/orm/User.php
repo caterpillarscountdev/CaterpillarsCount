@@ -680,7 +680,8 @@ class User
 		return in_array($email, array(
 			"plocharczykweb@gmail.com",
 			"hurlbert@bio.unc.edu",
-			"michael.lee@unc.edu"
+			"michael.lee@unc.edu",
+			"luke@opperman.net"
 		));
 	}
 
