@@ -1,0 +1,36 @@
+nginx:   
+      build: ./nginx/
+      ports:
+       - 443:443
+       - 80:80
+      links:
+       - php
+      volumes:
+       - ../:/var/www/html/
+       - ./certs:/etc/nginx/ssl
+
+php:
+      build: ./php
+      expose: [ 9000 ]
+      volumes: [ ../:/var/www/html/ ]
+      links:
+       - mysql
+      environment:
+       - Openshift=1
+       - DEVELOPMENT_INSTANCE=1
+       - DEVCCDB_SERVICE_HOST=mysql
+       - HOST_USERNAME=myuser
+       - HOST_PASSWORD=password
+       - DATABASE_NAME=mydb
+
+
+mysql:    
+      image: mysql:5.7
+      ports: [ 3306:3306 ]
+      environment:  
+       MYSQL_ROOT_PASSWORD: secret
+       MYSQL_DATABASE: mydb
+       MYSQL_USER: myuser
+       MYSQL_PASSWORD: password
+      volumes:  
+       - ./data:/var/lib/mysql
