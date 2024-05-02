@@ -322,6 +322,7 @@
 			nav.loadingNav{
 				display:none;
 			}
+
 			
 			nav ul li{
 				list-style-type:none;
@@ -904,7 +905,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
 				#navBack:after{
 					content:" BACK TO MAIN MENU";
 				}
-				
+
+                                #splash.mobileOptional {
+                                    height: 65px;
+                                }
+                                
 				#splashOverlay{
 					margin-top:50px;
 				}
