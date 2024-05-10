@@ -120,42 +120,63 @@
 				float:right;
 			}
 
+                        .fieldsSpecies {}
+                        .fieldsLocation {
+                            display:none;
+                        }
+
+                        .plantTabs {
+                            margin: 1em;
+                        }
+
+                        .plantTab {
+                            color: #aaa;
+                            padding: 0.5em;
+                            margin-top: 0.5em;
+                            margin-right: 2em;
+                            border-bottom: 3px solid #aaa;
+                        }
+
+                        .plantTab.selected {
+                            background-color: #fff;
+                        }
+                 
 			.plant{
 				border-left:5px solid transparent;
 				padding:20px;
 			}
 
-			.plant:nth-of-type(1){
+			.plant:nth-of-type(1), .plant:nth-of-type(1) .plantTab.selected {
 				border-color:#ff7575;
 			}
 			.plant:nth-of-type(1) .code{
 				color:#ff7575;
 			}
 
-			.plant:nth-of-type(2){
-				border-color:#75b3ff;
-			}
+		        .plant:nth-of-type(2), .plant:nth-of-type(2) .plantTab.selected {
+		                border-color:#75b3ff;
+		        }
 			.plant:nth-of-type(2) .code{
 				color:#75b3ff;
 			}
 
-			.plant:nth-of-type(3){
-				border-color:#5abd61;
-			}
+		        .plant:nth-of-type(3), .plant:nth-of-type(3) .plantTab.selected {
+		                border-color:#5abd61;
+		        }
 			.plant:nth-of-type(3) .code{
 				color:#5abd61;
 			}
 
-			.plant:nth-of-type(4){
-				border-color:#ffc875;
-			}
+		        .plant:nth-of-type(4), .plant:nth-of-type(4) .plantTab.selected {
+		                border-color:#ffc875;
+		        }
 			.plant:nth-of-type(4) .code{
 				color:#ffc875;
 			}
 
-			.plant:nth-of-type(5){
-				border-color:#9175ff;
-			}
+		        .plant:nth-of-type(5), .plant:nth-of-type(5) .plantTab.selected {
+		                border-color:#9175ff;
+		        }
 			.plant:nth-of-type(5) .code{
 				color:#9175ff;
 			}
@@ -415,7 +436,7 @@
 				$("#addNewCircle")[0].style.display = "block";
 				if(circles.length > 0){
 					$("#saveAllButton")[0].style.display = "block";
-					attachAutoCompleteToInput($("input"), plantSpeciesList, true);
+					attachAutoCompleteToInput($("input[type=text]"), plantSpeciesList, true);
 				}
 			}
 
@@ -442,38 +463,44 @@
 				htmlToAdd += 	"<div class=\"circleTitle\" onclick=\"togglePlants(this.parentNode);\">Circle " + circle[0] + noticeImage + "</div>";
 				htmlToAdd += 	"<div class=\"plants\">";
 				for(var j = 0; j < plants.length; j++){
+                                        var code = plants[j][1];
 					var noticeBorder = "";
 					if(plants[j][2].trim().toUpperCase() == "N/A"){
 						noticeBorder = " style=\"border-right:5px solid #FF645A;\"";
 					}
 					
 					htmlToAdd += "<div class=\"plant\">";
-					htmlToAdd += 	"<div class=\"code\"><img src='../images/tag" + (j + 1) + ".png'/>" + plants[j][1] + "</div>";
+					htmlToAdd += 	"<div class=\"code\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div>";
 					htmlToAdd += 	"<div class=\"editableFields\">";
-					htmlToAdd += 		"<div class=\"editableFieldTitle\">Plant Species:</div>";
-					htmlToAdd += 		"<input type=\"text\" id=\"" + plants[j][1] + "\" class=\"plantSpeciesInput\" value=\"" + plants[j][2] + "\"" + noticeBorder + " onfocus=\"this.setSelectionRange(0, 9999);setNoticeExemptingInput(this.parentNode.parentNode.parentNode.parentNode, this);\" onblur=\"if(this.value.trim().toUpperCase() == 'N/A' || this.value.replace(/ /g, '') == ''){this.value = 'N/A';setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else if(inArrayIgnoreCaseAndWhitespace(this.value, plantSpeciesList)){setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else{promptConfirm('&quot;' + this.value + '&quot; is not in our records. Have you searched for other labels? Are you sure this is the correct name and spelling of your tree species?', 'Try again.', 'Continue. I am sure!', function(){document.getElementById('" + plants[j][1] + "').focus();}, function(){setNoticeImage(document.getElementById('" + plants[j][1] + "').parentNode.parentNode.parentNode.parentNode);});}\" oninput=\"setConifer(this);\"/>";
+                                        htmlToAdd +=       "<div class=\"plantTabs\"><span class=\"plantTab selected\" onclick=\"showSpecies('" + code + "')\">Species</span>";
+                                        htmlToAdd +=         "<span class=\"plantTab\" onclick=\"showLocation('" + code + "')\">Location</span></div>";
+					htmlToAdd += 		"<div  class=\"fieldSpecies\" id=\"fieldsSpecies" + code + "\"><div class=\"editableFieldTitle\">Plant Species:</div>";
+					htmlToAdd += 		"<input type=\"text\" id=\"" + code + "\" class=\"plantSpeciesInput\" value=\"" + plants[j][2] + "\"" + noticeBorder + " onfocus=\"this.setSelectionRange(0, 9999);setNoticeExemptingInput(this.parentNode.parentNode.parentNode.parentNode, this);\" onblur=\"if(this.value.trim().toUpperCase() == 'N/A' || this.value.replace(/ /g, '') == ''){this.value = 'N/A';setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else if(inArrayIgnoreCaseAndWhitespace(this.value, plantSpeciesList)){setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else{promptConfirm('&quot;' + this.value + '&quot; is not in our records. Have you searched for other labels? Are you sure this is the correct name and spelling of your tree species?', 'Try again.', 'Continue. I am sure!', function(){document.getElementById('" + code + "').focus();}, function(){setNoticeImage(document.getElementById('" + code + "').parentNode.parentNode.parentNode.parentNode);});}\" oninput=\"setConifer(this);\"/>";
 					htmlToAdd +=		"<div class=\"checkboxTableHolder\">";
-					htmlToAdd +=			"<table class=\"checkboxTable\" id=\"checkboxTable" + plants[j][1] + "\">";
-					htmlToAdd +=				"<tr onclick=\"toggleCheckbox($(this).find('.checkbox'));lastManualConiferSettings['" + plants[j][1] + "'] = $(this).has('.checked').length > 0;\">";
-					htmlToAdd +=					"<td><div class=\"checkbox" + (plants[j][3] ? " checked" : "") + "\" id=\"coniferCheckbox" + plants[j][1] + "\"></div></td>";
+					htmlToAdd +=			"<table class=\"checkboxTable\" id=\"checkboxTable" + code + "\">";
+					htmlToAdd +=				"<tr onclick=\"toggleCheckbox($(this).find('.checkbox'));lastManualConiferSettings['" + code + "'] = $(this).has('.checked').length > 0;\">";
+					htmlToAdd +=					"<td><div class=\"checkbox" + (plants[j][3] ? " checked" : "") + "\" id=\"coniferCheckbox" + code + "\"></div></td>";
 					htmlToAdd +=					"<td>This plant is coniferous.</td>";
 					htmlToAdd +=					"<td onclick=\"event.stopPropagation();queueNotice('alert', 'Coniferous plants bear cones and have needle-like or scale-like leaves that are typically evergreen.<br/><br/><img src=\\'../images/conifer.jpeg\\'/>');\"><img src=\"../images/question.png\"/></td>";
 					htmlToAdd +=				"<tr>";
 					htmlToAdd +=			"</table>";
-					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + plants[j][1] + "\" class=\"checkboxTableOverlay\" onclick=\"queueNotice('alert', 'We\\'ve recognized this plant species and set its &quot;conifer&quot; checkbox automatically, so it is not editable.');\"></div>";
-					htmlToAdd +=		"</div>";
+					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + code + "\" class=\"checkboxTableOverlay\" onclick=\"queueNotice('alert', 'We\\'ve recognized this plant species and set its &quot;conifer&quot; checkbox automatically, so it is not editable.');\"></div>";
+					htmlToAdd +=		"</div></div>";
+                                        htmlToAdd +=            "<div class=\"fieldsLocation\" id=\"fieldsLocation" + code + "\"><div class=\"editableFieldTitle\">Locate:</div>";
+                                        htmlToAdd +=            "<div class=\"map\">The Map</div><input type=\"hidden\" id=\"lat" + code + "\" />";
+                                        htmlToAdd +=            "</div>";
           				htmlToAdd += 		"<div class=\"editableFieldTitle\">Location change:</div>";
 					htmlToAdd +=		"<table class=\"checkboxTable\">";
 					htmlToAdd +=			"<tr onclick=\"toggleCheckbox($(this).find('.checkbox'));\">";
-					htmlToAdd +=				"<td><div class=\"checkbox\" id=\"moveCheckbox" + plants[j][1] + "\"></div></td>";
+					htmlToAdd +=				"<td><div class=\"checkbox\" id=\"moveCheckbox" + code + "\"></div></td>";
 					htmlToAdd +=				"<td>I am moving this code to identify a more suitable tree.</td>";
-					htmlToAdd +=				"<td onclick=\"event.stopPropagation();queueNotice('alert', 'If a tag with the code &quot;" + plants[j][1] + "&quot; is hanging on a tree that is dead or otherwise no longer suitable to collect surveys with, check this checkbox and move that tag to another nearby tree. If the new tree is of a different species than the unsuitable tree, go ahead and change the plant species as well. Make sure to click the &quot;Save All&quot; button at the bottom of the page before exiting the page.');\"><img src=\"../images/question.png\"/></td>";
+					htmlToAdd +=				"<td onclick=\"event.stopPropagation();queueNotice('alert', 'If a tag with the code &quot;" + code + "&quot; is hanging on a tree that is dead or otherwise no longer suitable to collect surveys with, check this checkbox and move that tag to another nearby tree. If the new tree is of a different species than the unsuitable tree, go ahead and change the plant species as well. Make sure to click the &quot;Save All&quot; button at the bottom of the page before exiting the page.');\"><img src=\"../images/question.png\"/></td>";
 					htmlToAdd +=			"<tr>";
 					htmlToAdd +=		"</table>";
 					htmlToAdd += 	"</div>";
 					htmlToAdd += "</div>";
 					
-					lastManualConiferSettings[plants[j][1]] = plants[j][3];
+					lastManualConiferSettings[code] = plants[j][3];
 				}
 				htmlToAdd += 	"</div>";
 				htmlToAdd += "</div>";
@@ -497,6 +524,16 @@
 					$(plants).stop().animate({maxHeight:"0px"});
 				}
 			}
+
+                        function showSpecies(code) {
+                          $("#fieldsSpecies"+code).css({display: "block"})
+                          $("#fieldsLocation"+code).css({display: "none"})
+                        }
+                        function showLocation(code) {
+                          $("#fieldsSpecies"+code).css({display: "none"})
+                          $("#fieldsLocation"+code).css({display: "block"})
+                        }
+
 
 			function setNoticeImage(circle){
 				var inputs = $(circle).find("input");
