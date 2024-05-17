@@ -42,6 +42,13 @@
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
 		<script src="../js/checkbox.js?v=1"></script>
 		<style>
+			#map-canvas {
+              			height: 200px;
+              			margin:10px 0px;
+              			border-radius:4px;
+              			overflow:hidden;
+            		}
+  
 			ul.ui-autocomplete{
 				width:753px;
 				box-sizing:border-box;
@@ -119,6 +126,10 @@
 				height:18px;
 				float:right;
 			}
+
+                        .gm-style-iw {
+                          background-color: #f7f7f7;
+                        }
 
                         .fieldsSpecies {}
                         .fieldsLocation {
@@ -387,34 +398,40 @@
 					}
 				}
 			}
-
+                        siteLocation = {lat: 0, lng: 0};
 			function loadCircles(){
-				var xhttp = new XMLHttpRequest();
-				xhttp.onreadystatechange = function() {
-					if (this.readyState == 4 && this.status == 200) {
-						if(this.responseText.indexOf("true|") == 0){
-							var data = JSON.parse(this.responseText.replace("true|", ""));
-							var siteName = data[0];
-							var circles = data[1];
-
-							$(".tagline").eq(0)[0].innerHTML = "in " + siteName;
-							populateCircles(circles);
-						}
-						else{
-							var error = this.responseText.replace("false|", "");
-
-							$(".tagline").eq(0)[0].innerHTML = "Could not load.";
-							$("#error")[0].onclick = function(){window.location = "../manageMySites";};
-							$("#noticeInteractionBlock")[0].onclick = function(){window.location = "../manageMySites";};
-							queueNotice("error", error);
-							if(error == "Your log in dissolved. Maybe you logged in on another device."){
-								logOut();
-							}
-						}
-					}
-				};
-				xhttp.open("GET", "../php/getPlantsBySite.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
-				xhttp.send();
+			    var xhttp = new XMLHttpRequest();
+			    xhttp.onreadystatechange = function() {
+			        if (this.readyState == 4 && this.status == 200) {
+			            if(this.responseText.indexOf("true|") == 0){
+				        var data = JSON.parse(this.responseText.replace("true|", ""));
+				        var siteName = data[0];
+				        var circles = data[1];
+                                        var latitude = data[2];
+                                        var longitude = data[3];
+                                        siteLocation.lat = parseFloat(latitude);
+                                        siteLocation.lng = parseFloat(longitude);
+                                        
+				        $(".tagline").eq(0)[0].innerHTML = "in " + siteName;
+				        populateCircles(circles);
+                                        //createMap();
+                                        
+			            }
+			            else{
+				        var error = this.responseText.replace("false|", "");
+                                        
+				        $(".tagline").eq(0)[0].innerHTML = "Could not load.";
+				        $("#error")[0].onclick = function(){window.location = "../manageMySites";};
+				        $("#noticeInteractionBlock")[0].onclick = function(){window.location = "../manageMySites";};
+				        queueNotice("error", error);
+				        if(error == "Your log in dissolved. Maybe you logged in on another device."){
+				            logOut();
+				        }
+			            }
+			        }
+			    };
+			    xhttp.open("GET", "../php/getPlantsBySite.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
+			    xhttp.send();
 			}
 
 			function populateCircles(circles){
@@ -459,6 +476,7 @@
 						break;
 					}
 				}
+
 				var htmlToAdd = "<div class=\"circle\">";
 				htmlToAdd += 	"<div class=\"circleTitle\" onclick=\"togglePlants(this.parentNode);\">Circle " + circle[0] + noticeImage + "</div>";
 				htmlToAdd += 	"<div class=\"plants\">";
@@ -472,7 +490,7 @@
 					htmlToAdd += "<div class=\"plant\">";
 					htmlToAdd += 	"<div class=\"code\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div>";
 					htmlToAdd += 	"<div class=\"editableFields\">";
-                                        htmlToAdd +=       "<div class=\"plantTabs\"><span class=\"plantTab selected\" onclick=\"showSpecies('" + code + "')\">Species</span>";
+                                        htmlToAdd +=       "<div class=\"plantTabs code"+ code +"\"><span class=\"plantTab selected\" onclick=\"showSpecies('" + code + "')\">Species</span>";
                                         htmlToAdd +=         "<span class=\"plantTab\" onclick=\"showLocation('" + code + "')\">Location</span></div>";
 					htmlToAdd += 		"<div  class=\"fieldSpecies\" id=\"fieldsSpecies" + code + "\"><div class=\"editableFieldTitle\">Plant Species:</div>";
 					htmlToAdd += 		"<input type=\"text\" id=\"" + code + "\" class=\"plantSpeciesInput\" value=\"" + plants[j][2] + "\"" + noticeBorder + " onfocus=\"this.setSelectionRange(0, 9999);setNoticeExemptingInput(this.parentNode.parentNode.parentNode.parentNode, this);\" onblur=\"if(this.value.trim().toUpperCase() == 'N/A' || this.value.replace(/ /g, '') == ''){this.value = 'N/A';setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else if(inArrayIgnoreCaseAndWhitespace(this.value, plantSpeciesList)){setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else{promptConfirm('&quot;' + this.value + '&quot; is not in our records. Have you searched for other labels? Are you sure this is the correct name and spelling of your tree species?', 'Try again.', 'Continue. I am sure!', function(){document.getElementById('" + code + "').focus();}, function(){setNoticeImage(document.getElementById('" + code + "').parentNode.parentNode.parentNode.parentNode);});}\" oninput=\"setConifer(this);\"/>";
@@ -486,8 +504,8 @@
 					htmlToAdd +=			"</table>";
 					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + code + "\" class=\"checkboxTableOverlay\" onclick=\"queueNotice('alert', 'We\\'ve recognized this plant species and set its &quot;conifer&quot; checkbox automatically, so it is not editable.');\"></div>";
 					htmlToAdd +=		"</div></div>";
-                                        htmlToAdd +=            "<div class=\"fieldsLocation\" id=\"fieldsLocation" + code + "\"><div class=\"editableFieldTitle\">Locate:</div>";
-                                        htmlToAdd +=            "<div class=\"map\">The Map</div><input type=\"hidden\" id=\"lat" + code + "\" />";
+                                        htmlToAdd +=            "<div class=\"fieldsLocation\" id=\"fieldsLocation" + code + "\"><div class=\"editableFieldTitle\"></div>";
+                                        htmlToAdd +=            "<div id=\"map"+code+"\"></div><input type=\"hidden\" id=\"lat" + code + "\" />";
                                         htmlToAdd +=            "</div>";
           				htmlToAdd += 		"<div class=\"editableFieldTitle\">Location change:</div>";
 					htmlToAdd +=		"<table class=\"checkboxTable\">";
@@ -526,16 +544,79 @@
 			}
 
                         function showSpecies(code) {
-                          $("#fieldsSpecies"+code).css({display: "block"})
-                          $("#fieldsLocation"+code).css({display: "none"})
+                          $(".plantTabs.code"+code+" .plantTab.selected").removeClass("selected");
+                          $(".plantTabs.code"+code+" .plantTab:nth-of-type("+1+")").addClass("selected");
+                          
+                          $("#fieldsSpecies"+code).css({display: "block"});
+                          $("#fieldsLocation"+code).css({display: "none"});
+                            
                         }
                         function showLocation(code) {
-                          $("#fieldsSpecies"+code).css({display: "none"})
-                          $("#fieldsLocation"+code).css({display: "block"})
+                          $(".plantTabs.code"+code+" .plantTab.selected").removeClass("selected");
+                          $(".plantTabs.code"+code+" .plantTab:nth-of-type("+2+")").addClass("selected");
+
+                          $("#fieldsSpecies"+code).css({display: "none"});
+                          $("#fieldsLocation"+code).css({display: "block"});
+                          $("#map"+code).append(document.getElementById("map-canvas"));
+                          setMarker(code);
                         }
 
+                        map = null;
+                        marker = null;
+                        infoWindow = null;
+                 
+                        async function createMap() {
+                            const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+                            map = new Map(document.getElementById("map-canvas"), {
+                                center: { lat: siteLocation.lat, lng: siteLocation.lng },
+                                zoom: 16,
+                                mapId: '165a88552a1b4169',
+                                mapTypeId: 'satellite',
+                                streetViewControl: false
+                            });
+                            infoWindow = new google.maps.InfoWindow();
+                        }
 
-			function setNoticeImage(circle){
+                        async function setMarker(code) {
+                            const { PinElement, AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+                            
+                            const pin = new PinElement({
+                              background: "#f7f7f7",
+                              borderColor: "#aaa",
+                              glyphColor: "#aaa",
+                            });
+
+                            let loc = new google.maps.LatLng(siteLocation.lat, siteLocation.lng)
+                            map.panTo(loc)
+
+                            if(marker) {
+                                marker.map = null;
+                            }
+
+                            
+                            marker = new AdvancedMarkerElement({
+                                map,
+                                position: loc,
+                                gmpDraggable: true,
+                                title: code,
+                                content: pin.element
+                            });
+
+                          var node = $("#map"+code).closest(".plant").find(".code")[0].cloneNode(true);
+
+                          
+                            const showCode = (event) => {
+                                infoWindow.close();
+                                infoWindow.setContent(node);
+                                infoWindow.open(marker.map, marker);
+                            }
+
+                            marker.addListener("dragend", showCode);
+                            showCode();
+                            
+                        }
+                 
+		        function setNoticeImage(circle){
 				var inputs = $(circle).find("input");
 
 				var showNotice = false;
@@ -653,7 +734,7 @@
 						}
 						else{
 							$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 'slow');
-							var addingError = this.responseText.replace("false|", "");
+				                        var addingError = this.responseText.replace("false|", "");
 							queueNotice("error", addingError);
 							if(addingError == "Your log in dissolved. Maybe you logged in on another device."){
 								logOut();
@@ -764,6 +845,7 @@
 				<div class="tagline">This site's plants are loading. Please wait a moment.</div>
 				<div class="content">
 					<div id="circles"></div>
+                                        <div style="display:none;"><div id="map-canvas"></div></div>
 					<div id="addNewCircle" onclick="promptConfirm('You cannot remove a circle once it has been created. Are you sure you want to add a new circle?', 'Never mind.', 'Yes, I am sure!', function(){}, addNewCircle);">
 						Add New Circle
 						<div class="plusImage" style="background-image:url('../images/plus.png');"></div>
@@ -784,5 +866,6 @@
 
 			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
 		</footer>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1mAwi8Cs7H5vCpTApTkdHLgU_9Mimlko&loading=async&callback=createMap"></script>
 	</body>
 </html>
