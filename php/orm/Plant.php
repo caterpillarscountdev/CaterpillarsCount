@@ -13,7 +13,9 @@ class Plant
 	private $code;
 	private $species;
 	private $isConifer;
-	
+        private $latitude;
+        private $longitude;
+
 	private $deleted;
 
 //FACTORY
@@ -69,7 +71,7 @@ class Plant
 		
 		return new Plant($id, $site, $circle, $orientation, $code, "N/A", false);
 	}
-	private function __construct($id, $site, $circle, $orientation, $code, $species, $isConifer) {
+	private function __construct($id, $site, $circle, $orientation, $code, $species, $isConifer, $latitude, $longitude) {
 		$this->id = intval($id);
 		$this->site = $site;
 		$this->circle = $circle;
@@ -77,9 +79,25 @@ class Plant
 		$this->code = $code;
 		$this->species = $species;
 		$this->isConifer = filter_var($isConifer, FILTER_VALIDATE_BOOLEAN);
+                $this->latitude = $latitude;
+                $this->longitude = $longitude;
 		
 		$this->deleted = false;
 	}
+
+        private static function _constructFromRow($plantRow, $sites = array()) {
+                $id = $plantRow["ID"];
+                $site = array_key_exists($plantRow["SiteFK"], $sites) ? $sites[$plantRow["SiteFK"]] : Site::findByID($plantRow["SiteFK"]);
+		$circle = $plantRow["Circle"];
+		$orientation = $plantRow["Orientation"];
+		$code = $plantRow["Code"];
+		$species = $plantRow["Species"];
+		$isConifer = $plantRow["IsConifer"];
+                $latitude = $plantRow["Latitude"];
+                $longitude = $plantRow["Longitude"];
+		
+		return new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer, $latitude, $longitude);
+        }
 
 //FINDERS
 	public static function findByID($id) {
@@ -93,15 +111,8 @@ class Plant
 		}
 		
 		$plantRow = mysqli_fetch_assoc($query);
-		
-		$site = Site::findByID($plantRow["SiteFK"]);
-		$circle = $plantRow["Circle"];
-		$orientation = $plantRow["Orientation"];
-		$code = $plantRow["Code"];
-		$species = $plantRow["Species"];
-		$isConifer = $plantRow["IsConifer"];
-		
-		return new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer);
+
+                return self::_constructFromRow($plantRow);
 	}
 	
 	public static function findByCode($code) {
@@ -118,15 +129,8 @@ class Plant
 		}
 		
 		$plantRow = mysqli_fetch_assoc($query);
-		
-		$id = $plantRow["ID"];
-		$site = Site::findByID($plantRow["SiteFK"]);
-		$circle = $plantRow["Circle"];
-		$orientation = $plantRow["Orientation"];
-		$species = $plantRow["Species"];
-		$isConifer = $plantRow["IsConifer"];
-		
-		return new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer);
+
+                return self::_constructFromRow($plantRow);
 	}
 	
 	public static function findBySiteAndPosition($site, $circle, $orientation) {
@@ -175,15 +179,7 @@ class Plant
 		$plantsArray = array();
 		mysqli_data_seek($query, 0);
 		while($plantRow = mysqli_fetch_assoc($query)){
-			$id = $plantRow["ID"];
-			$site = array_key_exists($plantRow["SiteFK"], $associatedSitesBySiteFK) ? $associatedSitesBySiteFK[$plantRow["SiteFK"]] : null;
-			$circle = $plantRow["Circle"];
-			$orientation = $plantRow["Orientation"];
-			$code = $plantRow["Code"];
-			$species = $plantRow["Species"];
-			$isConifer = $plantRow["IsConifer"];
-			
-			array_push($plantsArray, new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer));
+			array_push($plantsArray, self::_constructFromRow($plantRow, $associatedSitesBySiteFK));
 		}
 		return $plantsArray;
 	}
@@ -192,17 +188,14 @@ class Plant
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `SiteFK`='" . $site->getID() . "' AND `Circle`>0");
 		mysqli_close($dbconn);
-		
+
+                $sites = array();
+                $sites[$site->getID()] = $site;
+
 		$plantsArray = array();
 		while($plantRow = mysqli_fetch_assoc($query)){
-			$id = $plantRow["ID"];
-			$circle = $plantRow["Circle"];
-			$orientation = $plantRow["Orientation"];
-			$code = $plantRow["Code"];
-			$species = $plantRow["Species"];
-			$isConifer = $plantRow["IsConifer"];
 			
-			array_push($plantsArray, new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer));
+			array_push($plantsArray, self::_constructFromRow($plantRow, $sites));
 		}
 		return $plantsArray;
 	}
@@ -237,6 +230,16 @@ class Plant
 		if($this->deleted){return null;}
 		return filter_var($this->isConifer, FILTER_VALIDATE_BOOLEAN);
 	}
+
+	public function getLatitude() {
+		if($this->deleted){return null;}
+		return $this->latitude;
+	}
+	public function getLongitude() {
+		if($this->deleted){return null;}
+		return $this->longitude;
+	}
+
 	
 	public function getColor(){
 		if($this->deleted){return null;}
@@ -325,7 +328,33 @@ class Plant
 		}
 		return false;
 	}
-	
+
+	public function setLatitude($latitude){
+		if(!$this->deleted){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+                        $latitude = Site::validLatitude($dbconn, $latitude);
+			mysqli_query($dbconn, "UPDATE Plant SET `Latitude`='$latitude' WHERE ID='" . $this->id . "'");
+			mysqli_close($dbconn);
+			$this->latitude = $latitude;
+			return true;
+		}
+		return false;
+	}
+
+	public function setLongitude($longitude){
+		if(!$this->deleted){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+                        $longitude = Site::validLongitude($dbconn, $longitude);
+			mysqli_query($dbconn, "UPDATE Plant SET `Longitude`='$longitude' WHERE ID='" . $this->id . "'");
+			mysqli_close($dbconn);
+			$this->longitude = $longitude;
+			return true;
+		}
+		return false;
+	}
+
+
+
 //REMOVER
 	public function permanentDelete()
 	{

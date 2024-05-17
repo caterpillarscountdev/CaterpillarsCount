@@ -505,7 +505,7 @@
 					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + code + "\" class=\"checkboxTableOverlay\" onclick=\"queueNotice('alert', 'We\\'ve recognized this plant species and set its &quot;conifer&quot; checkbox automatically, so it is not editable.');\"></div>";
 					htmlToAdd +=		"</div></div>";
                                         htmlToAdd +=            "<div class=\"fieldsLocation\" id=\"fieldsLocation" + code + "\"><div class=\"editableFieldTitle\"></div>";
-                                        htmlToAdd +=            "<div id=\"map"+code+"\"></div><input type=\"hidden\" id=\"lat" + code + "\" />";
+                                        htmlToAdd +=            "<div id=\"map"+code+"\"></div>";
                                         htmlToAdd +=            "</div>";
           				htmlToAdd += 		"<div class=\"editableFieldTitle\">Location change:</div>";
 					htmlToAdd +=		"<table class=\"checkboxTable\">";
@@ -610,9 +610,13 @@
                                 infoWindow.setContent(node);
                                 infoWindow.open(marker.map, marker);
                             }
-
-                            marker.addListener("dragend", showCode);
                             showCode();
+
+                            marker.addListener("dragend", (event) => {
+                                $("#map"+code).data("lat", marker.position.lat);
+                                $("#map"+code).data("lng", marker.position.lng);
+                                showCode();
+                            });
                             
                         }
                  
@@ -670,7 +674,15 @@
 				var plantData = [];
 				var inputs = $("input");
 				for(var i = 0; i < inputs.length; i++){
-					plantData[plantData.length] = [inputs.eq(i)[0].id, encodeURIComponent(inputs.eq(i)[0].value.replace(/\s\s+/g, ' ')), checkboxIsChecked($("#moveCheckbox" + inputs.eq(i)[0].id)), checkboxIsChecked($("#coniferCheckbox" + inputs.eq(i)[0].id))];
+                                    var code = inputs.eq(i)[0].id;
+				    plantData[plantData.length] = [
+                                        code,
+                                        encodeURIComponent(inputs.eq(i)[0].value.replace(/\s\s+/g, ' ')),
+                                        checkboxIsChecked($("#moveCheckbox" + code)),
+                                        checkboxIsChecked($("#coniferCheckbox" + code))
+                                        $('#map'+code).data('lat'),
+                                        $('#map'+code).data('lng')
+                                    ];
 				}
 
 				var formData = new FormData();
@@ -678,7 +690,7 @@
 				formData.append("email", window.localStorage.getItem("email"));
 				formData.append("salt", window.localStorage.getItem("salt"));
 				$.ajax({
-					url : "https://caterpillarscount.unc.edu/php/saveAllPlantSpecies.php",
+					url : "/php/saveAllPlantSpecies.php",
 					type : 'POST',
 					data : formData,
 					processData: false,  // tell jQuery not to process the data
