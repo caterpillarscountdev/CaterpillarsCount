@@ -127,7 +127,7 @@
 	//alert("attached form data");
 					
 					$.ajax({
-						url : "https://caterpillarscount.unc.edu/php/submit.php",
+						url : "/php/submit.php",
 						type : 'POST',
 						data : formData,
 						processData: false,  // tell jQuery not to process the data
@@ -337,7 +337,7 @@
 							}
 						}
 					};
-					xhttp.open("GET", "https://caterpillarscount.unc.edu/php/getSitesWithUnsetPlantSpecies.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
+					xhttp.open("GET", "/php/getSitesWithUnsetPlantSpecies.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
 					xhttp.send();
 				}
 			}
@@ -597,7 +597,7 @@
 							else if(haveInternet()){
 								//check server side
 								setLoadingButton($("#continueToArthropodButton")[0], "Continue", true);
-								$.get("https://caterpillarscount.unc.edu/php/verifySitePassword.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent($("#plantCode")[0].value) + "&password=" + encodeURIComponent($("#sitePassword")[0].value), function(data){
+								$.get("/php/verifySitePassword.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent($("#plantCode")[0].value) + "&password=" + encodeURIComponent($("#sitePassword")[0].value), function(data){
 									//success
 									if(data.indexOf("true") == 0){
 										$("#" + currentPanelID + "Icon")[0].className = "accessible panelIcon";
@@ -726,7 +726,7 @@
 							}
 							else if(haveInternet()){
 								//check server side
-								$.get("https://caterpillarscount.unc.edu/php/verifySitePassword.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent($("#plantCode")[0].value) + "&password=" + encodeURIComponent($("#sitePassword")[0].value), function(data){
+								$.get("/php/verifySitePassword.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent($("#plantCode")[0].value) + "&password=" + encodeURIComponent($("#sitePassword")[0].value), function(data){
 									//success
 									if(data.indexOf("true") == 0){
 										$("#" + currentPanelID + "Icon")[0].className = "accessible panelIcon";
@@ -1111,7 +1111,7 @@
 				setTimeout(function(){
 					if(thisPlantReturnNumber == mostUpToDatePlantReturnNumber) {
 						code = codeInput.value;
-						$.get("https://caterpillarscount.unc.edu/php/getPlantByCode.php?code=" + encodeURIComponent(code) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+						$.get("/php/getPlantByCode.php?code=" + encodeURIComponent(code) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
 							//success
 							if(thisPlantReturnNumber == mostUpToDatePlantReturnNumber){
 								if(data.indexOf("true|") == 0){
@@ -1435,7 +1435,7 @@
 							formData.append("salt", window.localStorage.getItem("salt"));
 							
 							$.ajax({
-								url : "https://caterpillarscount.unc.edu/php/submit.php",
+								url : "/php/submit.php",
 								type : 'POST',
 								data : formData,
 								processData: false,  // tell jQuery not to process the data
@@ -1970,7 +1970,7 @@
 			}
 			
 			function populateSites(){
-				$.get("https://caterpillarscount.unc.edu/php/getOwnedSitesLIGHT.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+				$.get("/php/getOwnedSitesLIGHT.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
 					//success
 					if(data.indexOf("true") == 0){
 						var ownedSites = JSON.parse(data.replace("true|", ""));
