@@ -30,7 +30,7 @@
 			      $circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies(), $plants[$i]->getIsConifer());
 		      }
 	      }
-	    	die("true|" . json_encode(array($site->getName() . " (" . $site->getRegion() . ")", $circles)));
+	    	die("true|" . json_encode(array($site->getName() . " (" . $site->getRegion() . ")", $circles, $site->getLatitude(), $site->getLongitude())));
 	    }
 	    die("false|You do not have access to this site.");
 	}
