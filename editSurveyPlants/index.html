@@ -458,9 +458,10 @@
 			}
 
 			function getCircleHTML(circle){
-				if(circle.length != 2){return "";}
-				for(var i = 0; i < circle[1].length; i++){
-					if(circle[1][i].length != 4){return "";}
+                            
+			    if(circle.length != 2){return "";}
+			    for(var i = 0; i < circle[1].length; i++){
+					if(circle[1][i].length < 4){return "";}
 				}
 
 				//sort plants
@@ -482,8 +483,12 @@
 				htmlToAdd += 	"<div class=\"plants\">";
 				for(var j = 0; j < plants.length; j++){
                                         var code = plants[j][1];
-					var noticeBorder = "";
-					if(plants[j][2].trim().toUpperCase() == "N/A"){
+                                        var lat = plants[j][4];
+                                        if (!lat || lat == 1 || lat == -1) lat = '';
+                                        var lng = plants[j][5];
+                                        if (!lng || lng == 1 || lng == -1) lng = '';
+				        var noticeBorder = "";
+				        if(plants[j][2].trim().toUpperCase() == "N/A"){
 						noticeBorder = " style=\"border-right:5px solid #FF645A;\"";
 					}
 					
@@ -505,7 +510,7 @@
 					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + code + "\" class=\"checkboxTableOverlay\" onclick=\"queueNotice('alert', 'We\\'ve recognized this plant species and set its &quot;conifer&quot; checkbox automatically, so it is not editable.');\"></div>";
 					htmlToAdd +=		"</div></div>";
                                         htmlToAdd +=            "<div class=\"fieldsLocation\" id=\"fieldsLocation" + code + "\"><div class=\"editableFieldTitle\"></div>";
-                                        htmlToAdd +=            "<div id=\"map"+code+"\"></div>";
+                                        htmlToAdd +=            "<div id=\"map"+code+"\" data-lat=\""+lat+"\" data-lng=\""+lng+"\"></div>";
                                         htmlToAdd +=            "</div>";
           				htmlToAdd += 		"<div class=\"editableFieldTitle\">Location change:</div>";
 					htmlToAdd +=		"<table class=\"checkboxTable\">";
@@ -586,9 +591,12 @@
                               glyphColor: "#aaa",
                             });
 
-                            let loc = new google.maps.LatLng(siteLocation.lat, siteLocation.lng)
+                            let loc = new google.maps.LatLng(siteLocation.lat, siteLocation.lng);
+                            if ($("#map"+code).data("lat")) {
+                                loc = new google.maps.LatLng($("#map"+code).data("lat"), $("#map"+code).data("lng"));
+                            }
                             map.panTo(loc)
-
+                                
                             if(marker) {
                                 marker.map = null;
                             }
