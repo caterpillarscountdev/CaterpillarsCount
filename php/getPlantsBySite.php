@@ -27,7 +27,7 @@
 			      $circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies());
 		      }
 		      else{
-			      $circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies(), $plants[$i]->getIsConifer(), $plants[$i]->getLatitude(), $plants[$i]->getLongitude());
+			      $circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies(), $plants[$i]->getIsConifer(), $plants[$i]->getLatitude(), $plants[$i]->getLongitude(), $plants[$i]->getColor());
 		      }
 	      }
 	    	die("true|" . json_encode(array($site->getName() . " (" . $site->getRegion() . ")", $circles, $site->getLatitude(), $site->getLongitude())));

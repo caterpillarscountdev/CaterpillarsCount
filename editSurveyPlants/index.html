@@ -131,6 +131,9 @@
                           background-color: #f7f7f7;
                         }
 
+                        .gm-style-iw + button {display: none;}
+
+
                         .fieldsSpecies {}
                         .fieldsLocation {
                             display:none;
@@ -151,46 +154,86 @@
                         .plantTab.selected {
                             background-color: #fff;
                         }
+
+
+                 /* The popup bubble styling. */
+                 .popup-bubble {
+                     /* Position the bubble centred-above its parent. */
+                     position: absolute;
+                     top: 0;
+                     left: 0;
+                     transform: translate(-50%, -100%);
+                     /* Style the bubble. */
+                     background-color: white;
+                     padding: 5px;
+                     border-radius: 5px;
+                     font-family: sans-serif;
+                     overflow-y: auto;
+                     max-height: 60px;
+                     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.5);
+                 }
+
+                 /* The parent of the bubble. A zero-height div at the top of the tip. */
+                 .popup-bubble-anchor {
+                     /* Position the div a fixed distance above the tip. */
+                     position: absolute;
+                     width: 100%;
+                     bottom: 8px;
+                     left: 0;
+                 }
+
+                 /* This element draws the tip. */
+                 .popup-bubble-anchor::after {
+                     content: "";
+                     position: absolute;
+                     top: 0;
+                     left: 0;
+                     /* Center the tip horizontally. */
+                     transform: translate(-50%, 0);
+                     /* The tip is a https://css-tricks.com/snippets/css/css-triangle/ */
+                     width: 0;
+                     height: 0;
+                     /* The tip is 8px high, and 12px wide. */
+                     border-left: 6px solid transparent;
+                     border-right: 6px solid transparent;
+                     border-top: 8px solid white;
+                 }
+
+                 /* JavaScript will position this div at the bottom of the popup tip. */
+                 .popup-container {
+                     cursor: auto;
+                     height: 0;
+                     position: absolute;
+                     /* The max width of the info window. */
+                     width: 200px;
+                 }
                  
-			.plant{
-				border-left:5px solid transparent;
-				padding:20px;
-			}
+                 
+		 .plant{
+		     border-left:5px solid transparent;
+		     padding:20px;
+		 }
 
 			.plant:nth-of-type(1), .plant:nth-of-type(1) .plantTab.selected {
 				border-color:#ff7575;
-			}
-			.plant:nth-of-type(1) .code{
-				color:#ff7575;
 			}
 
 		        .plant:nth-of-type(2), .plant:nth-of-type(2) .plantTab.selected {
 		                border-color:#75b3ff;
 		        }
-			.plant:nth-of-type(2) .code{
-				color:#75b3ff;
-			}
 
 		        .plant:nth-of-type(3), .plant:nth-of-type(3) .plantTab.selected {
 		                border-color:#5abd61;
 		        }
-			.plant:nth-of-type(3) .code{
-				color:#5abd61;
-			}
-
+                 
 		        .plant:nth-of-type(4), .plant:nth-of-type(4) .plantTab.selected {
 		                border-color:#ffc875;
 		        }
-			.plant:nth-of-type(4) .code{
-				color:#ffc875;
-			}
 
 		        .plant:nth-of-type(5), .plant:nth-of-type(5) .plantTab.selected {
 		                border-color:#9175ff;
 		        }
-			.plant:nth-of-type(5) .code{
-				color:#9175ff;
-			}
+
 			.code{
 				font-weight:bold;
 				font-size:120%;
@@ -487,13 +530,14 @@
                                         if (!lat || lat == 1 || lat == -1) lat = '';
                                         var lng = plants[j][5];
                                         if (!lng || lng == 1 || lng == -1) lng = '';
+                                        var color = plants[j][6];
 				        var noticeBorder = "";
 				        if(plants[j][2].trim().toUpperCase() == "N/A"){
 						noticeBorder = " style=\"border-right:5px solid #FF645A;\"";
 					}
 					
 					htmlToAdd += "<div class=\"plant\">";
-					htmlToAdd += 	"<div class=\"code\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div>";
+					htmlToAdd += 	"<div class=\"code\" style=\"color:"+color+"\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div>";
 					htmlToAdd += 	"<div class=\"editableFields\">";
                                         htmlToAdd +=       "<div class=\"plantTabs code"+ code +"\"><span class=\"plantTab selected\" onclick=\"showSpecies('" + code + "')\">Species</span>";
                                         htmlToAdd +=         "<span class=\"plantTab\" onclick=\"showLocation('" + code + "')\">Location</span></div>";
@@ -510,7 +554,7 @@
 					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + code + "\" class=\"checkboxTableOverlay\" onclick=\"queueNotice('alert', 'We\\'ve recognized this plant species and set its &quot;conifer&quot; checkbox automatically, so it is not editable.');\"></div>";
 					htmlToAdd +=		"</div></div>";
                                         htmlToAdd +=            "<div class=\"fieldsLocation\" id=\"fieldsLocation" + code + "\"><div class=\"editableFieldTitle\"></div>";
-                                        htmlToAdd +=            "<div id=\"map"+code+"\" data-lat=\""+lat+"\" data-lng=\""+lng+"\"></div>";
+                                        htmlToAdd +=            "<div id=\"map"+code+"\" class=\"plantMap\" data-code=\""+code+"\" data-lat=\""+lat+"\" data-lng=\""+lng+"\"></div>";
                                         htmlToAdd +=            "</div>";
           				htmlToAdd += 		"<div class=\"editableFieldTitle\">Location change:</div>";
 					htmlToAdd +=		"<table class=\"checkboxTable\">";
@@ -568,10 +612,11 @@
 
                         map = null;
                         marker = null;
-                        infoWindow = null;
+                        popUp = null;
+                        otherMarkers = [];
                  
-                        async function createMap() {
-                            const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+                 async function createMap() {
+                     const { Map, InfoWindow } = await google.maps.importLibrary("maps");
                             map = new Map(document.getElementById("map-canvas"), {
                                 center: { lat: siteLocation.lat, lng: siteLocation.lng },
                                 zoom: 16,
@@ -579,10 +624,80 @@
                                 mapTypeId: 'satellite',
                                 streetViewControl: false
                             });
-                            infoWindow = new google.maps.InfoWindow();
-                        }
 
-                        async function setMarker(code) {
+                     /**
+                      * A customized popup on the map.
+                      */
+                     class PopupClass extends google.maps.OverlayView {
+                         position;
+                         containerDiv;
+                         offset;
+
+                         constructor(position, content, offset) {
+                             super();
+                             this.position = position;
+                             this.offset = offset;
+
+                             content.classList.add("popup-bubble");
+
+                             // This zero-height div is positioned at the bottom of the bubble.
+                             const bubbleAnchor = document.createElement("div");
+
+                             bubbleAnchor.classList.add("popup-bubble-anchor");
+                             bubbleAnchor.appendChild(content);
+
+                             // This zero-height div is positioned at the bottom of the tip.
+                             this.containerDiv = document.createElement("div");
+                             this.containerDiv.classList.add("popup-container");
+                             this.containerDiv.appendChild(bubbleAnchor);
+
+                             // Optionally stop clicks, etc., from bubbling up to the map.
+                             PopupClass.preventMapHitsAndGesturesFrom(this.containerDiv);
+                         }
+
+                         /** Called when the popup is added to the map. */
+                         onAdd() {
+                             this.getPanes().floatPane.appendChild(this.containerDiv);
+                         }
+
+                         /** Called when the popup is removed from the map. */
+                         onRemove() {
+                             if (this.containerDiv.parentElement) {
+                                 this.containerDiv.parentElement.removeChild(this.containerDiv);
+                             }
+                         }
+
+                         /** Called each frame when the popup needs to draw itself. */
+                         draw() {
+                             const divPosition = this.getProjection().fromLatLngToDivPixel(
+                                 this.position
+                             );
+
+                             // Hide the popup when it is far out of view.
+                             const display =
+                                 Math.abs(divPosition.x) < 4000 && Math.abs(divPosition.y) < 4000
+                                 ? "block"
+                                 : "none";
+
+                             var offset = 50;
+                             
+                             if (display === "block") {
+                                 this.containerDiv.style.left = divPosition.x + "px";
+                                 this.containerDiv.style.top = divPosition.y - this.offset + "px";
+                             }
+
+                             if (this.containerDiv.style.display !== display) {
+                                 this.containerDiv.style.display = display;
+                             }
+                         }
+                     }
+
+                     PopUp = PopupClass;
+                     
+                     
+                 }
+
+                 async function setMarker(code) {
                             const { PinElement, AdvancedMarkerElement } = await google.maps.importLibrary("marker");
                             
                             const pin = new PinElement({
@@ -607,28 +722,55 @@
                                 position: loc,
                                 gmpDraggable: true,
                                 title: code,
-                                content: pin.element
+                                content: pin.element,
                             });
 
-                          var node = $("#map"+code).closest(".plant").find(".code")[0].cloneNode(true);
 
-                          
+                            function getLabelNode(co) {
+                                return $("#map"+co).closest(".plant").find(".code")[0].cloneNode(true);
+                                
+                            }
+                            var node = getLabelNode(code);
+
+                            // clear other markers
+                            for (let m of otherMarkers) {
+                                m.setMap(null);
+                            }
+
+                            otherMarkers = [];
+                     
+                            $("#map"+code).closest(".circle").find(".plantMap").each(function(n) {
+                                var m = $(this);
+                                if (m.data("code") == code) { return }
+                                var no = getLabelNode(m.data("code"));
+                                var label = new PopUp(new google.maps.LatLng(m.data("lat"), m.data("lng")), no, 0)
+                                label.setMap(map);
+                                otherMarkers.push(label);
+                            });
+
+                            if (popUp) { popUp.setMap(null)};
+                            popUp = new PopUp(marker.position, node, 40);
+                            popUp.setMap(map);
+                     
                             const showCode = (event) => {
-                                infoWindow.close();
-                                infoWindow.setContent(node);
-                                infoWindow.open(marker.map, marker);
+                                popUp.setMap(null);
+                                popUp.position = marker.position;
+                                popUp.setMap(map);
                             }
                             showCode();
 
-                            marker.addListener("dragend", (event) => {
-                                $("#map"+code).data("lat", marker.position.lat);
-                                $("#map"+code).data("lng", marker.position.lng);
+                            marker.addListener("drag", (event) => {
                                 showCode();
                             });
-                            
-                        }
+                            marker.addListener("dragend", (event) => {
+                             $("#map"+code).data("lat", marker.position.lat);
+                             $("#map"+code).data("lng", marker.position.lng);
+                                showCode();
+                            });
+                     
+                 }
                  
-		        function setNoticeImage(circle){
+		 function setNoticeImage(circle){
 				var inputs = $(circle).find("input");
 
 				var showNotice = false;
