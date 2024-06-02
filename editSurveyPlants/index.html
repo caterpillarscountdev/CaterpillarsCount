@@ -37,6 +37,9 @@
 		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<link href="../css/maps.css" rel="stylesheet">
+		<link href="../css/template.css" rel="stylesheet">
+		<script src="../js/template.js?v=3"></script>
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=3"></script>
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
@@ -131,8 +134,6 @@
                           background-color: #f7f7f7;
                         }
 
-                        .gm-style-iw + button {display: none;}
-
 
                         .fieldsSpecies {}
                         .fieldsLocation {
@@ -154,65 +155,12 @@
                         .plantTab.selected {
                             background-color: #fff;
                         }
-
-
-                 /* The popup bubble styling. */
-                 .popup-bubble {
-                     /* Position the bubble centred-above its parent. */
-                     position: absolute;
-                     top: 0;
-                     left: 0;
-                     transform: translate(-50%, -100%);
-                     /* Style the bubble. */
-                     background-color: white;
-                     padding: 5px;
-                     border-radius: 5px;
-                     font-family: sans-serif;
-                     overflow-y: auto;
-                     max-height: 60px;
-                     box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.5);
-                 }
-
-                 /* The parent of the bubble. A zero-height div at the top of the tip. */
-                 .popup-bubble-anchor {
-                     /* Position the div a fixed distance above the tip. */
-                     position: absolute;
-                     width: 100%;
-                     bottom: 8px;
-                     left: 0;
-                 }
-
-                 /* This element draws the tip. */
-                 .popup-bubble-anchor::after {
-                     content: "";
-                     position: absolute;
-                     top: 0;
-                     left: 0;
-                     /* Center the tip horizontally. */
-                     transform: translate(-50%, 0);
-                     /* The tip is a https://css-tricks.com/snippets/css/css-triangle/ */
-                     width: 0;
-                     height: 0;
-                     /* The tip is 8px high, and 12px wide. */
-                     border-left: 6px solid transparent;
-                     border-right: 6px solid transparent;
-                     border-top: 8px solid white;
-                 }
-
-                 /* JavaScript will position this div at the bottom of the popup tip. */
-                 .popup-container {
-                     cursor: auto;
-                     height: 0;
-                     position: absolute;
-                     /* The max width of the info window. */
-                     width: 200px;
-                 }
                  
                  
-		 .plant{
-		     border-left:5px solid transparent;
-		     padding:20px;
-		 }
+		        .plant{
+		            border-left:5px solid transparent;
+		            padding:20px;
+		        }
 
 			.plant:nth-of-type(1), .plant:nth-of-type(1) .plantTab.selected {
 				border-color:#ff7575;
@@ -619,81 +567,12 @@
                      const { Map, InfoWindow } = await google.maps.importLibrary("maps");
                             map = new Map(document.getElementById("map-canvas"), {
                                 center: { lat: siteLocation.lat, lng: siteLocation.lng },
-                                zoom: 16,
+                                zoom: 17,
                                 mapId: '165a88552a1b4169',
                                 mapTypeId: 'satellite',
                                 streetViewControl: false
                             });
-
-                     /**
-                      * A customized popup on the map.
-                      */
-                     class PopupClass extends google.maps.OverlayView {
-                         position;
-                         containerDiv;
-                         offset;
-
-                         constructor(position, content, offset) {
-                             super();
-                             this.position = position;
-                             this.offset = offset;
-
-                             content.classList.add("popup-bubble");
-
-                             // This zero-height div is positioned at the bottom of the bubble.
-                             const bubbleAnchor = document.createElement("div");
-
-                             bubbleAnchor.classList.add("popup-bubble-anchor");
-                             bubbleAnchor.appendChild(content);
-
-                             // This zero-height div is positioned at the bottom of the tip.
-                             this.containerDiv = document.createElement("div");
-                             this.containerDiv.classList.add("popup-container");
-                             this.containerDiv.appendChild(bubbleAnchor);
-
-                             // Optionally stop clicks, etc., from bubbling up to the map.
-                             PopupClass.preventMapHitsAndGesturesFrom(this.containerDiv);
-                         }
-
-                         /** Called when the popup is added to the map. */
-                         onAdd() {
-                             this.getPanes().floatPane.appendChild(this.containerDiv);
-                         }
-
-                         /** Called when the popup is removed from the map. */
-                         onRemove() {
-                             if (this.containerDiv.parentElement) {
-                                 this.containerDiv.parentElement.removeChild(this.containerDiv);
-                             }
-                         }
-
-                         /** Called each frame when the popup needs to draw itself. */
-                         draw() {
-                             const divPosition = this.getProjection().fromLatLngToDivPixel(
-                                 this.position
-                             );
-
-                             // Hide the popup when it is far out of view.
-                             const display =
-                                 Math.abs(divPosition.x) < 4000 && Math.abs(divPosition.y) < 4000
-                                 ? "block"
-                                 : "none";
-
-                             var offset = 50;
-                             
-                             if (display === "block") {
-                                 this.containerDiv.style.left = divPosition.x + "px";
-                                 this.containerDiv.style.top = divPosition.y - this.offset + "px";
-                             }
-
-                             if (this.containerDiv.style.display !== display) {
-                                 this.containerDiv.style.display = display;
-                             }
-                         }
-                     }
-
-                     PopUp = PopupClass;
-                     
+                     await import("../js/maps.js");
                      
                  }
 
@@ -723,6 +602,7 @@
                                 gmpDraggable: true,
                                 title: code,
                                 content: pin.element,
+                                zIndex: 100
                             });
 
 
@@ -743,13 +623,13 @@
                                 var m = $(this);
                                 if (m.data("code") == code) { return }
                                 var no = getLabelNode(m.data("code"));
-                                var label = new PopUp(new google.maps.LatLng(m.data("lat"), m.data("lng")), no, 0)
+                                var label = new MapPopUp(new google.maps.LatLng(m.data("lat"), m.data("lng")), no, 0)
                                 label.setMap(map);
                                 otherMarkers.push(label);
                             });
 
                             if (popUp) { popUp.setMap(null)};
-                            popUp = new PopUp(marker.position, node, 40);
+                            popUp = new MapPopUp(marker.position, node, 40);
                             popUp.setMap(map);
                      
                             const showCode = (event) => {
