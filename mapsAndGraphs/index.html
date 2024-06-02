@@ -42,6 +42,7 @@
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<script src="../js/libraries/jszip.min.js"></script>
 		<script src="../js/libraries/FileSaver.js"></script>
+		<link href="../css/maps.css" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=3"></script>
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
@@ -57,10 +58,33 @@
 				height:30px;
 			}
 
-			#alert img{
-				max-height:450px;
-				margin:0px;
-			}
+                 #map-canvas {
+                     height: 250px;
+                     margin:10px 0px;
+                     border-radius:4px;
+                     overflow:hidden;
+                 }
+
+		 .code{
+		     font-weight:bold;
+		     font-size:120%;
+		 }
+
+		 .code img{
+		     height:20px;
+		     margin-right:7px;
+		     margin-bottom:-3px;
+		 }
+
+                 #map-canvas a {
+                     text-decoration: none;
+                 }
+                 
+                 
+                 #alert img{
+                     max-height:450px;
+                     margin:0px;
+                 }
 
 			#rankingsSwitch, #graphSwitch{
 				color:#666;
@@ -288,7 +312,7 @@
 				color:#999;
 				font-family: 'Roboto Slab', serif;
 				text-align:center;
-				margin-top:-30px;
+				margin-top:0px;
 				margin-bottom:40px;
 			}
 
@@ -1336,8 +1360,93 @@
 				lastMarker = marker;
 				return "same";
 			}
-			var activeSite = "Example Site";
-			var activeSiteID = -1;
+
+                 plantMap = null;
+                 siteLocation = {lat: 0, lng: 0};                 
+                 async function createPlantMap() {
+                     const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+                            plantMap = new Map(document.getElementById("map-canvas"), {
+                                center: { lat: siteLocation.lat, lng: siteLocation.lng },
+                                zoom: 17,
+                                mapId: '165a88552a1b4169',
+                                mapTypeId: 'satellite',
+                                streetViewControl: false
+                            });
+                 }
+
+                 async function showSitePlants(siteID) {
+                     if (!window.localStorage.getItem('email')) return;
+                     $("#noPlantsSection").hide();
+                     $("#hasPlantsSection").hide();
+                     
+                     let response = await fetch("../php/getPlantsBySite.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0")
+                     var data = JSON.parse((await response.text()).replace("true|", ""));
+		     var siteName = data[0];
+		     var circles = data[1];
+                     var latitude = data[2];
+                     var longitude = data[3];
+                     siteLocation.lat = parseFloat(latitude);
+                     siteLocation.lng = parseFloat(longitude);
+                     
+                     if (!plantMap) createPlantMap();
+
+                     if (havePlantLocations(circles)) {
+                         console.log("Plants have locations");
+                         let plants = [];
+                         for (let circle of circles) {
+                             plants = plants.concat(circle[1]);
+                         }
+                         showPlantMarkers(plants);
+                         $("#noPlantsSection").hide();
+                         $("#hasPlantsSection").show();
+                     } else {
+                         console.log("Plants have no locations");
+                         $("#noPlantsSection").show();
+                         $("#hasPlantsSection").hide();
+                     }
+                 }
+
+                 function havePlantLocations(circles) {
+                     for (var i = 0; i < circles.length; i++) {
+                         for (var j = 0; j < circles[i].length; j++) {
+                             var lat = circles[i][j][4]
+                             if (lat != '' && lat != 0 && lat != 1) {
+                                 return true
+                             }
+                         }
+                     }
+                 }
+                 
+                 var plantMarkers = [];
+                 async function showPlantMarkers(plants) {
+                     await import("../js/maps.js");
+                     
+                     // clear other markers
+                     for (let m of plantMarkers) {
+                         m.setMap(null);
+                     }
+                     
+                     plantMarkers = [];
+                     let indices = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4};
+                     for (let plant of plants) {
+                         let j = indices[plant[0]];
+                         let code = plant[1];
+                         let lat = plant[4];
+                         let lng = plant[5];
+                         let color = plant[6];
+                         
+                         let node = $("<a href=\"../submitObservations/index.html?plantCode="+code+"\"><div class=\"code\" style=\"color:"+color+"\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div></a>")[0];
+                         var label = new MapPopUp(new google.maps.LatLng(lat, lng), node, 0);
+                         label.setMap(plantMap);
+                         plantMarkers.push(label);
+                     };
+                 }
+                 
+
+
+                 
+		 var activeSite = "Example Site";
+		 var activeSiteID = -1;
 			function physicalMarkerClick(){
 				markerClick(this);
 			}
@@ -1359,6 +1468,9 @@
 					scrollToPanel(3);
 					return false;
 				}
+                            
+                                showSitePlants(marker.siteInformation["ID"]);
+                            
 				$("#selectedSitePanel>h2")[0].innerHTML = marker.siteInformation["Name"];
 				$("#graphsH3")[0].innerHTML = marker.siteInformation["Name"] + " Graphs";
 				$("#selectedSitePanel>.tagline")[0].innerHTML = marker.siteInformation["Description"];
@@ -2793,7 +2905,7 @@
 			function loadSetFromFilters(filters, callback){
 				console.log("Loading phenology: " + JSON.stringify(filters));
 
-				$.get("https://caterpillarscount.unc.edu/php/getPhenology.php?lines=" + encodeURIComponent(JSON.stringify([filters])), function(data){
+				$.get("/php/getPhenology.php?lines=" + encodeURIComponent(JSON.stringify([filters])), function(data){
 					//success
 					console.log("Loaded phenology: " + JSON.stringify(filters));
 					if(data.indexOf("true|") == 0){
@@ -2947,7 +3059,7 @@
 				compositionQueue.splice(nextIndex, 1);
 				console.log("Loading composition: " + loadingComposition[0] + " " + loadingComposition[1] + " " + loadingComposition[2]);
 
-				$.get("https://caterpillarscount.unc.edu/php/getComposition.php?siteIDs=" + JSON.stringify([loadingComposition[2]]) + "&breakdown=" + loadingComposition[0] + "&comparisonMetric=" + loadingComposition[1], function(data){
+				$.get("/php/getComposition.php?siteIDs=" + JSON.stringify([loadingComposition[2]]) + "&breakdown=" + loadingComposition[0] + "&comparisonMetric=" + loadingComposition[1], function(data){
 					if(data.indexOf("true|") == 0){
 						console.log("Loaded composition: " + loadingComposition[0] + " " + loadingComposition[1] + " " + loadingComposition[2]);
 						data = JSON.parse(data.replace("true|", ""));
@@ -3527,7 +3639,7 @@
 
 				console.log("Loading trends: " + JSON.stringify(filters));
 
-				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify(filters)) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
+				$.get("/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify(filters)) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
 					//success
 					if(thisLoadTrendsIteration === loadTrendsIteration){
 						console.log("Loaded trend: " + JSON.stringify(filters));
@@ -3564,7 +3676,7 @@
 				console.log("Loading trend: " + JSON.stringify(filters));
 
 				var thisLoadTrendsIteration = ++loadTrendsIteration;
-				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
+				$.get("/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
 					//success
 					if(thisLoadTrendsIteration === loadTrendsIteration){
 						console.log("Loaded trend: " + JSON.stringify(filters));
@@ -4550,6 +4662,13 @@
 				<h2 class="forceWrapIfNeeded"></h2>
 				<div class="tagline forceWrapIfNeeded"></div>
 				<div class="content">
+				  <div id="noPlantsSection">
+				    <div><p>This site's plant locations have not been saved yet.</p></div>
+				  </div>
+                                  <div id="hasPlantsSection">
+				    <div><p>Click a plant tag to submit observations for this site.</p></div>
+                                    <div id="map-canvas"></div>
+                                  </div>
 					<div id="noDataSection">
 						<div class="circleImage" style="width:200px;height:200px;background-image:url('../images/noSurveys.png');margin:40px 0px;"></div>
 						<div><p>No surveys have been submitted at this site yet.</p></div>

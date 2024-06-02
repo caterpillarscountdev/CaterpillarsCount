@@ -37,6 +37,9 @@
 		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<link href="../css/maps.css" rel="stylesheet">
+		<link href="../css/template.css" rel="stylesheet">
+		<script src="../js/template.js?v=3"></script>
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=3"></script>
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
@@ -131,6 +134,7 @@
                           background-color: #f7f7f7;
                         }
 
+
                         .fieldsSpecies {}
                         .fieldsLocation {
                             display:none;
@@ -152,45 +156,32 @@
                             background-color: #fff;
                         }
                  
-			.plant{
-				border-left:5px solid transparent;
-				padding:20px;
-			}
+                 
+		        .plant{
+		            border-left:5px solid transparent;
+		            padding:20px;
+		        }
 
 			.plant:nth-of-type(1), .plant:nth-of-type(1) .plantTab.selected {
 				border-color:#ff7575;
-			}
-			.plant:nth-of-type(1) .code{
-				color:#ff7575;
 			}
 
 		        .plant:nth-of-type(2), .plant:nth-of-type(2) .plantTab.selected {
 		                border-color:#75b3ff;
 		        }
-			.plant:nth-of-type(2) .code{
-				color:#75b3ff;
-			}
 
 		        .plant:nth-of-type(3), .plant:nth-of-type(3) .plantTab.selected {
 		                border-color:#5abd61;
 		        }
-			.plant:nth-of-type(3) .code{
-				color:#5abd61;
-			}
-
+                 
 		        .plant:nth-of-type(4), .plant:nth-of-type(4) .plantTab.selected {
 		                border-color:#ffc875;
 		        }
-			.plant:nth-of-type(4) .code{
-				color:#ffc875;
-			}
 
 		        .plant:nth-of-type(5), .plant:nth-of-type(5) .plantTab.selected {
 		                border-color:#9175ff;
 		        }
-			.plant:nth-of-type(5) .code{
-				color:#9175ff;
-			}
+
 			.code{
 				font-weight:bold;
 				font-size:120%;
@@ -487,13 +478,14 @@
                                         if (!lat || lat == 1 || lat == -1) lat = '';
                                         var lng = plants[j][5];
                                         if (!lng || lng == 1 || lng == -1) lng = '';
+                                        var color = plants[j][6];
 				        var noticeBorder = "";
 				        if(plants[j][2].trim().toUpperCase() == "N/A"){
 						noticeBorder = " style=\"border-right:5px solid #FF645A;\"";
 					}
 					
 					htmlToAdd += "<div class=\"plant\">";
-					htmlToAdd += 	"<div class=\"code\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div>";
+					htmlToAdd += 	"<div class=\"code\" style=\"color:"+color+"\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div>";
 					htmlToAdd += 	"<div class=\"editableFields\">";
                                         htmlToAdd +=       "<div class=\"plantTabs code"+ code +"\"><span class=\"plantTab selected\" onclick=\"showSpecies('" + code + "')\">Species</span>";
                                         htmlToAdd +=         "<span class=\"plantTab\" onclick=\"showLocation('" + code + "')\">Location</span></div>";
@@ -510,7 +502,7 @@
 					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + code + "\" class=\"checkboxTableOverlay\" onclick=\"queueNotice('alert', 'We\\'ve recognized this plant species and set its &quot;conifer&quot; checkbox automatically, so it is not editable.');\"></div>";
 					htmlToAdd +=		"</div></div>";
                                         htmlToAdd +=            "<div class=\"fieldsLocation\" id=\"fieldsLocation" + code + "\"><div class=\"editableFieldTitle\"></div>";
-                                        htmlToAdd +=            "<div id=\"map"+code+"\" data-lat=\""+lat+"\" data-lng=\""+lng+"\"></div>";
+                                        htmlToAdd +=            "<div id=\"map"+code+"\" class=\"plantMap\" data-code=\""+code+"\" data-lat=\""+lat+"\" data-lng=\""+lng+"\"></div>";
                                         htmlToAdd +=            "</div>";
           				htmlToAdd += 		"<div class=\"editableFieldTitle\">Location change:</div>";
 					htmlToAdd +=		"<table class=\"checkboxTable\">";
@@ -568,21 +560,23 @@
 
                         map = null;
                         marker = null;
-                        infoWindow = null;
+                        popUp = null;
+                        otherMarkers = [];
                  
-                        async function createMap() {
-                            const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+                 async function createMap() {
+                     const { Map, InfoWindow } = await google.maps.importLibrary("maps");
                             map = new Map(document.getElementById("map-canvas"), {
                                 center: { lat: siteLocation.lat, lng: siteLocation.lng },
-                                zoom: 16,
+                                zoom: 17,
                                 mapId: '165a88552a1b4169',
                                 mapTypeId: 'satellite',
                                 streetViewControl: false
                             });
-                            infoWindow = new google.maps.InfoWindow();
-                        }
+                     await import("../js/maps.js");
+                     
+                 }
 
-                        async function setMarker(code) {
+                 async function setMarker(code) {
                             const { PinElement, AdvancedMarkerElement } = await google.maps.importLibrary("marker");
                             
                             const pin = new PinElement({
@@ -607,28 +601,56 @@
                                 position: loc,
                                 gmpDraggable: true,
                                 title: code,
-                                content: pin.element
+                                content: pin.element,
+                                zIndex: 100
                             });
 
-                          var node = $("#map"+code).closest(".plant").find(".code")[0].cloneNode(true);
 
-                          
+                            function getLabelNode(co) {
+                                return $("#map"+co).closest(".plant").find(".code")[0].cloneNode(true);
+                                
+                            }
+                            var node = getLabelNode(code);
+
+                            // clear other markers
+                            for (let m of otherMarkers) {
+                                m.setMap(null);
+                            }
+
+                            otherMarkers = [];
+                     
+                            $("#map"+code).closest(".circle").find(".plantMap").each(function(n) {
+                                var m = $(this);
+                                if (m.data("code") == code) { return }
+                                var no = getLabelNode(m.data("code"));
+                                var label = new MapPopUp(new google.maps.LatLng(m.data("lat"), m.data("lng")), no, 0)
+                                label.setMap(map);
+                                otherMarkers.push(label);
+                            });
+
+                            if (popUp) { popUp.setMap(null)};
+                            popUp = new MapPopUp(marker.position, node, 40);
+                            popUp.setMap(map);
+                     
                             const showCode = (event) => {
-                                infoWindow.close();
-                                infoWindow.setContent(node);
-                                infoWindow.open(marker.map, marker);
+                                popUp.setMap(null);
+                                popUp.position = marker.position;
+                                popUp.setMap(map);
                             }
                             showCode();
 
-                            marker.addListener("dragend", (event) => {
-                                $("#map"+code).data("lat", marker.position.lat);
-                                $("#map"+code).data("lng", marker.position.lng);
+                            marker.addListener("drag", (event) => {
                                 showCode();
                             });
-                            
-                        }
+                            marker.addListener("dragend", (event) => {
+                             $("#map"+code).data("lat", marker.position.lat);
+                             $("#map"+code).data("lng", marker.position.lng);
+                                showCode();
+                            });
+                     
+                 }
                  
-		        function setNoticeImage(circle){
+		 function setNoticeImage(circle){
 				var inputs = $(circle).find("input");
 
 				var showNotice = false;
