@@ -31,7 +31,7 @@ class PopupClass extends OverlayView {
   
   /** Called when the popup is added to the map. */
   onAdd() {
-    this.getPanes().floatPane.appendChild(this.containerDiv);
+    this.getPanes().overlayLayer.appendChild(this.containerDiv);
   }
   
   /** Called when the popup is removed from the map. */
@@ -52,8 +52,6 @@ class PopupClass extends OverlayView {
           Math.abs(divPosition.x) < 4000 && Math.abs(divPosition.y) < 4000
           ? "block"
           : "none";
-    
-    var offset = 50;
     
     if (display === "block") {
       this.containerDiv.style.left = divPosition.x + "px";
