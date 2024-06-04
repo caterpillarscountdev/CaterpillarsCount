@@ -1370,8 +1370,15 @@
                                 zoom: 17,
                                 mapId: '165a88552a1b4169',
                                 mapTypeId: 'satellite',
+                                mapTypeControlOptions: {
+                                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                                    mapTypeIds: ["satellite", "roadmap", "terrain"],
+                                },
                                 streetViewControl: false
                             });
+                     await import("../js/maps.js");
+                     MapFindMeButton(plantMap);
+                     MapFindSiteButton(plantMap);
                  }
 
                  async function showSitePlants(siteID) {
@@ -1436,7 +1443,7 @@
                          let color = plant[6];
                          
                          let node = $("<a href=\"../submitObservations/index.html?plantCode="+code+"\"><div class=\"code\" style=\"color:"+color+"\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div></a>")[0];
-                         var label = new MapPopUp(new google.maps.LatLng(lat, lng), node, 0);
+                         var label = new MapPopUp(new google.maps.LatLng(lat, lng), node, true, 0);
                          label.setMap(plantMap);
                          plantMarkers.push(label);
                      };
