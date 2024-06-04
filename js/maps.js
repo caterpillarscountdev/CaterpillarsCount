@@ -6,11 +6,13 @@ class PopupClass extends OverlayView {
   position;
   containerDiv;
   offset;
+  clickable;
   
-  constructor(position, content, offset) {
+  constructor(position, content, clickable, offset) {
     super();
     this.position = position;
     this.offset = offset;
+    this.clickable = clickable;
     
     content.classList.add("popup-bubble");
     
@@ -31,7 +33,8 @@ class PopupClass extends OverlayView {
   
   /** Called when the popup is added to the map. */
   onAdd() {
-    this.getPanes().overlayLayer.appendChild(this.containerDiv);
+    let pane = this.clickable ? this.getPanes().floatPane : this.getPanes().overlayLayer;
+    pane.appendChild(this.containerDiv);
   }
   
   /** Called when the popup is removed from the map. */
@@ -65,3 +68,43 @@ class PopupClass extends OverlayView {
 }
 
 window.MapPopUp = PopupClass;
+
+function getCurrentPosition() {
+  return new Promise( (resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      position => resolve(position),
+      error => reject(error)
+    )
+  })
+}
+
+function createMapButton(map, label, action) {
+  const button = document.createElement("div");
+  button.setAttribute('class', 'map-button');
+  button.textContent = label
+  button.onclick = action;
+  const wrap = document.createElement("div");
+  wrap.setAttribute("class", "map-button-wrap")
+  wrap.appendChild(button);
+  map.controls[google.maps.ControlPosition.TOP_CENTER].push(wrap);
+  
+}
+
+
+window.MapFindMeButton = function (map) {
+  return createMapButton(map, 'Find Me', async () => {
+    let position = await getCurrentPosition();
+    console.log(position.coords);
+    map.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+  })
+}
+
+window.MapFindSiteButton = function (map) {
+  if (!siteLocation) {
+    console.log('Find Site with no siteLocation');
+    return
+  };
+  return createMapButton(map, 'Find Site', () => {
+    map.panTo(new google.maps.LatLng(siteLocation.lat, siteLocation.lng));    
+  });
+}

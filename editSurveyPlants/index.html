@@ -46,7 +46,7 @@
 		<script src="../js/checkbox.js?v=1"></script>
 		<style>
 			#map-canvas {
-              			height: 200px;
+              			height: 250px;
               			margin:10px 0px;
               			border-radius:4px;
               			overflow:hidden;
@@ -563,27 +563,28 @@
                         popUp = null;
                         otherMarkers = [];
                  
-                 async function createMap() {
-                     const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+                        async function createMap() {
+                            const { Map, InfoWindow } = await google.maps.importLibrary("maps");
                             map = new Map(document.getElementById("map-canvas"), {
                                 center: { lat: siteLocation.lat, lng: siteLocation.lng },
                                 zoom: 17,
                                 mapId: '165a88552a1b4169',
                                 mapTypeId: 'satellite',
+                                mapTypeControlOptions: {
+                                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                                    mapTypeIds: ["satellite", "roadmap", "terrain"],
+                                },
                                 streetViewControl: false
                             });
-                     await import("../js/maps.js");
-                     
-                 }
+                            await import("../js/maps.js");
+                            MapFindMeButton(map);
+                            MapFindSiteButton(map);
+                            
+                        }
 
                  async function setMarker(code) {
                             const { PinElement, AdvancedMarkerElement } = await google.maps.importLibrary("marker");
                             
-                            const pin = new PinElement({
-                              background: "#f7f7f7",
-                              borderColor: "#aaa",
-                              glyphColor: "#aaa"
-                            });
 
                             let loc = new google.maps.LatLng(siteLocation.lat, siteLocation.lng);
                             if ($("#map"+code).data("lat")) {
@@ -591,19 +592,6 @@
                             }
                             map.panTo(loc)
                                 
-                            if(marker) {
-                                marker.map = null;
-                            }
-
-                            
-                            marker = new AdvancedMarkerElement({
-                                map,
-                                position: loc,
-                                gmpDraggable: true,
-                                title: code,
-                                content: pin.element,
-                            });
-
 
                             function getLabelNode(co) {
                                 return $("#map"+co).closest(".plant").find(".code")[0].cloneNode(true);
@@ -622,15 +610,33 @@
                                 var m = $(this);
                                 if (m.data("code") == code) { return }
                                 var no = getLabelNode(m.data("code"));
-                                var label = new MapPopUp(new google.maps.LatLng(m.data("lat"), m.data("lng")), no, 0)
+                                var label = new MapPopUp(new google.maps.LatLng(m.data("lat"), m.data("lng")), no, false, 0)
                                 label.setMap(map);
                                 otherMarkers.push(label);
                             });
 
+                            const pin = new PinElement({
+                                background: "#f7f7f7",
+                                borderColor: "#aaa",
+                                glyphColor: "#aaa"
+                            });
+
+                            if(marker) {
+                                marker.map = null;
+                            }
+                            
+                            marker = new AdvancedMarkerElement({
+                                map,
+                                position: loc,
+                                gmpDraggable: true,
+                                title: code,
+                                content: pin.element,
+                            });
+
                             if (popUp) { popUp.setMap(null)};
-                            popUp = new MapPopUp(marker.position, node, 40);
+                            popUp = new MapPopUp(marker.position, node, false, 40);
                             popUp.setMap(map);
-                     
+
                             const showCode = (event) => {
                                 popUp.setMap(null);
                                 popUp.position = marker.position;
