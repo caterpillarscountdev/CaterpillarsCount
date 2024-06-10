@@ -54,7 +54,7 @@
 			"ant" => "Ants",
 			"aphid" => "Sternorrhyncha",
 			"bee" => "Hymenoptera",
-			"sawfly" => "Symphyta",
+			"sawfly" => "Tenthredinoidea",
 			"beetle" => "Beetles",
 			"caterpillar" => "Lepidoptera",
 			"daddylonglegs" => "Daddy longlegs",
