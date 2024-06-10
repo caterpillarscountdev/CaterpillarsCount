@@ -1417,7 +1417,7 @@
                      for (var i = 0; i < circles.length; i++) {
                          for (var j = 0; j < circles[i].length; j++) {
                              var lat = circles[i][j][4]
-                             if (lat != '' && lat != 0 && lat != 1) {
+                             if (lat != undefined && lat != '' && lat != 0 && lat != 1) {
                                  return true
                              }
                          }
@@ -4670,7 +4670,7 @@
 				<div class="tagline forceWrapIfNeeded"></div>
 				<div class="content">
 				  <div id="noPlantsSection">
-				    <div><p>This site's plant locations have not been saved yet.</p></div>
+				    <div><p>This site's plant locations have not been set by a site manager.</p></div>
 				  </div>
                                   <div id="hasPlantsSection">
 				    <div><p>Click a plant tag to submit observations for this site.</p></div>
