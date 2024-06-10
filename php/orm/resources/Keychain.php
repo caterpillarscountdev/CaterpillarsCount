@@ -45,7 +45,7 @@ class Keychain
 
 //GETTERS
 	public function getDatabaseConnection(){
-                mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);        
+                //mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);        
 		return mysqli_connect($this->hostPointer, $this->hostUsername, $this->hostPassword, $this->databaseName);
 	}
 	
