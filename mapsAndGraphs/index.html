@@ -1415,9 +1415,9 @@
 
                  function havePlantLocations(circles) {
                      for (var i = 0; i < circles.length; i++) {
-                         for (var j = 0; j < circles[i].length; j++) {
-                             var lat = circles[i][j][4]
-                             if (lat != undefined && lat != '' && lat != 0 && lat != 1) {
+                         for (var j = 0; j < circles[1][i].length; j++) {
+                             var lat = circles[i][1][j][4]
+                             if (lat != null && lat != '' && lat != 0 && lat != 1) {
                                  return true
                              }
                          }
