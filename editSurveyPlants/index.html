@@ -46,7 +46,7 @@
 		<script src="../js/checkbox.js?v=1"></script>
 		<style>
 			#map-canvas {
-              			height: 250px;
+              			height: 270px;
               			margin:10px 0px;
               			border-radius:4px;
               			overflow:hidden;
@@ -110,17 +110,25 @@
 				color:#aaa;
 				padding:20px;
 				cursor:pointer;
-
-			}
+                        }
+		        .checkboxTable {
+			    color:#666;
+                        }
+                        .moveMapLabel, .locationChange {
+                            padding-top: 3px;
+                            color: #666;
+                            display: none;
+                        }
+                                
 			.plants{
-				font-size:14px;
+				font-size:16px;
 				background:#f7f7f7;
 				max-height:0px;
 				overflow:hidden;
 				border-right:2px solid #eee;
 				border-bottom:2px solid #eee;
 			}
-			.circleTitle, .plants{
+			.circleTitle, .plants, .checkboxTable {
 				font-family: 'Roboto Slab', serif;
 			}
 
@@ -145,11 +153,11 @@
                         }
 
                         .plantTab {
-                            color: #aaa;
+                            color: #666;
                             padding: 0.5em;
                             margin-top: 0.5em;
                             margin-right: 2em;
-                            border-bottom: 3px solid #aaa;
+                            border-bottom: 3px solid #666;
                         }
 
                         .plantTab.selected {
@@ -194,7 +202,7 @@
 			}
 
 			.editableFieldTitle{
-				color:#aaa;
+				color:#666;
 				margin-top:10px;
 			}
 			
@@ -474,6 +482,7 @@
 				htmlToAdd += 	"<div class=\"plants\">";
 				for(var j = 0; j < plants.length; j++){
                                         var code = plants[j][1];
+                                        var species = plants[j][2];
                                         var lat = plants[j][4];
                                         if (!lat || lat == 1 || lat == -1) lat = '';
                                         var lng = plants[j][5];
@@ -488,9 +497,9 @@
 					htmlToAdd += 	"<div class=\"code\" style=\"color:"+color+"\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div>";
 					htmlToAdd += 	"<div class=\"editableFields\">";
                                         htmlToAdd +=       "<div class=\"plantTabs code"+ code +"\"><span class=\"plantTab selected\" onclick=\"showSpecies('" + code + "')\">Species</span>";
-                                        htmlToAdd +=         "<span class=\"plantTab\" onclick=\"showLocation('" + code + "')\">Location</span></div>";
+                                        htmlToAdd +=         "<span class=\"plantTab\" onclick=\"showLocation('" + code + "')\" data-code=\""+code+"\">Location</span></div>";
 					htmlToAdd += 		"<div  class=\"fieldSpecies\" id=\"fieldsSpecies" + code + "\"><div class=\"editableFieldTitle\">Plant Species:</div>";
-					htmlToAdd += 		"<input type=\"text\" id=\"" + code + "\" class=\"plantSpeciesInput\" value=\"" + plants[j][2] + "\"" + noticeBorder + " onfocus=\"this.setSelectionRange(0, 9999);setNoticeExemptingInput(this.parentNode.parentNode.parentNode.parentNode, this);\" onblur=\"if(this.value.trim().toUpperCase() == 'N/A' || this.value.replace(/ /g, '') == ''){this.value = 'N/A';setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else if(inArrayIgnoreCaseAndWhitespace(this.value, plantSpeciesList)){setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else{promptConfirm('&quot;' + this.value + '&quot; is not in our records. Have you searched for other labels? Are you sure this is the correct name and spelling of your tree species?', 'Try again.', 'Continue. I am sure!', function(){document.getElementById('" + code + "').focus();}, function(){setNoticeImage(document.getElementById('" + code + "').parentNode.parentNode.parentNode.parentNode);});}\" oninput=\"setConifer(this);\"/>";
+					htmlToAdd += 		"<input type=\"text\" id=\"" + code + "\" class=\"plantSpeciesInput\" value=\"" + species + "\"" + noticeBorder + " onfocus=\"this.setSelectionRange(0, 9999);setNoticeExemptingInput(this.parentNode.parentNode.parentNode.parentNode, this);\" onblur=\"if(this.value.trim().toUpperCase() == 'N/A' || this.value.replace(/ /g, '') == ''){this.value = 'N/A';setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else if(inArrayIgnoreCaseAndWhitespace(this.value, plantSpeciesList)){setNoticeImage(this.parentNode.parentNode.parentNode.parentNode);}else{promptConfirm('&quot;' + this.value + '&quot; is not in our records. Have you searched for other labels? Are you sure this is the correct name and spelling of your tree species?', 'Try again.', 'Continue. I am sure!', function(){document.getElementById('" + code + "').focus();}, function(){setNoticeImage(document.getElementById('" + code + "').parentNode.parentNode.parentNode.parentNode);});}\" oninput=\"setConifer(this);\"/>";
 					htmlToAdd +=		"<div class=\"checkboxTableHolder\">";
 					htmlToAdd +=			"<table class=\"checkboxTable\" id=\"checkboxTable" + code + "\">";
 					htmlToAdd +=				"<tr onclick=\"toggleCheckbox($(this).find('.checkbox'));lastManualConiferSettings['" + code + "'] = $(this).has('.checked').length > 0;\">";
@@ -502,23 +511,23 @@
 					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + code + "\" class=\"checkboxTableOverlay\" onclick=\"queueNotice('alert', 'We\\'ve recognized this plant species and set its &quot;conifer&quot; checkbox automatically, so it is not editable.');\"></div>";
 					htmlToAdd +=		"</div></div>";
                                         htmlToAdd +=            "<div class=\"fieldsLocation\" id=\"fieldsLocation" + code + "\"><div class=\"editableFieldTitle\"></div>";
-                                        htmlToAdd +=            "<div id=\"map"+code+"\" class=\"plantMap\" data-code=\""+code+"\" data-lat=\""+lat+"\" data-lng=\""+lng+"\"></div>";
-                                        htmlToAdd +=            "</div>";
-          				htmlToAdd += 		"<div class=\"editableFieldTitle\">Location change:</div>";
-					htmlToAdd +=		"<table class=\"checkboxTable\">";
+					htmlToAdd +=		"<table class=\"checkboxTable locationChange\">";
 					htmlToAdd +=			"<tr onclick=\"toggleCheckbox($(this).find('.checkbox'));\">";
 					htmlToAdd +=				"<td><div class=\"checkbox\" id=\"moveCheckbox" + code + "\"></div></td>";
-					htmlToAdd +=				"<td>I am moving this code to identify a more suitable tree.</td>";
+					htmlToAdd +=				"<td>I need to move this code to identify a more suitable tree.</td>";
 					htmlToAdd +=				"<td onclick=\"event.stopPropagation();queueNotice('alert', 'If a tag with the code &quot;" + code + "&quot; is hanging on a tree that is dead or otherwise no longer suitable to collect surveys with, check this checkbox and move that tag to another nearby tree. If the new tree is of a different species than the unsuitable tree, go ahead and change the plant species as well. Make sure to click the &quot;Save All&quot; button at the bottom of the page before exiting the page.');\"><img src=\"../images/question.png\"/></td>";
 					htmlToAdd +=			"<tr>";
-					htmlToAdd +=		"</table>";
+				        htmlToAdd +=		"</table>";
+                                        htmlToAdd +=            "<div class=\"moveMapLabel\">Move the pin marker to specify the location of branch "+ code +".</div>";
+                                        htmlToAdd +=            "<div id=\"map"+code+"\" class=\"plantMap\" data-code=\""+code+"\" data-lat=\""+lat+"\" data-lng=\""+lng+"\" data-orig-lat=\""+lat+"\" data-orig-lng=\""+lng+"\" data-species=\""+species+"\"></div>";
+                                        htmlToAdd +=            "</div>";
 					htmlToAdd += 	"</div>";
 					htmlToAdd += "</div>";
 					
 					lastManualConiferSettings[code] = plants[j][3];
 				}
 				htmlToAdd += 	"</div>";
-				htmlToAdd += "</div>";
+ 				htmlToAdd += "</div>";
 				return htmlToAdd;
 			}
 
@@ -542,15 +551,20 @@
 
                         function showSpecies(code) {
                           $(".plantTabs.code"+code+" .plantTab.selected").removeClass("selected");
-                          $(".plantTabs.code"+code+" .plantTab:nth-of-type("+1+")").addClass("selected");
+                          $(".plantTabs.code"+code+" .plantTab:nth-of-type(1)").addClass("selected");
                           
                           $("#fieldsSpecies"+code).css({display: "block"});
                           $("#fieldsLocation"+code).css({display: "none"});
                             
                         }
                         function showLocation(code) {
+                          // switch other location tabs
+                          for (let el of $(".plantTabs .plantTab:nth-of-type(2).selected")) {
+                              showSpecies($(el).data('code'));
+                          }
+                          // 
                           $(".plantTabs.code"+code+" .plantTab.selected").removeClass("selected");
-                          $(".plantTabs.code"+code+" .plantTab:nth-of-type("+2+")").addClass("selected");
+                          $(".plantTabs.code"+code+" .plantTab:nth-of-type(2)").addClass("selected");
 
                           $("#fieldsSpecies"+code).css({display: "none"});
                           $("#fieldsLocation"+code).css({display: "block"});
@@ -582,7 +596,7 @@
                             
                         }
 
-                 async function setMarker(code) {
+                        async function setMarker(code) {
                             const { PinElement, AdvancedMarkerElement } = await google.maps.importLibrary("marker");
                             
 
@@ -591,7 +605,9 @@
                                 loc = new google.maps.LatLng($("#map"+code).data("lat"), $("#map"+code).data("lng"));
                             }
                             map.panTo(loc)
-                                
+
+                            let hasSpecies = $("#map"+code).data("species") != "N/A";
+                            let hasLocation = $("#map"+code).data("orig-lat");
 
                             function getLabelNode(co) {
                                 return $("#map"+co).closest(".plant").find(".code")[0].cloneNode(true);
@@ -624,14 +640,36 @@
                             if(marker) {
                                 marker.map = null;
                             }
-                            
+
                             marker = new AdvancedMarkerElement({
                                 map,
                                 position: loc,
-                                gmpDraggable: true,
                                 title: code,
                                 content: pin.element,
                             });
+
+                            if (hasSpecies || hasLocation) {
+                                $("#fieldsLocation"+code+" .locationChange").show()
+                            }
+
+                            function updateMoveable(moveable) {
+                                if (moveable) {
+                                    $("#fieldsLocation"+code+" .moveMapLabel").show()
+                                    marker.gmpDraggable = true;
+                                } else {
+                                    $("#fieldsLocation"+code+" .moveMapLabel").hide()
+                                    marker.gmpDraggable = false;
+                                }
+                                
+                            }
+
+                            updateMoveable(!hasLocation)
+
+                            $("#fieldsLocation"+code+" .checkbox").on("checked", () => updateMoveable(true))
+                                                                  .on("unchecked", () => updateMoveable(false));
+
+                            
+
 
                             if (popUp) { popUp.setMap(null)};
                             popUp = new MapPopUp(marker.position, node, false, 40);
@@ -648,12 +686,13 @@
                                 showCode();
                             });
                             marker.addListener("dragend", (event) => {
-                             $("#map"+code).data("lat", marker.position.lat);
-                             $("#map"+code).data("lng", marker.position.lng);
+                                $("#map"+code).data("lat", marker.position.lat);
+                                $("#map"+code).data("lng", marker.position.lng);
                                 showCode();
+                                map.panTo(marker.position);
                             });
-                     
-                 }
+                            
+                        }
                  
 		 function setNoticeImage(circle){
 				var inputs = $(circle).find("input");
@@ -773,7 +812,7 @@
 					if (this.readyState == 4 && this.status == 200) {
 						adding = false;
 						$("#addNewCircle")[0].innerHTML = "Add New Circle<div class=\"plusImage\" style=\"background-image:url('../images/plus.png');\"></div>";
-						//setLoadingButton($("#saveAllButton")[0], "Save all", false);
+				    //setLoadingButton($("#saveAllButton")[0], "Save all", false);
 						if(this.responseText.indexOf("true|") == "0"){
 							var newPlants = JSON.parse(this.responseText.replace("true|", ""));
 							$("#circles").append(getCircleHTML([($(".circle").length + 1), newPlants]));
