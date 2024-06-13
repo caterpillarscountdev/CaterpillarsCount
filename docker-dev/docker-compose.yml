@@ -17,6 +17,7 @@ php:
        - mysql
       environment:
        - Openshift=1
+       - CATERPILLARSV2_SERVICE_HOST=mysql
        - DEVELOPMENT_INSTANCE=1
        - DEVCCDB_SERVICE_HOST=mysql
        - HOST_USERNAME=myuser
