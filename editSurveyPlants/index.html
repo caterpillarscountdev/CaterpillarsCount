@@ -42,8 +42,8 @@
 		<script src="../js/template.js?v=3"></script>
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=3"></script>
-		<link href="../css/checkbox.css?v=1" rel="stylesheet">
-		<script src="../js/checkbox.js?v=1"></script>
+		<link href="../css/checkbox.css?v=2" rel="stylesheet">
+		<script src="../js/checkbox.js?v=2"></script>
 		<style>
 			#map-canvas {
               			height: 270px;
@@ -514,9 +514,9 @@
 					htmlToAdd +=		"<table class=\"checkboxTable locationChange\">";
 					htmlToAdd +=			"<tr onclick=\"toggleCheckbox($(this).find('.checkbox'));\">";
 					htmlToAdd +=				"<td><div class=\"checkbox\" id=\"moveCheckbox" + code + "\"></div></td>";
-					htmlToAdd +=				"<td>I need to move this code to identify a more suitable tree.</td>";
+				        htmlToAdd +=				"<td>I am moving this survey branch to a new location or a different plant species.</td>";
 					htmlToAdd +=				"<td onclick=\"event.stopPropagation();queueNotice('alert', 'If a tag with the code &quot;" + code + "&quot; is hanging on a tree that is dead or otherwise no longer suitable to collect surveys with, check this checkbox and move that tag to another nearby tree. If the new tree is of a different species than the unsuitable tree, go ahead and change the plant species as well. Make sure to click the &quot;Save All&quot; button at the bottom of the page before exiting the page.');\"><img src=\"../images/question.png\"/></td>";
-					htmlToAdd +=			"<tr>";
+				        htmlToAdd +=			"<tr>";
 				        htmlToAdd +=		"</table>";
                                         htmlToAdd +=            "<div class=\"moveMapLabel\">Move the pin marker to specify the location of branch "+ code +".</div>";
                                         htmlToAdd +=            "<div id=\"map"+code+"\" class=\"plantMap\" data-code=\""+code+"\" data-lat=\""+lat+"\" data-lng=\""+lng+"\" data-orig-lat=\""+lat+"\" data-orig-lng=\""+lng+"\" data-species=\""+species+"\"></div>";
