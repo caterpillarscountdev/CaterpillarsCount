@@ -1,5 +1,4 @@
 <?php
-/* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
  * <code>
  * N   N  OOO  !!   DDDD   OOO    N   N  OOO  TTTTT   EEEE DDDD  I TTTTT !!
@@ -15,9 +14,9 @@
  * config.inc.php
  *
  * All directives are explained in the documentation
- *
- * @package PhpMyAdmin
  */
+
+declare(strict_types=1);
 
 /**
  * Your phpMyAdmin URL.
@@ -35,8 +34,23 @@
  * an error message if phpMyAdmin cannot auto-detect the correct value.
  *
  * @global string $cfg['PmaAbsoluteUri']
+ * @psalm-suppress PossiblyUndefinedGlobalVariable
  */
 $cfg['PmaAbsoluteUri'] = '';
+
+/**
+ * Configure authentication logging destination
+ *
+ * @global string $cfg['AuthLog']
+ */
+$cfg['AuthLog'] = 'auto';
+
+/**
+ * Whether to log successful authentication attempts
+ *
+ * @global boolean $cfg['AuthLogSuccess']
+ */
+$cfg['AuthLogSuccess'] = false;
 
 /**
  * Disable the default warning that is displayed on the DB Details Structure page if
@@ -77,17 +91,18 @@ $cfg['TranslationWarningThreshold'] = 80;
 
 /**
  * Allows phpMyAdmin to be included from a other document in a frame;
- * setting this to true is a potential security hole
+ * setting this to true is a potential security hole. Setting this to
+ * 'sameorigin' prevents phpMyAdmin to be included from another document
+ * in a frame, unless that document belongs to the same domain.
  *
- * @global boolean $cfg['AllowThirdPartyFraming']
+ * @global boolean|string $cfg['AllowThirdPartyFraming']
  */
 $cfg['AllowThirdPartyFraming'] = false;
 
 /**
- * The 'cookie' auth_type uses AES algorithm to encrypt the password. If
- * at least one server configuration uses 'cookie' auth_type, enter here a
- * pass phrase that will be used by AES. The maximum length seems to be 46
- * characters.
+ * The 'cookie' auth_type uses the Sodium extension to encrypt the cookies. If at least one server configuration
+ * uses 'cookie' auth_type, enter here a generated string of random bytes to be used as an encryption key. The
+ * encryption key must be 32 bytes long.
  *
  * @global string $cfg['blowfish_secret']
  */
@@ -105,7 +120,7 @@ $cfg['blowfish_secret'] = '';
  *
  * @global array $cfg['Servers']
  */
-$cfg['Servers'] = array();
+$cfg['Servers'] = [];
 
 $i = 1;
 
@@ -174,11 +189,12 @@ $cfg['Servers'][$i]['ssl_ciphers'] = null;
 
 /**
  * MySQL 5.6 or later triggers the mysqlnd driver in PHP to validate the
- * peer_name of the SSL certifcate
+ * peer_name of the SSL certificate
  * For most self-signed certificates this is a problem. Setting this to false
  * will disable the check and allow the connection (PHP 5.6.16 or later)
  *
  * @link https://bugs.php.net/68344
+ *
  * @global string $cfg['Servers'][$i]['ssl_verify']
  */
 $cfg['Servers'][$i]['ssl_verify'] = true;
@@ -267,7 +283,7 @@ $cfg['Servers'][$i]['SignonSession'] = '';
  *
  * @global array $cfg['Servers'][$i]['SignonCookieParams']
  */
-$cfg['Servers'][$i]['SignonCookieParams'] = array();
+$cfg['Servers'][$i]['SignonCookieParams'] = [];
 
 /**
  * PHP script to use for 'signon' authentication method
@@ -535,13 +551,14 @@ $cfg['Servers'][$i]['AllowDeny']['order'] = '';
  *
  * @global array $cfg['Servers'][$i]['AllowDeny']['rules']
  */
-$cfg['Servers'][$i]['AllowDeny']['rules'] = array();
+$cfg['Servers'][$i]['AllowDeny']['rules'] = [];
 
 /**
  * Disable use of INFORMATION_SCHEMA.
  *
- * @see https://sourceforge.net/p/phpmyadmin/bugs/2606/
+ * @see https://github.com/phpmyadmin/phpmyadmin/issues/8970
  * @see https://bugs.mysql.com/19588
+ *
  * @global boolean $cfg['Servers'][$i]['DisableIS']
  */
 $cfg['Servers'][$i]['DisableIS'] = false;
@@ -560,8 +577,7 @@ $cfg['Servers'][$i]['tracking_version_auto_create'] = false;
  *
  * @global string $cfg['Servers'][$i]['tracking_default_statements']
  */
-$cfg['Servers'][$i]['tracking_default_statements']
-    = 'CREATE TABLE,ALTER TABLE,DROP TABLE,RENAME TABLE,CREATE INDEX,' .
+$cfg['Servers'][$i]['tracking_default_statements'] = 'CREATE TABLE,ALTER TABLE,DROP TABLE,RENAME TABLE,CREATE INDEX,' .
       'DROP INDEX,INSERT,UPDATE,DELETE,TRUNCATE,REPLACE,CREATE VIEW,' .
       'ALTER VIEW,DROP VIEW,CREATE DATABASE,ALTER DATABASE,DROP DATABASE';
 
@@ -590,6 +606,13 @@ $cfg['Servers'][$i]['tracking_add_drop_table'] = true;
 $cfg['Servers'][$i]['tracking_add_drop_database'] = true;
 
 /**
+ * Whether to show or hide detailed MySQL/MariaDB connection errors on the login page.
+ *
+ * @global bool $cfg['Servers'][$i]['hide_connection_errors']
+ */
+$cfg['Servers'][$i]['hide_connection_errors'] = false;
+
+/**
  * Default server (0 = no default server)
  *
  * If you have more than one server configured, you can set $cfg['ServerDefault']
@@ -602,7 +625,7 @@ $cfg['Servers'][$i]['tracking_add_drop_database'] = true;
  */
 $cfg['ServerDefault'] = 1;
 
-/*
+/**
  * Other core phpMyAdmin settings
  */
 
@@ -626,7 +649,7 @@ if (defined('VERSION_CHECK_DEFAULT')) {
  *
  * @global string $cfg['ProxyUrl']
  */
-$cfg['ProxyUrl'] = "";
+$cfg['ProxyUrl'] = '';
 
 /**
  * The username for authenticating with the proxy. By default, no
@@ -636,14 +659,14 @@ $cfg['ProxyUrl'] = "";
  *
  * @global string $cfg['ProxyUser']
  */
-$cfg['ProxyUser'] = "";
+$cfg['ProxyUser'] = '';
 
 /**
  * The password for authenticating with the proxy.
  *
  * @global string $cfg['ProxyPass']
  */
-$cfg['ProxyPass'] = "";
+$cfg['ProxyPass'] = '';
 
 /**
  * maximum number of db's displayed in database list
@@ -700,6 +723,13 @@ $cfg['ExecTimeLimit'] = 300;
  * @global integer $cfg['SessionSavePath']
  */
 $cfg['SessionSavePath'] = '';
+
+/**
+ * Hosts or IPs to consider safe when checking if SSL is used or not
+ *
+ * @global array $cfg['MysqlSslWarningSafeHosts']
+ */
+$cfg['MysqlSslWarningSafeHosts'] = ['127.0.0.1', 'localhost'];
 
 /**
  * maximum allocated bytes ('-1' for no limit, '0' for no change)
@@ -760,6 +790,18 @@ $cfg['AllowUserDropDatabase'] = false;
 $cfg['Confirm'] = true;
 
 /**
+ * sets SameSite attribute of the Set-Cookie HTTP response header
+ *
+ * Valid values are:
+ *    - Lax
+ *    - Strict
+ *    - None
+ *
+ * @global string $cfg['CookieSameSite']
+ */
+$cfg['CookieSameSite'] = 'Strict';
+
+/**
  * recall previous login in cookie authentication mode or not
  *
  * @global boolean $cfg['LoginCookieRecall']
@@ -804,6 +846,20 @@ $cfg['UseDbSearch'] = true;
 $cfg['IgnoreMultiSubmitErrors'] = false;
 
 /**
+ * Define whether phpMyAdmin will encrypt sensitive data from the URL query string.
+ *
+ * @global bool $cfg['URLQueryEncryption']
+ */
+$cfg['URLQueryEncryption'] = false;
+
+/**
+ * A secret key used to encrypt/decrypt the URL query string. Should be 32 bytes long.
+ *
+ * @global string $cfg['URLQueryEncryptionSecretKey']
+ */
+$cfg['URLQueryEncryptionSecretKey'] = '';
+
+/**
  * allow login to any user entered server in cookie based authentication
  *
  * @global boolean $cfg['AllowArbitraryServer']
@@ -819,6 +875,42 @@ $cfg['AllowArbitraryServer'] = false;
 $cfg['ArbitraryServerRegexp'] = '';
 
 /**
+ * To enable reCaptcha v2 checkbox mode if necessary
+ *
+ * @global string $cfg['CaptchaMethod']
+ */
+$cfg['CaptchaMethod'] = 'invisible';
+
+/**
+ * URL for the reCaptcha v2 compatible API to use
+ *
+ * @global string $cfg['CaptchaApi']
+ */
+$cfg['CaptchaApi'] = 'https://www.google.com/recaptcha/api.js';
+
+/**
+ * Content-Security-Policy snippet for the reCaptcha v2 compatible API
+ *
+ * @global string $cfg['CaptchaCsp']
+ */
+$cfg['CaptchaCsp'] = 'https://apis.google.com https://www.google.com/recaptcha/'
+    . ' https://www.gstatic.com/recaptcha/ https://ssl.gstatic.com/';
+
+/**
+ * reCaptcha API's request parameter name
+ *
+ * @global string $cfg['CaptchaRequestParam']
+ */
+$cfg['CaptchaRequestParam'] = 'g-recaptcha';
+
+/**
+ * reCaptcha API's response parameter name
+ *
+ * @global string $cfg['CaptchaResponseParam']
+ */
+$cfg['CaptchaResponseParam'] = 'g-recaptcha-response';
+
+/**
  * if reCaptcha is enabled it needs public key to connect with the service
  *
  * @global string $cfg['CaptchaLoginPublicKey']
@@ -831,6 +923,22 @@ $cfg['CaptchaLoginPublicKey'] = '';
  * @global string $cfg['CaptchaLoginPrivateKey']
  */
 $cfg['CaptchaLoginPrivateKey'] = '';
+
+/**
+ * if reCaptcha is enabled may need an URL for site verify
+ *
+ * @global string $cfg['CaptchaSiteVerifyURL']
+ */
+$cfg['CaptchaSiteVerifyURL'] = '';
+
+/**
+ * Enable drag and drop import
+ *
+ * @see feature request : https://github.com/phpmyadmin/phpmyadmin/issues/13155
+ *
+ * @global bool $cfg['enable_drag_drop_import']
+ */
+$cfg['enable_drag_drop_import'] = true;
 
 /*******************************************************************************
  * Navigation panel setup
@@ -964,7 +1072,7 @@ $cfg['NavigationTreeDisplayDbFilterMinimum'] = 30;
  * target of the navigation panel quick access icon
  *
  * Possible values:
- * 'structure.php' = fields list
+ * 'structure' = fields list
  * 'sql' = SQL form
  * 'search' = search page
  * 'insert' = insert row page
@@ -1031,6 +1139,20 @@ $cfg['NavigationTreeShowProcedures'] = true;
  */
 $cfg['NavigationTreeShowEvents'] = true;
 
+/**
+ * Width of navigation panel
+ *
+ * @global integer $cfg['NavigationWidth']
+ */
+$cfg['NavigationWidth'] = 240;
+
+/**
+ * Automatically expands single database in navigation panel
+ *
+ * @global boolean $cfg['NavigationAutoexpandSingleDb']
+ */
+$cfg['NavigationTreeAutoexpandSingleDb'] = true;
+
 /*******************************************************************************
  * In the main panel, at startup...
  */
@@ -1076,7 +1198,8 @@ $cfg['ShowCreateDb'] = true;
  * Database structure
  */
 
-/** show charset column in database structure (true|false)?
+/**
+ * show charset column in database structure (true|false)?
  *
  * @global boolean $cfg['ShowDbStructureCharset']
  */
@@ -1180,7 +1303,7 @@ $cfg['SaveCellsAtOnce'] = false;
  *
  * @global string $cfg['GridEditing']
  */
-$cfg['GridEditing'] ='double-click';
+$cfg['GridEditing'] = 'double-click';
 
 /**
  * Options > Relational display
@@ -1190,7 +1313,6 @@ $cfg['GridEditing'] ='double-click';
  * 'D' for display column
  *
  * @global string $cfg['RelationalDisplay']
- *
  */
 $cfg['RelationalDisplay'] = 'K';
 
@@ -1261,7 +1383,10 @@ $cfg['InsertRows'] = 2;
  *
  * @global array $cfg['ForeignKeyDropdownOrder']
  */
-$cfg['ForeignKeyDropdownOrder'] = array('content-id', 'id-content');
+$cfg['ForeignKeyDropdownOrder'] = [
+    'content-id',
+    'id-content',
+];
 
 /**
  * A drop-down list will be used if fewer items are present
@@ -1382,7 +1507,7 @@ $cfg['RowActionType'] = 'both';
 /*******************************************************************************
  * Export defaults
  */
-$cfg['Export'] = array();
+$cfg['Export'] = [];
 
 /**
  * codegen/csv/excel/htmlexcel/htmlword/latex/ods/odt/pdf/sql/texytext/xml/yaml
@@ -1420,253 +1545,181 @@ $cfg['Export']['lock_tables'] = false;
 $cfg['Export']['as_separate_files'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['asfile']
  */
 $cfg['Export']['asfile'] = true;
 
 /**
- *
- *
  * @global string $cfg['Export']['charset']
  */
 $cfg['Export']['charset'] = '';
 
 /**
- *
- *
  * @global boolean $cfg['Export']['onserver']
  */
 $cfg['Export']['onserver'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['onserver_overwrite']
  */
 $cfg['Export']['onserver_overwrite'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['quick_export_onserver']
  */
 $cfg['Export']['quick_export_onserver'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['quick_export_onserver_overwrite']
  */
 $cfg['Export']['quick_export_onserver_overwrite'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['remember_file_template']
  */
 $cfg['Export']['remember_file_template'] = true;
 
 /**
- *
- *
  * @global string $cfg['Export']['file_template_table']
  */
 $cfg['Export']['file_template_table'] = '@TABLE@';
 
 /**
- *
- *
  * @global string $cfg['Export']['file_template_database']
  */
 $cfg['Export']['file_template_database'] = '@DATABASE@';
 
 /**
- *
- *
  * @global string $cfg['Export']['file_template_server']
  */
 $cfg['Export']['file_template_server'] = '@SERVER@';
 
 /**
- *
- *
  * @global string $cfg['Export']['codegen_structure_or_data']
  */
 $cfg['Export']['codegen_structure_or_data'] = 'data';
 
 /**
- *
- *
  * @global $cfg['Export']['codegen_format']
  */
 $cfg['Export']['codegen_format'] = 0;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['ods_columns']
  */
 $cfg['Export']['ods_columns'] = false;
 
 /**
- *
- *
  * @global string $cfg['Export']['ods_null']
  */
 $cfg['Export']['ods_null'] = 'NULL';
 
 /**
- *
- *
  * @global string $cfg['Export']['odt_structure_or_data']
  */
 $cfg['Export']['odt_structure_or_data'] = 'structure_and_data';
 
 /**
- *
- *
  * @global boolean $cfg['Export']['odt_columns']
  */
 $cfg['Export']['odt_columns'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['odt_relation']
  */
 $cfg['Export']['odt_relation'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['odt_comments']
  */
 $cfg['Export']['odt_comments'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['odt_mime']
  */
 $cfg['Export']['odt_mime'] = true;
 
 /**
- *
- *
  * @global string $cfg['Export']['odt_null']
  */
 $cfg['Export']['odt_null'] = 'NULL';
 
 /**
- *
- *
  * @global boolean $cfg['Export']['htmlword_structure_or_data']
  */
 $cfg['Export']['htmlword_structure_or_data'] = 'structure_and_data';
 
 /**
- *
- *
  * @global boolean $cfg['Export']['htmlword_columns']
  */
 $cfg['Export']['htmlword_columns'] = false;
 
 /**
- *
- *
  * @global string $cfg['Export']['htmlword_null']
  */
 $cfg['Export']['htmlword_null'] = 'NULL';
 
 /**
- *
- *
  * @global string $cfg['Export']['texytext_structure_or_data']
  */
 $cfg['Export']['texytext_structure_or_data'] = 'structure_and_data';
 
 /**
- *
- *
  * @global boolean $cfg['Export']['texytext_columns']
  */
 $cfg['Export']['texytext_columns'] = false;
 
 /**
- *
- *
  * @global string $cfg['Export']['texytext_null']
  */
 $cfg['Export']['texytext_null'] = 'NULL';
 
 /**
- *
- *
  * @global boolean $cfg['Export']['csv_columns']
  */
-$cfg['Export']['csv_columns'] = false;
+$cfg['Export']['csv_columns'] = true;
 
 /**
- *
- *
  * @global string $cfg['Export']['csv_structure_or_data']
  */
 $cfg['Export']['csv_structure_or_data'] = 'data';
 
 /**
- *
- *
  * @global string $cfg['Export']['csv_null']
  */
 $cfg['Export']['csv_null'] = 'NULL';
 
 /**
- *
- *
  * @global string $cfg['Export']['csv_separator']
  */
 $cfg['Export']['csv_separator'] = ',';
 
 /**
- *
- *
  * @global string $cfg['Export']['csv_enclosed']
  */
 $cfg['Export']['csv_enclosed'] = '"';
 
 /**
- *
- *
  * @global string $cfg['Export']['csv_escaped']
  */
 $cfg['Export']['csv_escaped'] = '"';
 
 /**
- *
- *
  * @global string $cfg['Export']['csv_terminated']
  */
 $cfg['Export']['csv_terminated'] = 'AUTO';
 
 /**
- *
- *
  * @global string $cfg['Export']['csv_removeCRLF']
  */
 $cfg['Export']['csv_removeCRLF'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['excel_columns']
  */
 $cfg['Export']['excel_columns'] = true;
 
 /**
- *
- *
  * @global string $cfg['Export']['excel_null']
  */
 $cfg['Export']['excel_null'] = 'NULL';
@@ -1679,156 +1732,111 @@ $cfg['Export']['excel_null'] = 'NULL';
 $cfg['Export']['excel_edition'] = 'win';
 
 /**
- *
- *
  * @global string $cfg['Export']['excel_removeCRLF']
  */
 $cfg['Export']['excel_removeCRLF'] = false;
 
 /**
- *
- *
  * @global string $cfg['Export']['excel_structure_or_data']
  */
 $cfg['Export']['excel_structure_or_data'] = 'data';
 
 /**
- *
- *
  * @global string $cfg['Export']['latex_structure_or_data']
  */
 $cfg['Export']['latex_structure_or_data'] = 'structure_and_data';
 
 /**
- *
- *
  * @global boolean $cfg['Export']['latex_columns']
  */
 $cfg['Export']['latex_columns'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['latex_relation']
  */
 $cfg['Export']['latex_relation'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['latex_comments']
  */
 $cfg['Export']['latex_comments'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['latex_mime']
  */
 $cfg['Export']['latex_mime'] = true;
 
 /**
- *
- *
  * @global string $cfg['Export']['latex_null']
  */
 $cfg['Export']['latex_null'] = '\textit{NULL}';
 
 /**
- *
- *
  * @global boolean $cfg['Export']['latex_caption']
  */
 $cfg['Export']['latex_caption'] = true;
 
 /**
- *
- *
  * @global string $cfg['Export']['latex_structure_caption']
  */
 $cfg['Export']['latex_structure_caption'] = 'strLatexStructure';
 
 /**
- *
- *
  * @global string $cfg['Export']['latex_structure_continued_caption']
  */
-$cfg['Export']['latex_structure_continued_caption']
-    = 'strLatexStructure strLatexContinued';
+$cfg['Export']['latex_structure_continued_caption'] = 'strLatexStructure strLatexContinued';
 
 /**
- *
- *
  * @global string $cfg['Export']['latex_data_caption']
  */
 $cfg['Export']['latex_data_caption'] = 'strLatexContent';
 
 /**
- *
- *
  * @global string $cfg['Export']['latex_data_continued_caption']
  */
 $cfg['Export']['latex_data_continued_caption'] = 'strLatexContent strLatexContinued';
 
 /**
- *
- *
  * @global string $cfg['Export']['latex_data_label']
  */
 $cfg['Export']['latex_data_label'] = 'tab:@TABLE@-data';
 
 /**
- *
- *
  * @global string $cfg['Export']['latex_structure_label']
  */
 $cfg['Export']['latex_structure_label'] = 'tab:@TABLE@-structure';
 
 /**
- *
- *
  * @global string $cfg['Export']['mediawiki_structure_or_data']
  */
 $cfg['Export']['mediawiki_structure_or_data'] = 'data';
 
 /**
- *
- *
  * @global boolean $cfg['Export']['mediawiki_caption']
  */
 $cfg['Export']['mediawiki_caption'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['mediawiki_headers']
  */
 $cfg['Export']['mediawiki_headers'] = true;
 
 /**
- *
- *
  * @global string $cfg['Export']['ods_structure_or_data']
  */
 $cfg['Export']['ods_structure_or_data'] = 'data';
 
 /**
- *
- *
  * @global string $cfg['Export']['pdf_structure_or_data']
  */
 $cfg['Export']['pdf_structure_or_data'] = 'data';
 
 /**
- *
- *
  * @global string $cfg['Export']['phparray_structure_or_data']
  */
 $cfg['Export']['phparray_structure_or_data'] = 'data';
 
 /**
- *
- *
  * @global string $cfg['Export']['json_structure_or_data']
  */
 $cfg['Export']['json_structure_or_data'] = 'data';
@@ -1841,15 +1849,23 @@ $cfg['Export']['json_structure_or_data'] = 'data';
 $cfg['Export']['json_pretty_print'] = false;
 
 /**
+ * Export functions
  *
- *
+ * @global string $cfg['Export']['json_unicode']
+ */
+$cfg['Export']['json_unicode'] = true;
+
+/**
+ * @global string $cfg['Export']['remove_definer_from_definitions']
+ */
+$cfg['Export']['remove_definer_from_definitions'] = false;
+
+/**
  * @global string $cfg['Export']['sql_structure_or_data']
  */
 $cfg['Export']['sql_structure_or_data'] = 'structure_and_data';
 
 /**
- *
- *
  * @global string $cfg['Export']['sql_compatibility']
  */
 $cfg['Export']['sql_compatibility'] = 'NONE';
@@ -1862,136 +1878,109 @@ $cfg['Export']['sql_compatibility'] = 'NONE';
 $cfg['Export']['sql_include_comments'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_disable_fk']
  */
 $cfg['Export']['sql_disable_fk'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_views_as_tables']
  */
 $cfg['Export']['sql_views_as_tables'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_metadata']
  */
 $cfg['Export']['sql_metadata'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_use_transaction']
  */
 $cfg['Export']['sql_use_transaction'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_create_database']
  */
 $cfg['Export']['sql_create_database'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_drop_database']
  */
 $cfg['Export']['sql_drop_database'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_drop_table']
  */
 $cfg['Export']['sql_drop_table'] = false;
 
 /**
- *
- *
  * true by default for correct behavior when dealing with exporting
  * of VIEWs and the stand-in table
+ *
  * @global boolean $cfg['Export']['sql_if_not_exists']
  */
 $cfg['Export']['sql_if_not_exists'] = false;
 
 /**
- *
- *
+ * @global boolean $cfg['Export']['sql_view_current_user']
+ */
+$cfg['Export']['sql_view_current_user'] = false;
+
+/**
+ * @global boolean $cfg['Export']['sql_or_replace']
+ */
+$cfg['Export']['sql_or_replace_view'] = false;
+
+/**
  * @global boolean $cfg['Export']['sql_procedure_function']
  */
 $cfg['Export']['sql_procedure_function'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_create_table']
  */
 $cfg['Export']['sql_create_table'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_create_view']
  */
 $cfg['Export']['sql_create_view'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_create_trigger']
  */
 $cfg['Export']['sql_create_trigger'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_auto_increment']
  */
 $cfg['Export']['sql_auto_increment'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_backquotes']
  */
 $cfg['Export']['sql_backquotes'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_dates']
  */
 $cfg['Export']['sql_dates'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_relation']
  */
 $cfg['Export']['sql_relation'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_truncate']
  */
 $cfg['Export']['sql_truncate'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_delayed']
  */
 $cfg['Export']['sql_delayed'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_ignore']
  */
 $cfg['Export']['sql_ignore'] = false;
@@ -2004,8 +1993,6 @@ $cfg['Export']['sql_ignore'] = false;
 $cfg['Export']['sql_utc_time'] = true;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_hex_for_binary']
  */
 $cfg['Export']['sql_hex_for_binary'] = true;
@@ -2018,15 +2005,11 @@ $cfg['Export']['sql_hex_for_binary'] = true;
 $cfg['Export']['sql_type'] = 'INSERT';
 
 /**
- *
- *
  * @global integer $cfg['Export']['sql_max_query_size']
  */
 $cfg['Export']['sql_max_query_size'] = 50000;
 
 /**
- *
- *
  * @global boolean $cfg['Export']['sql_mime']
  */
 $cfg['Export']['sql_mime'] = false;
@@ -2046,16 +2029,12 @@ $cfg['Export']['sql_header_comment'] = '';
 $cfg['Export']['sql_insert_syntax'] = 'both';
 
 /**
- *
- *
  * @global string $cfg['Export']['pdf_report_title']
  */
 $cfg['Export']['pdf_report_title'] = '';
 
 /**
- *
- *
- *@global string $cfg['Export']['xml_structure_or_data']
+ * @global string $cfg['Export']['xml_structure_or_data']
  */
 $cfg['Export']['xml_structure_or_data'] = 'data';
 
@@ -2116,8 +2095,6 @@ $cfg['Export']['xml_export_views'] = true;
 $cfg['Export']['xml_export_contents'] = true;
 
 /**
- *
- *
  * @global string $cfg['Export']['yaml_structure_or_data']
  */
 $cfg['Export']['yaml_structure_or_data'] = 'data';
@@ -2125,11 +2102,9 @@ $cfg['Export']['yaml_structure_or_data'] = 'data';
 /*******************************************************************************
  * Import defaults
  */
-$cfg['Import'] = array();
+$cfg['Import'] = [];
 
 /**
- *
- *
  * @global string $cfg['Import']['format']
  */
 $cfg['Import']['format'] = 'sql';
@@ -2142,141 +2117,101 @@ $cfg['Import']['format'] = 'sql';
 $cfg['Import']['charset'] = '';
 
 /**
- *
- *
  * @global boolean $cfg['Import']['allow_interrupt']
  */
 $cfg['Import']['allow_interrupt'] = true;
 
 /**
- *
- *
  * @global integer $cfg['Import']['skip_queries']
  */
 $cfg['Import']['skip_queries'] = 0;
 
 /**
- *
- *
  * @global string $cfg['Import']['sql_compatibility']
  */
 $cfg['Import']['sql_compatibility'] = 'NONE';
 
 /**
- *
- *
  * @global string $cfg['Import']['sql_no_auto_value_on_zero']
  */
 $cfg['Import']['sql_no_auto_value_on_zero'] = true;
 
 /**
- *
- *
  * @global string $cfg['Import']['sql_read_as_multibytes']
  */
 $cfg['Import']['sql_read_as_multibytes'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Import']['csv_replace']
  */
 $cfg['Import']['csv_replace'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Import']['csv_ignore']
  */
 $cfg['Import']['csv_ignore'] = false;
 
 /**
- *
- *
  * @global string $cfg['Import']['csv_terminated']
  */
 $cfg['Import']['csv_terminated'] = ',';
 
 /**
- *
- *
  * @global string $cfg['Import']['csv_enclosed']
  */
 $cfg['Import']['csv_enclosed'] = '"';
 
 /**
- *
- *
  * @global string $cfg['Import']['csv_escaped']
  */
 $cfg['Import']['csv_escaped'] = '"';
 
 /**
- *
- *
  * @global string $cfg['Import']['csv_new_line']
  */
 $cfg['Import']['csv_new_line'] = 'auto';
 
 /**
- *
- *
  * @global string $cfg['Import']['csv_columns']
  */
 $cfg['Import']['csv_columns'] = '';
 
 /**
- *
- *
  * @global string $cfg['Import']['csv_col_names']
  */
 $cfg['Import']['csv_col_names'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Import']['ldi_replace']
  */
 $cfg['Import']['ldi_replace'] = false;
 
 /**
- *
- *
  * @global boolean $cfg['Import']['ldi_ignore']
  */
 $cfg['Import']['ldi_ignore'] = false;
 
 /**
- *
- *
  * @global string $cfg['Import']['ldi_terminated']
  */
 $cfg['Import']['ldi_terminated'] = ';';
 
 /**
- *
- *
  * @global string $cfg['Import']['ldi_enclosed']
  */
 $cfg['Import']['ldi_enclosed'] = '"';
 
 /**
- *
- *
  * @global string $cfg['Import']['ldi_escaped']
  */
 $cfg['Import']['ldi_escaped'] = '\\';
 
 /**
- *
- *
  * @global string $cfg['Import']['ldi_new_line']
  */
 $cfg['Import']['ldi_new_line'] = 'auto';
 
 /**
- *
- *
  * @global string $cfg['Import']['ldi_columns']
  */
 $cfg['Import']['ldi_columns'] = '';
@@ -2289,29 +2224,21 @@ $cfg['Import']['ldi_columns'] = '';
 $cfg['Import']['ldi_local_option'] = 'auto';
 
 /**
- *
- *
  * @global string $cfg['Import']['ods_col_names']
  */
 $cfg['Import']['ods_col_names'] = false;
 
 /**
- *
- *
  * @global string $cfg['Import']['ods_empty_rows']
  */
 $cfg['Import']['ods_empty_rows'] = true;
 
 /**
- *
- *
  * @global string $cfg['Import']['ods_recognize_percentages']
  */
 $cfg['Import']['ods_recognize_percentages'] = true;
 
 /**
- *
- *
  * @global string $cfg['Import']['ods_recognize_currency']
  */
 $cfg['Import']['ods_recognize_currency'] = true;
@@ -2319,7 +2246,7 @@ $cfg['Import']['ods_recognize_currency'] = true;
 /*******************************************************************************
  * Schema export defaults
 */
-$cfg['Schema'] = array();
+$cfg['Schema'] = [];
 
 /**
  * pdf/eps/dia/svg
@@ -2329,22 +2256,16 @@ $cfg['Schema'] = array();
 $cfg['Schema']['format'] = 'pdf';
 
 /**
- *
- *
  * @global string $cfg['Schema']['pdf_show_color']
  */
 $cfg['Schema']['pdf_show_color'] = true;
 
 /**
- *
- *
  * @global string $cfg['Schema']['pdf_show_keys']
  */
 $cfg['Schema']['pdf_show_keys'] = false;
 
 /**
- *
- *
  * @global string $cfg['Schema']['pdf_all_tables_same_width']
  */
 $cfg['Schema']['pdf_all_tables_same_width'] = false;
@@ -2357,43 +2278,31 @@ $cfg['Schema']['pdf_all_tables_same_width'] = false;
 $cfg['Schema']['pdf_orientation'] = 'L';
 
 /**
- *
- *
  * @global string $cfg['Schema']['pdf_paper']
  */
 $cfg['Schema']['pdf_paper'] = 'A4';
 
 /**
- *
- *
  * @global string $cfg['Schema']['pdf_show_grid']
  */
 $cfg['Schema']['pdf_show_grid'] = false;
 
 /**
- *
- *
  * @global string $cfg['Schema']['pdf_with_doc']
  */
 $cfg['Schema']['pdf_with_doc'] = true;
 
 /**
- *
- *
  * @global string $cfg['Schema']['pdf_table_order']
  */
 $cfg['Schema']['pdf_table_order'] = '';
 
 /**
- *
- *
  * @global string $cfg['Schema']['dia_show_color']
  */
 $cfg['Schema']['dia_show_color'] = true;
 
 /**
- *
- *
  * @global string $cfg['Schema']['dia_show_keys']
  */
 $cfg['Schema']['dia_show_keys'] = false;
@@ -2406,29 +2315,21 @@ $cfg['Schema']['dia_show_keys'] = false;
 $cfg['Schema']['dia_orientation'] = 'L';
 
 /**
- *
- *
  * @global string $cfg['Schema']['dia_paper']
  */
 $cfg['Schema']['dia_paper'] = 'A4';
 
 /**
- *
- *
  * @global string $cfg['Schema']['eps_show_color']
  */
 $cfg['Schema']['eps_show_color'] = true;
 
 /**
- *
- *
  * @global string $cfg['Schema']['eps_show_keys']
  */
 $cfg['Schema']['eps_show_keys'] = false;
 
 /**
- *
- *
  * @global string $cfg['Schema']['eps_all_tables_same_width']
  */
 $cfg['Schema']['eps_all_tables_same_width'] = false;
@@ -2441,22 +2342,16 @@ $cfg['Schema']['eps_all_tables_same_width'] = false;
 $cfg['Schema']['eps_orientation'] = 'L';
 
 /**
- *
- *
  * @global string $cfg['Schema']['svg_show_color']
  */
 $cfg['Schema']['svg_show_color'] = true;
 
 /**
- *
- *
  * @global string $cfg['Schema']['svg_show_keys']
  */
 $cfg['Schema']['svg_show_keys'] = false;
 
 /**
- *
- *
  * @global string $cfg['Schema']['svg_all_tables_same_width']
  */
 $cfg['Schema']['svg_all_tables_same_width'] = false;
@@ -2466,15 +2361,17 @@ $cfg['Schema']['svg_all_tables_same_width'] = false;
  */
 
 /**
- *
- *
  * @global array $cfg['PDFPageSizes']
  */
-$cfg['PDFPageSizes'] = array('A3', 'A4', 'A5', 'letter', 'legal');
+$cfg['PDFPageSizes'] = [
+    'A3',
+    'A4',
+    'A5',
+    'letter',
+    'legal',
+];
 
 /**
- *
- *
  * @global string $cfg['PDFDefaultPageSize']
  */
 $cfg['PDFDefaultPageSize'] = 'A4';
@@ -2530,7 +2427,7 @@ $cfg['RecodingEngine'] = 'auto';
 /**
  * Specify some parameters for iconv used in character set conversion. See iconv
  * documentation for details:
- * https://www.gnu.org/software/libiconv/documentation/libiconv/iconv_open.3.html
+ * https://www.gnu.org/savannah-checkouts/gnu/libiconv/documentation/libiconv-1.15/iconv_open.3.html
  *
  * @global string $cfg['IconvExtraParams']
  */
@@ -2544,7 +2441,7 @@ $cfg['IconvExtraParams'] = '//TRANSLIT';
  *
  * @global array $cfg['AvailableCharsets']
  */
-$cfg['AvailableCharsets'] = array(
+$cfg['AvailableCharsets'] = [
     'iso-8859-1',
     'iso-8859-2',
     'iso-8859-3',
@@ -2578,19 +2475,17 @@ $cfg['AvailableCharsets'] = array(
     'SHIFT_JIS',
     'SJIS',
     'SJIS-win',
-);
+];
 
 
 /*******************************************************************************
  * Customization & design
  *
- * The graphical settings are now located in themes/theme-name/layout.inc.php
+ * The graphical settings are now located in themes/theme-name/scss/_variables.scss
  */
 
 /**
  * enable the left panel pointer
- * see also LeftPointerColor
- * in layout.inc.php
  *
  * @global boolean $cfg['NavigationTreePointerEnable']
  */
@@ -2598,8 +2493,6 @@ $cfg['NavigationTreePointerEnable'] = true;
 
 /**
  * enable the browse pointer
- * see also BrowsePointerColor
- * in layout.inc.php
  *
  * @global boolean $cfg['BrowsePointerEnable']
  */
@@ -2607,8 +2500,6 @@ $cfg['BrowsePointerEnable'] = true;
 
 /**
  * enable the browse marker
- * see also BrowseMarkerColor
- * in layout.inc.php
  *
  * @global boolean $cfg['BrowseMarkerEnable']
  */
@@ -2656,7 +2547,7 @@ $cfg['CharTextareaCols'] = 40;
  *
  * @global integer $cfg['CharTextareaRows']
  */
-$cfg['CharTextareaRows'] = 2;
+$cfg['CharTextareaRows'] = 7;
 
 /**
  * Max field data length in browse mode for all non-numeric fields
@@ -2683,6 +2574,7 @@ $cfg['RowActionLinksWithoutUnique'] = false;
 
 /**
  * Default sort order by primary key.
+ *
  * @global string $cfg['TablePrimaryKeyOrder']
  */
 $cfg['TablePrimaryKeyOrder'] = 'NONE';
@@ -2706,7 +2598,7 @@ $cfg['ShowBrowseComments'] = true;
  *
  * @global boolean $cfg['ShowPropertyComments']
  */
-$cfg['ShowPropertyComments']= true;
+$cfg['ShowPropertyComments'] = true;
 
 /**
  * repeat header names every X cells? (0 = deactivate)
@@ -2742,7 +2634,7 @@ $cfg['BrowseMIME'] = true;
  *
  * @global integer $cfg['MaxExactCount']
  */
-$cfg['MaxExactCount'] = 500000;
+$cfg['MaxExactCount'] = 50000;
 
 /**
  * Zero means that no row count is done for views; see the doc
@@ -2772,7 +2664,7 @@ $cfg['InitialSlidersState'] = 'closed';
  *
  * @global array $cfg['UserprefsDisallow']
  */
-$cfg['UserprefsDisallow'] = array();
+$cfg['UserprefsDisallow'] = [];
 
 /**
  * User preferences: enable the Developer tab
@@ -2806,6 +2698,7 @@ $cfg['TitleServer'] = '@HTTP_HOST@ / @VSERVER@ | @PHPMYADMIN@';
 
 /**
  * title of browser window when nothing is selected
+ *
  * @global string $cfg['TitleDefault']
  */
 $cfg['TitleDefault'] = '@HTTP_HOST@ | @PHPMYADMIN@';
@@ -2839,10 +2732,6 @@ $cfg['ThemeDefault'] = 'pmahomme';
 $cfg['ThemePerServer'] = false;
 
 
-/*******************************************************************************
- *
- */
-
 /**
  * Default query for table
  *
@@ -2864,7 +2753,7 @@ $cfg['DefaultQueryDatabase'] = '';
  *
  * @global array $cfg['SQLQuery']
  */
-$cfg['SQLQuery'] = array();
+$cfg['SQLQuery'] = [];
 
 /**
  * Display an "Edit" link on the results page to change a query
@@ -2929,8 +2818,11 @@ $cfg['SaveDir'] = '';
  *
  * @global string $cfg['TempDir']
  */
-$cfg['TempDir'] = '';
-
+if (defined('TEMP_DIR')) {
+    $cfg['TempDir'] = TEMP_DIR;
+} else {
+    $cfg['TempDir'] = ROOT_PATH . 'tmp' . DIRECTORY_SEPARATOR;
+}
 
 /**
  * Misc. settings
@@ -2949,7 +2841,7 @@ $cfg['GD2Available'] = 'auto';
  *
  * @global array $cfg['TrustedProxies']
  */
-$cfg['TrustedProxies'] = array();
+$cfg['TrustedProxies'] = [];
 
 /**
  * We normally check the permissions on the configuration file to ensure
@@ -2965,7 +2857,7 @@ $cfg['CheckConfigurationPermissions'] = true;
  * is replaced by form with button.
  * This is required as some web servers (IIS) have problems with long URLs.
  * The recommended limit is 2000
- * (see https://www.boutell.com/newfaq/misc/urllength.html) but we put
+ * (see https://stackoverflow.com/a/417184/5155484) but we put
  * 1000 to accommodate Suhosin, see bug #3358750.
  */
 $cfg['LinkLengthLimit'] = 1000;
@@ -2973,7 +2865,7 @@ $cfg['LinkLengthLimit'] = 1000;
 /**
  * Additional string to allow in CSP headers.
  */
- $cfg['CSPAllow'] = '';
+$cfg['CSPAllow'] = '';
 
 /**
  * Disable the table maintenance mass operations, like optimizing or
@@ -3012,7 +2904,7 @@ $cfg['ZeroConf'] = true;
  *
  * @global array $cfg['DBG']
  */
-$cfg['DBG'] = array();
+$cfg['DBG'] = [];
 
 /**
  * Output executed queries and their execution times
@@ -3024,7 +2916,7 @@ $cfg['DBG']['sql'] = false;
 /**
  * Log executed queries and their execution times to syslog
  *
- * @global boolean $cfg['DBG']['sql']
+ * @global boolean $cfg['DBG']['sqllog']
  */
 $cfg['DBG']['sqllog'] = false;
 
@@ -3035,6 +2927,22 @@ $cfg['DBG']['sqllog'] = false;
  */
 $cfg['DBG']['demo'] = false;
 
+/**
+ * Enable Simple two-factor authentication
+ *
+ * @global boolean $cfg['DBG']['simple2fa']
+ */
+$cfg['DBG']['simple2fa'] = false;
+
+/**
+ * Sets the working environment
+ *
+ * This only needs to be changed when you are developing phpMyAdmin itself.
+ * The development mode may display debug information in some places.
+ *
+ * Possible values are 'production' or 'development'
+ */
+$cfg['environment'] = 'production';
 
 /*******************************************************************************
  * MySQL settings
@@ -3045,14 +2953,14 @@ $cfg['DBG']['demo'] = false;
  *
  * @global array $cfg['DefaultFunctions']
  */
-$cfg['DefaultFunctions'] = array(
+$cfg['DefaultFunctions'] = [
     'FUNC_CHAR' => '',
     'FUNC_DATE' => '',
     'FUNC_NUMBER' => '',
     'FUNC_SPATIAL' => 'GeomFromText',
     'FUNC_UUID' => 'UUID',
     'first_timestamp' => 'NOW',
-);
+];
 
 /**
  * Max rows retrieved for zoom search
@@ -3071,10 +2979,10 @@ $cfg['ShowGitRevision'] = true;
  *
  * @global array $cfg['MysqlMinVersion']
  */
-$cfg['MysqlMinVersion'] = array(
+$cfg['MysqlMinVersion'] = [
     'internal' => 50500,
-    'human' => '5.5.0'
-);
+    'human' => '5.5.0',
+];
 
 /**
  * Disable shortcuts
@@ -3082,3 +2990,135 @@ $cfg['MysqlMinVersion'] = array(
  * @global array $cfg['DisableShortcutKeys']
  */
 $cfg['DisableShortcutKeys'] = false;
+
+/**
+ * Console configuration
+ *
+ * This is mostly meant for user preferences.
+ */
+$cfg['Console'] = [
+    'StartHistory' => false,
+    'AlwaysExpand' => false,
+    'CurrentQuery' => true,
+    'EnterExecutes' => false,
+    'DarkTheme' => false,
+    'Mode' => 'info',
+    'Height' => 92,
+    'GroupQueries' => false,
+    'OrderBy' => 'exec',
+    'Order' => 'asc',
+];
+
+
+/*******************************************************************************
+ * Default options for transformations
+ */
+
+/**
+ * Initialize default transformations array
+ *
+ * @global array $cfg['DefaultTransformations']
+ */
+$cfg['DefaultTransformations'] = [];
+
+/**
+ * Default transformations for Substring
+ *
+ * @global array $cfg['DefaultTransformations']['Substring']
+ */
+$cfg['DefaultTransformations']['Substring'] = [
+    0,
+    'all',
+    '…',
+];
+
+/**
+ * Default transformations for Bool2Text
+ *
+ * @global array $cfg['DefaultTransformations']['Bool2Text']
+ */
+$cfg['DefaultTransformations']['Bool2Text'] = [
+    'T',
+    'F',
+];
+
+/**
+ * Default transformations for External
+ *
+ * @global array $cfg['DefaultTransformations']['External']
+ */
+$cfg['DefaultTransformations']['External'] = [
+    0,
+    '-f /dev/null -i -wrap -q',
+    1,
+    1,
+];
+
+/**
+ * Default transformations for PreApPend
+ *
+ * @global array $cfg['DefaultTransformations']['PreApPend']
+ */
+$cfg['DefaultTransformations']['PreApPend'] = [
+    '',
+    '',
+];
+
+/**
+ * Default transformations for Hex
+ *
+ * @global array $cfg['DefaultTransformations']['Hex']
+ */
+$cfg['DefaultTransformations']['Hex'] = ['2'];
+
+/**
+ * Default transformations for DateFormat
+ *
+ * @global array $cfg['DefaultTransformations']['DateFormat']
+ */
+$cfg['DefaultTransformations']['DateFormat'] = [
+    0,
+    '',
+    'local',
+];
+
+/**
+ * Set default for FirstDayOfCalendar
+ *
+ * @global integer $cfg['FirstDayOfCalendar']
+ */
+$cfg['FirstDayOfCalendar'] = 0;
+
+/**
+ * Default transformations for Inline
+ *
+ * @global array $cfg['DefaultTransformations']['Inline']
+ */
+$cfg['DefaultTransformations']['Inline'] = [
+    '100',
+    100,
+];
+$cfg['DefaultTransformations']['Inline']['wrapper_link'] = null;
+$cfg['DefaultTransformations']['Inline']['wrapper_params'] = [];
+
+/**
+ * Default transformations for TextImageLink
+ *
+ * @global array $cfg['DefaultTransformations']['TextImageLink']
+ */
+$cfg['DefaultTransformations']['TextImageLink'] = [
+    null,
+    100,
+    50,
+];
+
+/**
+ * Default transformations for TextLink
+ *
+ * @global array $cfg['DefaultTransformations']['TextLink']
+ */
+$cfg['DefaultTransformations']['TextLink'] = [
+    null,
+    null,
+    null,
+];
