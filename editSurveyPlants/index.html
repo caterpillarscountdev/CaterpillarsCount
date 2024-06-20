@@ -100,7 +100,7 @@
 			.circle{
 				margin:20px 0px;
 				border-radius:4px;
-				overflow:hidden;
+			        overflow:hidden;
 				border:2px solid #eee;
 			}
 
@@ -114,9 +114,17 @@
 		        .checkboxTable {
 			    color:#666;
                         }
-                        .moveMapLabel, .locationChange {
+                        .moveMapLabel {
                             padding-top: 3px;
                             color: #666;
+                        }
+                        .moveMapQuestion {
+                            padding-top: 3px;
+                            color: #666;
+                            display: none;
+                        }
+
+                        .hideForNew {
                             display: none;
                         }
                                 
@@ -493,7 +501,7 @@
 						noticeBorder = " style=\"border-right:5px solid #FF645A;\"";
 					}
 					
-					htmlToAdd += "<div class=\"plant\">";
+					htmlToAdd += "<div class=\"plant\" id=\"plant"+code+"\">";
 					htmlToAdd += 	"<div class=\"code\" style=\"color:"+color+"\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div>";
 					htmlToAdd += 	"<div class=\"editableFields\">";
                                         htmlToAdd +=       "<div class=\"plantTabs code"+ code +"\"><span class=\"plantTab selected\" onclick=\"showSpecies('" + code + "')\">Species</span>";
@@ -511,18 +519,19 @@
 					htmlToAdd +=			"<div id=\"checkboxTableOverlay" + code + "\" class=\"checkboxTableOverlay\" onclick=\"queueNotice('alert', 'We\\'ve recognized this plant species and set its &quot;conifer&quot; checkbox automatically, so it is not editable.');\"></div>";
 					htmlToAdd +=		"</div></div>";
                                         htmlToAdd +=            "<div class=\"fieldsLocation\" id=\"fieldsLocation" + code + "\"><div class=\"editableFieldTitle\"></div>";
-					htmlToAdd +=		"<table class=\"checkboxTable locationChange\">";
+                                        htmlToAdd +=            "<div class=\"moveMapLabel\">Move the pin marker to specify the location of branch "+ code +".</div>";
+                                        htmlToAdd +=            "<div id=\"map"+code+"\" class=\"plantMap\" data-code=\""+code+"\" data-lat=\""+lat+"\" data-lng=\""+lng+"\" data-orig-lat=\""+lat+"\" data-orig-lng=\""+lng+"\" data-species=\""+species+"\"></div>";
+                                        htmlToAdd +=            "<div class=\"moveMapQuestion\">Are you moving this code's tag at your site? If so, confirm the species and check the box below.</div>";
+                                        htmlToAdd +=            "</div>";
+				        htmlToAdd +=		"<table class=\"checkboxTable locationChange "+ ((species == 'N/A' && !lat) ? "hideForNew" : "")+"\">";
 					htmlToAdd +=			"<tr onclick=\"toggleCheckbox($(this).find('.checkbox'));\">";
 					htmlToAdd +=				"<td><div class=\"checkbox\" id=\"moveCheckbox" + code + "\"></div></td>";
 				        htmlToAdd +=				"<td>I am moving this survey branch to a new location or a different plant species.</td>";
 					htmlToAdd +=				"<td onclick=\"event.stopPropagation();queueNotice('alert', 'If a tag with the code &quot;" + code + "&quot; is hanging on a tree that is dead or otherwise no longer suitable to collect surveys with, check this checkbox and move that tag to another nearby tree. If the new tree is of a different species than the unsuitable tree, go ahead and change the plant species as well. Make sure to click the &quot;Save All&quot; button at the bottom of the page before exiting the page.');\"><img src=\"../images/question.png\"/></td>";
 				        htmlToAdd +=			"<tr>";
 				        htmlToAdd +=		"</table>";
-                                        htmlToAdd +=            "<div class=\"moveMapLabel\">Move the pin marker to specify the location of branch "+ code +".</div>";
-                                        htmlToAdd +=            "<div id=\"map"+code+"\" class=\"plantMap\" data-code=\""+code+"\" data-lat=\""+lat+"\" data-lng=\""+lng+"\" data-orig-lat=\""+lat+"\" data-orig-lng=\""+lng+"\" data-species=\""+species+"\"></div>";
-                                        htmlToAdd +=            "</div>";
-					htmlToAdd += 	"</div>";
-					htmlToAdd += "</div>";
+				        htmlToAdd += 	"</div>";
+				        htmlToAdd += "</div>";
 					
 					lastManualConiferSettings[code] = plants[j][3];
 				}
@@ -541,7 +550,7 @@
 
 				if(plants.style.maxHeight == "" || plants.style.maxHeight == "0px"){
 					$(circle).css({border:"0px none transparent"});
-					$(plants).stop().animate({maxHeight:"1500px"});
+					$(plants).stop().animate({maxHeight:"1800px"});
 					$(circle).find(".circleTitle").eq(0).stop().animate({backgroundColor:"#444", color:"#fff"});
 				}
 				else{
@@ -646,29 +655,8 @@
                                 position: loc,
                                 title: code,
                                 content: pin.element,
+                                gmpDraggable: true
                             });
-
-                            if (hasSpecies || hasLocation) {
-                                $("#fieldsLocation"+code+" .locationChange").show()
-                            }
-
-                            function updateMoveable(moveable) {
-                                if (moveable) {
-                                    $("#fieldsLocation"+code+" .moveMapLabel").show()
-                                    marker.gmpDraggable = true;
-                                } else {
-                                    $("#fieldsLocation"+code+" .moveMapLabel").hide()
-                                    marker.gmpDraggable = false;
-                                }
-                                
-                            }
-
-                            updateMoveable(!hasLocation)
-
-                            $("#fieldsLocation"+code+" .checkbox").on("checked", () => updateMoveable(true))
-                                                                  .on("unchecked", () => updateMoveable(false));
-
-                            
 
 
                             if (popUp) { popUp.setMap(null)};
@@ -686,6 +674,9 @@
                                 showCode();
                             });
                             marker.addListener("dragend", (event) => {
+                                if (hasSpecies && hasLocation) {
+                                    $('#plant'+code+" .moveMapQuestion").show();
+                                }
                                 $("#map"+code).data("lat", marker.position.lat);
                                 $("#map"+code).data("lng", marker.position.lng);
                                 showCode();
