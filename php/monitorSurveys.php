@@ -1,5 +1,6 @@
 <?php
-	
+        require_once('/opt/app-root/src/php/orm/resources/Keychain.php');
+        require_once('/opt/app-root/src/php/orm/resources/mailing.php');
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	
         $duplicates = array();
