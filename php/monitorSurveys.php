@@ -6,7 +6,7 @@
         $ids = array();
         $others = array();
         
-	$query = mysqli_query($dbconn, "SELECT Survey.ID, Plant.Code, Survey.LocalDate, Survey.LocalTime, CONCAT(User.FirstName, \" \", User.LastName) AS FullName FROM Survey JOIN User ON Survey.UserFKOfObserver = User.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK<>'2' AND CORRESPONDING_OLD_DATABASE_SURVEY_ID='0' AND Survey.LocalDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK) GROUP BY UserFKOfObserver, PlantFK, LocalDate, `LocalTime`, SubmittedThroughApp, CORRESPONDING_OLD_DATABASE_SURVEY_ID HAVING COUNT(*) > 1 ORDER BY Survey.SubmittedThroughApp DESC, Survey.SubmissionTimestamp ASC");
+	$query = mysqli_query($dbconn, "SELECT Survey.ID, Plant.Code, Survey.LocalDate, Survey.LocalTime, CONCAT(User.FirstName, \" \", User.LastName) AS FullName FROM Survey JOIN User ON Survey.UserFKOfObserver = User.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK<>'2' AND CORRESPONDING_OLD_DATABASE_SURVEY_ID='0' AND Survey.LocalDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH) GROUP BY UserFKOfObserver, PlantFK, LocalDate, `LocalTime`, SubmittedThroughApp, CORRESPONDING_OLD_DATABASE_SURVEY_ID HAVING COUNT(*) > 1 ORDER BY Survey.SubmittedThroughApp DESC, Survey.SubmissionTimestamp ASC");
 	if(mysqli_num_rows($query) > 0){
 		while($row = mysqli_fetch_assoc($query)){
                   $ids[] = $row["ID"];
