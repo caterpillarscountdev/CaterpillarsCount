@@ -18,7 +18,7 @@
 		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 
-	function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $sawfly, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
+        function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $time, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $sawfly, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
 		$debuginat = false; // turn all debugging comments off with this variable
 		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. init for ID " . $arthropodSightingID . " -->");}
@@ -54,7 +54,7 @@
 			"ant" => "Ants",
 			"aphid" => "Sternorrhyncha",
 			"bee" => "Hymenoptera",
-			"sawfly" => "Symphyta",
+			"sawfly" => "Tenthredinoidea",
 			"beetle" => "Beetles",
 			"caterpillar" => "Lepidoptera",
 			"daddylonglegs" => "Daddy longlegs",
@@ -79,7 +79,7 @@
 			"observation" => array(
 				"species_guess" => cleanParameter($newOrder),
 				"id_please" => 1,
-				"observed_on_string" => cleanParameter($date),
+				"observed_on_string" => cleanParameter($date . ' ' . $time),
 				"place_guess" => cleanParameter($site->getName()),
 				"latitude" => cleanParameter($site->getLatitude()),
 				"longitude" => cleanParameter($site->getLongitude())
