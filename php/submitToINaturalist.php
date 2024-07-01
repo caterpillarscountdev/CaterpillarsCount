@@ -37,6 +37,15 @@
 		//CREATE OBSERVATION
 		$plant = Plant::findByCode($plantCode);
 		$site = $plant->getSite();
+
+                $latitude = $site->getLatitude();
+                if ($plant->getLatitude()) {
+                  $latitude = $plant->getLatitude();
+                }
+                $longitude = $site->getLongitude();
+                if ($plant->getLongitude()) {
+                  $longitude = $plant->getLongitude();
+                }
 		
 		if(trim($surveyNotes) !== "" && trim($arthropodNotes) !== ""){
 			$surveyNotes = trim($surveyNotes) . " | " . trim($arthropodNotes);
@@ -81,8 +90,8 @@
 				"id_please" => 1,
 				"observed_on_string" => cleanParameter($date . ' ' . $time),
 				"place_guess" => cleanParameter($site->getName()),
-				"latitude" => cleanParameter($site->getLatitude()),
-				"longitude" => cleanParameter($site->getLongitude())
+				"latitude" => cleanParameter($latitude),
+				"longitude" => cleanParameter($longitude)
 			)
 		);
 		
