@@ -948,8 +948,10 @@
 				window.phenology = new Chart(document.getElementById('phenologyChart'), lineConfig);
 				window.composition = new Chart($('#compositionChart')[0].getContext('2d'), barConfig);
 				window.trends = new Chart(document.getElementById('trendsChart'), trendsConfig);
+                                enableWeeklyButton();
+                            
 			});
-			$(document).click(function(){
+		        $(document).click(function(){
 				$(".smallSelect .options").fadeOut(0);
 			});
 			function roundTo(number, decimalPlace){
@@ -1429,7 +1431,6 @@
 						addSetFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"], year: Number(dateParts[0])});
 						addCompositionSite(marker.siteInformation["ID"]);
 						addTrendFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"]});
-                                                enableWeeklyButton();
 						updateSiteSelections();
 						loadNewActiveSiteCompositionDefaults();
 						showComposition();
@@ -2765,6 +2766,7 @@
 				for(var i = (lineConfig.data.datasets.length - 1); i >= 0; i--){
 					if(lineColor == opaque(lineConfig.data.datasets[i].backgroundColor)){
 						lineConfig.data.datasets.splice(i, 1);
+                                                lineConfig.filters.splice(i, 1);
 					}
 				}
 				for(var i = (phenologyLabels.length - 1); i >=0; i--){
@@ -2781,8 +2783,9 @@
 				phenologyLabels = [];
 				chartedSets.phenology = {};
 				lineConfig.data.datasets = [endpoints[0], endpoints[1]];
-				window.phenology.update();
-				centerYAxisLabels();
+                                lineConfig.filters = [];
+			        window.phenology.update();
+			        centerYAxisLabels();
 				updatePhenologyLegend();
 			}
 
