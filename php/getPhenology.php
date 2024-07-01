@@ -37,9 +37,10 @@
 		$siteName = mysqli_fetch_assoc($query)["Name"];
 		$arthropod = mysqli_real_escape_string($dbconn, htmlentities($lines[$i]["arthropod"]));
 		$year = intval($lines[$i]["year"]);
+                $weekly = intval($lines[$i]["weekly"] || '');
 		
 		//CHECK FOR SAVE
-		$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . str_replace('%', 'all', $arthropod) . $year);
+		$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . str_replace('%', 'all', $arthropod) . $year . $weekly);
 		if($HIGH_TRAFFIC_MODE){
 			$save = getSave($baseFileName, $SAVE_TIME_LIMIT);
 			if($save !== null){
@@ -47,34 +48,40 @@
 				continue;
 			}
 		}
-    
+
+                $dateStr = 'Survey.LocalDate AS SurveyDate';
+                if ($weekly) {
+                  // Cast all dates to the Monday of the week they are in
+                  $dateStr = 'DATE_ADD(Survey.LocalDate, INTERVAL(-WEEKDAY(Survey.LocalDate)) DAY) AS SurveyDate';
+                }
+
     		$dateWeights = array();
     
 		//get survey counts each day
-		$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, COUNT(*) AS DailySurveyCount FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND YEAR(Survey.LocalDate)='$year' GROUP BY Survey.LocalDate ORDER BY Survey.LocalDate");
+		$query = mysqli_query($dbconn, "SELECT $dateStr, COUNT(*) AS SurveyCount FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND YEAR(Survey.LocalDate)='$year' GROUP BY SurveyDate ORDER BY SurveyDate");
 		while($row = mysqli_fetch_assoc($query)){
-			$dateWeights[$row["LocalDate"]] = array($row["LocalDate"], 0, 0, 0, intval($row["DailySurveyCount"]));
+			$dateWeights[$row["SurveyDate"]] = array($row["SurveyDate"], 0, 0, 0, intval($row["SurveyCount"]));
 		}
     		
 		//occurrence
 		//get [survey with specified arthropod] counts each day
-		$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS SurveysWithArthropodsCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND YEAR(Survey.LocalDate)='$year' GROUP BY Survey.LocalDate ORDER BY Survey.LocalDate");
+		$query = mysqli_query($dbconn, "SELECT $dateStr, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS SurveysWithArthropodsCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND YEAR(Survey.LocalDate)='$year' GROUP BY SurveyDate ORDER BY SurveyDate");
 		while($row = mysqli_fetch_assoc($query)){
-			$dateWeights[$row["LocalDate"]][1] = intval($row["SurveysWithArthropodsCount"]);
+			$dateWeights[$row["SurveyDate"]][1] = intval($row["SurveysWithArthropodsCount"]);
 		}
 		
 		//density
 		//get arthropod counts each day
-		$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, SUM(ArthropodSighting.Quantity) AS DailyArthropodSightings FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND YEAR(Survey.LocalDate)='$year' GROUP BY Survey.LocalDate ORDER BY Survey.LocalDate");
+		$query = mysqli_query($dbconn, "SELECT $dateStr, SUM(ArthropodSighting.Quantity) AS ArthropodSightings FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND YEAR(Survey.LocalDate)='$year' GROUP BY SurveyDate ORDER BY SurveyDate");
 		while($row = mysqli_fetch_assoc($query)){
-			$dateWeights[$row["LocalDate"]][2] = intval($row["DailyArthropodSightings"]);
+			$dateWeights[$row["SurveyDate"]][2] = intval($row["ArthropodSightings"]);
 		}
 		
 		//mean biomass
 		//get total biomass each day
-		$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, ArthropodSighting.UpdatedGroup, ArthropodSighting.Length, SUM(ArthropodSighting.Quantity) AS TotalQuantity FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND YEAR(Survey.LocalDate)='$year' GROUP BY Survey.LocalDate, ArthropodSighting.UpdatedGroup, ArthropodSighting.Length");
+		$query = mysqli_query($dbconn, "SELECT $dateStr, ArthropodSighting.UpdatedGroup, ArthropodSighting.Length, SUM(ArthropodSighting.Quantity) AS TotalQuantity FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='$siteID' AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND YEAR(Survey.LocalDate)='$year' GROUP BY SurveyDate, ArthropodSighting.UpdatedGroup, ArthropodSighting.Length");
 		while($row = mysqli_fetch_assoc($query)){
-			$dateWeights[$row["LocalDate"]][3] += (getBiomass($row["UpdatedGroup"], $row["Length"]) * floatval($row["TotalQuantity"]));
+			$dateWeights[$row["SurveyDate"]][3] += (getBiomass($row["UpdatedGroup"], $row["Length"]) * floatval($row["TotalQuantity"]));
 		}
     
 		//finalize
@@ -82,11 +89,16 @@
 		for($j = (count($dateWeights) - 1); $j >= 0; $j--){
 			if($dateWeights[$j][4] < 5){
 				//remove data from dates with fewer than 5 surveys
-				array_splice($dateWeights, $j, 1);
+                          array_splice($dateWeights, $j, 1);
 			}
 			else{
 				//divide
-				$dateWeights[$j] = array($dateWeights[$j][0], round((($dateWeights[$j][1] / $dateWeights[$j][4]) * 100), 2), round(($dateWeights[$j][2] / $dateWeights[$j][4]), 2), round(($dateWeights[$j][3] / $dateWeights[$j][4]), 2));
+				$dateWeights[$j] = array(
+                                  $dateWeights[$j][0],
+                                  round((($dateWeights[$j][1] / $dateWeights[$j][4]) * 100), 2),
+                                  round(($dateWeights[$j][2] / $dateWeights[$j][4]), 2),
+                                  round(($dateWeights[$j][3] / $dateWeights[$j][4]), 2)
+                                  );
 			}
 		}
     		
