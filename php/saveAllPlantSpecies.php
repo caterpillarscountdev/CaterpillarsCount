@@ -1,7 +1,5 @@
 <?php
 	header('Access-Control-Allow-Origin: *');
-        ini_set('display_errors', 1);
-        error_reporting(E_ALL);
 	
 	require_once('orm/User.php');
 	require_once('orm/Plant.php');
@@ -11,7 +9,6 @@
 	$plantData = json_decode(custgetparam("plantData"));
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
-                error_log(print_r($plantData, TRUE));
 		if(count($plantData) < 1){
 			die("false|No data provided.");
 		}
