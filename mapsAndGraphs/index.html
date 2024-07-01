@@ -789,7 +789,7 @@
 			#downloadLinks{
 				display:none;
 			}
-			.downloadChartButton{
+			.downloadChartButton, .chartButton {
 				position:absolute;
 				z-index:1;
 				top:-18px;
@@ -807,18 +807,18 @@
 				cursor:pointer;
 				width:100px;
 			}
-			.downloadChartButton>div{
+			.downloadChartButton>div, .chartButton>div {
 				display:table-cell;
 				vertical-align:middle;
 			}
-			.downloadChartButton>.downloadImage{
+			.downloadChartButton>.downloadImage, .chartButton>.buttonIcon {
 				height:13px;
 				width:13px;
 				background-position:center;
 				background-size:contain;
 				background-repeat:no-repeat;
 			}
-			.downloadChartButton>.downloadText{
+			.downloadChartButton>.downloadText, .chartButton>.buttonText {
 				padding-left:4px;
 				font-size:10px;
 				padding-top:1px;
@@ -1429,6 +1429,7 @@
 						addSetFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"], year: Number(dateParts[0])});
 						addCompositionSite(marker.siteInformation["ID"]);
 						addTrendFromFilters({arthropod:"caterpillar", siteID: marker.siteInformation["ID"]});
+                                                enableWeeklyButton();
 						updateSiteSelections();
 						loadNewActiveSiteCompositionDefaults();
 						showComposition();
@@ -1436,7 +1437,7 @@
 				}
 				$("#selectedSitePanel")[0].style.display = "block";
 				scrollToPanel(3);
-				 submitClassificationToSciStarter();
+				submitClassificationToSciStarter();
 			}
 			var currentSiteUserLeaderboardSiteID = -1;
 			var siteUserRankings = [];
@@ -2288,6 +2289,7 @@
 						endpoints[1]
 					]
 				},
+                                filters: [],
 				options: {
 					responsive: true,
 					legend: {display:false},
@@ -2348,7 +2350,7 @@
 					}
 				}
 			};
-      var trendsConfig = {
+                        var trendsConfig = {
 				type: 'line',
 				data: {
 					datasets: [
@@ -2392,6 +2394,23 @@
 					}
 				}
 			};
+
+                        var weekly = false;
+
+                        function enableWeeklyButton() {
+                            $(".weeklyButton").on("click", (ev) => {
+                                let checkbox = $(ev.currentTarget).find('.checkbox').first();
+                                if (checkboxIsChecked(checkbox)) {
+                                    weekly = false;
+                                    uncheckCheckbox(checkbox);
+                                } else {
+                                    weekly = true;
+                                    checkCheckbox(checkbox);
+                                }
+                                refreshSets();
+                            })
+                        }
+                 
 			function getClearPoint(x, y){
 				var background = "rgba(230,230,230,0)";
 				var border = "rgba(200,200,200,0)";
@@ -2571,10 +2590,7 @@
 				return comparisonMetricLines;
 			}
 			var phenologyLabels = [];
-			function addSet(label, points, update){
-				if(update !== false){
-					update = true;
-				}
+			function addSet(label, points, filters){
 				if(phenologyLabels.length >= colors.length){
 					queueNotice("error", "You have too many lines on your phenology chart. Please delete at least one of them before adding more.");
 					return false;
@@ -2596,15 +2612,15 @@
 				var lines = getLines("phenology", label, color, points, 30, false, false);
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					lineConfig.data.datasets = [];
+                                        lineConfig.filters = [];
 				}
 				for(var i = 0; i < lines.length; i++){
 					lineConfig.data.datasets[lineConfig.data.datasets.length] = lines[i];
+                                        lineConfig.filters[lineConfig.filters.length] = filters
 				}
-				if(update){
-					window.phenology.update();
-					centerYAxisLabels();
-					updatePhenologyLegend();
-				}
+			    window.phenology.update();
+			    centerYAxisLabels();
+			    updatePhenologyLegend();
 			}
 			function updatePhenologyLegend(){
 				var htmlToAdd = "<div style=\"display:inline-block;text-align:left;\">";
@@ -2769,6 +2785,17 @@
 				centerYAxisLabels();
 				updatePhenologyLegend();
 			}
+
+                        function refreshSets() {
+                            let filters = lineConfig.filters;
+
+                            clearSets();
+                            
+                            for (let f of filters) {
+                                addSetFromFilters(f);
+                            }
+                        }
+                 
 			function addSetFromFilters(filters, callback){
 				callback = callback || function(){};
 				var color = "";
@@ -2791,6 +2818,7 @@
 				pauseCompositionLoads(function(){loadSetFromFilters(filters, function(){callback();resumeCompositionLoads();})});
 			}
 			function loadSetFromFilters(filters, callback){
+                                filters['weekly'] = weekly;
 				console.log("Loading phenology: " + JSON.stringify(filters));
 
 				$.get("/php/getPhenology.php?lines=" + encodeURIComponent(JSON.stringify([filters])), function(data){
@@ -2800,7 +2828,7 @@
 						var sets = JSON.parse(data.replace("true|", ""));
 						for(var label in sets){
 							if(sets.hasOwnProperty(label)){
-								addSet(label, sets[label]);
+								addSet(label, sets[label], filters);
 							}
 						}
 					}
@@ -4462,12 +4490,12 @@
 						</div>
 						<div style="display:table-cell;width:100%;"></div>
 						<div style="display:table;" id="mapButtons">
-							<div style="display:table-cell;vertical-align:middle;">
-								<div id="mapDownloadButton" style="background:#ccc;opacity:0;cursor:default;">
-									<div id="mapDownloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
-									<div id="mapDownloadText">Download</div>
-								</div>
-							</div>
+						  <div style="display:table-cell;vertical-align:middle;">
+						    <div id="mapDownloadButton" style="background:#ccc;opacity:0;cursor:default;">
+						      <div id="mapDownloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+						      <div id="mapDownloadText">Download</div>
+						    </div>
+						  </div>
 							<div style="display:table-cell;vertical-align:middle;">
 								<div id="mapFiltersToggleButton" onclick="toggleMapFilters();">
 									<div id="mapFiltersImage" style="background-image:url('../images/filterIconWhite.png');"></div>
@@ -4583,10 +4611,18 @@
 							<div id="lineGraph">
 								<div class="chartExplanation">Click on the y-axis label to change the phenology metric being plotted. Data points are excluded if fewer than five surveys were conducted at the given site on that day.</div>
 								<div style="height:500px;margin-top:40px;position:relative;">
-									<div class="downloadChartButton" onclick="promptConfirm('To download, read and agree to the Caterpillars Count! <a href=&quot;../dataUsePolicy&quot; target=&quot;_blank&quot;>data use</a> and <a href=&quot;../dataAttributionPolicy&quot; target=&quot;_blank&quot;>attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadPhenologyData();});">
-										<div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
-										<div class="downloadText">Download</div>
-									</div>
+                                                                  <div style="position: relative">
+								    <div class="downloadChartButton" onclick="promptConfirm('To download, read and agree to the Caterpillars Count! <a href=&quot;../dataUsePolicy&quot; target=&quot;_blank&quot;>data use</a> and <a href=&quot;../dataAttributionPolicy&quot; target=&quot;_blank&quot;>attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadPhenologyData();});">
+								      <div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+								      <div class="downloadText">Download</div>
+								    </div>
+                                                                  </div>
+                                                                  <div style="position: relative; left: -9em;">
+								    <div class="chartButton weeklyButton">
+								      <div class="checkbox buttonIcon"></div>
+								      <div class="buttonText">Weekly</div>
+								    </div>
+                                                                  </div>    
 									<div class="yAxisLabel">
 										<div class="smallSelect">
 											<div class="selected" onclick="showSmallSelectOptions(this);">Percent of Surveys</div>
