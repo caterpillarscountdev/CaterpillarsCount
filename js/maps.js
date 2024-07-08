@@ -98,15 +98,16 @@ function createMapButton(map, label, action, position) {
 }
 
 let meCircle;
+let accCircle;
 
 window.MapFindMeButton = function (map) {
-  return createMapButton(map, `<span title="Here">\u{1F78B}</span>`, async () => {
+  return createMapButton(map, `<span title="Here" style="font-size:xx-large">\u{2316}</span>`, async () => {
     let position
     try {
       position = await getCurrentPosition();
     } catch (e) {
       showError("Unable to get your location. Please confirm Location Services are enabled and allow this site to access your location.");
-      //position = {coords:{latitude:32.5468,longitude:-84.3750}, accuracy: 50}
+      //position = {coords:{latitude:32.5468,longitude:-84.3750, accuracy: 2}}
       return
     }
 
@@ -115,8 +116,11 @@ window.MapFindMeButton = function (map) {
     if (meCircle) {
       meCircle.setMap(null);
     }
+    if (accCircle) {
+      accCircle.setMap(null);
+    }
     
-    meCircle = new google.maps.Circle({
+    accCircle = new google.maps.Circle({
       strokeColor: "#3333FF",
       strokeOpacity: 0.8,
       strokeWeight: 2,
@@ -124,9 +128,20 @@ window.MapFindMeButton = function (map) {
       fillOpacity: 0.3,
       map,
       center: pos,
-      radius: Math.min(200, position.accuracy)/2
+      radius: Math.min(200, position.coords.accuracy)/2
     });
 
+    meCircle = new google.maps.Circle({
+      strokeColor: "#FFFFFF",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#FFFFFF",
+      fillOpacity: 0.3,
+      map,
+      center: pos,
+      radius: 5,
+    });
+    
     
     
     map.panTo(pos);
@@ -138,10 +153,14 @@ window.MapFindSiteButton = function (map) {
     console.log('Find Site with no siteLocation');
     return
   };
-  return createMapButton(map, `<span title="Site">\u{2690}</span>`, () => {
+  return createMapButton(map, `<span title="Site" style="font-size:x-large">\u{2690}</span>`, () => {
     if (meCircle) {
       meCircle.setMap(null);
     }
+    if (accCircle) {
+      accCircle.setMap(null);
+    }
+    
     map.panTo(new google.maps.LatLng(siteLocation.lat, siteLocation.lng));    
   });
 }

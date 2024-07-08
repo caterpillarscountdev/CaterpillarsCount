@@ -72,6 +72,7 @@
                             overflow: hidden;
                             text-align: center;
                             height: 40px;
+                            max-height: 40px;
                             vertical-align: middle;
                             color: rgb(0, 0, 0);
                             font-family: Roboto, Arial, sans-serif;
