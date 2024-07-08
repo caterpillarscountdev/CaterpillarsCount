@@ -596,7 +596,8 @@
                                     mapTypeIds: ["satellite", "roadmap", "terrain"],
                                 },
                                 streetViewControl: false,
-                                fullscreenControl: false
+                                fullscreenControl: false,
+                                disableDoubleClickZoom: true
                             });
                             await import("../js/maps.js?v=2");
                             MapFullscreenButton(map);
@@ -673,7 +674,7 @@
                             marker.addListener("drag", (event) => {
                                 showCode();
                             });
-                            marker.addListener("dragend", (event) => {
+                            let moved = (event) => {
                                 if (hasSpecies && hasLocation) {
                                     $('#plant'+code+" .moveMapQuestion").show();
                                 }
@@ -681,6 +682,12 @@
                                 $("#map"+code).data("lng", marker.position.lng);
                                 showCode();
                                 map.panTo(marker.position);
+                            }
+                            marker.addListener("dragend", moved);
+
+                            map.addListener("dblclick", (ev) => {
+                                marker.position = ev.latLng;
+                                moved()
                             });
                             
                         }
