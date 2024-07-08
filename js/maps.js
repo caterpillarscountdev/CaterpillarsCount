@@ -78,21 +78,24 @@ function getCurrentPosition() {
   })
 }
 
-function createMapButton(map, label, action) {
+function createMapButton(map, label, action, position) {
+  if (!position) {
+    position = google.maps.ControlPosition.TOP_CENTER;
+  }
   const button = document.createElement("div");
   button.setAttribute('class', 'map-button');
-  button.textContent = label
+  button.innerHTML = label
   button.onclick = action;
   const wrap = document.createElement("div");
   wrap.setAttribute("class", "map-button-wrap")
   wrap.appendChild(button);
-  map.controls[google.maps.ControlPosition.TOP_CENTER].push(wrap);
-  
+  map.controls[position].push(wrap);
+  return button;
 }
 
 
 window.MapFindMeButton = function (map) {
-  return createMapButton(map, 'Find Me', async () => {
+  return createMapButton(map, `\u{1F78B} Here`, async () => {
     let position = await getCurrentPosition();
     console.log(position.coords);
     map.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
@@ -104,7 +107,42 @@ window.MapFindSiteButton = function (map) {
     console.log('Find Site with no siteLocation');
     return
   };
-  return createMapButton(map, 'Find Site', () => {
+  return createMapButton(map, `\u{1F78B} Site`, () => {
     map.panTo(new google.maps.LatLng(siteLocation.lat, siteLocation.lng));    
   });
+}
+
+window.MapFullscreenButton = function(map) {
+  let button = createMapButton(
+    map,
+    '<img style="height: 18px; width: 18px;" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M0%200v6h2V2h4V0H0zm16%200h-4v2h4v4h2V0h-2zm0%2016h-4v2h6v-6h-2v4zM2%2012H0v6h6v-2H2v-4z%22/%3E%3C/svg%3E" alt="">',
+    (ev) => {
+      let dataset = ev.target.closest('.map-button').dataset;
+
+      let full = dataset.full;
+      let el = map.getDiv();
+
+      if (full) {
+        el.style.height = "";
+        el.style.width = "";
+        el.style.position = 'relative';
+        el.style.left = '';
+
+        dataset.full = ''
+      } else {
+        el.style.height = "90%";
+        el.style.width = "100%";
+        el.style.position = 'absolute';
+        el.style.left = '0px';
+
+        dataset.full = 'full'
+
+        let y = el.closest('.plant').getBoundingClientRect().y + window.scrollY;
+        window.scroll({
+          top: y});
+      }
+    },
+    google.maps.ControlPosition.TOP_RIGHT
+  );
+  button.style.minWidth = '1em';
 }
