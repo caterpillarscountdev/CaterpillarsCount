@@ -115,28 +115,6 @@
 				"value" => cleanParameter($params[$i][1])
 			);
 		}
-		if($order == "caterpillar"){
-			$observationFieldValuesAttributes[] = array(
-				"observation_field_id" => 3441,
-				"value" => "caterpillar"
-			);
-			
-			$observationFieldValuesAttributes[] = array(
-				"observation_field_id" => 325,
-				"value" => "larva"
-			);
-		}
-		if($order == "moths"){
-			$observationFieldValuesAttributes[] = array(
-				"observation_field_id" => 3441,
-				"value" => "adult"
-			);
-			
-			$observationFieldValuesAttributes[] = array(
-				"observation_field_id" => 325,
-				"value" => "adult"
-			);
-		}
 		if($order == "beetle" && $beetleLarva){
 			$observationFieldValuesAttributes[] = array(
 				"observation_field_id" => 325,
