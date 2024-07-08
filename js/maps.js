@@ -84,7 +84,7 @@ function getCurrentPosition() {
 
 function createMapButton(map, label, action, position) {
   if (!position) {
-    position = google.maps.ControlPosition.TOP_CENTER;
+    position = google.maps.ControlPosition.TOP_RIGHT;
   }
   const button = document.createElement("div");
   button.setAttribute('class', 'map-button');
@@ -100,12 +100,12 @@ function createMapButton(map, label, action, position) {
 let meCircle;
 
 window.MapFindMeButton = function (map) {
-  return createMapButton(map, `\u{1F78B} Here`, async () => {
+  return createMapButton(map, `<span title="Here">\u{1F78B}</span>`, async () => {
     let position
     try {
       position = await getCurrentPosition();
     } catch (e) {
-      showError("Unable to get your location, are Location Services disabled?");
+      showError("Unable to get your location. Please confirm Location Services are enabled and allow this site to access your location.");
       //position = {coords:{latitude:32.5468,longitude:-84.3750}, accuracy: 50}
       return
     }
@@ -138,7 +138,7 @@ window.MapFindSiteButton = function (map) {
     console.log('Find Site with no siteLocation');
     return
   };
-  return createMapButton(map, `\u{1F78B} Site`, () => {
+  return createMapButton(map, `<span title="Site">\u{2690}</span>`, () => {
     if (meCircle) {
       meCircle.setMap(null);
     }
@@ -149,7 +149,7 @@ window.MapFindSiteButton = function (map) {
 window.MapFullscreenButton = function(map) {
   let button = createMapButton(
     map,
-    '<img style="height: 18px; width: 18px;" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M0%200v6h2V2h4V0H0zm16%200h-4v2h4v4h2V0h-2zm0%2016h-4v2h6v-6h-2v4zM2%2012H0v6h6v-2H2v-4z%22/%3E%3C/svg%3E" alt="">',
+    '<img style="height: 18px; width: 18px;" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M0%200v6h2V2h4V0H0zm16%200h-4v2h4v4h2V0h-2zm0%2016h-4v2h6v-6h-2v4zM2%2012H0v6h6v-2H2v-4z%22/%3E%3C/svg%3E" title="Fullscreen">',
     (ev) => {
       let dataset = ev.target.closest('.map-button').dataset;
 
