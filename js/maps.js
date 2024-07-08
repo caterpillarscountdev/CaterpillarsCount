@@ -73,7 +73,11 @@ function getCurrentPosition() {
   return new Promise( (resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       position => resolve(position),
-      error => reject(error)
+      error => reject(error),
+      {
+        timeout: 5*1000,
+        enableHighAccuracy: true
+      }
     )
   })
 }
@@ -93,12 +97,39 @@ function createMapButton(map, label, action, position) {
   return button;
 }
 
+let meCircle;
 
 window.MapFindMeButton = function (map) {
   return createMapButton(map, `\u{1F78B} Here`, async () => {
-    let position = await getCurrentPosition();
-    console.log(position.coords);
-    map.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+    let position
+    try {
+      position = await getCurrentPosition();
+    } catch (e) {
+      showError("Unable to get your location, are Location Services disabled?");
+      //position = {coords:{latitude:32.5468,longitude:-84.3750}, accuracy: 50}
+      return
+    }
+
+    let pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+    if (meCircle) {
+      meCircle.setMap(null);
+    }
+    
+    meCircle = new google.maps.Circle({
+      strokeColor: "#3333FF",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#3333FF",
+      fillOpacity: 0.3,
+      map,
+      center: pos,
+      radius: Math.min(200, position.accuracy)/2
+    });
+
+    
+    
+    map.panTo(pos);
   })
 }
 
@@ -108,6 +139,9 @@ window.MapFindSiteButton = function (map) {
     return
   };
   return createMapButton(map, `\u{1F78B} Site`, () => {
+    if (meCircle) {
+      meCircle.setMap(null);
+    }
     map.panTo(new google.maps.LatLng(siteLocation.lat, siteLocation.lng));    
   });
 }
@@ -125,15 +159,11 @@ window.MapFullscreenButton = function(map) {
       if (full) {
         el.style.height = "";
         el.style.width = "";
-        el.style.position = 'relative';
-        el.style.left = '';
 
         dataset.full = ''
       } else {
         el.style.height = "90%";
         el.style.width = "100%";
-        el.style.position = 'absolute';
-        el.style.left = '0px';
 
         dataset.full = 'full'
 
