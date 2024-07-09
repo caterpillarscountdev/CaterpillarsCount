@@ -1,4 +1,5 @@
 const {OverlayView} = await google.maps.importLibrary("maps")
+      
 /**
  * A customized popup on the map.
  */
@@ -126,6 +127,7 @@ window.MapFindMeButton = function (map) {
       strokeWeight: 2,
       fillColor: "#3333FF",
       fillOpacity: 0.3,
+      clickable: false,
       map,
       center: pos,
       radius: Math.min(200, position.coords.accuracy)/2
@@ -137,12 +139,11 @@ window.MapFindMeButton = function (map) {
       strokeWeight: 2,
       fillColor: "#FFFFFF",
       fillOpacity: 0.3,
+      clickable: false,
       map,
       center: pos,
       radius: 5,
     });
-    
-    
     
     map.panTo(pos);
   })
