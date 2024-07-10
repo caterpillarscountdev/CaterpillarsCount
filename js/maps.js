@@ -187,7 +187,12 @@ window.MapFullscreenButton = function(map) {
 
         dataset.full = 'full'
 
-        let y = el.closest('.plant').getBoundingClientRect().y + window.scrollY;
+        let y;
+        try {
+          y = el.closest('.plant').getBoundingClientRect().y;
+        } catch (e) {
+        }
+        y += window.scrollY;
         window.scroll({
           top: y});
       }
