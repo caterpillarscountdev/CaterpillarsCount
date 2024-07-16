@@ -581,6 +581,7 @@
 
                         map = null;
                         marker = null;
+                        dblclicker = null;
                         popUp = null;
                         otherMarkers = [];
                  
@@ -685,7 +686,11 @@
                             }
                             marker.addListener("dragend", moved);
 
-                            map.addListener("dblclick", (ev) => {
+                            if (dblclicker && dblclicker.remove) {
+                                dblclicker.remove()
+                            }
+                            
+                            dblclicker = map.addListener("dblclick", (ev) => {
                                 marker.position = ev.latLng;
                                 moved()
                             });
@@ -756,7 +761,6 @@
                                         $('#map'+code).data('lng')
                                     ];
 				}
-
 				var formData = new FormData();
 				formData.append("plantData", JSON.stringify(plantData));
 				formData.append("email", window.localStorage.getItem("email"));
