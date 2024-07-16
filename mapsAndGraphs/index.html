@@ -1376,11 +1376,14 @@
                                     style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
                                     mapTypeIds: ["satellite", "roadmap", "terrain"],
                                 },
-                                streetViewControl: false
+                                streetViewControl: false,
+                                fullscreenControl: false,
+                                tiltInteractionEnabled: false
                             });
-                     await import("../js/maps.js");
-                     MapFindMeButton(plantMap);
+                     await import("../js/maps.js?v2");
+                     MapFullscreenButton(plantMap);
                      MapFindSiteButton(plantMap);
+                     MapFindMeButton(plantMap);
                  }
 
                  async function showSitePlants(siteID) {
@@ -1434,21 +1437,29 @@
                      for (let m of plantMarkers) {
                          m.setMap(null);
                      }
+
+                     var latlngbounds = new google.maps.LatLngBounds();
                      
                      plantMarkers = [];
                      let indices = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4};
                      for (let plant of plants) {
                          let j = indices[plant[0]];
                          let code = plant[1];
-                         let lat = plant[4];
-                         let lng = plant[5];
+                         let lat = parseFloat(plant[4]);
+                         let lng = parseFloat(plant[5]);
                          let color = plant[6];
+                         if (!lat || !lng) {
+                             continue
+                         }
                          
                          let node = $("<a href=\"../submitObservations/index.html?plantCode="+code+"\"><div class=\"code\" style=\"color:"+color+"\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div></a>")[0];
-                         var label = new MapPopUp(new google.maps.LatLng(lat, lng), node, true, 0);
+                         let loc = new google.maps.LatLng(lat, lng);
+                         var label = new MapPopUp(loc, node, true, 0);
+                         latlngbounds.extend(loc);
                          label.setMap(plantMap);
                          plantMarkers.push(label);
                      };
+                     plantMap.fitBounds(latlngbounds);
                  }
                  
 
