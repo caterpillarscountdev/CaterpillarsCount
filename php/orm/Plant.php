@@ -19,7 +19,7 @@ class Plant
 	private $deleted;
 
 //FACTORY
-	public static function create($site, $circle, $orientation) {
+	public static function create($site, $circle, $orientation, $code=null) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		if(!$dbconn){
 			return "Cannot connect to server.";
@@ -44,34 +44,36 @@ class Plant
 			$failures .= "Enter a unique circle/orientation set for this site. ";
 		}
 		
-		if($failures != ""){
-			return $failures;
+                if($code == null) {
+                  // THERE ARE 2 digit and 7 digit codes to watch out for.
+                  $query = mysqli_query($dbconn, "SELECT MAX(LPAD(Code, 4, " ")) AS Code FROM `Plant` WHERE LENGTH(Code) IN (3,4);");
+                  if(mysqli_num_rows($query) == 1){
+                    $row = mysqli_fetch_assoc($query);
+                    // php increment to create next code
+                    $code = ++(ltrim($row["Code"]));
+                  }
+
+                  if ($code == null) {
+                    $failures .= "Error creating next plant code. "
+                  }                  
+                }
+
+                $existing = self::findByCode($code);
+                if (is_object($existing) && ! $existing->getMoved()) {
+                  $failures .= "Plant code already exists but is not marked as moved. ";
+                }
+
+                if($failures != ""){
+                  return $failures;
 		}
-		
-		//DETERMINE ID MANUALLY TO FILL IN THE CRACKS OF DELETED CODES:
-		$MIN_ID = 703;//corresponds to "AAA"
-		$id = $MIN_ID;
-		$query = mysqli_query($dbconn, "SELECT `ID` FROM `Plant` ORDER BY `ID` ASC LIMIT 1");
-		if(mysqli_num_rows($query) == 1){
-			$query = mysqli_query($dbconn, "SELECT t1.ID+1 AS NextID FROM `Plant` AS t1 LEFT JOIN `Plant` AS t2 ON t1.ID+1=t2.ID WHERE t2.ID IS NULL AND t1.ID+1>='$MIN_ID' ORDER BY t1.ID+1 ASC");
-			while($row = mysqli_fetch_assoc($query)){
-				$id = intval($row["NextID"]);
-				while(mysqli_num_rows(mysqli_query($dbconn, "SELECT `ID` FROM `Plant` WHERE `ID`='" . $id . "' LIMIT 1")) == 0){
-					if(mysqli_num_rows(mysqli_query($dbconn, "SELECT `ID` FROM `Plant` WHERE `Code`='" . self::IDToCode($id) . "' LIMIT 1")) == 0){
-						break 2;
-					}
-					$id++;
-				}
-			}
-		}
-		$code = self::IDToCode($id);
+
 		
 		mysqli_query($dbconn, "INSERT INTO Plant (`ID`, `SiteFK`, `Circle`, `Orientation`, `Code`, `Species`, `IsConifer`) VALUES ('$id', '" . $site->getID() . "', '$circle', '$orientation', '$code', 'N/A', '0')");
 		mysqli_close($dbconn);
 		
 		return new Plant($id, $site, $circle, $orientation, $code, "N/A", false);
 	}
-	private function __construct($id, $site, $circle, $orientation, $code, $species, $isConifer, $latitude, $longitude) {
+	private function __construct($id, $site, $circle, $orientation, $code, $species, $isConifer, $latitude, $longitude, $moved) {
 		$this->id = intval($id);
 		$this->site = $site;
 		$this->circle = $circle;
@@ -81,7 +83,7 @@ class Plant
 		$this->isConifer = filter_var($isConifer, FILTER_VALIDATE_BOOLEAN);
                 $this->latitude = $latitude;
                 $this->longitude = $longitude;
-		
+		$this->moved = $moved;
 		$this->deleted = false;
 	}
 
@@ -95,8 +97,9 @@ class Plant
 		$isConifer = $plantRow["IsConifer"];
                 $latitude = $plantRow["Latitude"];
                 $longitude = $plantRow["Longitude"];
+                $moved = $plantRow["Moved"];
 		
-		return new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer, $latitude, $longitude);
+		return new Plant($id, $site, $circle, $orientation, $code, $species, $isConifer, $latitude, $longitude, $moved);
         }
 
 //FINDERS
@@ -141,7 +144,7 @@ class Plant
 		if($site === false || $circle === false || $orientation === false){
 			return null;
 		}
-		$query = mysqli_query($dbconn, "SELECT `ID` FROM `Plant` WHERE `SiteFK`='" . $site->getID() . "' AND `Circle`='$circle' AND `Orientation`='$orientation' LIMIT 1");
+		$query = mysqli_query($dbconn, "SELECT `ID` FROM `Plant` WHERE `SiteFK`='" . $site->getID() . "' AND `Circle`='$circle' AND `Orientation`='$orientation' AND NOT `Moved` LIMIT 1");
 		mysqli_close($dbconn);
 		if(mysqli_num_rows($query) == 0){
 			return null;
@@ -186,7 +189,7 @@ class Plant
 	
 	public static function findPlantsBySite($site){
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `SiteFK`='" . $site->getID() . "' AND `Circle`>0");
+		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `SiteFK`='" . $site->getID() . "' AND NOT Moved");
 		mysqli_close($dbconn);
 
                 $sites = array();
@@ -238,6 +241,10 @@ class Plant
 	public function getLongitude() {
 		if($this->deleted){return null;}
 		return $this->longitude;
+	}
+	public function getMoved() {
+		if($this->deleted){return null;}
+		return $this->moved;
 	}
 
 	
@@ -352,6 +359,19 @@ class Plant
 		}
 		return false;
 	}
+        
+	public function moveAndReplace(){
+		if(!$this->deleted){
+			$dbconn = (new Keychain)->getDatabaseConnection();
+			$moved = filter_var($moved, FILTER_VALIDATE_BOOLEAN);
+			mysqli_query($dbconn, "UPDATE Plant SET `Moved`='$moved' WHERE ID='" . $this->id . "'");
+			mysqli_close($dbconn);
+			$this->moved = $moved;
+
+                        return self::create($this->site, $this->circle, $this->orientation, $this->code);
+		}
+		return false;
+	}
 
 
 
@@ -457,56 +477,5 @@ class Plant
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-//FUNCTIONS
-	public static function IDToCode($id){
-		$chars = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
-		
-		//get the length of the code we will be returning
-		$codeLength = 0;
-		$previousIterations = 0;
-		while(true){
-			$nextIterations = pow(count($chars), ++$codeLength);
-			if($id <= $previousIterations + $nextIterations){
-				break;
-			}
-			$previousIterations += $nextIterations;
-		}
-		
-		//and, for every character that will be in the code...
-		$code = "";
-		$index = $id - 1;
-		$iterationsFromPreviousSets = 0;
-		for($i = 0; $i < $codeLength; $i++){
-			//generate the character from the id
-			if($i > 0){
-				$iterationsFromPreviousSets += pow(count($chars), $i);
-			}
-			$newChar = $chars[floor(($index - $iterationsFromPreviousSets) / pow(count($chars), $i)) % count($chars)];
-			
-			//and add it to the code
-			$code = $newChar . $code;
-		}
-		
-		//then, return a sanitized version of the full code that is safe to use with a MySQL query
-		$dbconn = (new Keychain)->getDatabaseConnection();
-		$code = mysqli_real_escape_string($dbconn, htmlentities($code));
-		mysqli_close($dbconn);
-		return $code;
-	}
 }		
 ?>

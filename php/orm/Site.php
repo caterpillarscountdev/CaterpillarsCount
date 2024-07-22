@@ -377,7 +377,7 @@ class Site
 	
 	public function getPlants(){
 		if($this->deleted){return null;}
-		return Plant::FindPlantsBySite($this);
+		return Plant::findPlantsBySite($this);
 	}
 	
 	public function getSaltedHash($password){
