@@ -52,6 +52,7 @@
 			"Coordinates" => $row["Latitude"] . "," . $row["Longitude"],
 			"Description" => $row["Description"],
 			"DateEstablished" => $row["DateEstablished"],
+                        "FilteredSurveyCount" => 0
 		);
 	}
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Plant.ID=Survey.PlantFK GROUP BY Plant.SiteFK");
