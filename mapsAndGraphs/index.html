@@ -3914,26 +3914,29 @@
 				for (var siteID in markers) {
 					if (markers.hasOwnProperty(siteID)) {
 						var marker = markers[siteID];
-						var row = [
-                                                    marker.siteInformation.Name,
-                                                    marker.siteInformation.Description,
-                                                    marker.getPosition().lat(),
-                                                    marker.getPosition().lng(),
-                                                    mapFilters.observationMethod,
-                                                    mapFilters.arthropodGroup,
-                                                    mapFilters.minimumLength,
-                                                    mapFilters.plantSpecies,
-                                                    mapFilters.wetLeaves.toString(),
-                                                    mapFilters.monthStart,
-                                                    mapFilters.monthEnd,
-                                                    mapFilters.yearStart,
-                                                    mapFilters.yearEnd,
-                                                    marker.siteInformation.Weight,
-                                                    marker.siteInformation.FilteredSurveyCount];
-						for(var i = 0; i < row.length; i++){
+                                                // exclude row with no surveys for criteria
+                                                if (marker.siteInformation.FilteredSurveyCount) {
+						    var row = [
+                                                        marker.siteInformation.Name,
+                                                        marker.siteInformation.Description,
+                                                        marker.getPosition().lat(),
+                                                        marker.getPosition().lng(),
+                                                        mapFilters.observationMethod,
+                                                        mapFilters.arthropodGroup,
+                                                        mapFilters.minimumLength,
+                                                        mapFilters.plantSpecies,
+                                                        mapFilters.wetLeaves.toString(),
+                                                        mapFilters.monthStart,
+                                                        mapFilters.monthEnd,
+                                                        mapFilters.yearStart,
+                                                        mapFilters.yearEnd,
+                                                        marker.siteInformation.Weight,
+                                                        marker.siteInformation.FilteredSurveyCount];
+						    for(var i = 0; i < row.length; i++){
 							row[i] = "\"" + row[i].toString().replace(/"/g, "'") + "\"";
-						}
-						csvString += row.join(",") + "\r\n";
+						    }
+						    csvString += row.join(",") + "\r\n";
+                                                }
 					}
 				}
 
