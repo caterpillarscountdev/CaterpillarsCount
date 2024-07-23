@@ -1828,8 +1828,58 @@
 				}
 				return arrToReturn;
 			}
-			var filtering = false;
-			function filterMap(){
+
+                        function defineMarkerForSite(site, normalWeight) {
+                            var ll = site["Coordinates"].split(",")
+			    var latlng = {lat:Number(ll[0]), lng:Number(ll[1])};
+			    var color = mapPercentToColor(normalWeight);
+			    var scale = 7;
+			    var zIndex = Math.round(normalWeight * 100);
+			    if(site["FilteredSurveyCount"] == 0){
+				scale = 5;
+				color = "#bbb";
+				zIndex = -1;
+			    }
+			    var marker = new google.maps.Marker({
+				map: map,
+				position: latlng,
+				title: (site["Name"] + ": " + site["RawValue"]),
+				zIndex: zIndex,
+				defaultZIndex: zIndex,
+				icon: {
+				    path: google.maps.SymbolPath.CIRCLE,
+				    scale: scale,
+				    strokeWeight: 1,
+				    defaultFillColor: color,
+				    fillColor: color,
+				    fillOpacity: .9
+				},
+				animation: google.maps.Animation.DROP,
+				siteInformation: {
+				    ID: site["ID"],
+				    Name: site["Name"],
+				    DateEstablished: site["DateEstablished"],
+				    Description: site["Description"],
+				    UserCount: site["UserCount"],
+				    ArthropodGroupCount: site["ArthropodGroupCount"],
+				    ArthropodCount: site["ArthropodCount"],
+				    CaterpillarCount: site["CaterpillarCount"],
+				    SurveyCount: site["SurveyCount"],
+				    FilteredSurveyCount: site["FilteredSurveyCount"],
+				    RawValue: site["RawValue"],
+				    Weight: site["Weight"],
+				    MostRecentDateTime: site["MostRecentDateTime"],
+				    EarliestDateTime: site["EarliestDateTime"]
+				}
+			    });
+			    marker.addListener('click', physicalMarkerClick);
+			    markers[site["ID"] + ""] = marker;
+                            
+                            return marker
+                        }
+
+                        var filtering = false;
+		        function filterMap(){
 				if(filtering){return false;}
 				filtering = true;
 				$("#mapFilters button").eq(0)[0].innerHTML = "<img src=\"../images/rolling.svg\" alt=\"loading...\"/>";
@@ -1892,55 +1942,19 @@
 					var maxWeight = -100;
 					var alreadyActiveMarker = null;
 					for(var i = 0; i < sites.length; i++){
-						var latlng = {lat:Number(sites[i]["Coordinates"].split(",")[0]), lng:Number(sites[i]["Coordinates"].split(",")[1])};
 						var color = mapPercentToColor(normalizedWeights[i]);
-						var scale = 7;
-						var zIndex = Math.round(normalizedWeights[i] * 100);
-						if(sites[i]["FilteredSurveyCount"] == 0){
-							scale = 5;
-							color = "#bbb";
-							zIndex = -1;
-						}
 						var currentColor = color;
 						if($("#selectedSitePanel h2").eq(0)[0].innerHTML == sites[i]["Name"]){
 							currentColor = "#fed136";
 						}
-						var marker = new google.maps.Marker({
-							map: map,
-							position: latlng,
-							title: (sites[i]["Name"] + ": " + sites[i]["RawValue"]),
-							defaultZIndex: zIndex,
-							zIndex: zIndex,
-							icon: {
-								path: google.maps.SymbolPath.CIRCLE,
-								scale: scale,
-								strokeWeight: 1,
-								defaultFillColor: color,
-								fillColor: currentColor,
-								fillOpacity: .9
-							},
-							animation: google.maps.Animation.DROP,
-							siteInformation: {
-								ID: sites[i]["ID"],
-								Name: sites[i]["Name"],
-								Description: sites[i]["Description"],
-								UserCount: sites[i]["UserCount"],
-								ArthropodGroupCount: sites[i]["ArthropodGroupCount"],
-								ArthropodCount: sites[i]["ArthropodCount"],
-								CaterpillarCount: sites[i]["CaterpillarCount"],
-								SurveyCount: sites[i]["SurveyCount"],
-								MostRecentDateTime: sites[i]["MostRecentDateTime"],
-								EarliestDateTime: sites[i]["EarliestDateTime"]
-							}
-						});
+						var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
 						if(currentColor == "#fed136"){
 							lastMarker = marker;
 							alreadyActiveMarker = marker;
 						}
-						marker.addListener('click', physicalMarkerClick);
-						markers[sites[i]["ID"] + ""] = marker;
-						var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
-						if(rawValueNumber < minRawValue || minRawValue == -1){
+
+					    var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
+					    if(rawValueNumber < minRawValue || minRawValue == -1){
 							minRawValue = rawValueNumber;
 						}
 						if(rawValueNumber > maxRawValue){
@@ -2014,6 +2028,7 @@
 					yearEnd: filterYearEnd
 				};
 			}
+
 			var siteNamesAndIDs = [];
 			function initializeMap() {
 				map = new google.maps.Map($('#map')[0], {
@@ -2031,45 +2046,7 @@
 					var maxRawValue = -1;
 					for(var i = 0; i < sites.length; i++){
 						siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
-						var latlng = {lat:Number(sites[i]["Coordinates"].split(",")[0]), lng:Number(sites[i]["Coordinates"].split(",")[1])};
-						var color = mapPercentToColor(normalizedWeights[i]);
-						var scale = 7;
-						var zIndex = Math.round(normalizedWeights[i] * 100);
-						if(sites[i]["FilteredSurveyCount"] == 0){
-							scale = 5;
-							color = "#bbb";
-							zIndex = -1;
-						}
-						var marker = new google.maps.Marker({
-							map: map,
-							position: latlng,
-							title: (sites[i]["Name"] + ": " + sites[i]["RawValue"]),
-							zIndex: zIndex,
-							defaultZIndex: zIndex,
-							icon: {
-								path: google.maps.SymbolPath.CIRCLE,
-								scale: scale,
-								strokeWeight: 1,
-								defaultFillColor: color,
-								fillColor: color,
-								fillOpacity: .9
-							},
-							animation: google.maps.Animation.DROP,
-							siteInformation: {
-								ID: sites[i]["ID"],
-								Name: sites[i]["Name"],
-								DateEstablished: sites[i]["DateEstablished"],
-								Description: sites[i]["Description"],
-								UserCount: sites[i]["UserCount"],
-								ArthropodGroupCount: sites[i]["ArthropodGroupCount"],
-								ArthropodCount: sites[i]["ArthropodCount"],
-								CaterpillarCount: sites[i]["CaterpillarCount"],
-								SurveyCount: sites[i]["SurveyCount"],
-								MostRecentDateTime: sites[i]["MostRecentDateTime"],
-								EarliestDateTime: sites[i]["EarliestDateTime"]
-							}
-						});
-						marker.addListener('click', physicalMarkerClick);
+                                                var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
 						markers[sites[i]["ID"] + ""] = marker;
 						var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
 						if(rawValueNumber < minRawValue || minRawValue == -1){
@@ -3932,12 +3909,27 @@
       			//END OF TRENDS CHART STUFF
 
 			function downloadMapData(){
-				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)")];
+				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)"), 'Survey Count'];
 				var csvString = headers.join(",") + "\r\n";
 				for (var siteID in markers) {
 					if (markers.hasOwnProperty(siteID)) {
 						var marker = markers[siteID];
-						var row = [marker.title.substring(0, marker.title.lastIndexOf(": ")), marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), mapFilters.observationMethod, mapFilters.arthropodGroup, mapFilters.minimumLength, mapFilters.plantSpecies, mapFilters.wetLeaves.toString(), mapFilters.monthStart, mapFilters.monthEnd, mapFilters.yearStart, mapFilters.yearEnd, marker.title.substring(marker.title.lastIndexOf(": ") + 2).replace(/[^0-9.]/g, "")];
+						var row = [
+                                                    marker.siteInformation.Name,
+                                                    marker.siteInformation.Description,
+                                                    marker.getPosition().lat(),
+                                                    marker.getPosition().lng(),
+                                                    mapFilters.observationMethod,
+                                                    mapFilters.arthropodGroup,
+                                                    mapFilters.minimumLength,
+                                                    mapFilters.plantSpecies,
+                                                    mapFilters.wetLeaves.toString(),
+                                                    mapFilters.monthStart,
+                                                    mapFilters.monthEnd,
+                                                    mapFilters.yearStart,
+                                                    mapFilters.yearEnd,
+                                                    marker.siteInformation.Weight,
+                                                    marker.siteInformation.FilteredSurveyCount];
 						for(var i = 0; i < row.length; i++){
 							row[i] = "\"" + row[i].toString().replace(/"/g, "'") + "\"";
 						}
@@ -3961,7 +3953,8 @@
 					"latest allowed year": "The latest year included in the mapping calculations",
 					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified in \"Arthropod Group\". Need not sum to 100 across arthropod groups.",
 					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for the arthropod type specified in \"Arthropod Group\".",
-					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group (found in the \"Arthropod Group\" field) divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
+					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group (found in the \"Arthropod Group\" field) divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions",
+                                        "survey count": "The number of surveys filtered by search criteria used as the denominator for calculating the site's value."
 				};
 
 				var metadataText = "";
