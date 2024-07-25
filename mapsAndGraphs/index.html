@@ -813,7 +813,7 @@
 			#downloadLinks{
 				display:none;
 			}
-			.downloadChartButton{
+			.downloadChartButton, .chartButton {
 				position:absolute;
 				z-index:1;
 				top:-18px;
@@ -831,18 +831,18 @@
 				cursor:pointer;
 				width:100px;
 			}
-			.downloadChartButton>div{
+			.downloadChartButton>div, .chartButton>div {
 				display:table-cell;
 				vertical-align:middle;
 			}
-			.downloadChartButton>.downloadImage{
+			.downloadChartButton>.downloadImage, .chartButton>.buttonIcon {
 				height:13px;
 				width:13px;
 				background-position:center;
 				background-size:contain;
 				background-repeat:no-repeat;
 			}
-			.downloadChartButton>.downloadText{
+			.downloadChartButton>.downloadText, .chartButton>.buttonText {
 				padding-left:4px;
 				font-size:10px;
 				padding-top:1px;
@@ -972,8 +972,10 @@
 				window.phenology = new Chart(document.getElementById('phenologyChart'), lineConfig);
 				window.composition = new Chart($('#compositionChart')[0].getContext('2d'), barConfig);
 				window.trends = new Chart(document.getElementById('trendsChart'), trendsConfig);
+                                enableWeeklyButton();
+                            
 			});
-			$(document).click(function(){
+		        $(document).click(function(){
 				$(".smallSelect .options").fadeOut(0);
 			});
 			function roundTo(number, decimalPlace){
@@ -1566,7 +1568,7 @@
 				}
 				$("#selectedSitePanel")[0].style.display = "block";
 				scrollToPanel(3);
-				 submitClassificationToSciStarter();
+				submitClassificationToSciStarter();
 			}
 			var currentSiteUserLeaderboardSiteID = -1;
 			var siteUserRankings = [];
@@ -2418,6 +2420,7 @@
 						endpoints[1]
 					]
 				},
+                                filters: [],
 				options: {
 					responsive: true,
 					legend: {display:false},
@@ -2478,7 +2481,7 @@
 					}
 				}
 			};
-      var trendsConfig = {
+                        var trendsConfig = {
 				type: 'line',
 				data: {
 					datasets: [
@@ -2522,6 +2525,23 @@
 					}
 				}
 			};
+
+                        var weekly = false;
+
+                        function enableWeeklyButton() {
+                            $(".weeklyButton").on("click", (ev) => {
+                                let checkbox = $(ev.currentTarget).find('.checkbox').first();
+                                if (checkboxIsChecked(checkbox)) {
+                                    weekly = false;
+                                    uncheckCheckbox(checkbox);
+                                } else {
+                                    weekly = true;
+                                    checkCheckbox(checkbox);
+                                }
+                                refreshSets();
+                            })
+                        }
+                 
 			function getClearPoint(x, y){
 				var background = "rgba(230,230,230,0)";
 				var border = "rgba(200,200,200,0)";
@@ -2701,10 +2721,7 @@
 				return comparisonMetricLines;
 			}
 			var phenologyLabels = [];
-			function addSet(label, points, update){
-				if(update !== false){
-					update = true;
-				}
+			function addSet(label, points, filters){
 				if(phenologyLabels.length >= colors.length){
 					queueNotice("error", "You have too many lines on your phenology chart. Please delete at least one of them before adding more.");
 					return false;
@@ -2726,15 +2743,15 @@
 				var lines = getLines("phenology", label, color, points, 30, false, false);
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					lineConfig.data.datasets = [];
+                                        lineConfig.filters = [];
 				}
 				for(var i = 0; i < lines.length; i++){
 					lineConfig.data.datasets[lineConfig.data.datasets.length] = lines[i];
+                                        lineConfig.filters[lineConfig.filters.length] = filters
 				}
-				if(update){
-					window.phenology.update();
-					centerYAxisLabels();
-					updatePhenologyLegend();
-				}
+			    window.phenology.update();
+			    centerYAxisLabels();
+			    updatePhenologyLegend();
 			}
 			function updatePhenologyLegend(){
 				var htmlToAdd = "<div style=\"display:inline-block;text-align:left;\">";
@@ -2879,6 +2896,7 @@
 				for(var i = (lineConfig.data.datasets.length - 1); i >= 0; i--){
 					if(lineColor == opaque(lineConfig.data.datasets[i].backgroundColor)){
 						lineConfig.data.datasets.splice(i, 1);
+                                                lineConfig.filters.splice(i, 1);
 					}
 				}
 				for(var i = (phenologyLabels.length - 1); i >=0; i--){
@@ -2895,10 +2913,22 @@
 				phenologyLabels = [];
 				chartedSets.phenology = {};
 				lineConfig.data.datasets = [endpoints[0], endpoints[1]];
-				window.phenology.update();
-				centerYAxisLabels();
+                                lineConfig.filters = [];
+			        window.phenology.update();
+			        centerYAxisLabels();
 				updatePhenologyLegend();
 			}
+
+                        function refreshSets() {
+                            let filters = lineConfig.filters;
+
+                            clearSets();
+                            
+                            for (let f of filters) {
+                                addSetFromFilters(f);
+                            }
+                        }
+                 
 			function addSetFromFilters(filters, callback){
 				callback = callback || function(){};
 				var color = "";
@@ -2921,6 +2951,7 @@
 				pauseCompositionLoads(function(){loadSetFromFilters(filters, function(){callback();resumeCompositionLoads();})});
 			}
 			function loadSetFromFilters(filters, callback){
+                                filters['weekly'] = weekly;
 				console.log("Loading phenology: " + JSON.stringify(filters));
 
 				$.get("/php/getPhenology.php?lines=" + encodeURIComponent(JSON.stringify([filters])), function(data){
@@ -2930,7 +2961,7 @@
 						var sets = JSON.parse(data.replace("true|", ""));
 						for(var label in sets){
 							if(sets.hasOwnProperty(label)){
-								addSet(label, sets[label]);
+								addSet(label, sets[label], filters);
 							}
 						}
 					}
@@ -4049,6 +4080,9 @@
 			function downloadPhenologyData(){
 				var metric = $("#lineGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Date", "Julian Day", metric];
+                                if (weekly) {
+                                    headers[headers.indexOf('Date')] = 'Week';
+                                }
 				var csvString = headers.join(",") + "\r\n";
 				var filtersString = "Y-Axis: " + metric + ", Lines:";
 
@@ -4107,19 +4141,20 @@
 				}
 
 				var headerDescriptions = {
-					"site": "Name of the Caterpillars Count! site",
-					"description": "Description of the Caterpillars Count! site",
-					"latitude": "Latitude of the Caterpillars Count! site",
-					"longitude": "Longitude of the Caterpillars Count! site",
-					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
-					"date": "The Gregorian calendar date in the form YYYY-MM-DD",
-					"julian day": "The number of days since the beginning of the year, starting with January 1st as 1",
-					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
-					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
-					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
+				    "site": "Name of the Caterpillars Count! site",
+				    "description": "Description of the Caterpillars Count! site",
+				    "latitude": "Latitude of the Caterpillars Count! site",
+				    "longitude": "Longitude of the Caterpillars Count! site",
+				    "arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
+				    "date": "The Gregorian calendar date in the form YYYY-MM-DD",
+				    "week": "The Gregorian calendar date in the form YYYY-MM-DD for weekly aggregated data",
+				    "julian day": "The number of days since the beginning of the year, starting with January 1st as 1",
+				    "percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
+				    "number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
+				    "biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
 				};
 
-				var metadataText = "";
+			        var metadataText = "";
 				for(var i = 0; i < headers.length; i++){
 					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
 				}
@@ -4142,7 +4177,11 @@
 					siteNames = ["No sites".replace(/[\W_]+/g," ")];
 				}
 
-				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Phenology Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Phenology Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear;
+                                if (weekly) {
+                                    metadataText += " By Week"
+                                }
+                                metadataText += " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
 
 				var zip = new JSZip();
 				var folder = zip.folder("Caterpillars Count! " + siteNames.join(" - ") + " phenology data");
@@ -4592,12 +4631,12 @@
 						</div>
 						<div style="display:table-cell;width:100%;"></div>
 						<div style="display:table;" id="mapButtons">
-							<div style="display:table-cell;vertical-align:middle;">
-								<div id="mapDownloadButton" style="background:#ccc;opacity:0;cursor:default;">
-									<div id="mapDownloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
-									<div id="mapDownloadText">Download</div>
-								</div>
-							</div>
+						  <div style="display:table-cell;vertical-align:middle;">
+						    <div id="mapDownloadButton" style="background:#ccc;opacity:0;cursor:default;">
+						      <div id="mapDownloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+						      <div id="mapDownloadText">Download</div>
+						    </div>
+						  </div>
 							<div style="display:table-cell;vertical-align:middle;">
 								<div id="mapFiltersToggleButton" onclick="toggleMapFilters();">
 									<div id="mapFiltersImage" style="background-image:url('../images/filterIconWhite.png');"></div>
@@ -4720,10 +4759,18 @@
 							<div id="lineGraph">
 								<div class="chartExplanation">Click on the y-axis label to change the phenology metric being plotted. Data points are excluded if fewer than five surveys were conducted at the given site on that day.</div>
 								<div style="height:500px;margin-top:40px;position:relative;">
-									<div class="downloadChartButton" onclick="promptConfirm('To download, read and agree to the Caterpillars Count! <a href=&quot;../dataUsePolicy&quot; target=&quot;_blank&quot;>data use</a> and <a href=&quot;../dataAttributionPolicy&quot; target=&quot;_blank&quot;>attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadPhenologyData();});">
-										<div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
-										<div class="downloadText">Download</div>
-									</div>
+                                                                  <div style="position: relative">
+								    <div class="downloadChartButton" onclick="promptConfirm('To download, read and agree to the Caterpillars Count! <a href=&quot;../dataUsePolicy&quot; target=&quot;_blank&quot;>data use</a> and <a href=&quot;../dataAttributionPolicy&quot; target=&quot;_blank&quot;>attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadPhenologyData();});">
+								      <div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+								      <div class="downloadText">Download</div>
+								    </div>
+                                                                  </div>
+                                                                  <div style="position: relative; left: -9em;">
+								    <div class="chartButton weeklyButton">
+								      <div class="checkbox buttonIcon"></div>
+								      <div class="buttonText">Weekly</div>
+								    </div>
+                                                                  </div>    
 									<div class="yAxisLabel">
 										<div class="smallSelect">
 											<div class="selected" onclick="showSmallSelectOptions(this);">Percent of Surveys</div>
