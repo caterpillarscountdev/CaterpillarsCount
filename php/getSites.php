@@ -52,6 +52,7 @@
 			"Coordinates" => $row["Latitude"] . "," . $row["Longitude"],
 			"Description" => $row["Description"],
 			"DateEstablished" => $row["DateEstablished"],
+                        "FilteredSurveyCount" => 0
 		);
 	}
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Plant.ID=Survey.PlantFK GROUP BY Plant.SiteFK");
@@ -81,7 +82,7 @@
 	}
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Plant.SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
-		$sitesArray[strval($row["SiteFK"])]["Caterpillars"] = round(((floatval($row["Caterpillars"]) / floatval($sitesArray[strval($row["SiteFK"])]["SurveyCount"])) * 100), 2) . "%";
+          $sitesArray[strval($row["SiteFK"])]["Caterpillars"] = $sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"] !=0 ? round(((floatval($row["Caterpillars"]) / floatval($sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"])) * 100), 2) . "%": 0;
 	}
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(STR_TO_DATE(CONCAT(Survey.LocalDate, ' ', Survey.LocalTime), '%Y-%m-%d %T')) AS MostRecentDateTime, MIN(STR_TO_DATE(CONCAT(Survey.LocalDate, ' ', Survey.LocalTime), '%Y-%m-%d %T')) AS EarliestDateTime FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
@@ -93,15 +94,15 @@
 	if($comparisonMetric == "occurrence"){
 		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Arthropods FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE MONTH(Survey.LocalDate)>=$monthStart AND MONTH(Survey.LocalDate)<=$monthEnd AND YEAR(Survey.LocalDate)>=$yearStart AND YEAR(Survey.LocalDate)<=$yearEnd AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND (Plant.Species LIKE '$plantSpecies' OR (Plant.Species='N/A' AND Survey.PlantSpecies LIKE '$plantSpecies')) AND Survey.WetLeaves IN (0, $includeWetLeaves) AND ArthropodSighting.Length>=$minSize AND Survey.ObservationMethod LIKE '$observationMethod' GROUP BY Plant.SiteFK");
 		while($row = mysqli_fetch_assoc($query)){
-			$occurrencePercentage = round(((floatval($row["Arthropods"]) / floatval($sitesArray[strval($row["SiteFK"])]["SurveyCount"])) * 100), 2);
-			$sitesArray[strval($row["SiteFK"])]["RawValue"] = $occurrencePercentage . "%";
-			$sitesArray[strval($row["SiteFK"])]["Weight"] = $occurrencePercentage;
+                  $occurrencePercentage = floatval($sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"]) !=0 ? round(((floatval($row["Arthropods"]) / floatval($sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"])) * 100), 2) : 0;
+                  $sitesArray[strval($row["SiteFK"])]["RawValue"] = $occurrencePercentage . "%";
+                  $sitesArray[strval($row["SiteFK"])]["Weight"] = $occurrencePercentage;
 		}
 	}
 	else if($comparisonMetric == "density"){
 		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, SUM(ArthropodSighting.Quantity) AS Arthropods FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID JOIN ArthropodSighting ON Survey.ID=ArthropodSighting.SurveyFK WHERE MONTH(Survey.LocalDate)>=$monthStart AND MONTH(Survey.LocalDate)<=$monthEnd AND YEAR(Survey.LocalDate)>=$yearStart AND YEAR(Survey.LocalDate)<=$yearEnd AND ArthropodSighting.UpdatedGroup LIKE '$arthropod' AND (Plant.Species LIKE '$plantSpecies' OR (Plant.Species='N/A' AND Survey.PlantSpecies LIKE '$plantSpecies')) AND Survey.WetLeaves IN (0, $includeWetLeaves) AND ArthropodSighting.Length>=$minSize AND Survey.ObservationMethod LIKE '$observationMethod' GROUP BY Plant.SiteFK");
 		while($row = mysqli_fetch_assoc($query)){
-			$arthropodsPerSurvey = floatval($row["Arthropods"]) / floatval($sitesArray[strval($row["SiteFK"])]["SurveyCount"]);
+                  $arthropodsPerSurvey = floatval($sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"]) !=0 ? floatval($row["Arthropods"]) / floatval($sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"]) : 0;
 			$sitesArray[strval($row["SiteFK"])]["RawValue"] = round($arthropodsPerSurvey, 2);
 			$loggedDensity = round(log10($arthropodsPerSurvey + 0.000000000000000000000000000000000000000000000000001), 2);
 			$sitesArray[strval($row["SiteFK"])]["Weight"] = $loggedDensity;
@@ -121,7 +122,7 @@
 		}
 		
 		foreach($siteBiomasses as $siteID => $totalBiomass){
-			$meanBiomassPerSurvey = round(($totalBiomass / floatval($sitesArray[strval($siteID)]["SurveyCount"])), 2);
+                  $meanBiomassPerSurvey = floatval($sitesArray[strval($siteID)]["FilteredSurveyCount"]) !=0 ? round(($totalBiomass / floatval($sitesArray[strval($siteID)]["FilteredSurveyCount"])), 2) : 0;
 			$sitesArray[strval($siteID)]["RawValue"] = $meanBiomassPerSurvey;
 			$sitesArray[strval($siteID)]["Weight"] = $meanBiomassPerSurvey;
 		}
