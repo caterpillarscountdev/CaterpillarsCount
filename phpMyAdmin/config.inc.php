@@ -28,7 +28,11 @@ $i++;
 /* Authentication type */
 $cfg['Servers'][$i]['auth_type'] = 'cookie';
 /* Server parameters */
-$cfg['Servers'][$i]['host'] = getenv("CATERPILLARSV2_SERVICE_HOST");
+if (getenv("DEVELOPMENT_INSTANCE") == 1) {  
+  $cfg['Servers'][$i]['host'] = getenv("DEVCCDB_SERVICE_HOST");	
+} else {
+  $cfg['Servers'][$i]['host'] = getenv("CATERPILLARSV2_SERVICE_HOST");
+}	
 $cfg['Servers'][$i]['connect_type'] = 'tcp';
 $cfg['Servers'][$i]['compress'] = false;
 $cfg['Servers'][$i]['AllowNoPassword'] = false;
