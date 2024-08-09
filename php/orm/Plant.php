@@ -46,15 +46,16 @@ class Plant
 		
                 if($code == null) {
                   // THERE ARE 2 digit and 7 digit codes to watch out for.
-                  $query = mysqli_query($dbconn, "SELECT MAX(LPAD(Code, 4, " ")) AS Code FROM `Plant` WHERE LENGTH(Code) IN (3,4);");
+                  $query = mysqli_query($dbconn, "SELECT MAX(LPAD(Code, 4, ' ')) AS Code FROM `Plant` WHERE LENGTH(Code) IN (3,4);");
                   if(mysqli_num_rows($query) == 1){
                     $row = mysqli_fetch_assoc($query);
                     // php increment to create next code
-                    $code = ++(ltrim($row["Code"]));
+                    $code = ltrim($row["Code"]);
+                    $code = ++$code;
                   }
 
                   if ($code == null) {
-                    $failures .= "Error creating next plant code. "
+                    $failures .= "Error creating next plant code. ";
                   }                  
                 }
 
