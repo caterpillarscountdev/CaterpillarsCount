@@ -37,7 +37,6 @@
 		if (empty($fileErrorText)) {
 			$fileErrorText =  'Upload unsuccessful. ';
 		}
-        custom_error_log($fileErrorText . ' from ' . $fileError);
 		return $fileErrorText;
 	}
 		
@@ -119,7 +118,6 @@
 						if(strval($arthropodSightings[$i]->getID()) == strval($arthropodData[$j][0])){
 							$existingArthropodSightingIDs[] = strval($arthropodData[$j][0]);
 							if ($temp_debug_level>0) {
-                               custom_error_log('about to set all editables');
 		                    }			
 							$updateResult = $arthropodSightings[$i]->setAllEditables($arthropodData[$j][1], $arthropodData[$j][2], $arthropodData[$j][3], $arthropodData[$j][4], $arthropodData[$j][5], $arthropodData[$j][6], $arthropodData[$j][7], $arthropodData[$j][8], $arthropodData[$j][9], $arthropodData[$j][10]);
 							if($updateResult === false){
