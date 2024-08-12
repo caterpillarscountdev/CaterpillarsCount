@@ -15,6 +15,7 @@
 				"id" => $sites[$i]->getID(),
 				"name" => $sites[$i]->getName(),
 				"region" => $sites[$i]->getRegion(),
+                                "active" => $sites[$i]->getActive(),
 			);
 		}
 		die("true|" . json_encode($sitesArray));
