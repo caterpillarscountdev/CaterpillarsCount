@@ -290,7 +290,7 @@ class ArthropodSighting
 	
 	public function getNotes() {
 		if($this->deleted){return null;}
-		return $this->notes;
+		return html_entity_decode($this->notes);
 	}
 	
 	public function getPupa() {
@@ -366,27 +366,15 @@ class ArthropodSighting
 	
 	
 	public function setAllEditables($originalGroup, $length, $quantity, $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalBeetleLarva){
-		$temp_debug_level = 1; //temp debugging enabled if >=1 
-		if ($temp_debug_level>0) { custom_error_log('setAllEditables>init');}
 		if(!$this->deleted)
 		{
 			$dbconn = (new Keychain)->getDatabaseConnection();
-            if ($temp_debug_level>0) { custom_error_log('setAllEditables> have dbconn');} 
 			$originalGroup = self::validGroup($dbconn, $originalGroup);
 			$length = self::validLength($dbconn, $length);
 			$quantity = self::validQuantity($dbconn, $quantity);
 			$notes = self::validNotes($dbconn, $notes);
-			if ($temp_debug_level>0) {
-				custom_error_log('setAllEditables> pupa pre filter >' . $pupa . '< is empty? ' . empty($pupa) . ' is null? ' . is_null($pupa) . ' done.');
-			}
 			//$pupa = filter_var($pupa, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-			//if ($temp_debug_level>0) {
-			//	custom_error_log('setAllEditables> pupa after filter >' . $pupa . '< is empty? ' . empty($pupa) . ' is null? ' . is_null($pupa) . ' done.');
-			//}
 			$pupa = custom_filter_var_bool($pupa);
-			if ($temp_debug_level>0) {
-				custom_error_log('setAllEditables> pupa after second filter >' . $pupa . '< is empty? ' . empty($pupa) . ' is null? ' . is_null($pupa) . ' done.');
-			}
 			$hairy = custom_filter_var_bool($hairy);
 			$rolled = custom_filter_var_bool($rolled);
 			$tented = custom_filter_var_bool($tented);
@@ -412,13 +400,11 @@ class ArthropodSighting
 			if($failures != ""){
 				return $failures;
 			}
-			if ($temp_debug_level>0) { custom_error_log('setAllEditables> past failures');} 
 			$updatedGroup = $originalGroup;
 			$updatedSawfly = $originalSawfly;
 			$updatedBeetleLarva = $originalBeetleLarva;
 			$query = mysqli_query($dbconn, "SELECT `StandardGroup`, `SawflyUpdated`, `BeetleLarvaUpdated` FROM `ExpertIdentification` WHERE `ArthropodSightingFK`='" . $this->id . "'");
 			if(mysqli_num_rows($query) > 0){
-				if ($temp_debug_level>0) { custom_error_log('setAllEditables> have rows in query 1');} 
 				$row = mysqli_fetch_assoc($query);
 				$updatedGroup = $row["StandardGroup"];
 				$updatedSawfly = $row["SawflyUpdated"];
@@ -426,11 +412,6 @@ class ArthropodSighting
 			}
 			
 			$as_result = mysqli_query($dbconn, "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `UpdatedGroup`='$updatedGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Pupa`='$pupa', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `UpdatedSawfly`='$updatedSawfly', `OriginalBeetleLarva`='$originalBeetleLarva', `UpdatedBeetleLarva`='$updatedBeetleLarva' WHERE ID='" . $this->id . "'");
-			
-			if ($temp_debug_level>0) { custom_error_log('setAllEditables> done with query 2 for id ' . $this->id );
-			  custom_error_log('ran ' . "UPDATE ArthropodSighting SET `OriginalGroup`='$originalGroup', `UpdatedGroup`='$updatedGroup', `Length`='$length', `Quantity`='$quantity', `Notes`='$notes', `Pupa`='$pupa', `Hairy`='$hairy', `Rolled`='$rolled', `Tented`='$tented', `OriginalSawfly`='$originalSawfly', `UpdatedSawfly`='$updatedSawfly', `OriginalBeetleLarva`='$originalBeetleLarva', `UpdatedBeetleLarva`='$updatedBeetleLarva' WHERE ID='" . $this->id . "'");
-			  custom_error_log('Pupa is now >' . $pupa . '<');
-			} 
 			
 			if (!($as_result===true)) {
 				$failures = 'SQL failed';
