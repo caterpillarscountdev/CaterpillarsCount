@@ -17,11 +17,11 @@
 		$site = Site::findByID($siteID);
 		if(is_object($site) && get_class($site) == "Site" && in_array($siteID, $sites)){
 			$siteArray = array(
-				"name" => $site->getName(),
-				"description" => $site->getDescription(),
-				"url" => $site->getURL(),
-				"openToPublic" => $site->getOpenToPublic(),
-				"active" => $site->getActive(),
+                          "name" => html_entity_decode($site->getName()),
+                          "description" => html_entity_decode($site->getDescription()),
+                          "url" => $site->getURL(),
+                          "openToPublic" => $site->getOpenToPublic(),
+                          "active" => $site->getActive(),
 			);
 			die("true|" . json_encode($siteArray));
 		}
