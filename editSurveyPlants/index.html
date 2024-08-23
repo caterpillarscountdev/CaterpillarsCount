@@ -403,8 +403,9 @@
 					}
 				}
 			}
+                        siteID = encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3));
                         siteLocation = {lat: 0, lng: 0};
-			function loadCircles(){
+		        function loadCircles(){
 			    var xhttp = new XMLHttpRequest();
 			    xhttp.onreadystatechange = function() {
 			        if (this.readyState == 4 && this.status == 200) {
@@ -435,7 +436,7 @@
 			            }
 			        }
 			    };
-			    xhttp.open("GET", "../php/getPlantsBySite.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
+			    xhttp.open("GET", "../php/getPlantsBySite.php?siteID=" + siteID + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
 			    xhttp.send();
 			}
 
@@ -804,11 +805,6 @@
 				$("#addNewCircle")[0].innerHTML = "Adding New Circle...";
 				//setLoadingButton($("#saveAllButton")[0], "Save all", true);
 
-				var samplePlantCode = "";
-				if($("input").length > 0){
-					samplePlantCode = $("input").eq(0)[0].id;
-				}
-
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function() {
 					if (this.readyState == 4 && this.status == 200) {
@@ -830,8 +826,8 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/addCircle.php?samplePlantCode=" + encodeURIComponent(samplePlantCode) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
-				xhttp.send();
+			    xhttp.open("GET", "../php/addCircle.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
+			    xhttp.send();
 			}
 		</script>
 	</head>

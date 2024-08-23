@@ -1,4 +1,5 @@
-<?php
+<?php                                           
+                                                
 
 class Keychain
 {
@@ -45,8 +46,13 @@ class Keychain
 
 //GETTERS
 	public function getDatabaseConnection(){
-                //mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);        
-		return mysqli_connect($this->hostPointer, $this->hostUsername, $this->hostPassword, $this->databaseName);
+                //mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+          static $__conn;
+          if (!is_object($__conn)) {
+            error_log("Creating new connection " . print_r($__conn, true));
+            $__conn = mysqli_connect($this->hostPointer, $this->hostUsername, $this->hostPassword, $this->databaseName);
+          }
+          return $__conn;
 	}
 	
 	public function getProtocol(){
