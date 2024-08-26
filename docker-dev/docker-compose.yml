@@ -29,6 +29,8 @@ php:
 mysql:    
       image: mysql:5.7
       ports: [ 3306:3306 ]
+      command:
+       - --sql_mode=NO_ENGINE_SUBSTITUTION
       environment:  
        MYSQL_ROOT_PASSWORD: secret
        MYSQL_DATABASE: mydb
