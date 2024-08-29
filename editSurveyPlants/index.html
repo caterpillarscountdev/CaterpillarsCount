@@ -805,6 +805,7 @@
 				$("#addNewCircle")[0].innerHTML = "Adding New Circle...";
 				//setLoadingButton($("#saveAllButton")[0], "Save all", true);
 
+
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function() {
 					if (this.readyState == 4 && this.status == 200) {
@@ -826,8 +827,8 @@
 						}
 					}
 				};
-			    xhttp.open("GET", "../php/addCircle.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
-			    xhttp.send();
+				xhttp.open("GET", "../php/addCircle.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
+				xhttp.send();
 			}
 		</script>
 	</head>

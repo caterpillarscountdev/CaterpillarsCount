@@ -43,7 +43,7 @@
 	}
 	$sitesArray = array();
 	$siteIDs = array();
-	$query = mysqli_query($dbconn, "SELECT `ID`, `Name`, `Latitude`, `Longitude`, `Description`, `DateEstablished` FROM `Site`");
+	$query = mysqli_query($dbconn, "SELECT `ID`, `Name`, `Latitude`, `Longitude`, `Description`, `DateEstablished`, `Active` FROM `Site`");
 	while($row = mysqli_fetch_assoc($query)){
 		$siteIDs[] = strval($row["ID"]);
 		$sitesArray[strval($row["ID"])] = array(
@@ -52,6 +52,7 @@
 			"Coordinates" => $row["Latitude"] . "," . $row["Longitude"],
 			"Description" => $row["Description"],
 			"DateEstablished" => $row["DateEstablished"],
+                        "Active" => $row["Active"],
                         "FilteredSurveyCount" => 0
 		);
 	}

@@ -69,7 +69,7 @@ class Plant
 		mysqli_query($dbconn, "INSERT INTO Plant (`ID`, `SiteFK`, `Circle`, `Orientation`, `Code`, `Species`, `IsConifer`) VALUES ('$id', '" . $site->getID() . "', '$circle', '$orientation', '$code', 'N/A', '0')");
 		mysqli_close($dbconn);
 		
-		return new Plant($id, $site, $circle, $orientation, $code, "N/A", false);
+		return new Plant($id, $site, $circle, $orientation, $code, "N/A", false, null, null);
 	}
 	private function __construct($id, $site, $circle, $orientation, $code, $species, $isConifer, $latitude, $longitude) {
 		$this->id = intval($id);

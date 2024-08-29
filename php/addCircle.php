@@ -12,6 +12,7 @@
         $siteID = custgetparam("siteID");
 	$appVersion = intval(preg_replace("/[^0-9]/", "", isset($_GET["appVersion"]) ? $_GET["appVersion"] : "0"));
 
+
         $conn = (new Keychain)->getDatabaseConnection();
         $conn->begin_transaction();
 try {
@@ -46,11 +47,11 @@ try {
           }
           else{
             $newPlantsData = array(
-              array($newPlants[0]->getOrientation(), $newPlants[0]->getCode(), $newPlants[0]->getSpecies(), $newPlants[0]->getIsConifer()),
-              array($newPlants[1]->getOrientation(), $newPlants[1]->getCode(), $newPlants[1]->getSpecies(), $newPlants[1]->getIsConifer()),
-              array($newPlants[2]->getOrientation(), $newPlants[2]->getCode(), $newPlants[2]->getSpecies(), $newPlants[2]->getIsConifer()),
-              array($newPlants[3]->getOrientation(), $newPlants[3]->getCode(), $newPlants[3]->getSpecies(), $newPlants[3]->getIsConifer()),
-              array($newPlants[4]->getOrientation(), $newPlants[4]->getCode(), $newPlants[4]->getSpecies(), $newPlants[4]->getIsConifer()),
+              array($newPlants[0]->getOrientation(), $newPlants[0]->getCode(), $newPlants[0]->getSpecies(), $newPlants[0]->getIsConifer(), $newPlants[0]->getLatitude(), $newPlants[0]->getLongitude(), $newPlants[0]->getColor()),
+              array($newPlants[1]->getOrientation(), $newPlants[1]->getCode(), $newPlants[1]->getSpecies(), $newPlants[1]->getIsConifer(), $newPlants[1]->getLatitude(), $newPlants[1]->getLongitude(), $newPlants[1]->getColor()),
+              array($newPlants[2]->getOrientation(), $newPlants[2]->getCode(), $newPlants[2]->getSpecies(), $newPlants[2]->getIsConifer(), $newPlants[2]->getLatitude(), $newPlants[2]->getLongitude(), $newPlants[2]->getColor()),
+              array($newPlants[3]->getOrientation(), $newPlants[3]->getCode(), $newPlants[3]->getSpecies(), $newPlants[3]->getIsConifer(), $newPlants[3]->getLatitude(), $newPlants[3]->getLongitude(), $newPlants[3]->getColor()),
+              array($newPlants[4]->getOrientation(), $newPlants[4]->getCode(), $newPlants[4]->getSpecies(), $newPlants[4]->getIsConifer(), $newPlants[4]->getLatitude(), $newPlants[4]->getLongitude(), $newPlants[4]->getColor()),
               );
           }
         } else { $error = "You cannot have more than 25 circles at a single site.";}
@@ -69,6 +70,5 @@ if ($error) {
 } else {
   die("true|" . json_encode($newPlantsData));
 }
-
 
 ?>
