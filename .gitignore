@@ -2,3 +2,4 @@ docker-dev/data
 composer.lock
 /vendor
 /php/orm/resources/vendor
+/php/get*.txt

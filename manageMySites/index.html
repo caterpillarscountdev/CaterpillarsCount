@@ -115,6 +115,10 @@
 				overflow:hidden;
 			}
 
+                        .select .option.hidden {
+                                display:none;
+                        }
+                 
 			.select .option.selected{
 				max-height:250px;
 				overflow:hidden;
@@ -464,25 +468,45 @@
 				xhttp.onreadystatechange = function() {
 					if (this.readyState == 4 && this.status == 200) {
 						if(this.responseText.indexOf("true") == 0){
-							var ownedSites = JSON.parse(this.responseText.replace("true|", ""));
+						    var ownedSites = JSON.parse(this.responseText.replace("true|", ""));
+                                                    ownedSites.forEach(site => {
+                                                        site.nameAndRegion = site["name"] + " (" + site["region"] + ")";
+                                                    })
+						    ownedSites.sort(function(a, b){
+                                                        return a.nameAndRegion.localeCompare(b.nameAndRegion);
+						    });
+						    
+						    var onlyOwnsOneSite = (ownedSites.length == 1);
+						    
+						    var htmlToAdd = "<div class=\"select\">";
+						    htmlToAdd += "<div class=\"option" + (onlyOwnsOneSite ? "" : " selected") + "\" onclick=\"selectOption(this);\">	<div class=\"value\"></div>			<div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/selectIcons/notselected.png');\"></div>		<div class=\"text\">Site not selected</div></div></div>";
+                                                    function siteHTML(site, extraCls) {
+                                                        return "<div class=\"option" + (onlyOwnsOneSite ? " selected" : "") + " " + extraCls + "\" onclick=\"selectOption(this);\">	<div class=\"value\">" + site["id"] + "</div>			<div class=\"shown\"><div class=\"image\"></div>		<div class=\"text\">" + site.nameAndRegion + "</div></div></div>";
+                                                    }
+                                                    
+                                                    let activeSites = ownedSites.filter(a => a.active);
+                                                    let inactiveSites = ownedSites.filter(a => !a.active);
 
-							ownedSites.sort(function(a, b){
-								if((a["name"] + " (" + a["region"] + ")").toLowerCase() < (b["name"] + " (" + b["region"] + ")").toLowerCase()){return -1;}
-								if((a["name"] + " (" + a["region"] + ")").toLowerCase() > (b["name"] + " (" + b["region"] + ")").toLowerCase()){return 1;}
-								return 0;
-							});
-							
-							var onlyOwnsOneSite = (ownedSites.length == 1);
-							
-							var htmlToAdd = "<div class=\"select\">";
-							htmlToAdd += "<div class=\"option" + (onlyOwnsOneSite ? "" : " selected") + "\" onclick=\"selectOption(this);\">	<div class=\"value\"></div>			<div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/selectIcons/notselected.png');\"></div>		<div class=\"text\">Site not selected</div></div></div>";
-							for(var i = 0; i < ownedSites.length; i++){
-								htmlToAdd += "<div class=\"option" + (onlyOwnsOneSite ? " selected" : "") + "\" onclick=\"selectOption(this);\">	<div class=\"value\">" + ownedSites[i]["id"] + "</div>			<div class=\"shown\"><div class=\"image\"></div>		<div class=\"text\">" + ownedSites[i]["name"] + " (" + ownedSites[i]["region"] + ")</div></div></div>";
-								//htmlToAdd += "<option value=\"" + ownedSites[i]["id"] + "\">" + ownedSites[i]["name"] + " (" + ownedSites[i]["region"] + ")</option>";
-							}
-							htmlToAdd += "<div class=\"option\" onclick=\"window.location = '../createNewSite';\"><div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/plus.png');\"></div>		<div class=\"text italic\">CREATE NEW SITE</div></div></div>";
-							htmlToAdd += "</div>";
-							$("#sites")[0].innerHTML = htmlToAdd;
+                                                    if (activeSites.length < 1 && inactiveSites.length > 0) {
+                                                        activeSites = inactiveSites;
+                                                        inactiveSites = [];
+                                                    }
+                                                    
+						    for(let site of activeSites){
+							htmlToAdd += siteHTML(site);
+						    }
+
+                                                    if (inactiveSites.length > 0) {
+                                                        htmlToAdd += "<div class=\"option\" onclick=\"showInactive(this);\"><div class=\"value\"></div><div class=\"shown\"><div class=\"text italic\">SHOW INACTIVE SITES</div></div></div>";
+						        for(let site of inactiveSites){
+							    htmlToAdd += siteHTML(site, "hidden");
+						        }
+                                                        
+                                                    }
+                                                    
+						    htmlToAdd += "<div class=\"option\" onclick=\"window.location = '../createNewSite';\"><div class=\"shown\"><div class=\"image\" style=\"background-image:url('../images/plus.png');\"></div>		<div class=\"text italic\">CREATE NEW SITE</div></div></div>";
+						    htmlToAdd += "</div>";
+						    $("#sites")[0].innerHTML = htmlToAdd;
 						}
 						else{
 							var getSitesError = this.responseText.replace("false|", "");
@@ -496,6 +520,11 @@
 				xhttp.open("GET", "../php/getOwnedSitesLIGHT.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
 				xhttp.send();
 			}
+
+                        function showInactive(el) {
+                            el.remove()
+                            document.querySelectorAll(".option.hidden").forEach(a => { a.classList.remove('hidden')})
+                        }
 
 			function printTags(){
 				var id = getSelectValue($(".select").eq(0));

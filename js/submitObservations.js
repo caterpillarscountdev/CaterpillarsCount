@@ -16,6 +16,12 @@
 				
 				//clear file upload
 				$("#uploadedImageFile")[0].outerHTML = $("#uploadedImageFile")[0].outerHTML;
+
+                                // set plant code if in URL
+                          let plantCode = window.location.search.indexOf("plantCode");
+                          if (plantCode > -1) {
+                            $("#plantCode").val(window.location.search.slice(plantCode+10, plantCode+13)).trigger("input");
+                          }
 			});
 			function tap(){
 				return !hasMoved;

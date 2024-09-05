@@ -42,6 +42,7 @@
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<script src="../js/libraries/jszip.min.js"></script>
 		<script src="../js/libraries/FileSaver.js"></script>
+		<link href="../css/maps.css" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=3"></script>
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
@@ -57,10 +58,33 @@
 				height:30px;
 			}
 
-			#alert img{
-				max-height:450px;
-				margin:0px;
-			}
+                 #map-canvas {
+                     height: 250px;
+                     margin:10px 0px;
+                     border-radius:4px;
+                     overflow:hidden;
+                 }
+
+		 .code{
+		     font-weight:bold;
+		     font-size:120%;
+		 }
+
+		 .code img{
+		     height:20px;
+		     margin-right:7px;
+		     margin-bottom:-3px;
+		 }
+
+                 #map-canvas a {
+                     text-decoration: none;
+                 }
+                 
+                 
+                 #alert img{
+                     max-height:450px;
+                     margin:0px;
+                 }
 
 			#rankingsSwitch, #graphSwitch{
 				color:#666;
@@ -288,7 +312,7 @@
 				color:#999;
 				font-family: 'Roboto Slab', serif;
 				text-align:center;
-				margin-top:-30px;
+				margin-top:0px;
 				margin-bottom:40px;
 			}
 
@@ -789,7 +813,7 @@
 			#downloadLinks{
 				display:none;
 			}
-			.downloadChartButton{
+			.downloadChartButton, .chartButton {
 				position:absolute;
 				z-index:1;
 				top:-18px;
@@ -807,18 +831,18 @@
 				cursor:pointer;
 				width:100px;
 			}
-			.downloadChartButton>div{
+			.downloadChartButton>div, .chartButton>div {
 				display:table-cell;
 				vertical-align:middle;
 			}
-			.downloadChartButton>.downloadImage{
+			.downloadChartButton>.downloadImage, .chartButton>.buttonIcon {
 				height:13px;
 				width:13px;
 				background-position:center;
 				background-size:contain;
 				background-repeat:no-repeat;
 			}
-			.downloadChartButton>.downloadText{
+			.downloadChartButton>.downloadText, .chartButton>.buttonText {
 				padding-left:4px;
 				font-size:10px;
 				padding-top:1px;
@@ -948,8 +972,10 @@
 				window.phenology = new Chart(document.getElementById('phenologyChart'), lineConfig);
 				window.composition = new Chart($('#compositionChart')[0].getContext('2d'), barConfig);
 				window.trends = new Chart(document.getElementById('trendsChart'), trendsConfig);
+                                enableWeeklyButton();
+                            
 			});
-			$(document).click(function(){
+		        $(document).click(function(){
 				$(".smallSelect .options").fadeOut(0);
 			});
 			function roundTo(number, decimalPlace){
@@ -1336,8 +1362,111 @@
 				lastMarker = marker;
 				return "same";
 			}
-			var activeSite = "Example Site";
-			var activeSiteID = -1;
+
+                 plantMap = null;
+                 siteLocation = {lat: 0, lng: 0};                 
+                 async function createPlantMap() {
+                     const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+                            plantMap = new Map(document.getElementById("map-canvas"), {
+                                center: { lat: siteLocation.lat, lng: siteLocation.lng },
+                                zoom: 17,
+                                mapId: '165a88552a1b4169',
+                                mapTypeId: 'satellite',
+                                mapTypeControlOptions: {
+                                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                                    mapTypeIds: ["satellite", "roadmap", "terrain"],
+                                },
+                                streetViewControl: false,
+                                fullscreenControl: false,
+                                tiltInteractionEnabled: false
+                            });
+                     await import("../js/maps.js?v2");
+                     MapFullscreenButton(plantMap);
+                     MapFindSiteButton(plantMap);
+                     MapFindMeButton(plantMap);
+                 }
+
+                 async function showSitePlants(siteID) {
+                     if (!window.localStorage.getItem('email')) return;
+                     $("#noPlantsSection").hide();
+                     $("#hasPlantsSection").hide();
+                     
+                     let response = await fetch("../php/getPlantsBySite.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0")
+                     var data = JSON.parse((await response.text()).replace("true|", ""));
+		     var siteName = data[0];
+		     var circles = data[1];
+                     var latitude = data[2];
+                     var longitude = data[3];
+                     siteLocation.lat = parseFloat(latitude);
+                     siteLocation.lng = parseFloat(longitude);
+                     
+                     if (!plantMap) createPlantMap();
+
+                     if (havePlantLocations(circles)) {
+                         console.log("Plants have locations");
+                         let plants = [];
+                         for (let circle of circles) {
+                             plants = plants.concat(circle[1]);
+                         }
+                         showPlantMarkers(plants);
+                         $("#noPlantsSection").hide();
+                         $("#hasPlantsSection").show();
+                     } else {
+                         console.log("Plants have no locations");
+                         $("#noPlantsSection").show();
+                         $("#hasPlantsSection").hide();
+                     }
+                 }
+
+                 function havePlantLocations(circles) {
+                     for (var i = 0; i < circles.length; i++) {
+                         for (var j = 0; j < circles[i][1].length; j++) {
+                             var lat = circles[i][1][j][4]
+                             if (lat != null && lat != '' && lat != 0 && lat != 1) {
+                                 return true
+                             }
+                         }
+                     }
+                 }
+                 
+                 var plantMarkers = [];
+                 async function showPlantMarkers(plants) {
+                     await import("../js/maps.js");
+                     
+                     // clear other markers
+                     for (let m of plantMarkers) {
+                         m.setMap(null);
+                     }
+
+                     var latlngbounds = new google.maps.LatLngBounds();
+                     
+                     plantMarkers = [];
+                     let indices = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4};
+                     for (let plant of plants) {
+                         let j = indices[plant[0]];
+                         let code = plant[1];
+                         let lat = parseFloat(plant[4]);
+                         let lng = parseFloat(plant[5]);
+                         let color = plant[6];
+                         if (!lat || !lng) {
+                             continue
+                         }
+                         
+                         let node = $("<a href=\"../submitObservations/index.html?plantCode="+code+"\"><div class=\"code\" style=\"color:"+color+"\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div></a>")[0];
+                         let loc = new google.maps.LatLng(lat, lng);
+                         var label = new MapPopUp(loc, node, true, 0);
+                         latlngbounds.extend(loc);
+                         label.setMap(plantMap);
+                         plantMarkers.push(label);
+                     };
+                     plantMap.fitBounds(latlngbounds);
+                 }
+                 
+
+
+                 
+		 var activeSite = "Example Site";
+		 var activeSiteID = -1;
 			function physicalMarkerClick(){
 				markerClick(this);
 			}
@@ -1359,6 +1488,9 @@
 					scrollToPanel(3);
 					return false;
 				}
+                            
+                                showSitePlants(marker.siteInformation["ID"]);
+                            
 				$("#selectedSitePanel>h2")[0].innerHTML = marker.siteInformation["Name"];
 				$("#graphsH3")[0].innerHTML = marker.siteInformation["Name"] + " Graphs";
 				$("#selectedSitePanel>.tagline")[0].innerHTML = marker.siteInformation["Description"];
@@ -1436,7 +1568,7 @@
 				}
 				$("#selectedSitePanel")[0].style.display = "block";
 				scrollToPanel(3);
-				 submitClassificationToSciStarter();
+				submitClassificationToSciStarter();
 			}
 			var currentSiteUserLeaderboardSiteID = -1;
 			var siteUserRankings = [];
@@ -1698,8 +1830,58 @@
 				}
 				return arrToReturn;
 			}
-			var filtering = false;
-			function filterMap(){
+
+                        function defineMarkerForSite(site, normalWeight) {
+                            var ll = site["Coordinates"].split(",")
+			    var latlng = {lat:Number(ll[0]), lng:Number(ll[1])};
+			    var color = mapPercentToColor(normalWeight);
+			    var scale = 7;
+			    var zIndex = Math.round(normalWeight * 100);
+			    if(site["FilteredSurveyCount"] == 0){
+				scale = 5;
+				color = "#bbb";
+				zIndex = -1;
+			    }
+			    var marker = new google.maps.Marker({
+				map: map,
+				position: latlng,
+				title: (site["Name"] + ": " + site["RawValue"]),
+				zIndex: zIndex,
+				defaultZIndex: zIndex,
+				icon: {
+				    path: google.maps.SymbolPath.CIRCLE,
+				    scale: scale,
+				    strokeWeight: 1,
+				    defaultFillColor: color,
+				    fillColor: color,
+				    fillOpacity: .9
+				},
+				animation: google.maps.Animation.DROP,
+				siteInformation: {
+				    ID: site["ID"],
+				    Name: site["Name"],
+				    DateEstablished: site["DateEstablished"],
+				    Description: site["Description"],
+				    UserCount: site["UserCount"],
+				    ArthropodGroupCount: site["ArthropodGroupCount"],
+				    ArthropodCount: site["ArthropodCount"],
+				    CaterpillarCount: site["CaterpillarCount"],
+				    SurveyCount: site["SurveyCount"],
+				    FilteredSurveyCount: site["FilteredSurveyCount"],
+				    RawValue: site["RawValue"],
+				    Weight: site["Weight"],
+				    MostRecentDateTime: site["MostRecentDateTime"],
+				    EarliestDateTime: site["EarliestDateTime"]
+				}
+			    });
+			    marker.addListener('click', physicalMarkerClick);
+			    markers[site["ID"] + ""] = marker;
+                            
+                            return marker
+                        }
+
+                        var filtering = false;
+		        function filterMap(){
 				if(filtering){return false;}
 				filtering = true;
 				$("#mapFilters button").eq(0)[0].innerHTML = "<img src=\"../images/rolling.svg\" alt=\"loading...\"/>";
@@ -1762,55 +1944,21 @@
 					var maxWeight = -100;
 					var alreadyActiveMarker = null;
 					for(var i = 0; i < sites.length; i++){
-						var latlng = {lat:Number(sites[i]["Coordinates"].split(",")[0]), lng:Number(sites[i]["Coordinates"].split(",")[1])};
-						var color = mapPercentToColor(normalizedWeights[i]);
-						var scale = 7;
-						var zIndex = Math.round(normalizedWeights[i] * 100);
-						if(sites[i]["FilteredSurveyCount"] == 0){
-							scale = 5;
-							color = "#bbb";
-							zIndex = -1;
-						}
-						var currentColor = color;
+                                            if (sites[i]["Active"] == "0" && sites[i]["SurveyCount"] == 0) { continue }
+                                            
+					    var color = mapPercentToColor(normalizedWeights[i]);
+					    var currentColor = color;
 						if($("#selectedSitePanel h2").eq(0)[0].innerHTML == sites[i]["Name"]){
 							currentColor = "#fed136";
 						}
-						var marker = new google.maps.Marker({
-							map: map,
-							position: latlng,
-							title: (sites[i]["Name"] + ": " + sites[i]["RawValue"]),
-							defaultZIndex: zIndex,
-							zIndex: zIndex,
-							icon: {
-								path: google.maps.SymbolPath.CIRCLE,
-								scale: scale,
-								strokeWeight: 1,
-								defaultFillColor: color,
-								fillColor: currentColor,
-								fillOpacity: .9
-							},
-							animation: google.maps.Animation.DROP,
-							siteInformation: {
-								ID: sites[i]["ID"],
-								Name: sites[i]["Name"],
-								Description: sites[i]["Description"],
-								UserCount: sites[i]["UserCount"],
-								ArthropodGroupCount: sites[i]["ArthropodGroupCount"],
-								ArthropodCount: sites[i]["ArthropodCount"],
-								CaterpillarCount: sites[i]["CaterpillarCount"],
-								SurveyCount: sites[i]["SurveyCount"],
-								MostRecentDateTime: sites[i]["MostRecentDateTime"],
-								EarliestDateTime: sites[i]["EarliestDateTime"]
-							}
-						});
+						var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
 						if(currentColor == "#fed136"){
 							lastMarker = marker;
 							alreadyActiveMarker = marker;
 						}
-						marker.addListener('click', physicalMarkerClick);
-						markers[sites[i]["ID"] + ""] = marker;
-						var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
-						if(rawValueNumber < minRawValue || minRawValue == -1){
+
+					    var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
+					    if(rawValueNumber < minRawValue || minRawValue == -1){
 							minRawValue = rawValueNumber;
 						}
 						if(rawValueNumber > maxRawValue){
@@ -1884,6 +2032,7 @@
 					yearEnd: filterYearEnd
 				};
 			}
+
 			var siteNamesAndIDs = [];
 			function initializeMap() {
 				map = new google.maps.Map($('#map')[0], {
@@ -1900,46 +2049,9 @@
 					var minRawValue = -1;
 					var maxRawValue = -1;
 					for(var i = 0; i < sites.length; i++){
-						siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
-						var latlng = {lat:Number(sites[i]["Coordinates"].split(",")[0]), lng:Number(sites[i]["Coordinates"].split(",")[1])};
-						var color = mapPercentToColor(normalizedWeights[i]);
-						var scale = 7;
-						var zIndex = Math.round(normalizedWeights[i] * 100);
-						if(sites[i]["FilteredSurveyCount"] == 0){
-							scale = 5;
-							color = "#bbb";
-							zIndex = -1;
-						}
-						var marker = new google.maps.Marker({
-							map: map,
-							position: latlng,
-							title: (sites[i]["Name"] + ": " + sites[i]["RawValue"]),
-							zIndex: zIndex,
-							defaultZIndex: zIndex,
-							icon: {
-								path: google.maps.SymbolPath.CIRCLE,
-								scale: scale,
-								strokeWeight: 1,
-								defaultFillColor: color,
-								fillColor: color,
-								fillOpacity: .9
-							},
-							animation: google.maps.Animation.DROP,
-							siteInformation: {
-								ID: sites[i]["ID"],
-								Name: sites[i]["Name"],
-								DateEstablished: sites[i]["DateEstablished"],
-								Description: sites[i]["Description"],
-								UserCount: sites[i]["UserCount"],
-								ArthropodGroupCount: sites[i]["ArthropodGroupCount"],
-								ArthropodCount: sites[i]["ArthropodCount"],
-								CaterpillarCount: sites[i]["CaterpillarCount"],
-								SurveyCount: sites[i]["SurveyCount"],
-								MostRecentDateTime: sites[i]["MostRecentDateTime"],
-								EarliestDateTime: sites[i]["EarliestDateTime"]
-							}
-						});
-						marker.addListener('click', physicalMarkerClick);
+                                            if (sites[i]["Active"] == "0") { continue }
+					    siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
+                                            var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
 						markers[sites[i]["ID"] + ""] = marker;
 						var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
 						if(rawValueNumber < minRawValue || minRawValue == -1){
@@ -2288,6 +2400,7 @@
 						endpoints[1]
 					]
 				},
+                                filters: [],
 				options: {
 					responsive: true,
 					legend: {display:false},
@@ -2348,7 +2461,7 @@
 					}
 				}
 			};
-      var trendsConfig = {
+                        var trendsConfig = {
 				type: 'line',
 				data: {
 					datasets: [
@@ -2392,6 +2505,23 @@
 					}
 				}
 			};
+
+                        var weekly = false;
+
+                        function enableWeeklyButton() {
+                            $(".weeklyButton").on("click", (ev) => {
+                                let checkbox = $(ev.currentTarget).find('.checkbox').first();
+                                if (checkboxIsChecked(checkbox)) {
+                                    weekly = false;
+                                    uncheckCheckbox(checkbox);
+                                } else {
+                                    weekly = true;
+                                    checkCheckbox(checkbox);
+                                }
+                                refreshSets();
+                            })
+                        }
+                 
 			function getClearPoint(x, y){
 				var background = "rgba(230,230,230,0)";
 				var border = "rgba(200,200,200,0)";
@@ -2571,10 +2701,7 @@
 				return comparisonMetricLines;
 			}
 			var phenologyLabels = [];
-			function addSet(label, points, update){
-				if(update !== false){
-					update = true;
-				}
+			function addSet(label, points, filters){
 				if(phenologyLabels.length >= colors.length){
 					queueNotice("error", "You have too many lines on your phenology chart. Please delete at least one of them before adding more.");
 					return false;
@@ -2596,15 +2723,15 @@
 				var lines = getLines("phenology", label, color, points, 30, false, false);
 				if(lineConfig.data.datasets.length == 2 && opaque(lineConfig.data.datasets[0].backgroundColor) == opaque(endpoints[0].backgroundColor) && opaque(lineConfig.data.datasets[1].backgroundColor) == opaque(endpoints[0].backgroundColor)){
 					lineConfig.data.datasets = [];
+                                        lineConfig.filters = [];
 				}
 				for(var i = 0; i < lines.length; i++){
 					lineConfig.data.datasets[lineConfig.data.datasets.length] = lines[i];
+                                        lineConfig.filters[lineConfig.filters.length] = filters
 				}
-				if(update){
-					window.phenology.update();
-					centerYAxisLabels();
-					updatePhenologyLegend();
-				}
+			    window.phenology.update();
+			    centerYAxisLabels();
+			    updatePhenologyLegend();
 			}
 			function updatePhenologyLegend(){
 				var htmlToAdd = "<div style=\"display:inline-block;text-align:left;\">";
@@ -2749,6 +2876,7 @@
 				for(var i = (lineConfig.data.datasets.length - 1); i >= 0; i--){
 					if(lineColor == opaque(lineConfig.data.datasets[i].backgroundColor)){
 						lineConfig.data.datasets.splice(i, 1);
+                                                lineConfig.filters.splice(i, 1);
 					}
 				}
 				for(var i = (phenologyLabels.length - 1); i >=0; i--){
@@ -2765,10 +2893,22 @@
 				phenologyLabels = [];
 				chartedSets.phenology = {};
 				lineConfig.data.datasets = [endpoints[0], endpoints[1]];
-				window.phenology.update();
-				centerYAxisLabels();
+                                lineConfig.filters = [];
+			        window.phenology.update();
+			        centerYAxisLabels();
 				updatePhenologyLegend();
 			}
+
+                        function refreshSets() {
+                            let filters = lineConfig.filters;
+
+                            clearSets();
+                            
+                            for (let f of filters) {
+                                addSetFromFilters(f);
+                            }
+                        }
+                 
 			function addSetFromFilters(filters, callback){
 				callback = callback || function(){};
 				var color = "";
@@ -2791,16 +2931,17 @@
 				pauseCompositionLoads(function(){loadSetFromFilters(filters, function(){callback();resumeCompositionLoads();})});
 			}
 			function loadSetFromFilters(filters, callback){
+                                filters['weekly'] = weekly;
 				console.log("Loading phenology: " + JSON.stringify(filters));
 
-				$.get("https://caterpillarscount.unc.edu/php/getPhenology.php?lines=" + encodeURIComponent(JSON.stringify([filters])), function(data){
+				$.get("/php/getPhenology.php?lines=" + encodeURIComponent(JSON.stringify([filters])), function(data){
 					//success
 					console.log("Loaded phenology: " + JSON.stringify(filters));
 					if(data.indexOf("true|") == 0){
 						var sets = JSON.parse(data.replace("true|", ""));
 						for(var label in sets){
 							if(sets.hasOwnProperty(label)){
-								addSet(label, sets[label]);
+								addSet(label, sets[label], filters);
 							}
 						}
 					}
@@ -2947,7 +3088,7 @@
 				compositionQueue.splice(nextIndex, 1);
 				console.log("Loading composition: " + loadingComposition[0] + " " + loadingComposition[1] + " " + loadingComposition[2]);
 
-				$.get("https://caterpillarscount.unc.edu/php/getComposition.php?siteIDs=" + JSON.stringify([loadingComposition[2]]) + "&breakdown=" + loadingComposition[0] + "&comparisonMetric=" + loadingComposition[1], function(data){
+				$.get("/php/getComposition.php?siteIDs=" + JSON.stringify([loadingComposition[2]]) + "&breakdown=" + loadingComposition[0] + "&comparisonMetric=" + loadingComposition[1], function(data){
 					if(data.indexOf("true|") == 0){
 						console.log("Loaded composition: " + loadingComposition[0] + " " + loadingComposition[1] + " " + loadingComposition[2]);
 						data = JSON.parse(data.replace("true|", ""));
@@ -3527,7 +3668,7 @@
 
 				console.log("Loading trends: " + JSON.stringify(filters));
 
-				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify(filters)) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
+				$.get("/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify(filters)) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
 					//success
 					if(thisLoadTrendsIteration === loadTrendsIteration){
 						console.log("Loaded trend: " + JSON.stringify(filters));
@@ -3564,7 +3705,7 @@
 				console.log("Loading trend: " + JSON.stringify(filters));
 
 				var thisLoadTrendsIteration = ++loadTrendsIteration;
-				$.get("https://caterpillarscount.unc.edu/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
+				$.get("/php/getTrend.php?lines=" + encodeURIComponent(JSON.stringify([filters])) + "&startMonth=" + trendsMonthStart + "&endMonth=" + trendsMonthEnd, function(data){
 					//success
 					if(thisLoadTrendsIteration === loadTrendsIteration){
 						console.log("Loaded trend: " + JSON.stringify(filters));
@@ -3802,16 +3943,34 @@
       			//END OF TRENDS CHART STUFF
 
 			function downloadMapData(){
-				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)")];
+				var headers = ["Site", "Description", "Latitude", "Longitude", "Included Observation Methods", "Arthropod Group", "Minimum Arthropod Length (mm)", "Plant Species", "Surveys With Wet Leaves Are Included", "Earliest Allowed Month", "Latest Allowed Month", "Earliest Allowed Year", "Latest Allowed Year", mapFilters.comparisonMetric.replace("Occurrence", "Occurrence (%)"), 'Survey Count'];
 				var csvString = headers.join(",") + "\r\n";
 				for (var siteID in markers) {
 					if (markers.hasOwnProperty(siteID)) {
 						var marker = markers[siteID];
-						var row = [marker.title.substring(0, marker.title.lastIndexOf(": ")), marker.siteInformation.Description, marker.getPosition().lat(), marker.getPosition().lng(), mapFilters.observationMethod, mapFilters.arthropodGroup, mapFilters.minimumLength, mapFilters.plantSpecies, mapFilters.wetLeaves.toString(), mapFilters.monthStart, mapFilters.monthEnd, mapFilters.yearStart, mapFilters.yearEnd, marker.title.substring(marker.title.lastIndexOf(": ") + 2).replace(/[^0-9.]/g, "")];
-						for(var i = 0; i < row.length; i++){
+                                                // exclude row with no surveys for criteria
+                                                if (marker.siteInformation.FilteredSurveyCount) {
+						    var row = [
+                                                        marker.siteInformation.Name,
+                                                        marker.siteInformation.Description,
+                                                        marker.getPosition().lat(),
+                                                        marker.getPosition().lng(),
+                                                        mapFilters.observationMethod,
+                                                        mapFilters.arthropodGroup,
+                                                        mapFilters.minimumLength,
+                                                        mapFilters.plantSpecies,
+                                                        mapFilters.wetLeaves.toString(),
+                                                        mapFilters.monthStart,
+                                                        mapFilters.monthEnd,
+                                                        mapFilters.yearStart,
+                                                        mapFilters.yearEnd,
+                                                        marker.siteInformation.Weight,
+                                                        marker.siteInformation.FilteredSurveyCount];
+						    for(var i = 0; i < row.length; i++){
 							row[i] = "\"" + row[i].toString().replace(/"/g, "'") + "\"";
-						}
-						csvString += row.join(",") + "\r\n";
+						    }
+						    csvString += row.join(",") + "\r\n";
+                                                }
 					}
 				}
 
@@ -3831,7 +3990,8 @@
 					"latest allowed year": "The latest year included in the mapping calculations",
 					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified in \"Arthropod Group\". Need not sum to 100 across arthropod groups.",
 					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for the arthropod type specified in \"Arthropod Group\".",
-					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group (found in the \"Arthropod Group\" field) divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
+					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group (found in the \"Arthropod Group\" field) divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions",
+                                        "survey count": "The number of surveys filtered by search criteria used as the denominator for calculating the site's value."
 				};
 
 				var metadataText = "";
@@ -3919,6 +4079,9 @@
 			function downloadPhenologyData(){
 				var metric = $("#lineGraph .yAxisLabel .selected").eq(0)[0].innerHTML;
 				var headers = ["Site", "Description", "Latitude", "Longitude", "Arthropod Group", "Date", "Julian Day", metric];
+                                if (weekly) {
+                                    headers[headers.indexOf('Date')] = 'Week';
+                                }
 				var csvString = headers.join(",") + "\r\n";
 				var filtersString = "Y-Axis: " + metric + ", Lines:";
 
@@ -3977,19 +4140,20 @@
 				}
 
 				var headerDescriptions = {
-					"site": "Name of the Caterpillars Count! site",
-					"description": "Description of the Caterpillars Count! site",
-					"latitude": "Latitude of the Caterpillars Count! site",
-					"longitude": "Longitude of the Caterpillars Count! site",
-					"arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
-					"date": "The Gregorian calendar date in the form YYYY-MM-DD",
-					"julian day": "The number of days since the beginning of the year, starting with January 1st as 1",
-					"percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
-					"number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
-					"biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
+				    "site": "Name of the Caterpillars Count! site",
+				    "description": "Description of the Caterpillars Count! site",
+				    "latitude": "Latitude of the Caterpillars Count! site",
+				    "longitude": "Longitude of the Caterpillars Count! site",
+				    "arthropod group": "Arthropod group that includes any corrected id's based on iNaturalist user feedback",
+				    "date": "The Gregorian calendar date in the form YYYY-MM-DD",
+				    "week": "The Gregorian calendar date in the form YYYY-MM-DD for weekly aggregated data",
+				    "julian day": "The number of days since the beginning of the year, starting with January 1st as 1",
+				    "percent of surveys": "The percent of survey branches with at least one arthropod of the type specified. Need not sum to 100 across arthropod groups.",
+				    "number per survey": "The total number of arthropods encountered divided by the total number of surveys calculated for each arthropod group.",
+				    "biomass per survey": "The total estimated dry weight (mg) of the specified arthropod group divided by the total number of surveys. Dry weight (M) is estimated from reported lengths (L) using length-weight regressions of the form M = a L^b where a and b vary by arthropod group as shown in the table available at this url: http://caterpillarscount.unc.edu/lengthWeightRegressions"
 				};
 
-				var metadataText = "";
+			        var metadataText = "";
 				for(var i = 0; i < headers.length; i++){
 					metadataText += headers[i] + ": " + (headerDescriptions[headers[i].toLowerCase()] || headers[i]) + "\n";
 				}
@@ -4012,7 +4176,11 @@
 					siteNames = ["No sites".replace(/[\W_]+/g," ")];
 				}
 
-				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Phenology Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear + " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
+				metadataText += "\n\nRecommended citation:\n\nCaterpillars Count!. " + date.getFullYear() + ". Foliage Arthropod Data. Data type: Phenology Data. 01/01/" + earliestEstablishedYear + "-12/31/" + mostRecentlySurveyedYear;
+                                if (weekly) {
+                                    metadataText += " By Week"
+                                }
+                                metadataText += " for Site" + (untouchedSiteNames.length > 1 ? "s" : "") + ": " + untouchedSiteNames.join(", ") + ". Chapel Hill, North Carolina, USA. Data set accessed " + ('0' + (date.getMonth() + 1)).slice(-2) + "/" + ('0' + date.getDate()).slice(-2) + "/" + date.getFullYear() + " at https://caterpillarscount.unc.edu.";
 
 				var zip = new JSZip();
 				var folder = zip.folder("Caterpillars Count! " + siteNames.join(" - ") + " phenology data");
@@ -4462,12 +4630,12 @@
 						</div>
 						<div style="display:table-cell;width:100%;"></div>
 						<div style="display:table;" id="mapButtons">
-							<div style="display:table-cell;vertical-align:middle;">
-								<div id="mapDownloadButton" style="background:#ccc;opacity:0;cursor:default;">
-									<div id="mapDownloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
-									<div id="mapDownloadText">Download</div>
-								</div>
-							</div>
+						  <div style="display:table-cell;vertical-align:middle;">
+						    <div id="mapDownloadButton" style="background:#ccc;opacity:0;cursor:default;">
+						      <div id="mapDownloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+						      <div id="mapDownloadText">Download</div>
+						    </div>
+						  </div>
 							<div style="display:table-cell;vertical-align:middle;">
 								<div id="mapFiltersToggleButton" onclick="toggleMapFilters();">
 									<div id="mapFiltersImage" style="background-image:url('../images/filterIconWhite.png');"></div>
@@ -4550,6 +4718,13 @@
 				<h2 class="forceWrapIfNeeded"></h2>
 				<div class="tagline forceWrapIfNeeded"></div>
 				<div class="content">
+				  <div id="noPlantsSection">
+				    <div><p>This site's plant locations have not been set by a site manager.</p></div>
+				  </div>
+                                  <div id="hasPlantsSection">
+				    <div><p>Click a plant tag to submit observations for this site.</p></div>
+                                    <div id="map-canvas"></div>
+                                  </div>
 					<div id="noDataSection">
 						<div class="circleImage" style="width:200px;height:200px;background-image:url('../images/noSurveys.png');margin:40px 0px;"></div>
 						<div><p>No surveys have been submitted at this site yet.</p></div>
@@ -4583,10 +4758,18 @@
 							<div id="lineGraph">
 								<div class="chartExplanation">Click on the y-axis label to change the phenology metric being plotted. Data points are excluded if fewer than five surveys were conducted at the given site on that day.</div>
 								<div style="height:500px;margin-top:40px;position:relative;">
-									<div class="downloadChartButton" onclick="promptConfirm('To download, read and agree to the Caterpillars Count! <a href=&quot;../dataUsePolicy&quot; target=&quot;_blank&quot;>data use</a> and <a href=&quot;../dataAttributionPolicy&quot; target=&quot;_blank&quot;>attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadPhenologyData();});">
-										<div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
-										<div class="downloadText">Download</div>
-									</div>
+                                                                  <div style="position: relative">
+								    <div class="downloadChartButton" onclick="promptConfirm('To download, read and agree to the Caterpillars Count! <a href=&quot;../dataUsePolicy&quot; target=&quot;_blank&quot;>data use</a> and <a href=&quot;../dataAttributionPolicy&quot; target=&quot;_blank&quot;>attribution</a> policies.', 'Cancel', 'I agree.', function(){}, function(){downloadPhenologyData();});">
+								      <div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+								      <div class="downloadText">Download</div>
+								    </div>
+                                                                  </div>
+                                                                  <div style="position: relative; left: -9em;">
+								    <div class="chartButton weeklyButton">
+								      <div class="checkbox buttonIcon"></div>
+								      <div class="buttonText">Weekly</div>
+								    </div>
+                                                                  </div>    
 									<div class="yAxisLabel">
 										<div class="smallSelect">
 											<div class="selected" onclick="showSmallSelectOptions(this);">Percent of Surveys</div>

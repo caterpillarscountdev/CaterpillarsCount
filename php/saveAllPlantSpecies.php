@@ -7,7 +7,6 @@
 	$email = custgetparam("email");
 	$salt = custgetparam("salt");
 	$plantData = json_decode(custgetparam("plantData"));
-	
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
 		if(count($plantData) < 1){
@@ -59,12 +58,21 @@
 							$newPlant->setCode($code);
 							$newPlant->setSpecies($plantData[$i][1]);
 							$newPlant->setIsConifer(count($plantData[$i]) > 3 ? $plantData[$i][3] : $plant->getIsConifer());
+                                                        if(count($plantData[$i]) > 5) {
+                                                          $newPlant->setLatitude($plantData[$i][4]);
+                                                          $newPlant->setLongitude($plantData[$i][5]);
+                                                        }
 						}
 						else{
 							$plant->setSpecies($plantData[$i][1]);
 							if(count($plantData[$i]) > 3){
 								$plant->setIsConifer($plantData[$i][3]);
 							}
+                                                        if(count($plantData[$i]) > 5) {
+                                                          $plant->setLatitude($plantData[$i][4]);
+                                                          $plant->setLongitude($plantData[$i][5]);
+                                                        }
+                                                        
 						}
 					}
 					else{die("false|Plant with code \"" . $plantData[$i][0] . "\" could not be found in the \"" . $site->getName() . "\" site.");}
