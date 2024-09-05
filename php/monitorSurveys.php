@@ -36,7 +36,6 @@
             $row["duplicates"][] = $row["ID"];
 
             $message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">We recently noticed there were two surveys submitted for branch " . $row["Code"] . " on " . $date . " that were potential duplicates. Would you mind taking a look using the <a href=\"" . $root . "/manageMySurveys\" style=\"color:#70c6ff;\">Manage My Surveys</a>. page, where you can use the filters to specify the branch code " . $row["Code"] . "? If one of them was a mistake, you can simply delete that survey by clicking the small trash icon on the right side, or you can edit the survey to modify the branch code or any other survey details.<br/><br/>Thank you for your participation in the project!</div><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"><div>Potential duplicate IDs: ". $row["ID"] . ","  . implode(", ", $row["duplicates"]) . "</div></div>";
-            print_r($message);
 
             $site = Site::findByID($row["SiteFK"]);
             $ccs = array_merge(array("caterpillarscount@office.unc.edu"), $site->getAuthorityEmails());
