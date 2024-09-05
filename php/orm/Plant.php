@@ -67,7 +67,6 @@ class Plant
 		$code = self::IDToCode($id);
 		
 		mysqli_query($dbconn, "INSERT INTO Plant (`ID`, `SiteFK`, `Circle`, `Orientation`, `Code`, `Species`, `IsConifer`) VALUES ('$id', '" . $site->getID() . "', '$circle', '$orientation', '$code', 'N/A', '0')");
-		mysqli_close($dbconn);
 		
 		return new Plant($id, $site, $circle, $orientation, $code, "N/A", false, null, null);
 	}
@@ -104,7 +103,6 @@ class Plant
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `ID`='$id' LIMIT 1");
-		mysqli_close($dbconn);
 		
 		if(mysqli_num_rows($query) == 0){
 			return null;
@@ -122,7 +120,6 @@ class Plant
 			return null;
 		}
 		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `Code`='$code' LIMIT 1");
-		mysqli_close($dbconn);
 		
 		if(mysqli_num_rows($query) == 0){
 			return null;
@@ -142,7 +139,6 @@ class Plant
 			return null;
 		}
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `Plant` WHERE `SiteFK`='" . $site->getID() . "' AND `Circle`='$circle' AND `Orientation`='$orientation' LIMIT 1");
-		mysqli_close($dbconn);
 		if(mysqli_num_rows($query) == 0){
 			return null;
 		}
@@ -160,7 +156,6 @@ class Plant
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `ID` IN (" . implode(",", $plantIDs) . ")");
-		mysqli_close($dbconn);
 		
 		//get associated sites
 		$associatedSiteFKs = array();
@@ -187,7 +182,6 @@ class Plant
 	public static function findPlantsBySite($site){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `Plant` WHERE `SiteFK`='" . $site->getID() . "' AND `Circle`>0");
-		mysqli_close($dbconn);
 
                 $sites = array();
                 $sites[$site->getID()] = $site;
@@ -278,11 +272,9 @@ class Plant
 			if($species !== false){
 				$dbconn = (new Keychain)->getDatabaseConnection();
 				mysqli_query($dbconn, "UPDATE Plant SET `Species`='$species' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->species = $species;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -293,11 +285,9 @@ class Plant
 			$code = self::validCode($dbconn, $code);
 			if($code !== false){
 				mysqli_query($dbconn, "UPDATE Plant SET `Code`='$code' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->code = $code;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -308,11 +298,9 @@ class Plant
 			$circle = self::validCircleFormat($dbconn, $circle);
 			if($circle !== false){
 				mysqli_query($dbconn, "UPDATE Plant SET `Circle`='$circle' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->circle = $circle;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -322,7 +310,6 @@ class Plant
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$isConifer = filter_var($isConifer, FILTER_VALIDATE_BOOLEAN);
 			mysqli_query($dbconn, "UPDATE Plant SET `IsConifer`='$isConifer' WHERE ID='" . $this->id . "'");
-			mysqli_close($dbconn);
 			$this->isConifer = $isConifer;
 			return true;
 		}
@@ -334,7 +321,6 @@ class Plant
 			$dbconn = (new Keychain)->getDatabaseConnection();
                         $latitude = Site::validLatitude($dbconn, $latitude);
 			mysqli_query($dbconn, "UPDATE Plant SET `Latitude`='$latitude' WHERE ID='" . $this->id . "'");
-			mysqli_close($dbconn);
 			$this->latitude = $latitude;
 			return true;
 		}
@@ -346,7 +332,6 @@ class Plant
 			$dbconn = (new Keychain)->getDatabaseConnection();
                         $longitude = Site::validLongitude($dbconn, $longitude);
 			mysqli_query($dbconn, "UPDATE Plant SET `Longitude`='$longitude' WHERE ID='" . $this->id . "'");
-			mysqli_close($dbconn);
 			$this->longitude = $longitude;
 			return true;
 		}
@@ -363,7 +348,6 @@ class Plant
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			mysqli_query($dbconn, "DELETE FROM `Plant` WHERE `ID`='" . $this->id . "'");
 			$this->deleted = true;
-			mysqli_close($dbconn);
 			return true;
 		}
 	}
@@ -374,7 +358,6 @@ class Plant
 		{
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			mysqli_query($dbconn, "DELETE FROM `Plant` WHERE `ID` IN ('" . implode("', '", $ids) . "')");
-			mysqli_close($dbconn);
 			return true;
 		}
 	}
@@ -382,7 +365,6 @@ class Plant
 	public static function permanentDeleteAllLooseEnds(){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `Plant`.`ID` FROM `Plant` LEFT JOIN `Site` ON `Plant`.`SiteFK`=`Site`.`ID` WHERE `Site`.`ID` IS NULL");
-		mysqli_close($dbconn);
 		$idsToDelete = array();
 		while($row = mysqli_fetch_assoc($query)){
 			$idsToDelete[] = $row["ID"];
@@ -505,7 +487,6 @@ class Plant
 		//then, return a sanitized version of the full code that is safe to use with a MySQL query
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$code = mysqli_real_escape_string($dbconn, htmlentities($code));
-		mysqli_close($dbconn);
 		return $code;
 	}
 }		

@@ -1,6 +1,15 @@
 <?php
 	header('Access-Control-Allow-Origin: *');
-	
+
+
+function exceptions_error_handler($severity, $message, $filename, $lineno) {
+    throw new ErrorException($message, 0, $severity, $filename, $lineno);
+}
+
+set_error_handler('exceptions_error_handler');
+
+
+        
         require_once('orm/resources/Keychain.php');
 	require_once('orm/User.php');
 	require_once('orm/Plant.php');
@@ -14,7 +23,7 @@
 
 
         $conn = (new Keychain)->getDatabaseConnection();
-        $conn->begin_transaction();
+        mysqli_begin_transaction($conn);
 try {
   $site = Site::findByID($siteID);
   if(!(is_object($site) && get_class($site) == "Site")){
@@ -58,11 +67,12 @@ try {
       } else { $error = "You do not have permission to add a circle to this site.";}
     } else { $error = "Your log in dissolved. Maybe you logged in on another device.";}
   } else { $error = "We could not find the requested site.";}
-
-  $conn->commit();
-} catch (mysqli_sql_exception $exception) {
-    $conn->rollback();
-    throw $exception;
+  typo;
+  //mysqli_commit($conn);
+} catch (Exception $exception) {
+  mysqli_rollback($conn);
+  error_log("rolling back");
+  throw $exception;
 }
 
 if ($error) {
