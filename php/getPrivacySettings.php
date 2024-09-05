@@ -8,8 +8,10 @@
   	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
 		$privacySettings = array(
-			"Hidden" => $user->getHidden(),
-			"iNaturalistObserverID" => $user->getINaturalistObserverID()
+                  "firstName" => $user->getFirstName(),
+                  "lastName" => $user->getLastName(),
+                  "Hidden" => $user->getHidden(),
+                  "iNaturalistObserverID" => $user->getINaturalistObserverID()
 		);
     		die("true|" . json_encode($privacySettings));
   	}
