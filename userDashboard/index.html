@@ -75,8 +75,15 @@
                      padding: 5px 7px;
 		 }
 
-                 .content table thead .alt {
+		 .content table tr:nth-of-type(even){
+		     background:rgba(0,0,0,0.025);
+		 }
+
+                 .content table .alt {
                      background: #555;
+                 }
+                 .content td{
+                     padding: 0.3em;
                  }
 		 .content td{
 		     text-align:center;
@@ -84,7 +91,6 @@
 		 }
 
                  .spanner {
-                     background: #555;
                      text-align: center;
                      text-transform: uppercase;                     
                  }
@@ -93,11 +99,46 @@
                  
 		</style>
 		<script>
-			requireLogIn();
+		 requireLogIn();
+                 
+		 $(document).ready(function(){
+		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
+                     
+                     loadUserStats()
+                 });
+                 
+                 async function loadUserStats() {
+                     let siteID = 0;
+                     let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"));
+                     var data = JSON.parse((await response.text()).replace("true|", ""));
 
-			$(document).ready(function(){
-			    loadBackgroundImage($("#splashImage"), "../images/splash.png");
-                        });
+                     for (let row of data.Users) {
+                         showScores(row);
+                         showSurveys(row);
+                         
+                         if (row.ArthropodGroups.length) {
+                             showGroups(row.arthropodGroups)
+                         } else {
+                             // hide arthro groups
+                         }
+                     }
+
+                     $(".loading").each((i,e) => e.style.display = "none");
+                     
+                 }
+
+                 function showScores(row) {
+                     let tr = document.createElement("tr");
+                     tr.innerHTML = `<td>${row.Name}</td><td>${row.QuizCount}</td><td>${row.QuizMean}%</td><td>${row.QuizHigh}%</td><td>${row.GameCount}</td><td>${row.GameMean}%</td><td>${row.GameHigh}%</td>`;
+                     document.querySelector("#scoreStats tbody").appendChild(tr);
+                 }
+
+                 function showSurveys(row) {
+                     let tr = document.createElement("tr");
+                     tr.innerHTML = `<td>${row.Name}</td><td>${row.SurveysWeek}</td><td>${row.SurveysMonth}</td><td>${row.SurveysYear}</td><td>${row.SurveysTotal}</td><td>${row.SurveysCaterpillars}%</td>`;
+                     document.querySelector("#surveyStats tbody").appendChild(tr);
+                     
+                 }
 		</script>
 	</head>
 	<body>
@@ -199,11 +240,16 @@
 		    <div class="content">
 		      <div id="scores">
 		        <h3>Practice Scores</h3>
-                        <p class="note">From the <a href="../arthropodQuiz">Photo ID Quiz</a> and the <a href="../virtualSurvey">Virtual Survey</a>.</p>
 		        <div>
-                          <table id="scoresStats">
+                          <table id="scoreStats">
                             <thead>
                               <tr class="roundedTop">
+                                <th></th>
+                                <th colspan="3" class="spanner"><a href="../arthropodQuiz">Photo ID Quiz</a></th>
+                                <th colspan="3" class="spanner alt"><a href="../virtualSurvey">Virtual Survey</a></th>
+                              </tr>
+                              <tr>
+                                <th>User name</th>
                                 <th>Quizzes</th>
                                 <th>Mean Score</th>
                                 <th>High Score</th>
@@ -213,12 +259,6 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <tr>
-                                <td>1</td>
-                                <td>2</td>
-                                <td>0</td>
-                                <td>0</td>
-                              </tr>
                             </tbody>
                           </table>
 		        </div>
@@ -226,11 +266,11 @@
 		      </div>
 		      <h3>Surveys</h3>
 		      <div>
-                        <table id="scoresStats">
+                        <table id="surveyStats">
                           <thead>
                             <tr class="roundedTop">
                               <th></th>
-                              <th colspan="4" class="spanner">Surveys this...</th>
+                              <th colspan="4" class="spanner alt">Surveys this...</th>
                               <th></th>
                             </tr>
                             <tr>
@@ -243,19 +283,13 @@
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>2</td>
-                              <td>0</td>
-                              <td>0</td>
-                            </tr>
                           </tbody>
                         </table>
 			<div class="loading"><img src="../images/rolling.svg"/></div>
 		      </div>
 		      <h3>Sightings</h3>
 		      <div>
-                        <table id="sightingsStats">
+                        <table id="sightingStats">
                           <thead>
                             <tr>
                               <th>Arthropod Group</th>
@@ -265,12 +299,6 @@
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>2</td>
-                              <td>0</td>
-                              <td>0</td>
-                            </tr>
                           </tbody>
                         </table>
 			<div class="loading"><img src="../images/rolling.svg"/></div>
