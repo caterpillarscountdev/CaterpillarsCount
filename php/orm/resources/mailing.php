@@ -42,7 +42,7 @@
 		$mail->From = "caterpillarscount@office.unc.edu";
 		$mail->FromName = "Caterpillars Count!";
 		$mail->addAddress($to);
-                for($ccs as $cc) {
+                foreach($ccs as $cc) {
                   $mail->addCC($cc);
                 }
 		
@@ -54,6 +54,11 @@
 		$mail->Subject = $subject;
 		$mail->Body = $body;
 		$mail->AltBody = strip_tags($body);
+
+                if(getenv('LOCAL_DEV')) {
+                  error_log("Mail to " . $to . " : " . $body);
+                  return true;
+                }
 
 		if($mail->send()){
 			//custom_error_log("email() send()  was successful");
