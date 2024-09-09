@@ -1944,8 +1944,10 @@
 					var maxWeight = -100;
 					var alreadyActiveMarker = null;
 					for(var i = 0; i < sites.length; i++){
-						var color = mapPercentToColor(normalizedWeights[i]);
-						var currentColor = color;
+                                            if (sites[i]["Active"] == "0" && sites[i]["SurveyCount"] == 0) { continue }
+                                            
+					    var color = mapPercentToColor(normalizedWeights[i]);
+					    var currentColor = color;
 						if($("#selectedSitePanel h2").eq(0)[0].innerHTML == sites[i]["Name"]){
 							currentColor = "#fed136";
 						}
@@ -2047,8 +2049,9 @@
 					var minRawValue = -1;
 					var maxRawValue = -1;
 					for(var i = 0; i < sites.length; i++){
-						siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
-                                                var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
+                                            if (sites[i]["Active"] == "0") { continue }
+					    siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
+                                            var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
 						markers[sites[i]["ID"] + ""] = marker;
 						var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
 						if(rawValueNumber < minRawValue || minRawValue == -1){
