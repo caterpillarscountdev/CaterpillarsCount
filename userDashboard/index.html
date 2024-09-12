@@ -75,6 +75,10 @@
                      padding: 5px 7px;
 		 }
 
+                 .content table td:nth-of-type(1) {
+                     text-align: left;
+                 }
+
 		 .content table tr:nth-of-type(even){
 		     background:rgba(0,0,0,0.025);
 		 }
@@ -106,27 +110,45 @@
                      
                      loadUserStats()
                  });
-                 
+
                  async function loadUserStats() {
                      let siteID = 0;
-                     let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"));
-                     var data = JSON.parse((await response.text()).replace("true|", ""));
+                     let userID = window.location.toString().substring(window.location.toString().indexOf("?u=") + 3);
+                     let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID));
+                         var data = JSON.parse((await response.text()).replace("true|", ""));
 
                      for (let row of data.Users) {
                          showQuiz(row);
                          showGame(row);
                          showSurveys(row);
-                         
-                         if (row.ArthropodGroups.length) {
+
+                         if (row.ArthropodGroups) {
                              showGroups(row.arthropodGroups)
                          } else {
-                             // hide arthro groups
+                             document.querySelector("#groups").style.display = "none";
                          }
                      }
 
                      $(".loading").each((i,e) => e.style.display = "none");
                      
                  }
+
+                 let arthropodGroups = [
+                     {label: 'ant', name: "Ants", icon: "../images/selectIcons/orders/ant.png"},
+                     {label: 'aphid', name: "Aphids and Psyllids", icon: "../images/selectIcons/orders/aphid.png"},
+                     {label: 'bee', name: "Bees, Wasps, and Sawflies", icon: "../images/selectIcons/orders/bee.png"},
+                     {label: 'beetle', name: "Beetles", icon: "../images/selectIcons/orders/beetle.png"},
+                     {label: 'caterpillar', name: "Caterpillars", icon: "../images/selectIcons/orders/caterpillar.png"},
+                     {label: 'daddylonglegs', name: "Daddy longlegs", icon: "../images/selectIcons/orders/daddylonglegs.png"},
+                     {label: 'fly', name: "Flies", icon: "../images/selectIcons/orders/fly.png"},
+                     {label: 'grasshopper', name: "Grasshoppers, Crickets", icon: "../images/selectIcons/orders/grasshopper.png"},
+                     {label: 'leafhopper', name: "Leaf Hoppers and Cicadas", icon: "../images/selectIcons/orders/leafhopper.png"},
+                     {label: 'moth', name: "Moths, Butterflies", icon: "../images/selectIcons/orders/moth.png"},
+                     {label: 'spider', name: "Spiders", icon: "../images/selectIcons/orders/spider.png"},
+                     {label: 'truebugs', name: "True Bugs", icon: "../images/selectIcons/orders/truebugs.png"},
+                     {label: 'other', name: "Other", icon: "../images/selectIcons/orders/other.png"},
+                     {label: 'unidentified', name: "Unidentified", icon: "../images/selectIcons/orders/unidentified.png"},
+                 ];
 
                  function showQuiz(row) {
                      let tr = document.createElement("tr");
@@ -136,6 +158,10 @@
 
                  function showGame(row) {
                      let tr = document.createElement("tr");
+                     console.log(row);
+                     for (let k of Object.keys(row).filter(x => x.startsWith('Game'))) {
+                         row[k] = parseInt(row[k]);
+                     }
                      tr.innerHTML = `<td>${row.Name}</td><td>${row.GameCount}</td><td>${row.GameScoreHigh} (${row.GameScoreMean})</td><td>${row.GameFoundHigh}% (${row.GameFoundMean}%)</td><td>${row.GameIdentificationHigh}% (${row.GameIdentificationMean}%)</td><td>${row.GameLengthHigh}% (${row.GameLengthMean}%)</td>`;
                      document.querySelector("#gameStats tbody").appendChild(tr);
                  }
@@ -144,6 +170,10 @@
                      let tr = document.createElement("tr");
                      tr.innerHTML = `<td>${row.Name}</td><td>${row.SurveysWeek}</td><td>${row.SurveysMonth}</td><td>${row.SurveysYear}</td><td>${row.SurveysTotal}</td><td>${row.SurveysCaterpillars}%</td><td>${row.SurveysAccuracy}</td>`;
                      document.querySelector("#surveyStats tbody").appendChild(tr);
+                     
+                 }
+
+                 function showGroups(groups) {
                      
                  }
 		</script>
@@ -312,22 +342,26 @@
                         </table>
 			<div class="loading"><img src="../images/rolling.svg"/></div>
 		      </div>
-		      <h3>Sightings</h3>
-		      <div>
-                        <table id="sightingStats">
-                          <thead>
-                            <tr>
-                              <th>Arthropod Group</th>
-                              <th class="alt">Total Reported</th>
-                              <th class="alt">With Photos</th>
-                              <th class="alt">% Accuracy</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                          </tbody>
-                        </table>
-			<div class="loading"><img src="../images/rolling.svg"/></div>
-		      </div>
+                      <div id="groups">
+		        <h3>Sightings</h3>
+		        <div>
+                          <table id="sightingStats">
+                            <thead>
+                              <tr>
+                                <th>Arthropod Group</th>
+                                <th class="alt">Total Reported</th>
+                                <th class="alt">With Photos</th>
+                                <th class="alt">With Expert IDs</th>
+                                <th class="alt">With Matching IDs</th>
+                                <th class="alt">% Accuracy</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                          </table>
+			  <div class="loading"><img src="../images/rolling.svg"/></div>
+		        </div>
+                      </div>
                       
                     </div>
                   </div>
