@@ -1,5 +1,6 @@
 <?php
 	header('Access-Control-Allow-Origin: *');
+        require_once('orm/resources/Keychain.php');
 	require_once('orm/User.php');
 	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
 	$email = custgetparam("email");
@@ -46,21 +47,30 @@
 		if($country == "US" || $country == "CA"){
 			$finalRegion = $region;
 		}
+                
+                $conn = (new Keychain)->getDatabaseConnection();
+                mysqli_begin_transaction($conn);
+		try {
+                  //create site
+                  $site = $user->createSite($siteName, $description, $url, $latitude, $longitude, $zoom, $finalRegion, $sitePassword, $public);
 		
-		//create site
-		$site = $user->createSite($siteName, $description, $url, $latitude, $longitude, $zoom, $finalRegion, $sitePassword, $public);
+                  //output errors if there are any
+                  if(!is_object($site) || get_class($site) != "Site"){
+                    die("false|" . $site);
+                  }
 		
-		//output errors if there are any
-		if(!is_object($site) || get_class($site) != "Site"){
-			die("false|" . $site);
-		}
-		
-		//if error free, create the plants for the site
-		for($i = 0; $i < ($plantCount / 5); $i++){
-			$site->addCircle();
-		}
-		//and email the creator
-		$site->sendSignUpEmailToCreator();
+                  //if error free, create the plants for the site
+                  for($i = 0; $i < ($plantCount / 5); $i++){
+                    $site->addCircle();
+                  }
+                  //and email the creator
+                  $site->sendSignUpEmailToCreator();
+
+                  mysqli_commit($conn);
+                } catch (Exception $exception) {
+                  mysqli_rollback($conn);
+                  throw $exception;
+                }
 		die("true");
 		
 	}
