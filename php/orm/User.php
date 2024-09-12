@@ -349,10 +349,13 @@ class User
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$email = self::validEmail($dbconn, $email);
 			if($email !== false){
+                          $existing = User::findByEmail($email);
+                          if ($existing == null) {
 				mysqli_query($dbconn, "UPDATE User SET DesiredEmail='$email' WHERE ID='" . $this->id . "'");
 				$this->desiredEmail = $email;
 				self::sendEmailVerificationCodeToUser($this->id);
 				return true;
+                          }
 			}
 		}
 		return false;
@@ -480,7 +483,6 @@ class User
 
 	public static function validEmailFormat($dbconn, $email){
 		$email = filter_var(rawurldecode($email), FILTER_SANITIZE_EMAIL);
-
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			return strtolower(mysqli_real_escape_string($dbconn, htmlentities($email)));
 		}
@@ -600,7 +602,7 @@ class User
 	public function emailHasBeenVerified() {
 		if($this->deleted){return null;}
 		$dbconn = (new Keychain)->getDatabaseConnection();
-		$query = mysqli_query($dbconn, "SELECT `Email` FROM `User` WHERE `ID`='" . $this->id . "' LIMIT 1");
+		$query = mysqli_query($dbconn, "SELECT `Email` FROM `User` WHERE `Email` = `DesiredEmail` AND `ID`='" . $this->id . "' LIMIT 1");
 		if(mysqli_num_rows($query) == 0){
 			return false;
 		}
