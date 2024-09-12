@@ -67,11 +67,9 @@ try {
       } else { $error = "You do not have permission to add a circle to this site.";}
     } else { $error = "Your log in dissolved. Maybe you logged in on another device.";}
   } else { $error = "We could not find the requested site.";}
-  typo;
-  //mysqli_commit($conn);
+  mysqli_commit($conn);
 } catch (Exception $exception) {
   mysqli_rollback($conn);
-  error_log("rolling back");
   throw $exception;
 }
 
