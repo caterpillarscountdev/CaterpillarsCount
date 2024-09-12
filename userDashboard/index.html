@@ -113,7 +113,8 @@
                      var data = JSON.parse((await response.text()).replace("true|", ""));
 
                      for (let row of data.Users) {
-                         showScores(row);
+                         showQuiz(row);
+                         showGame(row);
                          showSurveys(row);
                          
                          if (row.ArthropodGroups.length) {
@@ -127,15 +128,21 @@
                      
                  }
 
-                 function showScores(row) {
+                 function showQuiz(row) {
                      let tr = document.createElement("tr");
-                     tr.innerHTML = `<td>${row.Name}</td><td>${row.QuizCount}</td><td>${row.QuizMean}%</td><td>${row.QuizHigh}%</td><td>${row.GameCount}</td><td>${row.GameMean}%</td><td>${row.GameHigh}%</td>`;
-                     document.querySelector("#scoreStats tbody").appendChild(tr);
+                     tr.innerHTML = `<td>${row.Name}</td><td>${row.QuizCount}</td><td>${row.QuizMean}%</td><td>${row.QuizHigh}%</td>`;
+                     document.querySelector("#quizStats tbody").appendChild(tr);
+                 }
+
+                 function showGame(row) {
+                     let tr = document.createElement("tr");
+                     tr.innerHTML = `<td>${row.Name}</td><td>${row.GameCount}</td><td>${row.GameScoreHigh} (${row.GameScoreMean})</td><td>${row.GameFoundHigh}% (${row.GameFoundMean}%)</td><td>${row.GameIdentificationHigh}% (${row.GameIdentificationMean}%)</td><td>${row.GameLengthHigh}% (${row.GameLengthMean}%)</td>`;
+                     document.querySelector("#gameStats tbody").appendChild(tr);
                  }
 
                  function showSurveys(row) {
                      let tr = document.createElement("tr");
-                     tr.innerHTML = `<td>${row.Name}</td><td>${row.SurveysWeek}</td><td>${row.SurveysMonth}</td><td>${row.SurveysYear}</td><td>${row.SurveysTotal}</td><td>${row.SurveysCaterpillars}%</td>`;
+                     tr.innerHTML = `<td>${row.Name}</td><td>${row.SurveysWeek}</td><td>${row.SurveysMonth}</td><td>${row.SurveysYear}</td><td>${row.SurveysTotal}</td><td>${row.SurveysCaterpillars}%</td><td>${row.SurveysAccuracy}</td>`;
                      document.querySelector("#surveyStats tbody").appendChild(tr);
                      
                  }
@@ -238,39 +245,56 @@
 		  <div class="panel">
 		    <h2>User Stats Dashboard</h2>
 		    <div class="content">
-		      <div id="scores">
-		        <h3>Practice Scores</h3>
+		      <div id="quiz">
+		        <h3><a href="../arthropodQuiz">Photo ID Quiz</a></h3>
 		        <div>
-                          <table id="scoreStats">
+                          <table id="quizStats">
                             <thead>
-                              <tr class="roundedTop">
-                                <th></th>
-                                <th colspan="3" class="spanner"><a href="../arthropodQuiz">Photo ID Quiz</a></th>
-                                <th colspan="3" class="spanner alt"><a href="../virtualSurvey">Virtual Survey</a></th>
-                              </tr>
                               <tr>
                                 <th>User name</th>
                                 <th>Quizzes</th>
                                 <th>Mean Score</th>
-                                <th>High Score</th>
-                                <th class="alt">Virtual Surveys</th>
-                                <th class="alt">Mean Score</th>
-                                <th class="alt">High Score</th>
+                                <th>Best Score</th>
                               </tr>
                             </thead>
                             <tbody>
                             </tbody>
                           </table>
 		        </div>
-			  <div class="loading"><img src="../images/rolling.svg"/></div>
+			<div class="loading"><img src="../images/rolling.svg"/></div>
 		      </div>
-		      <h3>Surveys</h3>
+		      <div id="game">
+		        <h3><a href="../virtualSurvey">Virtual Survey</a></h3>
+		        <div>
+                          <table id="gameStats">
+                            <thead>
+                              <tr>
+                                <th colspan="2"></th>
+                                <th class="alt" colspan="4"><em>Best (Mean)</em></th>
+                              </tr>
+                              <tr>
+                                <th>User name</th>
+                                <th>Games</th>
+                                <th class="alt">Score</th>
+                                <th class="alt">Percent Found</th>
+                                <th class="alt">ID Accuracy</th>
+                                <th class="alt">Length Accuracy</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                          </table>
+		        </div>
+			<div class="loading"><img src="../images/rolling.svg"/></div>
+		      </div>
+		      <h3><a href="../manageMySurveys">Surveys</a></h3>
 		      <div>
                         <table id="surveyStats">
                           <thead>
                             <tr class="roundedTop">
                               <th></th>
                               <th colspan="4" class="spanner alt">Surveys this...</th>
+                              <th></th>
                               <th></th>
                             </tr>
                             <tr>
@@ -280,6 +304,7 @@
                               <th class="alt">Year</th>
                               <th class="alt">Millenium</th>
                               <th>Caterpillars</th>
+                              <th>Accuracy</th>
                             </tr>
                           </thead>
                           <tbody>
