@@ -203,8 +203,12 @@
 							checkCheckbox($("#hiddenCheckbox"));
 						}
 						$("#privacy")[0].style.display = "block";
+
+                                            $('#changeUserEmail input[name="firstName"]').val(privacySettings.firstName);
+                                            $('#changeUserEmail input[name="lastName"]').val(privacySettings.lastName);
+                                            $('#changeUserEmail input[name="newEmail"]').val(window.localStorage.getItem("email"));
 					}
-					else{
+				    else{
 						var getPrivacySettingsError = data.replace("false|", "");
 						queueNotice("error", getPrivacySettingsError);
 						if(getPrivacySettingsError == "Your log in dissolved. Maybe you logged in on another device."){
@@ -219,6 +223,7 @@
 				.always(function(){
 					$("#privacyLoading")[0].style.display = "none";
 				});
+                            
 			});
 
 			function expandTextarea(textareaElement){
@@ -257,6 +262,39 @@
 				}
 			}
 
+			var settingNewUserEmail = false;
+			function setNewUserEmail(){
+				if(!settingNewPassword){
+                                    var firstName = $('#changeUserEmail input[name="firstName"]').val();
+                                    var lastName = $('#changeUserEmail input[name="lastName"]').val();
+                                    var newEmail = $('#changeUserEmail input[name="newEmail"]').val();
+
+				    settingNewUserEmail = true;
+				    setLoadingButton($("#changeUserEmailButton")[0], "Save Changes", true);
+				    var xhttp = new XMLHttpRequest();
+				    xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+					    settingNewUserEmail = false;
+					    setLoadingButton($("#changeUserEmailButton")[0], "SaveChanges", false);
+					    if(this.responseText.indexOf("false|") != 0){
+						queueNotice("confirmation", "Changes saved.");
+						closeAllSettings();
+					    }
+					    else{
+						var setError = this.responseText.replace("false|", "");
+						queueNotice("error", setError);
+						if(setError == "Your log in dissolved. Maybe you logged in on another device."){
+						    logOut();
+						}
+					    }
+					}
+				    };
+				    xhttp.open("GET", "../php/changeUserEmail.php?firstName=" + encodeURIComponent(firstName) + "&lastName=" + encodeURIComponent(lastName) + "&newEmail=" + encodeURIComponent(newEmail) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")), false);
+				    xhttp.send();
+				}
+			}
+
+                 
 			function resetNewPasswords(){
 				//clear password inputs in #changePassword and focus on the first one
 				$("#changePassword input").eq(0)[0].blur();
@@ -268,8 +306,8 @@
 				$("#changePassword input").eq(1)[0].focus();
 			}
 
-			var settingNewPassword = false;
-			function setNewPassword(){
+		        var settingNewPassword = false;
+		        function setNewPassword(){
 				//change the password and, if successful, update the locally saved version of the password and close the drop down
 				if(!settingNewPassword){
 					var currentPassword = $("#changePassword input").eq(0)[0].value;
@@ -490,38 +528,50 @@
 			<div class="panel">
 				<h2>Settings</h2>
 				<div class="content">
-					<div class="setting">
-						<div class="settingTitle" onclick="toggleSetting(this.parentNode);">Change password</div>
-						<div class="settingBody">
-							<div id="changePassword">
-								<input type="password" placeholder="current password"/>
-								<input type="password" placeholder="new password"/>
-								<input type="password" placeholder="confirm new password"/>
-								<button onclick="setNewPassword();" id="changePasswordButton">Change password</button>
-							</div>
-						</div>
+				  <div class="setting">
+				    <div class="settingTitle" onclick="toggleSetting(this.parentNode);">Change password</div>
+				    <div class="settingBody">
+				      <div id="changePassword">
+					<input type="password" placeholder="current password"/>
+					<input type="password" placeholder="new password"/>
+					<input type="password" placeholder="confirm new password"/>
+					<button onclick="setNewPassword();" id="changePasswordButton">Change password</button>
+				      </div>
+				    </div>
+				  </div>
+				  <div class="setting">
+				    <div class="settingTitle" onclick="toggleSetting(this.parentNode);">Change name & email</div>
+				    <div class="settingBody">
+				      <div id="changeUserEmail">
+					<input type="text" name="firstName" placeholder="First Name" />
+					<input type="text" name="lastName" placeholder="Last Name" />
+					<input type="text" name="newEmail" placeholder="Email" />
+                                        <p>Changing your email address will send a verification email to your new email, and log out of all devices and sessions once you verify your new email.</p>
+					<button onclick="setNewUserEmail();" id="changeUserEmailButton">Save Changes</button>
+				      </div>
+				    </div>
+				  </div>
+				  <div class="setting">
+				    <div class="settingTitle" onclick="toggleSetting(this.parentNode);">Privacy</div>
+				    <div class="settingBody">
+				      <div>
+					<div id="privacyLoading">
+					  <img src="../images/rolling.svg"/>
 					</div>
-					<div class="setting">
-						<div class="settingTitle" onclick="toggleSetting(this.parentNode);">Privacy</div>
-						<div class="settingBody">
-							<div>
-								<div id="privacyLoading">
-									<img src="../images/rolling.svg"/>
-								</div>
-								<div id="privacy">
-									<table class="checkboxTable">
-										<tr onclick="toggleCheckbox($(this).find('.checkbox'));">
-											<td><div class="checkbox" id="hiddenCheckbox"></div></td>
-											<td>Hide my name from the leaderboards on the <a class="highlighted" href="../mapsAndGraphs">Maps & Graphs</a> page, and hide my Observer ID from future <a id="iNaturalistLink" class="highlighted" href="#" target="_blank">iNaturalist observations</a>. I am not interested in tracking my personal observations on iNaturalist.</td>
-											<td onclick="event.stopPropagation();queueNotice('alert', 'Some of the user-specific leaderboards on our <a href=&quot;../mapsAndGraphs&quot;>Maps & Graphs</a> page may display your name. If you choose to hide your name from these leaderboards, we will refer to you as <span style=&quot;white-space:nowrap;&quot;>&quot;(anonymous user)&quot;</span> instead.');"><img src="../images/question.png"/></td>
-										<tr>
-									</table>
-									<button onclick="savePrivacySettings();" id="savePrivacySettingsButton">Save privacy settings</button>
-								</div>
-							</div>
-						</div>
+					<div id="privacy">
+					  <table class="checkboxTable">
+					    <tr onclick="toggleCheckbox($(this).find('.checkbox'));">
+					      <td><div class="checkbox" id="hiddenCheckbox"></div></td>
+					      <td>Hide my name from the leaderboards on the <a class="highlighted" href="../mapsAndGraphs">Maps & Graphs</a> page, and hide my Observer ID from future <a id="iNaturalistLink" class="highlighted" href="#" target="_blank">iNaturalist observations</a>. I am not interested in tracking my personal observations on iNaturalist.</td>
+					      <td onclick="event.stopPropagation();queueNotice('alert', 'Some of the user-specific leaderboards on our <a href=&quot;../mapsAndGraphs&quot;>Maps & Graphs</a> page may display your name. If you choose to hide your name from these leaderboards, we will refer to you as <span style=&quot;white-space:nowrap;&quot;>&quot;(anonymous user)&quot;</span> instead.');"><img src="../images/question.png"/></td>
+					      <tr>
+					  </table>
+					  <button onclick="savePrivacySettings();" id="savePrivacySettingsButton">Save privacy settings</button>
 					</div>
-					<div class="setting">
+				      </div>
+				    </div>
+				  </div>
+				  <div class="setting">
 						<div class="settingTitle" onclick="toggleSetting(this.parentNode);">Sign out of all other devices</div>
 						<div class="settingBody">
 							<div id="signOutOfAllOtherDevices">

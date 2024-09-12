@@ -23,6 +23,11 @@
 		$mail->Body = $body;
 		$mail->AltBody = strip_tags($body);
 
+                if(getenv('LOCAL_DEV')) {
+                  error_log("Mail to " . $to . " : " . $body);
+                  return true;
+                }
+
 		if($mail->send()){
 			//custom_error_log("email() send()  was successful");
 	   		return true;

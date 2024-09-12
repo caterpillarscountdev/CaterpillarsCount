@@ -20,6 +20,7 @@ php:
        - PHPMYADMIN_COOKIE_SECRET=44DVWxYc7XJoCCYFPfXhMMv3KdkcqvGr
        - CATERPILLARSV2_SERVICE_HOST=mysql
        - DEVELOPMENT_INSTANCE=1
+       - LOCAL_DEV=1
        - DEVCCDB_SERVICE_HOST=mysql
        - HOST_USERNAME=myuser
        - HOST_PASSWORD=password
