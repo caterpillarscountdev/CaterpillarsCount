@@ -98,8 +98,62 @@
                      text-align: center;
                      text-transform: uppercase;                     
                  }
-                 
 
+                 .group {
+                     position: relative;
+                     padding: 1em;
+                 }
+                 
+                 .group .image{
+		     width:34px;
+                     height: 34px;
+		     background-size:contain;
+		     background-repeat:no-repeat;
+		     background-position:center;
+		     display:inline-block;
+		     opacity:.4;
+		     right:0px;
+		     top:0px;
+		     bottom:10px;
+		 }
+		 
+		 .text{
+		     display:inline-block;
+		 }
+
+                 .tooltip {
+                     text-decoration: underline;
+                     position:relative;
+                 }
+                 
+		 .bottomToolTip{
+		     display:none;
+		     position:absolute;
+		     top:100%;
+		     margin-top:10px;
+		     right:0px;
+		     width:180px;
+		     font-size:13px;
+		     padding:9px;
+		     border-radius:4px;
+		     background:#444;
+		     color:#fff;
+		     box-sizing:border-box;
+		     z-index:1;
+		     text-align:left;
+                     left: 0px;
+                     margin-left: 0px;
+		 }
+		 .bottomToolTip .arrow{
+		     position:relative;
+		     right:0px;
+		     margin:-15px 0px 0px 0px;
+		     border:5px solid transparent;
+		     border-top:0px none transparent;
+		     border-bottom:7px solid #444;
+		     width:0px;
+		 }
+                 
                  
 		</style>
 		<script>
@@ -123,7 +177,7 @@
                          showSurveys(row);
 
                          if (row.ArthropodGroups) {
-                             showGroups(row.arthropodGroups)
+                             showGroups(row.ArthropodGroups, row)
                          } else {
                              document.querySelector("#groups").style.display = "none";
                          }
@@ -143,7 +197,7 @@
                      {label: 'fly', name: "Flies", icon: "../images/selectIcons/orders/fly.png"},
                      {label: 'grasshopper', name: "Grasshoppers, Crickets", icon: "../images/selectIcons/orders/grasshopper.png"},
                      {label: 'leafhopper', name: "Leaf Hoppers and Cicadas", icon: "../images/selectIcons/orders/leafhopper.png"},
-                     {label: 'moth', name: "Moths, Butterflies", icon: "../images/selectIcons/orders/moth.png"},
+                     {label: 'moth', name: "Moths, Butterflies", icon: "../images/selectIcons/orders/moths.png"},
                      {label: 'spider', name: "Spiders", icon: "../images/selectIcons/orders/spider.png"},
                      {label: 'truebugs', name: "True Bugs", icon: "../images/selectIcons/orders/truebugs.png"},
                      {label: 'other', name: "Other", icon: "../images/selectIcons/orders/other.png"},
@@ -173,8 +227,19 @@
                      
                  }
 
-                 function showGroups(groups) {
-                     
+                 function showGroups(groups, row) {
+                     for (let arth of arthropodGroups) {
+                         let group = groups[arth.label];
+                         let groupHTML = `<td class="group"><div class="image" style="background-image:url('${arth.icon}');"></div></td><td><div class="text">${arth.name}</div></td>`;
+                         let tr = document.createElement("tr");
+                         if (group) {
+                             tr.innerHTML = `${groupHTML}<td>${group.Surveys}</td><td><a target="_blank" href="https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=${row.iNatObserverID}&taxon_name=">${group.WithPhotos}</a></td><td>${group.WithIDs} (${group.WithMatches})</td><td>${group.Accuracy}</td>`;
+                         } else {
+                             tr.innerHTML = `${groupHTML}<td colspan="4"></td>`;
+                         }
+                         
+                         document.querySelector("#sightingStats tbody").appendChild(tr);
+                     }                     
                  }
 		</script>
 	</head>
@@ -348,12 +413,11 @@
                           <table id="sightingStats">
                             <thead>
                               <tr>
-                                <th>Arthropod Group</th>
-                                <th class="alt">Total Reported</th>
+                                <th colspan="2">Arthropod Group</th>
+                                <th class="alt">Total Surveys</th>
                                 <th class="alt">With Photos</th>
-                                <th class="alt">With Expert IDs</th>
-                                <th class="alt">With Matching IDs</th>
-                                <th class="alt">% Accuracy</th>
+                                <th class="alt">With Expert IDs (Matching)</th>
+                                <th class="alt tooltip" onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">Accuracy<div class="bottomToolTip"><div class="arrow"></div>Sightings with Expert IDs that match the reported group.</div></th>
                               </tr>
                             </thead>
                             <tbody>

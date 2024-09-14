@@ -24,6 +24,7 @@ if(is_object($user) && get_class($user) == "User"){
   $results["Users"][strval($user->getID())] = array(
     "ID" => $user->getID(),
     "Name" => $user->getFullName(),
+    "iNatObserverID" => $user->getINaturalistObserverID(),
     "QuizCount" => 0,
     "QuizMean" => 0,
     "QuizHigh" => 0,
@@ -71,12 +72,11 @@ if(is_object($user) && get_class($user) == "User"){
 
   // Sightings
 
-  //SELECT Survey.UserFKOfObserver AS UserFK, UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(IF(PhotoURL != "",1, NULL)) As WithPhotos FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver = 3172 GROUP BY Survey.UserFKOfObserver, ArthropodSighting.UpdatedGroup;
-  
-  $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(IF(PhotoURL != \"\",1, NULL)) As WithPhotos FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID WHERE Survey.UserFKOfObserver = " . $user->getID() . " GROUP BY Survey.UserFKOfObserver, ArthropodSighting.UpdatedGroup;");
+  $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(IF(PhotoURL != \"\",1, NULL)) As WithPhotos, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ExpertIdentification.StandardGroup = ArthropodSighting.UpdatedGroup THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK WHERE Survey.UserFKOfObserver = " . $user->getID() . " GROUP BY Survey.UserFKOfObserver, ArthropodSighting.UpdatedGroup;");
 
   while($row = mysqli_fetch_assoc($query)){
     $results["Users"][strval($row["UserFK"])]["ArthropodGroups"][$row["UpdatedGroup"]] = $row;
+    $results["Users"][strval($row["UserFK"])]["ArthropodGroups"][$row["UpdatedGroup"]]["Accuracy"] = $row["WithIDs"] ? intval($row["WithMatches"] / $row["WithIDs"] * 100) . "%" : "N/A";
   }
   
   
