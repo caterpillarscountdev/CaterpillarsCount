@@ -307,6 +307,9 @@
 
                  function showQuiz(row) {
                      let tr = document.createElement("tr");
+                     for (let k of Object.keys(row).filter(x => x.startsWith('Quiz'))) {
+                         row[k] = parseInt(row[k]);
+                     }
                      tr.innerHTML = `<td>${row.Name}</td><td>${row.QuizCount}</td><td>${row.QuizMean}%</td><td>${row.QuizHigh}%</td>`;
                      document.querySelector("#quizStats tbody").appendChild(tr);
                  }
