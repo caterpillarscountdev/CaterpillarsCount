@@ -253,7 +253,7 @@
                  });
 
                  async function loadUserSites() {
-                     let response = await fetch("../php/getOwnedSites.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"));
+                     let response = await fetch("../php/getOwnedSitesLIGHT.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"));
                      var data = JSON.parse((await response.text()).replace("true|", ""));
 
                      if (data.length > 0) {
@@ -369,6 +369,9 @@
 
                  function showSiteSelect(sites) {
                      let parent = document.querySelector(".siteSelect .options");
+
+                     sites = sites.filter((x) => x.active).sort((a,b) => a.name.localeCompare(b.name));
+
                      for (let site of sites) {
                          let div = document.createElement('div');
                          div.innerHTML = site.name;
