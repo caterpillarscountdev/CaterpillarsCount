@@ -57,6 +57,20 @@
                      text-align: left;
                  }
 
+                 h3 img {
+                     padding-left: 10px;
+                     height: 20px;
+                     opacity: .2;                     
+                 }
+
+                 #quizNotice {
+                     padding-left: 10px;
+                     font-size: 12px;
+                     font-weight: normal;
+                     display: none;
+                     text-transform: none;
+                 }
+
 		 .content table{
 		     width:100%;
 		     border-collapse:collapse;
@@ -153,30 +167,117 @@
 		     border-bottom:7px solid #444;
 		     width:0px;
 		 }
+
+		 #switch {
+		     color:#666;
+		     background:#eee;
+		     display:none;;
+		     border-radius:5px;
+		     border-bottom:1px solid rgba(0,0,0,0.2);
+		     white-space:nowrap;
+		     margin-bottom:20px;
+		 }
+                 #switch.active {
+                     display:inline-block;
+                 }
                  
+		 #switch button{
+		     color:inherit;
+		     cursor:pointer;
+		     outline:none;
+		     margin:0px;
+		     border:0px none transparent;
+		     border-radius:0px;
+		     padding:7px 15px;
+		     font-size:14px;
+		     background:transparent;
+		     display:inline-block;
+		     text-align:center;
+		     min-width:70px;
+		 }
+		 #switch button:last-of-type{
+		     margin-left:-4px;
+		 }
+		 #switch .active {
+		     background:rgba(0,0,0,.1);
+		     -webkit-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+		     -moz-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+		     box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+		 }
+
+
+		 .siteSelect{
+		     position:relative;
+		     display:inline-block;
+		     text-decoration:inherit;
+		 }
+		 .siteSelect .selected{
+		     border-radius:4px;
+		     text-decoration:inherit;
+		     cursor:pointer;
+		     background:rgba(0,0,0,0.1);
+		     padding:0px 2px;
+		 }
+		 .siteSelect .options{
+		     position:absolute;
+		     top:1em;
+		     left:0px;
+		     background:#fff;
+		     min-width:100%;
+		     border-radius:5px;
+		     overflow:hidden;
+		     border:1px solid #ddd;
+		     border-bottom:2px solid #ddd;
+		     font-size:12px;
+		     display:none;
+		     z-index:1;
+		 }
+		 .siteSelect .options>div{
+		     padding:5px;
+		     cursor:pointer;
+		 }
+		 .siteSelect .options>div:hover{
+		     background:#ebfeff;
+		 }                 
                  
 		</style>
 		<script>
 		 requireLogIn();
-                 
+                 let hasSiteURL = window.location.toString().indexOf("s=");
+                 let siteID = hasSiteURL > 0 ? window.location.toString().substring(window.location.toString().indexOf("s=") + 2) : null;
+                     
 		 $(document).ready(function(){
 		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
-                     
-                     loadUserStats()
+                     loadUserSites();
+                     loadUserStats();
                  });
 
+                 async function loadUserSites() {
+                     let response = await fetch("../php/getOwnedSites.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"));
+                     var data = JSON.parse((await response.text()).replace("true|", ""));
+
+                     if (data.length > 0) {
+                         document.querySelector('#switch').classList.add('active');
+                         showSiteSelect(data);
+                     }
+                 }
+
                  async function loadUserStats() {
-                     let siteID = 0;
                      let userID = window.location.toString().substring(window.location.toString().indexOf("?u=") + 3);
                      let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID));
-                         var data = JSON.parse((await response.text()).replace("true|", ""));
+                     var data = JSON.parse((await response.text()).replace("true|", ""));
 
+                     document.querySelector("#gameStats tbody").innerHTML="";
+                     document.querySelector("#quizStats tbody").innerHTML="";
+                     document.querySelector("#surveyStats tbody").innerHTML="";
+                     document.querySelector("#sightingStats tbody").innerHTML="";
+                     
                      for (let row of data.Users) {
                          showQuiz(row);
                          showGame(row);
                          showSurveys(row);
 
-                         if (row.ArthropodGroups) {
+                         if (Object.values(row.ArthropodGroups).length > 0) {
                              showGroups(row.ArthropodGroups, row)
                          } else {
                              document.querySelector("#groups").style.display = "none";
@@ -212,7 +313,7 @@
 
                  function showGame(row) {
                      let tr = document.createElement("tr");
-                     console.log(row);
+
                      for (let k of Object.keys(row).filter(x => x.startsWith('Game'))) {
                          row[k] = parseInt(row[k]);
                      }
@@ -222,7 +323,11 @@
 
                  function showSurveys(row) {
                      let tr = document.createElement("tr");
-                     tr.innerHTML = `<td>${row.Name}</td><td>${row.SurveysWeek}</td><td>${row.SurveysMonth}</td><td>${row.SurveysYear}</td><td>${row.SurveysTotal}</td><td>${row.SurveysCaterpillars}%</td><td>${row.SurveysAccuracy}</td>`;
+                     let name = row.Name;
+                     if (siteID) {
+                         name = `<a href="?u=${row.ID}&s=${siteID}">${row.Name}</a>`;
+                     }
+                     tr.innerHTML = `<td>${name}</td><td>${row.SurveysWeek}</td><td>${row.SurveysMonth}</td><td>${row.SurveysYear}</td><td>${row.SurveysTotal}</td><td>${row.SurveysCaterpillars}%</td><td>${row.SurveysAccuracy}</td>`;
                      document.querySelector("#surveyStats tbody").appendChild(tr);
                      
                  }
@@ -241,6 +346,49 @@
                          document.querySelector("#sightingStats tbody").appendChild(tr);
                      }                     
                  }
+
+		 function switchStatsTo(viewType, otherType, label){
+                     if (viewType == 'User') {
+                         siteID = null;
+                     }
+                     let id = `#${viewType.toLowerCase()}SwitchButton`;
+                     let other = `#${otherType.toLowerCase()}SwitchButton`;
+		     $(id)[0].className = "active";
+		     $(other)[0].className = "";
+		     $(id)[0].innerHTML = ". . .";
+                     $(other)[0].innerHTML = otherType;
+		     setTimeout(function(){
+                         loadUserStats();
+			 $(id)[0].innerHTML = label || viewType;
+		     }, 1);
+		 }
+
+
+                 function showSiteSelect(sites) {
+                     let parent = document.querySelector(".siteSelect .options");
+                     for (let site of sites) {
+                         let div = document.createElement('div');
+                         div.innerHTML = site.name;
+                         div.addEventListener('click', () => siteSelectOption(site));
+                         div.dataset.siteid = site.id;
+                         parent.appendChild(div);
+                     }
+                 }
+                 
+		 function showSiteSelectOptions(selectedOption){
+		     setTimeout(function(){
+			 $(".siteSelect .options").eq(0).css({display:"block"});
+		     }, 1);
+		 }
+                 function siteSelectOption(site) {
+                     siteID = site.id;
+                     switchStatsTo('Site', 'User', `Site: ${site.name}`);                     
+		     setTimeout(function(){
+			 $(".siteSelect .options").eq(0).css({display:"none"});
+		     }, 1);
+                     
+                 }
+                 
 		</script>
 	</head>
 	<body>
@@ -340,8 +488,18 @@
 		  <div class="panel">
 		    <h2>User Stats Dashboard</h2>
 		    <div class="content">
+		      <div class="centeredText">
+			<div id="switch">
+			  <button id="userSwitchButton" class="active" onclick="switchStatsTo('User', 'Site');">User</button>
+                          <div class="siteSelect">
+		            <div class="options" style="min-width:153px;">
+                            </div>
+                          </div>
+			  <button id="siteSwitchButton" onclick="showSiteSelectOptions(this);">Site</button>
+			</div>
+		      </div>
 		      <div id="quiz">
-		        <h3><a href="../arthropodQuiz">Photo ID Quiz</a></h3>
+		        <h3><a href="../arthropodQuiz">Photo ID Quiz</a><img onmouseover="$('#quizNotice').css('display','inline-block')" onmouseout="$('#quizNotice').css('display','none')" src="../images/question.png"><div id="quizNotice">Quiz Scores before October 2024 were not collected.</div></h3>
 		        <div>
                           <table id="quizStats">
                             <thead>
