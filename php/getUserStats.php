@@ -106,7 +106,7 @@ if(is_object($user) && get_class($user) == "User"){
   $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS SurveysCaterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID AND ArthropodSighting.UpdatedGroup='caterpillar' AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver");
 
   while($row = mysqli_fetch_assoc($query)){
-    $results["Users"][strval($row["UserFK"])] = array_merge($results["Users"][strval($row["UserFK"])], $row);
+    $results["Users"][strval($row["UserFK"])]["SurveysCaterpillars"] = intval($results["Users"][strval($row["UserFK"])]["SurveysTotal"]) > 0 ? (round($row["SurveysCaterpillars"] / intval($results["Users"][strval($row["UserFK"])]["SurveysTotal"]) * 100, 2)) : 0;
   }
 
   if ($getSightings) {
