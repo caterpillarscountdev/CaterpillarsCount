@@ -103,7 +103,7 @@ if(is_object($user) && get_class($user) == "User"){
   }
 
   // Survey Caterpillars
-  $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS SurveysCaterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID AND YEAR(Survey.LocalDate)=YEAR(CURDATE()) AND ArthropodSighting.UpdatedGroup='caterpillar' AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver");
+  $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS SurveysCaterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID AND ArthropodSighting.UpdatedGroup='caterpillar' AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver");
 
   while($row = mysqli_fetch_assoc($query)){
     $results["Users"][strval($row["UserFK"])] = array_merge($results["Users"][strval($row["UserFK"])], $row);
@@ -112,7 +112,7 @@ if(is_object($user) && get_class($user) == "User"){
   if ($getSightings) {
     // Sightings
 
-    $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(IF(PhotoURL != \"\",1, NULL)) As WithPhotos, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ExpertIdentification.StandardGroup = ArthropodSighting.UpdatedGroup THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK WHERE Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver, ArthropodSighting.UpdatedGroup;");
+    $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(IF(PhotoURL != \"\",1, NULL)) As WithPhotos, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ExpertIdentification.StandardGroup = ArthropodSighting.OriginalGroup THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK WHERE Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver, ArthropodSighting.UpdatedGroup;");
 
     while($row = mysqli_fetch_assoc($query)){
       $results["Users"][strval($row["UserFK"])]["ArthropodGroups"][$row["UpdatedGroup"]] = $row;
