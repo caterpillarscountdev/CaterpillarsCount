@@ -26,6 +26,10 @@
 		      if($appVersion < 150){
 			      $circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies());
 		      }
+                      else if ($appVersion < 160) {
+                              $circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies(), $plants[$i]->getIsConifer());
+                      
+                      }
 		      else{
 			      $circles[($plants[$i]->getCircle() - 1)][1][] = array($plants[$i]->getOrientation(), $plants[$i]->getCode(), $plants[$i]->getSpecies(), $plants[$i]->getIsConifer(), $plants[$i]->getLatitude(), $plants[$i]->getLongitude(), $plants[$i]->getColor());
 		      }

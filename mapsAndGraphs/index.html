@@ -1391,7 +1391,7 @@
                      $("#noPlantsSection").hide();
                      $("#hasPlantsSection").hide();
                      
-                     let response = await fetch("../php/getPlantsBySite.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0")
+                     let response = await fetch("../php/getPlantsBySite.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.6.0")
                      var data = JSON.parse((await response.text()).replace("true|", ""));
 		     var siteName = data[0];
 		     var circles = data[1];
