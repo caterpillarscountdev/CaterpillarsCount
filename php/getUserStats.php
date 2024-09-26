@@ -13,6 +13,13 @@ $salt = custgetparam("salt");
 $conn = (new Keychain)->getDatabaseConnection();
 
 
+function query_error($query, $c) {
+  if (!$query) {
+    error_log("Query Error: " . mysqli_error($c));
+  }
+}
+
+
 $user = User::findBySignInKey($email, $salt);
 if(is_object($user) && get_class($user) == "User"){
 
@@ -39,6 +46,12 @@ if(is_object($user) && get_class($user) == "User"){
     }
 
   };
+
+  $siteRestriction = "<>2";
+  //if($siteID > 0){
+  //  $siteRestriction = "=" . $siteID;
+  //}
+  
 
   $getSightings = count($users) == 1;
 
@@ -96,14 +109,16 @@ if(is_object($user) && get_class($user) == "User"){
 
   // Surveys
 
-  $query = mysqli_query($conn, "SELECT User.ID as UserFK, SUM(CASE WHEN Survey.LocalDate >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) THEN 1 ELSE 0 END) AS SurveysWeek, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(DATE_FORMAT(CURDATE(),'%Y-%m'), '-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS SurveysMonth, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS SurveysYear, Count(*) AS SurveysTotal, COUNT(DISTINCT Survey.LocalDate) AS SurveysTotalUniqueDates FROM `Survey` JOIN User ON Survey.UserFKOfObserver=User.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE User.ID IN (" . implode(",", $userIDs) . ") GROUP BY User.ID");
+  $query = mysqli_query($conn, "SELECT User.ID as UserFK, SUM(CASE WHEN Survey.LocalDate >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) THEN 1 ELSE 0 END) AS SurveysWeek, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(DATE_FORMAT(CURDATE(),'%Y-%m'), '-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS SurveysMonth, SUM(CASE WHEN Survey.LocalDate >= STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01 00:00:00'), '%Y-%m-%d %T') THEN 1 ELSE 0 END) AS SurveysYear, Count(*) AS SurveysTotal, COUNT(DISTINCT Survey.LocalDate) AS SurveysTotalUniqueDates FROM `Survey` JOIN User ON Survey.UserFKOfObserver=User.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK " . $siteRestriction . " AND User.ID IN (" . implode(",", $userIDs) . ") GROUP BY User.ID");
+  query_error($query, $conn);
 
   while($row = mysqli_fetch_assoc($query)){
     $results["Users"][strval($row["UserFK"])] = array_merge($results["Users"][strval($row["UserFK"])], $row);
   }
 
   // Survey Caterpillars
-  $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS SurveysCaterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID AND ArthropodSighting.UpdatedGroup='caterpillar' AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver");
+  $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS SurveysCaterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK " . $siteRestriction . " AND ArthropodSighting.UpdatedGroup='caterpillar' AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver");
+  query_error($query, $conn);
 
   while($row = mysqli_fetch_assoc($query)){
     $results["Users"][strval($row["UserFK"])]["SurveysCaterpillars"] = intval($results["Users"][strval($row["UserFK"])]["SurveysTotal"]) > 0 ? (round($row["SurveysCaterpillars"] / intval($results["Users"][strval($row["UserFK"])]["SurveysTotal"]) * 100, 2)) : 0;
@@ -112,7 +127,8 @@ if(is_object($user) && get_class($user) == "User"){
   if ($getSightings) {
     // Sightings
 
-    $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(IF(PhotoURL != \"\",1, NULL)) As WithPhotos, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ExpertIdentification.StandardGroup = ArthropodSighting.OriginalGroup THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK WHERE Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver, ArthropodSighting.UpdatedGroup;");
+    $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(IF(PhotoURL != \"\",1, NULL)) As WithPhotos, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ExpertIdentification.StandardGroup = ArthropodSighting.OriginalGroup THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK " . $siteRestriction . " AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver, ArthropodSighting.UpdatedGroup;");
+    query_error($query, $conn);
 
     while($row = mysqli_fetch_assoc($query)){
       $results["Users"][strval($row["UserFK"])]["ArthropodGroups"][$row["UpdatedGroup"]] = $row;
