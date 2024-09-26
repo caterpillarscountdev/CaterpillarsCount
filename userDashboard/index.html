@@ -283,6 +283,7 @@
                          showSurveys(row);
 
                          if (Object.values(row.ArthropodGroups).length > 0) {
+                             document.querySelector("#groups").style.display = "block";
                              showGroups(row.ArthropodGroups, row)
                          } else {
                              document.querySelector("#groups").style.display = "none";
