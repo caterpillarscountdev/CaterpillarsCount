@@ -19,6 +19,10 @@ function query_error($query, $c) {
   }
 }
 
+function accuracy_calc($row) {
+  return $row["WithIDs"] ? intval($row["WithMatches"] / $row["WithIDs"] * 100) . "%" : "N/A";
+}
+
 
 $user = User::findBySignInKey($email, $salt);
 if(is_object($user) && get_class($user) == "User"){
@@ -116,6 +120,16 @@ if(is_object($user) && get_class($user) == "User"){
     $results["Users"][strval($row["UserFK"])] = array_merge($results["Users"][strval($row["UserFK"])], $row);
   }
 
+  // Overall Accuracy
+  
+  $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ExpertIdentification.StandardGroup = ArthropodSighting.OriginalGroup THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK " . $siteRestriction . " AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver");
+  query_error($query, $conn);
+
+  while($row = mysqli_fetch_assoc($query)){
+    $results["Users"][strval($row["UserFK"])]["SurveysAccuracy"] = accuracy_calc($row);
+  }
+
+  
   // Survey Caterpillars
   $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS SurveysCaterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK " . $siteRestriction . " AND ArthropodSighting.UpdatedGroup='caterpillar' AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver");
   query_error($query, $conn);
@@ -132,7 +146,7 @@ if(is_object($user) && get_class($user) == "User"){
 
     while($row = mysqli_fetch_assoc($query)){
       $results["Users"][strval($row["UserFK"])]["ArthropodGroups"][$row["UpdatedGroup"]] = $row;
-      $results["Users"][strval($row["UserFK"])]["ArthropodGroups"][$row["UpdatedGroup"]]["Accuracy"] = $row["WithIDs"] ? intval($row["WithMatches"] / $row["WithIDs"] * 100) . "%" : "N/A";
+      $results["Users"][strval($row["UserFK"])]["ArthropodGroups"][$row["UpdatedGroup"]]["Accuracy"] = accuracy_calc($row);
     }
   }
   
