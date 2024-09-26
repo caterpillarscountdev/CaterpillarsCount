@@ -71,6 +71,7 @@ if(is_object($user) && get_class($user) == "User"){
     $userIDs[] = $u->getID();
     $results["Users"][strval($u->getID())] = array(
       "ID" => $u->getID(),
+      "LastName" => $u->getLastName(),
       "Name" => $u->getFullName(),
       "iNatObserverID" => $u->getINaturalistObserverID(),
       "QuizCount" => 0,
