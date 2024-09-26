@@ -246,11 +246,20 @@
 		 requireLogIn();
                  let hasSiteURL = window.location.toString().indexOf("s=");
                  let siteID = hasSiteURL > 0 ? window.location.toString().substring(window.location.toString().indexOf("s=") + 2) : null;
-                     
+		 $(document).click(function(){
+		     $(".siteSelect .options").fadeOut(0);
+		 });
+
 		 $(document).ready(function(){
 		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
                      loadUserSites();
                      loadUserStats();
+                     sortableInit(document.querySelector('#quizStats'));
+                     sortableInit(document.querySelector('#gameStats'));
+                     sortableInit(document.querySelector('#surveyStats'));
+                     sortableInit(document.querySelector('#sightingStats'));
+                     
+                     
                  });
 
                  async function loadUserSites() {
@@ -279,6 +288,7 @@
                          showSurveys(row);
 
                          if (Object.values(row.ArthropodGroups).length > 0) {
+                             document.querySelector("#groups").style.display = "block";
                              showGroups(row.ArthropodGroups, row)
                          } else {
                              document.querySelector("#groups").style.display = "none";
@@ -290,18 +300,18 @@
                  }
 
                  let arthropodGroups = [
-                     {label: 'ant', name: "Ants", icon: "../images/selectIcons/orders/ant.png"},
-                     {label: 'aphid', name: "Aphids and Psyllids", icon: "../images/selectIcons/orders/aphid.png"},
-                     {label: 'bee', name: "Bees, Wasps, and Sawflies", icon: "../images/selectIcons/orders/bee.png"},
-                     {label: 'beetle', name: "Beetles", icon: "../images/selectIcons/orders/beetle.png"},
-                     {label: 'caterpillar', name: "Caterpillars", icon: "../images/selectIcons/orders/caterpillar.png"},
-                     {label: 'daddylonglegs', name: "Daddy longlegs", icon: "../images/selectIcons/orders/daddylonglegs.png"},
-                     {label: 'fly', name: "Flies", icon: "../images/selectIcons/orders/fly.png"},
-                     {label: 'grasshopper', name: "Grasshoppers, Crickets", icon: "../images/selectIcons/orders/grasshopper.png"},
-                     {label: 'leafhopper', name: "Leaf Hoppers and Cicadas", icon: "../images/selectIcons/orders/leafhopper.png"},
-                     {label: 'moth', name: "Moths, Butterflies", icon: "../images/selectIcons/orders/moths.png"},
-                     {label: 'spider', name: "Spiders", icon: "../images/selectIcons/orders/spider.png"},
-                     {label: 'truebugs', name: "True Bugs", icon: "../images/selectIcons/orders/truebugs.png"},
+                     {label: 'ant', name: "Ants", icon: "../images/selectIcons/orders/ant.png", taxon: "Ants"},
+                     {label: 'aphid', name: "Aphids and Psyllids", icon: "../images/selectIcons/orders/aphid.png", taxon: "Sternorrhyncha"},
+                     {label: 'bee', name: "Bees, Wasps, and Sawflies", icon: "../images/selectIcons/orders/bee.png", taxon: "Hymenoptera"},
+                     {label: 'beetle', name: "Beetles", icon: "../images/selectIcons/orders/beetle.png", taxon: "Beetles"},
+                     {label: 'caterpillar', name: "Caterpillars", icon: "../images/selectIcons/orders/caterpillar.png", taxon: "Lepidoptera"},
+                     {label: 'daddylonglegs', name: "Daddy longlegs", icon: "../images/selectIcons/orders/daddylonglegs.png", taxon: "Daddy longlegs"},
+                     {label: 'fly', name: "Flies", icon: "../images/selectIcons/orders/fly.png", taxon: "Flies"},
+                     {label: 'grasshopper', name: "Grasshoppers, Crickets", icon: "../images/selectIcons/orders/grasshopper.png", taxon: "Orthoptera"},
+                     {label: 'leafhopper', name: "Leaf Hoppers and Cicadas", icon: "../images/selectIcons/orders/leafhopper.png", taxon: "Auchenorrhyncha"},
+                     {label: 'moth', name: "Moths, Butterflies", icon: "../images/selectIcons/orders/moths.png", taxon: "Lepidoptera"},
+                     {label: 'spider', name: "Spiders", icon: "../images/selectIcons/orders/spider.png", taxon: "Spiders"},
+                     {label: 'truebugs', name: "True Bugs", icon: "../images/selectIcons/orders/truebugs.png", taxon: "True Bugs"},
                      {label: 'other', name: "Other", icon: "../images/selectIcons/orders/other.png", hideAccuracy: true},
                      {label: 'unidentified', name: "Unidentified", icon: "../images/selectIcons/orders/unidentified.png", hideAccuracy: true},
                  ];
@@ -311,7 +321,7 @@
                      for (let k of Object.keys(row).filter(x => x.startsWith('Quiz'))) {
                          row[k] = parseInt(row[k]);
                      }
-                     tr.innerHTML = `<td>${row.Name}</td><td>${row.QuizCount}</td><td>${row.QuizMean}%</td><td>${row.QuizHigh}%</td>`;
+                     tr.innerHTML = `<td data-sort="${row.LastName}">${row.Name}</td><td>${row.QuizCount}</td><td>${row.QuizMean}%</td><td>${row.QuizHigh}%</td>`;
                      document.querySelector("#quizStats tbody").appendChild(tr);
                  }
 
@@ -321,7 +331,7 @@
                      for (let k of Object.keys(row).filter(x => x.startsWith('Game'))) {
                          row[k] = parseInt(row[k]);
                      }
-                     let content = `<td>${row.Name}</td><td>${row.GameCount}</td><td>${row.GameScoreHigh} (${row.GameScoreMean})</td>`;
+                     let content = `<td data-sort="${row.LastName}">${row.Name}</td><td>${row.GameCount}</td><td>${row.GameScoreHigh} (${row.GameScoreMean})</td>`;
                      if (row.GameFoundHigh == -1 && row.GameIdentificationHigh == -1) {
                          content += `<td>-</td><td>-</td><td>-</td>`                         
                      } else {
@@ -337,7 +347,7 @@
                      if (siteID) {
                          name = `<a href="?u=${row.ID}&s=${siteID}">${row.Name}</a>`;
                      }
-                     tr.innerHTML = `<td>${name}</td><td>${row.SurveysWeek}</td><td>${row.SurveysMonth}</td><td>${row.SurveysYear}</td><td>${row.SurveysTotal}</td><td>${row.SurveysCaterpillars}%</td><td>${row.SurveysAccuracy}</td>`;
+                     tr.innerHTML = `<td data-sort="${row.LastName}">${name}</td><td>${row.SurveysWeek}</td><td>${row.SurveysMonth}</td><td>${row.SurveysYear}</td><td>${row.SurveysTotal}</td><td>${row.SurveysCaterpillars}%</td><td>${row.SurveysAccuracy}</td>`;
                      document.querySelector("#surveyStats tbody").appendChild(tr);
                      
                  }
@@ -348,7 +358,7 @@
                          let groupHTML = `<td class="group"><div class="image" style="background-image:url('${arth.icon}');"></div></td><td><div class="text">${arth.name}</div></td>`;
                          let tr = document.createElement("tr");
                          if (group) {
-                             tr.innerHTML = `${groupHTML}<td>${group.Surveys}</td><td><a target="_blank" href="https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=${row.iNatObserverID}&taxon_name=">${group.WithPhotos}</a></td><td>${arth.hideAccuracy ? "-" : group.WithIDs} (${arth.hideAccuracy ? "-" : group.WithMatches})</td><td>${arth.hideAccuracy ? "N/A" : group.Accuracy}</td>`;
+                             tr.innerHTML = `${groupHTML}<td>${group.Surveys}</td><td><a target="_blank" href="https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=${row.iNatObserverID}&taxon_name=${arth.taxon}">${group.WithPhotos}</a></td><td>${group.WithIDs} (${arth.hideAccuracy ? "-" : group.WithMatches})</td><td>${arth.hideAccuracy ? "N/A" : group.Accuracy}</td>`;
                          } else {
                              tr.innerHTML = `${groupHTML}<td colspan="4"></td>`;
                          }
@@ -400,6 +410,54 @@
 			 $(".siteSelect .options").eq(0).css({display:"none"});
 		     }, 1);
                      
+                 }
+
+                 
+                 function sortableInit(table) {
+                     table.querySelectorAll('th.sortable').forEach((c, i) => {
+                         let idx = c.dataset.sortIndex || i;
+                         c.addEventListener('click', () => sortableColumn(table, idx, c.dataset.hasOwnProperty('sortNumeric')))
+                     })
+                 }
+
+                 function sortableColumn(table, idx, numeric) {
+                     let switchCount = 0;
+                     let switching = true;
+                     let shouldSwitch;
+                     let dir = "asc";
+                     let extract = (a) => {
+                         let val = a.dataset.sort || a.textContent.toLowerCase();
+                         if (numeric) {
+                             val = parseFloat(val);
+                         }
+                         return val
+                     }
+                     let compare = (a,b) => { return a > b };
+                     while (switching) {
+                         switching = false;
+                         rows = table.rows;
+                         for (i = 0; i < (rows.length - 1); i++) {
+                             if(rows[i].querySelector('th')) continue;
+                             shouldSwitch = false;
+                             x = rows[i].getElementsByTagName("td")[idx];
+                             y = rows[i + 1].getElementsByTagName("td")[idx];
+                             if (compare(extract(x), extract(y))) {
+                                     shouldSwitch = true;
+                                     break;
+                             }
+                         }
+                         if (shouldSwitch) {
+                             rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                             switching = true;
+                             switchCount ++;
+                         } else {
+                             if (switchCount == 0 && dir == "asc") {
+                                 dir = "desc";
+                                 compare = (a,b) => { return a < b };
+                                 switching = true;
+                             }
+                         }
+                     }
                  }
                  
 		</script>
@@ -517,10 +575,10 @@
                           <table id="quizStats">
                             <thead>
                               <tr>
-                                <th>User name</th>
-                                <th>Quizzes</th>
-                                <th>Mean Score</th>
-                                <th>Best Score</th>
+                                <th class="sortable">User name</th>
+                                <th class="sortable" data-sort-numeric>Quizzes</th>
+                                <th class="sortable" data-sort-numeric>Mean Score</th>
+                                <th class="sortable" data-sort-numeric>Best Score</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -535,12 +593,12 @@
                           <table id="gameStats">
                             <thead>
                               <tr>
-                                <th>User name</th>
-                                <th>Games</th>
-                                <th class="alt">Score</th>
-                                <th class="alt">Percent Found</th>
-                                <th class="alt">ID Accuracy</th>
-                                <th class="alt">Length Accuracy</th>
+                                <th class="sortable">User name</th>
+                                <th class="sortable" data-sort-numeric>Games</th>
+                                <th class="sortable alt" data-sort-numeric>Score</th>
+                                <th class="sortable alt" data-sort-numeric>Percent Found</th>
+                                <th class="sortable alt" data-sort-numeric>ID Accuracy</th>
+                                <th class="sortable alt" data-sort-numeric>Length Accuracy</th>
                               </tr>
                               <tr>
                                 <th colspan="2"></th>
@@ -558,17 +616,17 @@
                         <table id="surveyStats">
                           <thead>
                             <tr class="roundedTop">
-                              <th rowspan="2">User name</th>
+                              <th rowspan="2" class="sortable" data-sort-index="0">User name</th>
                               <th colspan="4" class="spanner alt">Surveys this...</th>
-                              <th rowspan="2">With Caterpillars</th>
-                              <th rowspan="2">Overall Accuracy</th>
+                              <th rowspan="2" class="sortable" data-sort-index="5" data-sort-numeric>With Caterpillars</th>
+                              <th rowspan="2" class="alt tooltip sortable" data-sort-index="6" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">Overall Accuracy<div class="bottomToolTip"><div class="arrow"></div>Sightings with Expert IDs that match the reported group.</div></th>
 
                             </tr>
                             <tr>
-                              <th class="alt">Week</th>
-                              <th class="alt">Month</th>
-                              <th class="alt">Year</th>
-                              <th class="alt">Millenium</th>
+                              <th class="alt sortable" data-sort-index="1" data-sort-numeric>Week</th>
+                              <th class="alt sortable" data-sort-index="2" data-sort-numeric>Month</th>
+                              <th class="alt sortable" data-sort-index="3" data-sort-numeric>Year</th>
+                              <th class="alt sortable" data-sort-index="4" data-sort-numeric>Millenium</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -582,11 +640,11 @@
                           <table id="sightingStats">
                             <thead>
                               <tr>
-                                <th colspan="2">Arthropod Group</th>
-                                <th class="alt">Total Surveys</th>
-                                <th class="alt">With Photos</th>
-                                <th class="alt">With Expert IDs (Matching)</th>
-                                <th class="alt tooltip" onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">ID Accuracy<div class="bottomToolTip"><div class="arrow"></div>Sightings with Expert IDs that match the reported group.</div></th>
+                                <th colspan="2" class="sortable" data-sort-index="1">Arthropod Group</th>
+                                <th class="alt sortable" data-sort-index="2" data-sort-numeric>Total Surveys</th>
+                                <th class="alt sortable" data-sort-index="3" data-sort-numeric>With Photos</th>
+                                <th class="alt sortable" data-sort-index="4" data-sort-numeric>With Expert IDs (Matching)</th>
+                                <th class="alt sortable tooltip" data-sort-index="5" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">ID Accuracy<div class="bottomToolTip"><div class="arrow"></div>Sightings with Expert IDs that match the reported group.</div></th>
                               </tr>
                             </thead>
                             <tbody>
