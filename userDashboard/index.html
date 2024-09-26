@@ -246,7 +246,11 @@
 		 requireLogIn();
                  let hasSiteURL = window.location.toString().indexOf("s=");
                  let siteID = hasSiteURL > 0 ? window.location.toString().substring(window.location.toString().indexOf("s=") + 2) : null;
-                     
+		 $(document).click(function(){
+		     $(".siteSelect .options").fadeOut(0);
+		 });
+
+                 
 		 $(document).ready(function(){
 		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
                      loadUserSites();
