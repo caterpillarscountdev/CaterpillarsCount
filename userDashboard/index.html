@@ -244,15 +244,27 @@
 		</style>
 		<script>
 		 requireLogIn();
-                 let hasSiteURL = window.location.toString().indexOf("s=");
-                 let siteID = hasSiteURL > 0 ? window.location.toString().substring(window.location.toString().indexOf("s=") + 2) : null;
+
+                 function queryParam(key) {
+                     let u = new URL(window.location);
+                     return u.searchParams.get(key);
+                 }
+
+                 let siteID = queryParam('s');
+                 let sites = null;
+
+                 window.addEventListener("popstate", (ev) => {
+                     console.log("popstate", ev.state)
+                     //loadUserStats();
+                 })
+                 
+                 
 		 $(document).click(function(){
 		     $(".siteSelect .options").fadeOut(0);
 		 });
 
 		 $(document).ready(function(){
 		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
-                     loadUserSites();
                      loadUserStats();
                      sortableInit(document.querySelector('#quizStats'));
                      sortableInit(document.querySelector('#gameStats'));
@@ -268,12 +280,29 @@
 
                      if (data.length > 0) {
                          document.querySelector('#switch').classList.add('active');
+                         sites = data;
                          showSiteSelect(data);
                      }
                  }
 
                  async function loadUserStats() {
-                     let userID = window.location.toString().substring(window.location.toString().indexOf("?u=") + 3);
+                     if (!sites) {
+                         await loadUserSites();
+                     }
+
+                     let userID = queryParam('u');
+
+                     if (siteID && !userID) {
+                         let label;
+                         let site = sites.filter((x) => {return x.id == siteID});
+                         if (site.length == 1) {
+                           label = "Site: " + site[0].name;   
+                         }
+                         switchButtonStates('Site', 'User', label);
+                     } else {
+                         switchButtonStates('User', 'Site');
+                     }
+                     
                      let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID));
                      var data = JSON.parse((await response.text()).replace("true|", ""));
 
@@ -369,8 +398,15 @@
 
 		 function switchStatsTo(viewType, otherType, label){
                      if (viewType == 'User') {
+                         window.history.pushState({}, "", `${window.location.pathname}`);
                          siteID = null;
+                     } else {
+                         window.history.pushState({}, "", `${window.location.pathname}?s=${siteID}`);
                      }
+                     loadUserStats();
+                 }
+
+                 function switchButtonStates(viewType, otherType, label) {
                      let id = `#${viewType.toLowerCase()}SwitchButton`;
                      let other = `#${otherType.toLowerCase()}SwitchButton`;
 		     $(id)[0].className = "active";
@@ -378,7 +414,6 @@
 		     $(id)[0].innerHTML = ". . .";
                      $(other)[0].innerHTML = otherType;
 		     setTimeout(function(){
-                         loadUserStats();
 			 $(id)[0].innerHTML = label || viewType;
 		     }, 1);
 		 }
@@ -405,8 +440,8 @@
 		 }
                  function siteSelectOption(site) {
                      siteID = site.id;
-                     switchStatsTo('Site', 'User', `Site: ${site.name}`);                     
-		         setTimeout(function(){
+                     switchStatsTo('Site', 'User', `Site: ${site.name}`);              
+		     setTimeout(function(){
 			 $(".siteSelect .options").eq(0).css({display:"none"});
 		     }, 1);
                      
