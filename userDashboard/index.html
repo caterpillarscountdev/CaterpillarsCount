@@ -244,15 +244,27 @@
 		</style>
 		<script>
 		 requireLogIn();
-                 let hasSiteURL = window.location.toString().indexOf("s=");
-                 let siteID = hasSiteURL > 0 ? window.location.toString().substring(window.location.toString().indexOf("s=") + 2) : null;
+
+                 function queryParam(key) {
+                     let u = new URL(window.location);
+                     return u.searchParams.get(key);
+                 }
+
+                 let siteID = queryParam('s');
+                 let sites = null;
+
+                 window.addEventListener("popstate", (ev) => {
+                     console.log("popstate", ev.state)
+                     //loadUserStats();
+                 })
+                 
+                 
 		 $(document).click(function(){
 		     $(".siteSelect .options").fadeOut(0);
 		 });
 
 		 $(document).ready(function(){
 		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
-                     loadUserSites();
                      loadUserStats();
                      sortableInit(document.querySelector('#quizStats'));
                      sortableInit(document.querySelector('#gameStats'));
@@ -268,12 +280,29 @@
 
                      if (data.length > 0) {
                          document.querySelector('#switch').classList.add('active');
+                         sites = data;
                          showSiteSelect(data);
                      }
                  }
 
                  async function loadUserStats() {
-                     let userID = window.location.toString().substring(window.location.toString().indexOf("?u=") + 3);
+                     if (!sites) {
+                         await loadUserSites();
+                     }
+
+                     let userID = queryParam('u');
+
+                     if (siteID && !userID) {
+                         let label;
+                         let site = sites.filter((x) => {return x.id == siteID});
+                         if (site.length == 1) {
+                           label = "Site: " + site[0].name;   
+                         }
+                         switchButtonStates('Site', 'User', label);
+                     } else {
+                         switchButtonStates('User', 'Site');
+                     }
+                     
                      let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID));
                      var data = JSON.parse((await response.text()).replace("true|", ""));
 
@@ -309,7 +338,7 @@
                      {label: 'fly', name: "Flies", icon: "../images/selectIcons/orders/fly.png", taxon: "Flies"},
                      {label: 'grasshopper', name: "Grasshoppers, Crickets", icon: "../images/selectIcons/orders/grasshopper.png", taxon: "Orthoptera"},
                      {label: 'leafhopper', name: "Leaf Hoppers and Cicadas", icon: "../images/selectIcons/orders/leafhopper.png", taxon: "Auchenorrhyncha"},
-                     {label: 'moth', name: "Moths, Butterflies", icon: "../images/selectIcons/orders/moths.png", taxon: "Lepidoptera"},
+                     {label: 'moths', name: "Moths, Butterflies", icon: "../images/selectIcons/orders/moths.png", taxon: "Lepidoptera"},
                      {label: 'spider', name: "Spiders", icon: "../images/selectIcons/orders/spider.png", taxon: "Spiders"},
                      {label: 'truebugs', name: "True Bugs", icon: "../images/selectIcons/orders/truebugs.png", taxon: "True Bugs"},
                      {label: 'other', name: "Other", icon: "../images/selectIcons/orders/other.png", hideAccuracy: true},
@@ -360,7 +389,7 @@
                          if (group) {
                              tr.innerHTML = `${groupHTML}<td>${group.Surveys}</td><td><a target="_blank" href="https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=${row.iNatObserverID}&taxon_name=${arth.taxon}">${group.WithPhotos}</a></td><td>${group.WithIDs} (${arth.hideAccuracy ? "-" : group.WithMatches})</td><td>${arth.hideAccuracy ? "N/A" : group.Accuracy}</td>`;
                          } else {
-                             tr.innerHTML = `${groupHTML}<td colspan="4"></td>`;
+                             tr.innerHTML = `${groupHTML}<td></td><td></td><td></td><td></td>`;
                          }
                          
                          document.querySelector("#sightingStats tbody").appendChild(tr);
@@ -369,8 +398,15 @@
 
 		 function switchStatsTo(viewType, otherType, label){
                      if (viewType == 'User') {
+                         window.history.pushState({}, "", `${window.location.pathname}`);
                          siteID = null;
+                     } else {
+                         window.history.pushState({}, "", `${window.location.pathname}?s=${siteID}`);
                      }
+                     loadUserStats();
+                 }
+
+                 function switchButtonStates(viewType, otherType, label) {
                      let id = `#${viewType.toLowerCase()}SwitchButton`;
                      let other = `#${otherType.toLowerCase()}SwitchButton`;
 		     $(id)[0].className = "active";
@@ -378,7 +414,6 @@
 		     $(id)[0].innerHTML = ". . .";
                      $(other)[0].innerHTML = otherType;
 		     setTimeout(function(){
-                         loadUserStats();
 			 $(id)[0].innerHTML = label || viewType;
 		     }, 1);
 		 }
@@ -405,8 +440,8 @@
 		 }
                  function siteSelectOption(site) {
                      siteID = site.id;
-                     switchStatsTo('Site', 'User', `Site: ${site.name}`);                     
-		         setTimeout(function(){
+                     switchStatsTo('Site', 'User', `Site: ${site.name}`);              
+		     setTimeout(function(){
 			 $(".siteSelect .options").eq(0).css({display:"none"});
 		     }, 1);
                      
@@ -429,6 +464,9 @@
                          let val = a.dataset.sort || a.textContent.toLowerCase();
                          if (numeric) {
                              val = parseFloat(val);
+                             if (Number.isNaN(val)) {
+                                 val = Infinity;
+                             }
                          }
                          return val
                      }
@@ -441,6 +479,7 @@
                              shouldSwitch = false;
                              x = rows[i].getElementsByTagName("td")[idx];
                              y = rows[i + 1].getElementsByTagName("td")[idx];
+
                              if (compare(extract(x), extract(y))) {
                                      shouldSwitch = true;
                                      break;
@@ -619,7 +658,7 @@
                               <th rowspan="2" class="sortable" data-sort-index="0">User name</th>
                               <th colspan="4" class="spanner alt">Surveys this...</th>
                               <th rowspan="2" class="sortable" data-sort-index="5" data-sort-numeric>With Caterpillars</th>
-                              <th rowspan="2" class="alt tooltip sortable" data-sort-index="6" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">Overall Accuracy<div class="bottomToolTip"><div class="arrow"></div>Sightings with Expert IDs that match the reported group.</div></th>
+                              <th rowspan="2" class="alt tooltip sortable" data-sort-index="6" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">Overall Accuracy<div class="bottomToolTip"><div class="arrow"></div>Sightings with Expert IDs that match the reported group, across all sites.</div></th>
 
                             </tr>
                             <tr>
@@ -635,7 +674,7 @@
 			<div class="loading"><img src="../images/rolling.svg"/></div>
 		      </div>
                       <div id="groups">
-		        <h3>Sightings</h3>
+		        <h3>Sightings (across all Sites)</h3>
 		        <div>
                           <table id="sightingStats">
                             <thead>

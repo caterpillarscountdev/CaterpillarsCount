@@ -51,10 +51,12 @@ if(is_object($user) && get_class($user) == "User"){
 
   };
 
-  $siteRestriction = "<>2";
-  //if($siteID > 0){
-  //  $siteRestriction = "=" . $siteID;
-  //}
+  $baseSiteRestriction = "<>2";
+  if($siteID > 0){
+    $siteRestriction = "=" . $siteID;
+  } else {
+    $siteRestriction = $baseSiteRestriction;
+  }
   
 
   $getSightings = count($users) == 1;
@@ -123,7 +125,7 @@ if(is_object($user) && get_class($user) == "User"){
 
   // Overall Accuracy
   
-  $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ExpertIdentification.StandardGroup = ArthropodSighting.OriginalGroup THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK " . $siteRestriction . " AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver");
+  $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ((ExpertIdentification.OriginalGroup=ExpertIdentification.StandardGroup OR (ExpertIdentification.OriginalGroup IN ('other', 'unidentified') AND (ExpertIdentification.StandardGroup NOT IN ('ant', 'aphid', 'bee', 'beetle', 'caterpillar', 'daddylonglegs', 'fly', 'grasshopper', 'leafhopper', 'moths', 'spider', 'truebugs'))))) THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK " . $baseSiteRestriction . " AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver");
   query_error($query, $conn);
 
   while($row = mysqli_fetch_assoc($query)){
@@ -142,7 +144,7 @@ if(is_object($user) && get_class($user) == "User"){
   if ($getSightings) {
     // Sightings
 
-    $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(IF(PhotoURL != \"\",1, NULL)) As WithPhotos, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ExpertIdentification.StandardGroup = ArthropodSighting.OriginalGroup THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK " . $siteRestriction . " AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver, ArthropodSighting.UpdatedGroup;");
+    $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(IF(PhotoURL != \"\",1, NULL)) As WithPhotos, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ((ExpertIdentification.OriginalGroup=ExpertIdentification.StandardGroup OR (ExpertIdentification.OriginalGroup IN ('other', 'unidentified') AND (ExpertIdentification.StandardGroup NOT IN ('ant', 'aphid', 'bee', 'beetle', 'caterpillar', 'daddylonglegs', 'fly', 'grasshopper', 'leafhopper', 'moths', 'spider', 'truebugs'))))) THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK " . $baseSiteRestriction . " AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver, ArthropodSighting.UpdatedGroup;");
     query_error($query, $conn);
 
     while($row = mysqli_fetch_assoc($query)){
