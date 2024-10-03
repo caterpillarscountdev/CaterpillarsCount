@@ -309,7 +309,7 @@
                      {label: 'fly', name: "Flies", icon: "../images/selectIcons/orders/fly.png", taxon: "Flies"},
                      {label: 'grasshopper', name: "Grasshoppers, Crickets", icon: "../images/selectIcons/orders/grasshopper.png", taxon: "Orthoptera"},
                      {label: 'leafhopper', name: "Leaf Hoppers and Cicadas", icon: "../images/selectIcons/orders/leafhopper.png", taxon: "Auchenorrhyncha"},
-                     {label: 'moth', name: "Moths, Butterflies", icon: "../images/selectIcons/orders/moths.png", taxon: "Lepidoptera"},
+                     {label: 'moths', name: "Moths, Butterflies", icon: "../images/selectIcons/orders/moths.png", taxon: "Lepidoptera"},
                      {label: 'spider', name: "Spiders", icon: "../images/selectIcons/orders/spider.png", taxon: "Spiders"},
                      {label: 'truebugs', name: "True Bugs", icon: "../images/selectIcons/orders/truebugs.png", taxon: "True Bugs"},
                      {label: 'other', name: "Other", icon: "../images/selectIcons/orders/other.png", hideAccuracy: true},
@@ -360,7 +360,7 @@
                          if (group) {
                              tr.innerHTML = `${groupHTML}<td>${group.Surveys}</td><td><a target="_blank" href="https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=${row.iNatObserverID}&taxon_name=${arth.taxon}">${group.WithPhotos}</a></td><td>${group.WithIDs} (${arth.hideAccuracy ? "-" : group.WithMatches})</td><td>${arth.hideAccuracy ? "N/A" : group.Accuracy}</td>`;
                          } else {
-                             tr.innerHTML = `${groupHTML}<td colspan="4"></td>`;
+                             tr.innerHTML = `${groupHTML}<td></td><td></td><td></td><td></td>`;
                          }
                          
                          document.querySelector("#sightingStats tbody").appendChild(tr);
@@ -429,6 +429,9 @@
                          let val = a.dataset.sort || a.textContent.toLowerCase();
                          if (numeric) {
                              val = parseFloat(val);
+                             if (Number.isNaN(val)) {
+                                 val = Infinity;
+                             }
                          }
                          return val
                      }
@@ -441,6 +444,7 @@
                              shouldSwitch = false;
                              x = rows[i].getElementsByTagName("td")[idx];
                              y = rows[i + 1].getElementsByTagName("td")[idx];
+
                              if (compare(extract(x), extract(y))) {
                                      shouldSwitch = true;
                                      break;
