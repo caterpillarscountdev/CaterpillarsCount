@@ -32,7 +32,6 @@
     
     if($rowCount > (count($tableArray) - 1)){
       $query = mysqli_query($dbconn, "SELECT * FROM `" . $tableName . "` LIMIT " . $iteration * $CHUNK_SIZE . ", " . $CHUNK_SIZE);
-      mysqli_close($dbconn);
 
       while ($row = mysqli_fetch_assoc($query)){
         $rowArray = array();
@@ -82,7 +81,6 @@
 	//backup
 	$dbconn = (new Keychain)->getDatabaseConnection();
 	$query = mysqli_query($dbconn, "SELECT table_name FROM information_schema.tables WHERE table_schema='CaterpillarsCount' AND table_name<>'TemporaryEmailLog'");
-	mysqli_close($dbconn);  
 	while($row = mysqli_fetch_assoc($query)){
 		backup($row["table_name"]);
 	}
