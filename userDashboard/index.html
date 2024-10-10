@@ -160,7 +160,7 @@
 		 }
 		 .bottomToolTip .arrow{
 		     position:relative;
-		     right:0px;
+		     right:-30%;
 		     margin:-15px 0px 0px 0px;
 		     border:5px solid transparent;
 		     border-top:0px none transparent;
@@ -682,9 +682,9 @@
                               <tr>
                                 <th colspan="2" class="sortable" data-sort-index="1">Arthropod Group</th>
                                 <th class="alt sortable" data-sort-index="2" data-sort-numeric>Total Surveys</th>
-                                <th class="alt sortable" data-sort-index="3" data-sort-numeric>With Photos</th>
-                                <th class="alt sortable" data-sort-index="4" data-sort-numeric>With Expert IDs (Matching)</th>
-                                <th class="alt sortable tooltip" data-sort-index="5" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">ID Accuracy<div class="bottomToolTip"><div class="arrow"></div>Sightings with Expert IDs that match the reported group.</div></th>
+                                <th class="alt sortable tooltip" data-sort-index="3" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">With Photos<div class="bottomToolTip"><div class="arrow"></div>The number of photos on iNaturalist may be fewer due to corrected identifications.</div>
+                                  <th class="alt sortable tooltip" data-sort-index="4" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">With Expert IDs (Matching)<div class="bottomToolTip"><div class="arrow"></div>Matching if at least 2 other IDs and 2/3 of identifiers agree.</div>
+                                    <th class="alt sortable tooltip" data-sort-index="5" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">ID Accuracy<div class="bottomToolTip"><div class="arrow"></div>Sightings with Expert IDs that match the reported group.</div></th>
                               </tr>
                             </thead>
                             <tbody>
