@@ -2,13 +2,6 @@
 	header('Access-Control-Allow-Origin: *');
 
 
-function exceptions_error_handler($severity, $message, $filename, $lineno) {
-    throw new ErrorException($message, 0, $severity, $filename, $lineno);
-}
-
-set_error_handler('exceptions_error_handler');
-
-
         
         require_once('orm/resources/Keychain.php');
 	require_once('orm/User.php');

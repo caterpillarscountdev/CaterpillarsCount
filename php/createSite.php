@@ -32,7 +32,6 @@
 		$arr = json_decode(file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $latitude . "," . $longitude . "&key=" . $KEY), true);
 		$country = "";
 		$region = "";
-                error_log(json_encode($arr));
 		$addressComponents = $arr["results"][0]["address_components"];
 		for($i = 0; $i < count($addressComponents); $i++){
 			if(in_array("country", $addressComponents[$i]["types"])){
