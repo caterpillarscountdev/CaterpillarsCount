@@ -10,12 +10,9 @@
         $duplicates = array();
         $duplicatesObj = array();
 
-	$query = mysqli_query($dbconn, "SELECT Survey.ID, Plant.Code, Survey.LocalDate, Survey.LocalTime, User.Email, CONCAT(User.FirstName, \" \", User.LastName) AS FullName, Plant.SiteFK FROM Survey JOIN User ON Survey.UserFKOfObserver = User.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.DuplicateDetected IS NULL AND Plant.SiteFK<>'2' AND CORRESPONDING_OLD_DATABASE_SURVEY_ID='0' AND Survey.LocalDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK) GROUP BY UserFKOfObserver, PlantFK, LocalDate, `LocalTime`, SubmittedThroughApp, CORRESPONDING_OLD_DATABASE_SURVEY_ID HAVING COUNT(*) > 1 ORDER BY Survey.SubmittedThroughApp DESC, Survey.SubmissionTimestamp ASC");
-        //if(!$query) {
-        //  custom_error_log("Query Error: " . mysqli_error($dbconn));
-        //  return;
-        //}
-	if(mysqli_num_rows($query) > 0){
+	$query = mysqli_query($dbconn, "SELECT Survey.ID, Plant.Code, Survey.LocalDate, Survey.LocalTime, User.Email, CONCAT(User.FirstName, \" \", User.LastName) AS FullName, Plant.SiteFK, Site.Name AS SiteName FROM Survey JOIN User ON Survey.UserFKOfObserver = User.ID JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK = Site.ID WHERE Survey.DuplicateDetected IS NULL AND Plant.SiteFK<>'2' AND CORRESPONDING_OLD_DATABASE_SURVEY_ID='0' AND Survey.LocalDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK) GROUP BY UserFKOfObserver, PlantFK, LocalDate, `LocalTime`, SubmittedThroughApp, CORRESPONDING_OLD_DATABASE_SURVEY_ID HAVING COUNT(*) > 1 ORDER BY Survey.SubmittedThroughApp DESC, Survey.SubmissionTimestamp ASC");
+
+        if(mysqli_num_rows($query) > 0){
 		while($row = mysqli_fetch_assoc($query)){
                   $row["duplicates"] = array();
                   $duplicatesObj[$row["ID"]] = $row;
@@ -35,7 +32,7 @@
           foreach ($duplicatesObj as $row){
             $row["duplicates"][] = $row["ID"];
 
-            $message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">We recently noticed there were two surveys submitted for branch " . $row["Code"] . " on " . $date . " that were potential duplicates. Would you mind taking a look using the <a href=\"" . $root . "/manageMySurveys\" style=\"color:#70c6ff;\">Manage My Surveys</a>. page, where you can use the filters to specify the branch code " . $row["Code"] . "? If one of them was a mistake, you can simply delete that survey by clicking the small trash icon on the right side, or you can edit the survey to modify the branch code or any other survey details.<br/><br/>Thank you for your participation in the project!</div><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"><div>Potential duplicate IDs: ". $row["ID"] . ","  . implode(", ", $row["duplicates"]) . "</div></div>";
+            $message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">We recently noticed there were two surveys submitted for branch " . $row["Code"] . " at " . $row["SiteName"] . " on " . date_format(date_create($row["LocalDate"]), 'F d') . " that were potential duplicates. Would you mind taking a look using the <a href=\"" . $root . "/manageMySurveys\" style=\"color:#70c6ff;\">Manage My Surveys</a> page, where you can use the filters to specify the branch code " . $row["Code"] . "? If one of them was a mistake, you can simply delete that survey by clicking the small trash icon on the right side, or you can edit the survey to modify the branch code or any other survey details.<br/><br/>Thank you for your participation in the project!</div><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"><div>Potential duplicate IDs: ". $row["ID"] . ","  . implode(", ", $row["duplicates"]) . "</div></div>";
 
             $site = Site::findByID($row["SiteFK"]);
             $ccs = array_merge(array("caterpillarscount@office.unc.edu"), $site->getAuthorityEmails());

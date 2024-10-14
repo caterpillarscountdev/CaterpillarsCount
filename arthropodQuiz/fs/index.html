@@ -280,17 +280,19 @@
 			
 			function showNextQuestion(){
 				if(++currentQuestionIndex >= questions.length){
-					$("#fade").stop().fadeOut(0);
-					$(".explanation").stop().fadeOut(0);
-					$(".choice").css({backgroundColor:"", color:"", zIndex:""});
-					$(".choice").unbind("click");
-					$(".choice").click(function(){
-						showAnswer(this);
-					});
-					currentQuestionIndex = -1;
-					numberCorrect = 0;
-					$("#startScreen").stop().fadeIn(300);
-					return false;
+				    $("#fade").stop().fadeOut(0);
+				    $(".explanation").stop().fadeOut(0);
+				    $(".choice").css({backgroundColor:"", color:"", zIndex:""});
+				    $(".choice").unbind("click");
+				    $(".choice").click(function(){
+					showAnswer(this);
+				    });
+                                    let currentScore = Math.round(numberCorrect / (currentQuestionIndex) * 100)
+                                    fetch("../../php/submitQuizScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + currentScore);
+				    currentQuestionIndex = -1;
+				    numberCorrect = 0;
+				    $("#startScreen").stop().fadeIn(300);
+				    return false;
 				}
 				setImage(questions[currentQuestionIndex][0]);
 				$("#fade").stop().fadeOut(0);
