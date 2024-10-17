@@ -23,6 +23,48 @@
 		$mail->Body = $body;
 		$mail->AltBody = strip_tags($body);
 
+                if(getenv('LOCAL_DEV')) {
+                  error_log("Mail to " . $to . " : " . $body);
+                  return true;
+                }
+
+		if($mail->send()){
+			//custom_error_log("email() send()  was successful");
+	   		return true;
+	  	} 
+		custom_error_log("Mailer Error: " . $mail->ErrorInfo);
+	  	 return false;//"Mailer Error: " . $mail->ErrorInfo;
+	  
+	}
+
+        function emailAndCC($to, $ccs, $subject, $body, $attachments=array()){
+		
+		// custom_error_log("email() init " . $to . ' ' . $subject);
+		$mail = new PHPMailer;
+		$mail->IsSMTP();
+		$mail->Host = 'relay.unc.edu';
+
+		$mail->From = "caterpillarscount@office.unc.edu";
+		$mail->FromName = "Caterpillars Count!";
+		$mail->addAddress($to);
+                foreach($ccs as $cc) {
+                  $mail->addCC($cc);
+                }
+		
+		for($i = 0; $i < count($attachments); $i++){
+			$mail->addAttachment($attachments[$i]);
+		}
+	
+		$mail->isHTML(true);
+		$mail->Subject = $subject;
+		$mail->Body = $body;
+		$mail->AltBody = strip_tags($body);
+
+                if(getenv('LOCAL_DEV')) {
+                  error_log("Mail to " . $to . " : " . $body);
+                  return true;
+                }
+
 		if($mail->send()){
 			//custom_error_log("email() send()  was successful");
 	   		return true;

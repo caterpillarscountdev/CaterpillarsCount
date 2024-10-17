@@ -8,11 +8,11 @@
 			}
 			
 			function checkCheckbox(checkbox){
-				$(checkbox).addClass("checked");
+			        $(checkbox).addClass("checked").trigger("checked");
 			}
 			
 			function uncheckCheckbox(checkbox){
-				$(checkbox).removeClass("checked");
+			        $(checkbox).removeClass("checked").trigger("unchecked");
 			}
 			
 			function checkboxIsChecked(checkbox){

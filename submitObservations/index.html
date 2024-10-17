@@ -118,14 +118,12 @@
 					$(".noautocomplete").eq(i)[0].style.display = "inline-block";
 					$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
 				}
-				var stopAutocompleteInterval = setInterval(function(){
-                                    try {
+			    var stopAutocompleteInterval = setInterval(function(){
+                                try {
 					for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
 						$("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
 					}
-                                    } catch (e) {
-                                        console.log("caught exp for app");
-                                    }
+                                } catch {};
 				}, 1);
 				setTimeout(function(){
 					clearInterval(stopAutocompleteInterval);
@@ -240,6 +238,7 @@
 							<li><a href="../createNewSite">Create New Site</a></li>
 							<li><a href="../manageMySites">Manage My Sites</a></li>
 							<li><a href="../manageMySurveys">Manage My Surveys</a></li>
+							<li><a href="../userDashboard">My Stats</a></li>
 							<li><a href="../settings">Settings</a></li>
 							<li><a href="" onclick="logOut();">Sign Out</a></li>
 						</ul>
