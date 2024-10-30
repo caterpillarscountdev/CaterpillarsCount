@@ -128,6 +128,20 @@
 				setTimeout(function(){
 					clearInterval(stopAutocompleteInterval);
 				}, 2000);
+
+
+                            let count = hasOfflineSurveys();
+                            if (count) {
+                                let el = document.createElement('span');
+                                el.classList.add('panelIcon');
+                                el.title = "Offline observations waiting to upload.";
+                                el.onclick = (event) => {
+                                    event.stopPropagation();
+                                    queueNotice('alert', 'Offline observations waiting to upload.');
+                                };
+                                el.textContent = count;
+                                document.querySelector('#iconBar').prepend(el);
+                            }
 			});
 
 			$(window).resize(function(){
