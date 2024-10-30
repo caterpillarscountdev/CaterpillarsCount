@@ -1051,3 +1051,22 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
 					margin:10px 0px;
 				}
 			}
+
+
+
+.notifyOffline {
+    position: relative;
+}
+
+.notifyOffline span {
+    background-color: #fa3e3e;
+    border-radius: 0.5em;
+    color: white;
+  
+    padding: 3px 3px;
+    font-size: 10px;
+    
+    position: absolute;
+    top: -0.5em;
+    right: -1.5em;
+}
