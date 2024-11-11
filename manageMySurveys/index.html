@@ -943,11 +943,12 @@
 					 qcissues  + '<br/><br/>' +
                      'Thanks!<br/>The Caterpillars Count team' ;
 					 
-				promptConfirm('Send this email to ' +  emailaddress + '?<hr/>' + emailBody, "No, cancel", "Send Email!", function(){}, 
+				promptConfirm('Send this email to ' +  emailaddress + '?<hr/><div id="emailBody" contenteditable>' + emailBody + "</div>", "No, cancel", "Send Email!", function(){}, 
 				  function(){
+                                      let body = document.getElementById("emailBody").innerHTML;
 				    // alert('sending')
 						$.post("../php/emailUserAskSurvey.php", {email: (window.localStorage.getItem("email")), 
-						      salt: window.localStorage.getItem("salt"), emailto:(emailaddress), emailmessage:(emailBody)},function(data){
+						      salt: window.localStorage.getItem("salt"), emailto:(emailaddress), emailmessage:(body)},function(data){
 						//success
 						if(data.indexOf("true|") == 0){
 							queueNotice("confirmation", "Email sent!");
