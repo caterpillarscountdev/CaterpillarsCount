@@ -68,6 +68,11 @@
 				background:rgba(0,0,0,0.05);
 			}
 
+                        #surveys .survey:has(+ .flags) {
+                            border-radius: 5px 5px 0 0;
+                            margin-bottom: 0;
+                        }
+
 			#surveys .survey .headInfo{
 				background:#333;
 				color:#fff;
@@ -735,15 +740,20 @@
 			main .panel .flags{
 				background:#f8d7da;
 				padding:10px;
-				border-radius:5px;
-				margin:-13px 0px 80px 0px;
+                                border-radius: 0 0 5px 5px;
+				margin-bottom: 20px;
 			}
-			
-			main .panel .flags ul li, main .panel .flags span {
-				font-size:14px;
-				color:#721c24;
-				list-style-type:disc;
-			}
+                        main .panel .flags:has(+ .flags) {
+                            border-radius: 0;
+                            margin-bottom: 0;
+                        }
+                 
+		 
+		        main .panel .flags ul li, main .panel .flags span {
+		            font-size:14px;
+		            color:#721c24;
+		            list-style-type:disc;
+		        }
 			
 			main .panel .flags .flagButtons{
 				padding-top:10px;
@@ -1486,8 +1496,10 @@
 									htmlToAdd += 	"<div class=\"arthropodSightingsDropdownButtonDiv\" style=\"display:none;\" onclick=\"toggleArthropodSightings(this.parentNode.getElementsByClassName('arthropodSightingsInfo')[0]);\">Show 0 Arthropods Found</div>";
 								}
 								htmlToAdd += "</div>";
-								
-								htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><span>QC Comments (optional, choose item in list or write anything): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Click this button if the values are correct in your opinion, even if out of standard range\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Approve</button><button class='hint--bottom' data-hint=\"Click this button if you aren't sure if the data are right or wrong but that's all you can say.  You don't want to see this again.\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",2,this);\">? I'm not sure</button><button class='hint--bottom' data-hint=\"Click this button to remove the entire survey because it's invalid or has errors\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; REJECT SURVEY</button></div></div>") : "";
+
+                                                            htmlToAdd += surveys[i]["flags"].length > 0 ? "<div class=\"flags\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul></div>" : "";
+                                                            
+							    htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional, choose item in list or write anything): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Click this button if the values are correct in your opinion, even if out of standard range\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Approve</button><button class='hint--bottom' data-hint=\"Click this button if you aren't sure if the data are right or wrong but that's all you can say.  You don't want to see this again.\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",2,this);\">? I'm not sure</button><button class='hint--bottom' data-hint=\"Click this button to remove the entire survey because it's invalid or has errors\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; REJECT SURVEY</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
