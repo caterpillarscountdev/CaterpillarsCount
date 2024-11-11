@@ -82,7 +82,7 @@
 					"linearBranchLength" => $surveys[$i]->getLinearBranchLength(),
 					"submittedThroughApp" => $surveys[$i]->getSubmittedThroughApp(),
 					"arthropodSightings" => $arthropodSightingsArray,
-					"flags" => $surveys[$i]->getFlags()
+					"flags" => $surveys[$i]->getFlags()["text"]
 				);
 			}
 		}

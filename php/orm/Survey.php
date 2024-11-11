@@ -400,58 +400,21 @@ class Survey
 		}
 		
 		//arthropod flags
-		$sql = "SELECT DISTINCT `SurveyFK` FROM `ArthropodSighting` WHERE (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["sawflyFlaggingRules"]["maxSafeQuantity"]) . "'))";
+                $sql = "(`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["arthropodGroupFlaggingRules"]["sawfly"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["arthropodGroupFlaggingRules"]["sawfly"]["maxSafeQuantity"]) . "'))";
 		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
-			$sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingData["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingData["maxSafeQuantity"]) . "'))";
+                  if ($arthropodGroup == "sawfly") { continue; }
+                  $sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingData["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingData["maxSafeQuantity"]) . "'))";
 		}
+
+                // Exclude example site and already reviewed surveys
+                
+                $sql = "SELECT DISTINCT A.SurveyFK FROM `ArthropodSighting` A JOIN `Survey` S ON A.SurveyFK = S.ID JOIN `Plant` P ON P.ID = S.PlantFK  WHERE S.ReviewedAndApproved < 1 AND P.SiteFK <> '2' AND (" . $sql . ")";
+
+                
 		$query = mysqli_query($dbconn, $sql);
 		while($row = mysqli_fetch_assoc($query)){
-			$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
+                  $flaggedSurveyIDs[] = $row["SurveyFK"];
 		}
-		
-		//too many total arthropods (minus specified exclusions) flags
-		// removed 6/1/2023
-		// $sql = "SELECT `SurveyFK` FROM `ArthropodSighting`" . (count($arthropodGroupsExcludedFromTotalQuantityCount) > 0 ? (" WHERE `UpdatedGroup` NOT IN ('" . implode("', '", $arthropodGroupsExcludedFromTotalQuantityCount) . "')") : "") . " GROUP BY `SurveyFK` HAVING SUM(`Quantity`)>'" . intval($flaggingRules["maxSafeTotalQuantity"]) . "'";
-		// $query = mysqli_query($dbconn, $sql);
-		// while($row = mysqli_fetch_assoc($query)){
-		// 	$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-		// }
-		
-		//too many distinct groups flags
-		// removed 6/1/2023
-		// $sql = "SELECT `SurveyFK` FROM (SELECT DISTINCT `SurveyFK`, `UpdatedGroup` FROM `ArthropodSighting`) AS `DistinctSurveyGroupTable` GROUP BY `SurveyFK` HAVING COUNT(*)>'" . intval($flaggingRules["maxSafeArthropodGroups"]) . "'";
-		// $query = mysqli_query($dbconn, $sql);
-		// while($row = mysqli_fetch_assoc($query)){
-		// 	$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-		// }
-		
-		//too many rare groups flags
-		// removed 6/1/2023
-		// if(count($rareArthropodGroups) > 0){
-		// 	$sql = "SELECT `SurveyFK` FROM `ArthropodSighting` WHERE `UpdatedGroup` IN ('" . implode("', '", $rareArthropodGroups) . "') GROUP BY SurveyFK HAVING COUNT(DISTINCT (CONCAT(`SurveyFK`, `UpdatedGroup`)))>'" . intval($flaggingRules["maxSafeRareArthropodGroups"]) . "'";
-		// 	$query = mysqli_query($dbconn, $sql);
-		// 	while($row = mysqli_fetch_assoc($query)){
-		// 		$flaggedSurveyIDs[$row["SurveyFK"]] = 1;
-		// 	}
-		// }
-		
-		//remove example site data
-		$sql = "SELECT `Survey`.`ID` FROM `Survey` JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`SiteFK`='2'";
-		$query = mysqli_query($dbconn, $sql);
-		while($row = mysqli_fetch_assoc($query)){
-			unset($flaggedSurveyIDs[$row["ID"]]);
-		}
-		
-		//remove approved survey data
-		$sql = "SELECT `ID` FROM `Survey` WHERE `ReviewedAndApproved`>0"; // changed this to allow 1,2,3 as values to remove, but why pull in data and then remove?  Why not just remove from first set?
-		$query = mysqli_query($dbconn, $sql);
-		while($row = mysqli_fetch_assoc($query)){
-			unset($flaggedSurveyIDs[$row["ID"]]);
-		}
-		
-		mysqli_close($dbconn);
-		
-		$flaggedSurveyIDs = array_keys($flaggedSurveyIDs);
 		
 		$totalCount = count($flaggedSurveyIDs);
 		
@@ -513,7 +476,10 @@ class Survey
 	
 	public function getArthropodSightings() {
 		if($this->deleted){return null;}
-		return ArthropodSighting::findArthropodSightingsBySurvey($this);
+                if(!$this->_arthropodSightings) {
+                  $this->_arthropodSightings = ArthropodSighting::findArthropodSightingsBySurvey($this);
+                }
+		return $this->_arthropodSightings;
 	}
 	
 	public function getPlantSpecies() {
@@ -570,10 +536,6 @@ class Survey
 			"minSafeLeaves" => 5,
 			"maxSafeLeaves" => 400,
 			"maxSafeLeafLength" => 30,
-			"sawflyFlaggingRules" => array(
-				"maxSafeLength" => 50,
-				"maxSafeQuantity" => 20
-			),
 			"arthropodGroupFlaggingRules" => array(
 				"ant" => array(
 					"maxSafeLength" => 17,
@@ -592,7 +554,13 @@ class Survey
 					"maxSafeQuantity" => 6,
 					"excludedFromTotalQuantityCount" => false,
 					"isRare" => true
-				),
+                                ),
+                                "sawfly" => array(
+                                        "maxSafeLength" => 50,
+                                        "maxSafeQuantity" => 20,
+					"excludedFromTotalQuantityCount" => false,
+					"isRare" => false
+                                ),
 				"beetle" =>  array(
 					"maxSafeLength" => 20,
 					"maxSafeQuantity" => 10,
@@ -667,7 +635,7 @@ class Survey
 		$flaggingRules = self::getFlaggingRules();
 		
 		//grab flags based on info provided above...
-		$flags = array();
+		$flags = array("text" => array(), "raw" => array());
 		
 		$arthropodGroupsExcludedFromTotalQuantityCount = array();
 		$rareArthropodGroups = array();
@@ -681,100 +649,51 @@ class Survey
 			}
 		}
 		
-		$updatedArthropodGroups = array();
-		$totalQuantityExcludingSpecifiedArthropodGroups = 0;
 		$arthropodSightings = $this->getArthropodSightings();
 		for($i = 0; $i < count($arthropodSightings); $i++){
 			$updatedArthropodGroup = $arthropodSightings[$i]->getUpdatedGroup();
-			$isSawfly = $arthropodSightings[$i]->getUpdatedSawfly();
+			if ($arthropodSightings[$i]->getUpdatedSawfly()) {
+                          $updatedArthropodGroup = "sawfly";
+                        }
 			
 			//flag lengths
 			$arthropodLength = $arthropodSightings[$i]->getLength();
-			if($isSawfly && $arthropodLength > $flaggingRules["sawflyFlaggingRules"]["maxSafeLength"]){
-				$flags[] = "LONG ARTHROPOD: " . $arthropodLength . "mm exceeds safe \"sawfly\" limit of " . $flaggingRules["sawflyFlaggingRules"]["maxSafeLength"] . "mm.";
-			}
 			
 			if(array_key_exists($updatedArthropodGroup, $flaggingRules["arthropodGroupFlaggingRules"]) && $arthropodLength > $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"]){
-				$flags[] = "LONG ARTHROPOD: " . $arthropodLength . "mm exceeds safe \"" . $updatedArthropodGroup . "\" limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"] . "mm.";
+				$flags["text"][] = "LONG ARTHROPOD: " . $arthropodLength . "mm exceeds safe \"" . $updatedArthropodGroup . "\" limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"] . "mm.";
+                                $flags["raw"]["ArthropodLengthHigh"] = 1;
 			}
 			
 			//flag quantities
 			$arthropodQuantity = $arthropodSightings[$i]->getQuantity();
-			if($isSawfly && $arthropodQuantity > $flaggingRules["sawflyFlaggingRules"]["maxSafeQuantity"]){
-				$flags[] = "LARGE ARTHROPOD QUANTITY: " . $arthropodQuantity . " exceeds safe \"sawfly\" quantity limit of " . $MAX_SAFE_SAWFLY_QUANTITY . ".";
-			}
 			
 			if(array_key_exists($updatedArthropodGroup, $flaggingRules["arthropodGroupFlaggingRules"]) && $arthropodQuantity > $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"]){
-				$flags[] = "LARGE ARTHROPOD QUANTITY: " . $arthropodQuantity . " exceeds safe \"" . $updatedArthropodGroup . "\" quantity limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"] . ".";
-			}
-			
-			//collect unique groups in $updatedArthropodGroups array
-			if(!in_array($updatedArthropodGroup, $updatedArthropodGroups)){
-				$updatedArthropodGroups[] = $updatedArthropodGroup;
-			}
-			
-			//collect total quantity, excluding specified arthropod groups, in $totalQuantityExcludingSpecifiedArthropodGroups
-			if(!in_array($updatedArthropodGroup, $arthropodGroupsExcludedFromTotalQuantityCount)){
-				$totalQuantityExcludingSpecifiedArthropodGroups += $arthropodQuantity;
+                          $flags{"text"}[] = "LARGE ARTHROPOD QUANTITY: " . $arthropodQuantity . " exceeds safe \"" . $updatedArthropodGroup . "\" quantity limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"] . ".";
+                          $flags["raw"]["ArthropodQuantityHigh"] = 1;
 			}
 		}
-		
-		//flag too many total arthropods (minus groups we've specifically excluded)
-		// removed 6/1/2023
-		// if($totalQuantityExcludingSpecifiedArthropodGroups > $flaggingRules["maxSafeTotalQuantity"]){
-		// 	$excludingClause = "";
-		// 	if(count($arthropodGroupsExcludedFromTotalQuantityCount) > 0){
-		// 		$excludedGroupsCopy = $arthropodGroupsExcludedFromTotalQuantityCount;
-		// 		$lastGroup = count($excludedGroupsCopy) > 1 ?  "\" and \"" . array_pop($excludedGroupsCopy) : "";
-		// 		$excludingClause = " (excluding \"" . implode("\", \"", $excludedGroupsCopy) . $lastGroup . "\")";
-		// 	}
-                //  
-		// 	$flags[] = "TOO MANY ARTHROPODS: " . $totalQuantityExcludingSpecifiedArthropodGroups . " total arthropods" . $excludingClause . " exceeds safe limit of " .  $flaggingRules["maxSafeTotalQuantity"] . ".";
-		// }
-		
-		//flag too many arthropod groups
-		// removed 6/1/2023
-		// $numberOfArthropodGroups = count($updatedArthropodGroups);
-		// if($numberOfArthropodGroups > $flaggingRules["maxSafeArthropodGroups"]){
-		// 	$flags[] = "TOO MANY ARTHROPOD GROUPS: " . $numberOfArthropodGroups . " arthropod groups exceeds safe limit of " . $flaggingRules["maxSafeArthropodGroups"];
-		// }
-		// removed 6/1/2023
-		// $rareArthropodGroupsInSurvey = array();
-		// for($i = 0; $i < count($updatedArthropodGroups); $i++){
-		// 	if(in_array($updatedArthropodGroups[$i], $rareArthropodGroups)){
-		// 		$rareArthropodGroupsInSurvey[] = $updatedArthropodGroups[$i];
-		// 	}
-		// }
-		
-		//flag too many rare arthropod groups
-		// removed 6/1/2023
-		// $numberOfRareArthropodGroupsInSurvey = count($rareArthropodGroupsInSurvey);
-		// if($numberOfRareArthropodGroupsInSurvey > $flaggingRules["maxSafeRareArthropodGroups"]){
-		// 	$groupsClause = "";
-		// 	if($numberOfRareArthropodGroupsInSurvey > 0){
-		// 		$rareGroupsInSurveyCopy = $rareArthropodGroupsInSurvey;
-		// 		$lastGroup = count($rareGroupsInSurveyCopy) > 1 ?  "\" and \"" . array_pop($rareGroupsInSurveyCopy) : "";
-		// 		$groupsClause = " (\"" . implode("\", \"", $rareGroupsInSurveyCopy) . $lastGroup . "\")";
-		// 	}
-		// 	$flags[] = "TOO MANY RARE ARTHROPOD GROUPS: " . $numberOfRareArthropodGroups . " rare arthropod groups" . $groupsClause . " exceeds the safe limit of " . $flaggingRules["maxSafeRareArthropodGroups"];
-		// } 
 		
 		//flag too few leaves
 		$isConifer = $this->isConifer();
 		$numberOfLeaves = $this->getNumberOfLeaves();
 		if(!$isConifer && $numberOfLeaves < $flaggingRules["minSafeLeaves"]){
-			$flags[] = "TOO FEW LEAVES: " . $numberOfLeaves . " leaves does not meet safe limit of " . $flaggingRules["minSafeLeaves"] . " leaves.";
+			$flags["text"][] = "TOO FEW LEAVES: " . $numberOfLeaves . " leaves does not meet safe limit of " . $flaggingRules["minSafeLeaves"] . " leaves.";
+                        $flags["raw"]["NumberOfLeavesLow"] = 1;
 		}
 		
 		//flag too many leaves
 		if(!$isConifer && $numberOfLeaves > $flaggingRules["maxSafeLeaves"]){
-			$flags[] = "TOO MANY LEAVES: " . $numberOfLeaves . " leaves exceeds safe limit of " . $flaggingRules["maxSafeLeaves"] . " leaves.";
+			$flags["text"][] = "TOO MANY LEAVES: " . $numberOfLeaves . " leaves exceeds safe limit of " . $flaggingRules["maxSafeLeaves"] . " leaves.";
+                        $flags["raw"]["NumberOfLeavesHigh"] = 1;
+
 		}
 		
 		//flag long leaves
 		$averageLeafLength = $this->getAverageLeafLength();
 		if(!$isConifer && $averageLeafLength > $flaggingRules["maxSafeLeafLength"]){
-			$flags[] = "LONG LEAVES: " . $averageLeafLength . "cm exceeds safe limit of " . $flaggingRules["maxSafeLeafLength"] . "cm.";
+			$flags["text"][] = "LONG LEAVES: " . $averageLeafLength . "cm exceeds safe limit of " . $flaggingRules["maxSafeLeafLength"] . "cm.";
+                        $flags["raw"]["AverageLeafLengthHigh"] = 1;
+                        
 		}
 		
 		return $flags;
