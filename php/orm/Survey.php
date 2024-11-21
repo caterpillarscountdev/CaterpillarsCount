@@ -535,7 +535,7 @@ class Survey
 			$arthropodLength = $arthropodSightings[$i]->getLength();
 			
 			if(array_key_exists($updatedArthropodGroup, $flaggingRules["arthropodGroupFlaggingRules"]) && $arthropodLength > $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"]){
-				$flags["text"][] = "LONG ARTHROPOD: " . $arthropodLength . "mm exceeds safe \"" . $updatedArthropodGroup . "\" limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"] . "mm.";
+				$flags["text"][] = "LONG ARTHROPOD: " . $arthropodLength . "mm more than expected \"" . $updatedArthropodGroup . "\" limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"] . "mm.";
                                 $flags["raw"]["ArthropodLengthHigh"] = 1;
 			}
 			
@@ -543,7 +543,7 @@ class Survey
 			$arthropodQuantity = $arthropodSightings[$i]->getQuantity();
 			
 			if(array_key_exists($updatedArthropodGroup, $flaggingRules["arthropodGroupFlaggingRules"]) && $arthropodQuantity > $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"]){
-                          $flags{"text"}[] = "LARGE ARTHROPOD QUANTITY: " . $arthropodQuantity . " exceeds safe \"" . $updatedArthropodGroup . "\" quantity limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"] . ".";
+                          $flags{"text"}[] = "LARGE ARTHROPOD QUANTITY: " . $arthropodQuantity . " more than expected \"" . $updatedArthropodGroup . "\" quantity limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"] . ".";
                           $flags["raw"]["ArthropodQuantityHigh"] = 1;
 			}
 		}
@@ -552,13 +552,13 @@ class Survey
 		$isConifer = $this->isConifer();
 		$numberOfLeaves = $this->getNumberOfLeaves();
 		if(!$isConifer && $numberOfLeaves < $flaggingRules["minSafeLeaves"]){
-			$flags["text"][] = "TOO FEW LEAVES: " . $numberOfLeaves . " leaves does not meet safe limit of " . $flaggingRules["minSafeLeaves"] . " leaves.";
+			$flags["text"][] = "TOO FEW LEAVES: " . $numberOfLeaves . " leaves less than expected " . $flaggingRules["minSafeLeaves"] . " leaves.";
                         $flags["raw"]["NumberOfLeavesLow"] = 1;
 		}
 		
 		//flag too many leaves
 		if(!$isConifer && $numberOfLeaves > $flaggingRules["maxSafeLeaves"]){
-			$flags["text"][] = "TOO MANY LEAVES: " . $numberOfLeaves . " leaves exceeds safe limit of " . $flaggingRules["maxSafeLeaves"] . " leaves.";
+			$flags["text"][] = "TOO MANY LEAVES: " . $numberOfLeaves . " leaves more than expected " . $flaggingRules["maxSafeLeaves"] . " leaves.";
                         $flags["raw"]["NumberOfLeavesHigh"] = 1;
 
 		}
@@ -566,7 +566,7 @@ class Survey
 		//flag long leaves
 		$averageLeafLength = $this->getAverageLeafLength();
 		if(!$isConifer && $averageLeafLength > $flaggingRules["maxSafeLeafLength"]){
-			$flags["text"][] = "LONG LEAVES: " . $averageLeafLength . "cm exceeds safe limit of " . $flaggingRules["maxSafeLeafLength"] . "cm.";
+			$flags["text"][] = "LONG LEAVES: " . $averageLeafLength . "cm more than expected " . $flaggingRules["maxSafeLeafLength"] . "cm.";
                         $flags["raw"]["AverageLeafLengthHigh"] = 1;
                         
 		}
