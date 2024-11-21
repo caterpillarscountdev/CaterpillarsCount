@@ -4,6 +4,7 @@ require_once('resources/Keychain.php');
 require_once('User.php');
 require_once('Plant.php');
 require_once('ArthropodSighting.php');
+require('SurveyFlaggingRules.php');
 
 class Survey
 {
@@ -376,19 +377,8 @@ class Survey
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		
-		$flaggingRules = self::getFlaggingRules();
+		$flaggingRules = SurveyFlaggingRules();
 		
-		$arthropodGroupsExcludedFromTotalQuantityCount = array();
-		$rareArthropodGroups = array();
-		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
-			if($flaggingData["excludedFromTotalQuantityCount"]){
-				$arthropodGroupsExcludedFromTotalQuantityCount[] = mysqli_real_escape_string($dbconn, $arthropodGroup);
-			}
-			
-			if($flaggingData["isRare"]){
-				$rareArthropodGroups[] = mysqli_real_escape_string($dbconn, $arthropodGroup);
-			}
-		}
 		
 		$flaggedSurveyIDs = array();
 		
@@ -526,128 +516,13 @@ class Survey
 		if($this->deleted){return null;}
 		return filter_var($this->reviewedAndApproved, FILTER_VALIDATE_BOOLEAN);
 	}
-	
-	private static function getFlaggingRules(){
-                        // the following removed from the returned array 6/1/2023
-		        // "maxSafeTotalQuantity" => 10,
-			// "maxSafeArthropodGroups" => 4,
-			// "maxSafeRareArthropodGroups" => 3,
-		return array(
-			"minSafeLeaves" => 5,
-			"maxSafeLeaves" => 400,
-			"maxSafeLeafLength" => 30,
-			"arthropodGroupFlaggingRules" => array(
-				"ant" => array(
-					"maxSafeLength" => 17,
-					"maxSafeQuantity" => 50,
-					"excludedFromTotalQuantityCount" => true,
-					"isRare" => false
-				),
-				"aphid" => array(
-					"maxSafeLength" => 10,
-					"maxSafeQuantity" => 50,
-					"excludedFromTotalQuantityCount" => true,
-					"isRare" => false
-				),
-				"bee" =>  array(
-					"maxSafeLength" => 25,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => true
-                                ),
-                                "sawfly" => array(
-                                        "maxSafeLength" => 50,
-                                        "maxSafeQuantity" => 20,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => false
-                                ),
-				"beetle" =>  array(
-					"maxSafeLength" => 20,
-					"maxSafeQuantity" => 10,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => false
-				),
-				"caterpillar" =>  array(
-					"maxSafeLength" => 50,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => false
-				),
-				"daddylonglegs" =>  array(
-					"maxSafeLength" => 15,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => true
-				),
-				"fly" =>  array(
-					"maxSafeLength" => 20,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => false
-				),
-				"grasshopper" =>  array(
-					"maxSafeLength" => 30,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => true
-				),
-				"leafhopper" =>  array(
-					"maxSafeLength" => 20,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => false
-				),
-				"moths" =>  array(
-					"maxSafeLength" => 30,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => true
-				),
-				"spider" =>  array(
-					"maxSafeLength" => 20,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => false
-				),
-				"truebugs" =>  array(
-					"maxSafeLength" => 25,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => true
-				),
-				"other" =>  array(
-					"maxSafeLength" => 25,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => false
-				),
-				"unidentified" =>  array(
-					"maxSafeLength" => 25,
-					"maxSafeQuantity" => 6,
-					"excludedFromTotalQuantityCount" => false,
-					"isRare" => false
-				)
-			)
-		);
-	}
-	
-	public function getFlags(){
-		$flaggingRules = self::getFlaggingRules();
 		
+	public function getFlags(){
+                $flaggingRules = SurveyFlaggingRules();
+
 		//grab flags based on info provided above...
 		$flags = array("text" => array(), "raw" => array());
 		
-		$arthropodGroupsExcludedFromTotalQuantityCount = array();
-		$rareArthropodGroups = array();
-		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
-			if($flaggingData["excludedFromTotalQuantityCount"]){
-				$arthropodGroupsExcludedFromTotalQuantityCount[] = $arthropodGroup;
-			}
-			
-			if($flaggingData["isRare"]){
-				$rareArthropodGroups[] = $arthropodGroup;
-			}
-		}
 		
 		$arthropodSightings = $this->getArthropodSightings();
 		for($i = 0; $i < count($arthropodSightings); $i++){
