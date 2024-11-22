@@ -61,6 +61,16 @@
 				width:100%
 			}
 
+                        .ok {
+                            display: inline-flex;
+                            height: 24px;
+                            border-radius: 4px;
+                            background-color: #fff;
+                            padding: 1px 3px 1px 3px;
+                            justify-content: center;
+                            align-items: center;
+                        }
+
 			#surveys .survey{
 				margin-bottom:20px;
 				font-family: 'Roboto Slab', serif;
@@ -856,8 +866,6 @@
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
 				
-				showQCButtonIfSuperUser();
-
 				loadFirstPage(true);
 
 				populateSurveySites();
@@ -871,42 +879,6 @@
 				requireLogIn();
 			});
 			
-			function showQCButtonIfSuperUser(){
-				$.get("../php/getIsSuperUser.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
-					if(data == "true"){
-						$("#qcModeIconButton")[0].style.display = "";
-						$("#qcIcon")[0].style.display = "";
-					}
-				});
-			}
-			
-			var inQCMode = false;
-			var filtersBeforeQCMode = {};
-			function toggleQCMode(){
-				inQCMode = !inQCMode;
-				
-				if(inQCMode){
-					$("#enterQCModeButtonText").html("Exit QC Mode");
-					$(".hiddenInQcMode").css({display: "none"});
-					$(".shownInQCMode").css({display: "block"});
-					
-					filtersBeforeQCMode = GLOBALFilters;
-					loadPage(1, {});
-				}
-				else{
-					$("#enterQCModeButtonText").html("Enter QC Mode");
-					
-					var hiddenInQcModeElements = $(".hiddenInQcMode");
-					for(var i = 0; i < hiddenInQcModeElements.length; i++){
-						hiddenInQcModeElements[i].style.display = "";
-					}
-					
-					$(".shownInQCMode").css({display: "none"});
-					
-					loadPage(1, filtersBeforeQCMode);
-					filtersBeforeQCMode = {};
-				}
-			}
 			
 			function emailSurveyContributor(fullName, emailParts, surveyid) {
 			    // send email to user from the site to ask about info
@@ -938,7 +910,7 @@
 				
 				var emailBody = 'Hi '  + fullName + ', <br/><br/>' +
 				     'There was a QC issue with some data you submitted.  Could you please <a href="https://caterpillarscount.unc.edu/manageMySurveys/">check the site data</a> for issues below and let us know if this looks correct, ' +
-					 ' or if there is some simple fix for the data?<br/><br/>' +
+					 ' or edit the survey if there is some simple fix for the data?<br/><br/>' +
 					 surveyPlace  + '<br/><br/>' +
 					 qcissues  + '<br/><br/>' +
                      'Thanks!<br/>The Caterpillars Count team' ;
@@ -1111,7 +1083,7 @@
 					$("#resultsPage").css({display:"none"});
 					$(".loading").css({display:"block"});
 					
-					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)) + "&inQCMode=" + inQCMode, function(data){
+					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)), function(data){
 						//success
 						if(data.indexOf("true|") == 0){
 							GLOBALFilters = filters;
@@ -1498,9 +1470,10 @@
 								}
 								htmlToAdd += "</div>";
 
-                                                            htmlToAdd += surveys[i]["flags"].length > 0 ? "<div class=\"flags\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul></div>" : "";
+                                                            okBox = (surveys[i]["canQC"] ? "<div class='ok'>OK?&nbsp; <div class='checkbox'></div></div>" : "" )
+                                                            htmlToAdd += surveys[i]["flags"].length > 0 ? "<div class=\"flags\"><ul><li onclick=\"toggleCheckbox($(this).find('.checkbox'));\">" +  surveys[i]["flags"].join(okBox + "</li><li>") + okBox + "</li></ul></div>" : "";
                                                             
-							    htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional, choose item in list or write anything): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Click this button if the values are correct in your opinion, even if out of standard range\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Approve</button><button class='hint--bottom' data-hint=\"Click this button if you aren't sure if the data are right or wrong but that's all you can say.  You don't want to see this again.\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",2,this);\">? I'm not sure</button><button class='hint--bottom' data-hint=\"Click this button to remove the entire survey because it's invalid or has errors\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; REJECT SURVEY</button></div></div>") : "";
+							    htmlToAdd += surveys[i]["canQC"] ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional, choose item in list or write anything): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Mark as rejected and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; Reject</button><button class='hint--bottom' data-hint=\"Mark as reviwed and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Reviewed</button><button class='hint--bottom' data-hint=\"Save comments and checks for later\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",0,this);\">&darr; Save</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
@@ -1676,7 +1649,7 @@
 
 			function filter(){
 				if(!loadingPage){
-					var filters = {"user": $('#userSearch')[0].value.trim(), "arthropod": getSelectValue($('#arthropodSearch')), "minArthropodLength": Number($("#minLength").val().replace(/\D/g, "")), "site": getSelectValue($('#siteSearch .select').eq(0)), "circle": $('#circleSearch')[0].value.trim(), "code": $('#codeSearch')[0].value.trim(), "date": getSelectValue($("#yearFilter")) + "-" + getSelectValue($("#monthFilter")) + "-" + getSelectValue($("#dayFilter"))};
+					var filters = {"user": $('#userSearch')[0].value.trim(), "arthropod": getSelectValue($('#arthropodSearch')), "minArthropodLength": Number($("#minLength").val().replace(/\D/g, "")), "site": getSelectValue($('#siteSearch .select').eq(0)), "circle": $('#circleSearch')[0].value.trim(), "code": $('#codeSearch')[0].value.trim(), "date": getSelectValue($("#yearFilter")) + "-" + getSelectValue($("#monthFilter")) + "-" + getSelectValue($("#dayFilter")), "flagged": getSelectValue($("#flagFilter"))};
 					$("#filtersDropdown button")[0].innerHTML = "<img src=\"../images/rolling.svg\" alt=\"loading...\"/>";
 					loadPage(1, filters);
 					/*
@@ -2076,11 +2049,14 @@
 			    // ask user if they want to update approvedlevel
 				// buttonEl is button they pushed and is used to find qc comments just before
 				var verbToUser = "";
+				if (approvedLevel == 0) {
+				   verbToUser = "save comments on";
+				} 
 				if (approvedLevel == 1) {
 				   verbToUser = "approve";
 				} 
-				if (approvedLevel == 2) {
-				   verbToUser = "say you're not sure";
+			    if (approvedLevel == 2) {
+				verbToUser = "say you're not sure";
 				} 
 				if (approvedLevel == 3) {
 				   verbToUser = "REJECT";
@@ -2092,7 +2068,7 @@
 				} else {
 				  qcNoteToUser = "You have not specified a QC Comment, but they are optional.  Press 'Never mind.' if you want to go back and add a comment.";
 				}
-				promptConfirm("Are you sure you want to **" + verbToUser + "** this survey? It won't show up as being flagged again unless someone edits it. " + qcNoteToUser, 'Never mind.', 'Yes, I am sure!', function(){}, function(){
+				promptConfirm("Are you sure you want to **" + verbToUser + "** this survey? " + (approvedLevel > 0 ? "It won't show up as being flagged again unless someone edits it. " : "") + qcNoteToUser, 'Never mind.', 'Yes, I am sure!', function(){}, function(){
 					approveSurvey(id, approvedLevel, qccomment);
 				});
 			}
@@ -2933,7 +2909,6 @@
 					<div>
 						<img src="../images/filterIcon.png" id="filterIcon" class="iconImg hiddenInQcMode" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));"/>
 						<img src="../images/delete.png" id="batchDeleteIcon" class="iconImg hiddenInQcMode" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
-						<img src="../images/qcIcon.png" id="qcIcon" class="iconImg" onclick="closeHeight($('#filtersDropdown'));closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleQCMode();" style="display:none;"/>
 						<div class="iconButton hiddenInQcMode" id="filterIconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
 							<img src="../images/filterIconWhite.png"/>
 							<div>Filter surveys</div>
@@ -2941,10 +2916,6 @@
 						<div class="iconButton hiddenInQcMode" id="batchDeleteIconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
 							<img src="../images/deleteWhite.png"/>
 							<div>Batch delete</div>
-						</div>
-						<div class="iconButton" id="qcModeIconButton" onclick="closeHeight($('#filtersDropdown'));closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleQCMode();" style="display:none;">
-							<img src="../images/qcIconWhite.png"/>
-							<div id="enterQCModeButtonText">Enter QC Mode</div>
 						</div>
 						<div class="clearBoth"></div>
 					</div>
@@ -2987,15 +2958,26 @@
 							<input type="number" id="minLength" placeholder="0" onclick="this.select();" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');"/>
 						</div>
 						<div class="filter">
-						  <datalist id='qccomment'>
-						    <option>seems plausible</option>
-							<option>seems reasonable</option>
-							<option>abnormal, but verified</option>
-							<option>far too many</option>
-							<option>far too long</option>
-							<option>type of insect is only good data</option>
-						  </datalist>
-						</div>
+						  <div class="inputTitle">Flagged Surveys:</div>
+						  <div class="select" id="flagFilter">
+						    <div class="option selected" onclick="selectOption(this);">
+                                                      <div class="shown">
+                                                        <div class="value">all</div><div class="text">Show All</div>
+                                                      </div>
+                                                    </div>
+						    <div class="option" onclick="selectOption(this);">
+                                                      <div class="shown">
+                                                        <div class="value">flagged</div><div class="text">Needs Review</div>
+                                                      </div>
+                                                    </div>
+						    <div class="option" onclick="selectOption(this);">
+                                                      <div class="shown">
+                                                        
+                                                        <div class="value">reviewed</div><div class="text">Reviewed</div>
+                                                      </div>
+                                                    </div>
+						  </div>
+                                                </div>
 						<div class="filter">
 							<div id="locationFilters" style="max-height:999999px;">
 								<div id="siteCircleFilter">

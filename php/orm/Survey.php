@@ -260,7 +260,9 @@ class Survey
 		foreach($filterKeys as $filterKey) {
 			$filters[$filterKey] = mysqli_real_escape_string($dbconn, htmlentities(($filters[$filterKey] . "")));
 		}
-		
+
+                $superUser = User::isSuperUser($user->getEmail());
+                
 		$surveysArray = array();
 		//as well as all surveys completed at sites the user created or manages
 		$sites = $user->getSites();
@@ -272,10 +274,12 @@ class Survey
 		$baseTable = "`Survey`";
 		$additionalSQL = "";
 		$groupBy = "";
-		
+
+		$flagSearch = trim($filters["flagged"]);
+                
 		$arthropodSearch = trim($filters["arthropod"]);
 		$minArthropodLength = intval($filters["minArthropodLength"]);
-		if(strlen($arthropodSearch) > 0 || $minArthropodLength > 0){
+		if($flagSearch == 'flagged' || strlen($arthropodSearch) > 0 || $minArthropodLength > 0){
 			$baseTable = "`ArthropodSighting` JOIN `Survey` ON ArthropodSighting.SurveyFK = Survey.ID";
 			$groupBy = " GROUP BY ArthropodSighting.SurveyFK";
 		}
@@ -292,6 +296,29 @@ class Survey
 		if(strlen($userSearch) > 0){
 			$additionalSQL .= " AND CONCAT(User.FirstName, ' ', User.LastName) LIKE '%" . $userSearch . "%'";
 		}
+
+                $flaggingRules = SurveyFlaggingRules();
+
+		if(strlen($flagSearch) > 0){
+                  if ($flagSearch == 'reviewed') {
+                    $field = 'ReviewedAndApprovedSite';
+                    if ($superUser) {
+                      $field = 'ReviewedAndApproved';
+                    }
+                    $additionalSQL .= " AND " . $field . " > 0";
+                  } else if ($flagSearch == 'flagged') {
+                    $sql = "`AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
+                    //arthropod flags
+                    $sql .= " OR (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["arthropodGroupFlaggingRules"]["sawfly"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["arthropodGroupFlaggingRules"]["sawfly"]["maxSafeQuantity"]) . "'))";
+                    foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
+                      if ($arthropodGroup == "sawfly") { continue; }
+                      $sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingData["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingData["maxSafeQuantity"]) . "'))";
+                    }
+
+                    $additionalSQL .=  " AND (" . $sql . ")";
+                  }
+		}
+                
 		
 		$siteSearch = trim(strval($filters["site"]));
 		$circleSearch = trim(strval($filters["circle"]));
@@ -308,7 +335,7 @@ class Survey
 		}
 		
 		$dateSearch = mysqli_real_escape_string($dbconn, trim(htmlentities(strval($filters["date"]))));
-		
+
 		$totalCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS `Count` FROM (SELECT DISTINCT Survey.ID FROM " . $baseTable . " JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `User` ON Survey.UserFKOfObserver=User.ID WHERE (Plant.SiteFK IN (" . join(",", $siteIDs) . ") OR Survey.UserFKOfObserver='" . $user->getID() . "') AND Survey.LocalDate LIKE '" . $dateSearch . "'" . $additionalSQL . $groupBy . ") AS Results"))["Count"]);
 		if($limit === "max"){
 			$limit = $totalCount;
@@ -361,7 +388,9 @@ class Survey
 			$reviewedAndApproved = $surveyRow["ReviewedAndApproved"];
 			
 			$survey = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved);
-			
+
+                        $flags = $survey->getFlags();
+                        
 			array_push($surveysArray, $survey);
 		}
 		return array($totalCount, $surveysArray);
@@ -518,11 +547,16 @@ class Survey
 	}
 		
 	public function getFlags(){
+          if($this->_flags) { return $this->_flags; };
+
+          $dbconn = (new Keychain)->getDatabaseConnection();
+
                 $flaggingRules = SurveyFlaggingRules();
 
 		//grab flags based on info provided above...
 		$flags = array("text" => array(), "raw" => array());
-		
+
+                $sets = array();
 		
 		$arthropodSightings = $this->getArthropodSightings();
 		for($i = 0; $i < count($arthropodSightings); $i++){
@@ -535,16 +569,27 @@ class Survey
 			$arthropodLength = $arthropodSightings[$i]->getLength();
 			
 			if(array_key_exists($updatedArthropodGroup, $flaggingRules["arthropodGroupFlaggingRules"]) && $arthropodLength > $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"]){
-				$flags["text"][] = "LONG ARTHROPOD: " . $arthropodLength . "mm more than expected \"" . $updatedArthropodGroup . "\" limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"] . "mm.";
-                                $flags["raw"]["ArthropodLengthHigh"] = 1;
-			}
+                          $flags["text"][] = "LONG ARTHROPOD: " . $arthropodLength . "mm more than expected \"" . $updatedArthropodGroup . "\" limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"] . "mm.";
+                          if (!$flags["raw"]["ArthropodLengthHigh"]) {
+                            $sets[] = "QCArthropodLengthHigh = 1";
+                          }
+                          $flags["raw"]["ArthropodLengthHigh"] = 1;
+                          
+                          mysqli_query($dbconn, "UPDATE ArthropodSighting SET QCArthropodLengthHigh = 1 WHERE ID = " . $arthropodSightings[$i]->getID());
+                        }
 			
 			//flag quantities
 			$arthropodQuantity = $arthropodSightings[$i]->getQuantity();
 			
 			if(array_key_exists($updatedArthropodGroup, $flaggingRules["arthropodGroupFlaggingRules"]) && $arthropodQuantity > $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"]){
                           $flags{"text"}[] = "LARGE ARTHROPOD QUANTITY: " . $arthropodQuantity . " more than expected \"" . $updatedArthropodGroup . "\" quantity limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"] . ".";
+
+                          if (!$flags["raw"]["ArthropodQuantityHigh"]) {
+                            $sets[] = "QCArthropodQuantityHigh = 1";
+                          }
                           $flags["raw"]["ArthropodQuantityHigh"] = 1;
+                          
+                          mysqli_query($dbconn, "UPDATE ArthropodSighting SET QCArthropodQuantityHigh = 1 WHERE ID = " . $arthropodSightings[$i]->getID() );
 			}
 		}
 		
@@ -554,13 +599,14 @@ class Survey
 		if(!$isConifer && $numberOfLeaves < $flaggingRules["minSafeLeaves"]){
 			$flags["text"][] = "TOO FEW LEAVES: " . $numberOfLeaves . " leaves less than expected " . $flaggingRules["minSafeLeaves"] . " leaves.";
                         $flags["raw"]["NumberOfLeavesLow"] = 1;
+                        $sets[] = "QCNuberOfLeavesLow = 1";
 		}
 		
 		//flag too many leaves
 		if(!$isConifer && $numberOfLeaves > $flaggingRules["maxSafeLeaves"]){
 			$flags["text"][] = "TOO MANY LEAVES: " . $numberOfLeaves . " leaves more than expected " . $flaggingRules["maxSafeLeaves"] . " leaves.";
                         $flags["raw"]["NumberOfLeavesHigh"] = 1;
-
+                        $sets[] = "QCNuberOfLeavesHigh = 1";
 		}
 		
 		//flag long leaves
@@ -568,10 +614,14 @@ class Survey
 		if(!$isConifer && $averageLeafLength > $flaggingRules["maxSafeLeafLength"]){
 			$flags["text"][] = "LONG LEAVES: " . $averageLeafLength . "cm more than expected " . $flaggingRules["maxSafeLeafLength"] . "cm.";
                         $flags["raw"]["AverageLeafLengthHigh"] = 1;
-                        
+                        $sets[] = "QCAverageLeafLengthHigh = 1";
 		}
-		
-		return $flags;
+
+                $sql = "UPDATE Survey SET " . join(", ", $sets) . " WHERE ID = " . $this->getID() . ";";
+
+                $query = mysqli_query($dbconn, $sql);
+                
+		return $this->_flags = $flags;
 	}
 	
 //SETTERS
