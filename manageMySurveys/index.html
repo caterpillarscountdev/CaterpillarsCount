@@ -904,7 +904,9 @@
 				
 				//alert('place is ' + surveyPlace);
 				
-				var qcissues = $('#' + surveyid).next().find("ul").prop('outerHTML');
+				var qcissues = $('#' + surveyid).next().find("ul").clone();
+                                qcissues.find(".ok").remove();
+                                qcissues = qcissues.prop('outerHTML');
 				//alert('have ' + qcissues.length); 
 				
 				
@@ -915,12 +917,12 @@
 					 qcissues  + '<br/><br/>' +
                      'Thanks!<br/>The Caterpillars Count team' ;
 					 
-				promptConfirm('Send this email to ' +  emailaddress + '?<hr/><div id="emailBody" contenteditable>' + emailBody + "</div>", "No, cancel", "Send Email!", function(){}, 
+				promptConfirm('Send this email to ' +  emailaddress + ' and cc site managers?<hr/><div id="emailBody" contenteditable>' + emailBody + "</div>", "No, cancel", "Send Email!", function(){}, 
 				  function(){
                                       let body = document.getElementById("emailBody").innerHTML;
 				    // alert('sending')
 						$.post("../php/emailUserAskSurvey.php", {email: (window.localStorage.getItem("email")), 
-						      salt: window.localStorage.getItem("salt"), emailto:(emailaddress), emailmessage:(body)},function(data){
+						      salt: window.localStorage.getItem("salt"), survey: surveyid, emailmessage:(body)},function(data){
 						//success
 						if(data.indexOf("true|") == 0){
 							queueNotice("confirmation", "Email sent!");
@@ -1472,8 +1474,8 @@
 
                                                             okBox = (surveys[i]["canQC"] ? "<div class='ok'>OK?&nbsp; <div class='checkbox'></div></div>" : "" )
                                                             htmlToAdd += surveys[i]["flags"].length > 0 ? "<div class=\"flags\"><ul><li onclick=\"toggleCheckbox($(this).find('.checkbox'));\">" +  surveys[i]["flags"].join(okBox + "</li><li>") + okBox + "</li></ul></div>" : "";
-                                                            
-							    htmlToAdd += surveys[i]["canQC"] ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional, choose item in list or write anything): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Mark as rejected and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; Reject</button><button class='hint--bottom' data-hint=\"Mark as reviwed and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Reviewed</button><button class='hint--bottom' data-hint=\"Save comments and checks for later\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",0,this);\">&darr; Save</button></div></div>") : "";
+
+							    htmlToAdd += surveys[i]["canQC"] ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Mark as rejected and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; Reject</button><button class='hint--bottom' data-hint=\"Mark as reviwed and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Reviewed</button><button class='hint--bottom' data-hint=\"Save comments and checks for later\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",0,this);\">&darr; Save</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
