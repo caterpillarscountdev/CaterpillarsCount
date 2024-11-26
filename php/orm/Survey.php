@@ -27,6 +27,9 @@ class Survey
 	private $submittedThroughApp;
 	private $reviewedAndApproved;
 	private $qcComment;
+
+        private $_flags;
+        private $_arthropodSightings;
 	
 	private $deleted;
 
@@ -279,7 +282,10 @@ class Survey
 		$additionalSQL = "";
 		$groupBy = "";
 
-		$flagSearch = trim($filters["flagged"]);
+                $flagSearch = "";
+                if (isset($filters["flagged"])) {
+                  $flagSearch = trim($filters["flagged"]);
+                }
                 
 		$arthropodSearch = trim($filters["arthropod"]);
 		$minArthropodLength = intval($filters["minArthropodLength"]);
