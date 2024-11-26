@@ -1472,10 +1472,18 @@
 								}
 								htmlToAdd += "</div>";
 
-                                                            okBox = (surveys[i]["canQC"] ? "<div class='ok'>OK?&nbsp; <div class='checkbox'></div></div>" : "" )
-                                                            htmlToAdd += surveys[i]["flags"].length > 0 ? "<div class=\"flags\"><ul><li onclick=\"toggleCheckbox($(this).find('.checkbox'));\">" +  surveys[i]["flags"].join(okBox + "</li><li>") + okBox + "</li></ul></div>" : "";
+                                                            let flagsM = ""
+                                                            surveys[i]["flags"].forEach(f => {
+                                                                flagsM += "<li onclick=\"toggleCheckbox($(this).find('.checkbox'));\">";
+                                                                flagsM += f.text
+                                                                if (surveys[i]["canQC"]) {
+                                                                    flagsM += "<div class='ok'>OK?&nbsp; <div class='checkbox" + (f.ok ? " checked" : "") + "' data-override='" + f.key.replace("Low", "OK").replace("High", "OK") + "'></div></div>";
+                                                                }
+                                                                flagsM += "</li>";
+                                                            })
+                                                            htmlToAdd += surveys[i]["flags"].length > 0 ? "<div class=\"flags flagsChecks\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul>" + flagsM + "</ul></div>" : "";
 
-							    htmlToAdd += surveys[i]["canQC"] ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Mark as rejected and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; Reject</button><button class='hint--bottom' data-hint=\"Mark as reviwed and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Reviewed</button><button class='hint--bottom' data-hint=\"Save comments and checks for later\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",0,this);\">&darr; Save</button></div></div>") : "";
+							            htmlToAdd += surveys[i]["canQC"] ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\" value=\"" + (surveys[i]["qcComment"] || "") + "\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Mark as rejected and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; Reject</button><button class='hint--bottom' data-hint=\"Mark as reviwed and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Reviewed</button><button class='hint--bottom' data-hint=\"Save comments and checks for later\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",0,this);\">&darr; Save</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
@@ -2050,25 +2058,25 @@
 			function askToApproveSurvey(id, approvedLevel, buttonEl){
 			    // ask user if they want to update approvedlevel
 				// buttonEl is button they pushed and is used to find qc comments just before
-				var verbToUser = "";
-				if (approvedLevel == 0) {
-				   verbToUser = "save comments on";
-				} 
-				if (approvedLevel == 1) {
-				   verbToUser = "approve";
-				} 
+			    var verbToUser = "";
+			    if (approvedLevel == 0) {
+				verbToUser = "save comments on";
+			    } 
+			    if (approvedLevel == 1) {
+				verbToUser = "approve";
+			    } 
 			    if (approvedLevel == 2) {
 				verbToUser = "say you're not sure";
-				} 
-				if (approvedLevel == 3) {
-				   verbToUser = "REJECT";
-				} 
-				var qccomment = $(buttonEl).parent().prev().children('.qccomment')[0].value;
-                var qcNoteToUser = "";
+			    } 
+			    if (approvedLevel == 3) {
+				verbToUser = "REJECT";
+			    } 
+			    var qccomment = $(buttonEl).parent().prev().children('.qccomment')[0].value;
+                            var qcNoteToUser = "";
 				if (qccomment.length >0) {
 				  qcNoteToUser = "You have specified a QC Comment.";
 				} else {
-				  qcNoteToUser = "You have not specified a QC Comment, but they are optional.  Press 'Never mind.' if you want to go back and add a comment.";
+				  qcNoteToUser = "You have not specified a QC Comment, but they are optional.  Press 'Never mind.' if you want to go back and add an explanatory note.";
 				}
 				promptConfirm("Are you sure you want to **" + verbToUser + "** this survey? " + (approvedLevel > 0 ? "It won't show up as being flagged again unless someone edits it. " : "") + qcNoteToUser, 'Never mind.', 'Yes, I am sure!', function(){}, function(){
 					approveSurvey(id, approvedLevel, qccomment);
@@ -2076,12 +2084,19 @@
 			}
 			
 			function approveSurvey(id, approvedLevel, qccomment){
-				$('.loading').fadeIn(0);
-				$('#surveys').fadeOut(0);
-				
-				$.get("../php/approveSurvey.php?surveyID=" + id + "&approvedLevel=" + approvedLevel + "&qccomment=" + encodeURIComponent(qccomment) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
-					//success
-					if(data.indexOf("true|") == 0){
+			    $('.loading').fadeIn(0);
+			    $('#surveys').fadeOut(0);
+
+                            let overrides = [];
+                            document.querySelectorAll('.flagsChecks[data-associated-survey="' + id + '"] .checkbox')
+                                    .forEach(v => {
+                                        if (checkboxIsChecked(v)) {
+                                            overrides.push(v.dataset.override);
+                                        }});
+
+			    $.get("../php/approveSurvey.php?surveyID=" + id + "&approvedLevel=" + approvedLevel + "&qccomment=" + encodeURIComponent(qccomment) + "&overrides=" + encodeURIComponent(overrides) +  "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+				//success
+				if(data.indexOf("true|") == 0){
 						reloadPage();
 					}
 					else{
@@ -2090,14 +2105,14 @@
 						
 						queueNotice("error", data.replace("false|", ""));
 					}
-				})
-				.fail(function(){
-					//error
-					$('.loading').fadeOut(0);
-					$('#surveys').fadeIn(0);
+			    })
+			     .fail(function(){
+				 //error
+				 $('.loading').fadeOut(0);
+				 $('#surveys').fadeIn(0);
 					
-					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
-				});
+				 queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+			     });
 			}
 
 			var batchDeleting = false;

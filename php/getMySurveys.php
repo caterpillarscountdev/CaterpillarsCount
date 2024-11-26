@@ -54,7 +54,7 @@
 						);
 					}
 				}
-                                $flags = $surveys[$i]->getFlags()["text"];
+                                $flags = $surveys[$i]->getFlags();
 				$surveysArray[] = array(
 					"id" => $surveys[$i]->getID(),
                                         "canQC" => ($flags && ($surveys[$i]->getPlant()->getSite()->isAuthority($user) || User::isSuperUser($user->getEmail()))),
@@ -83,6 +83,7 @@
 					"linearBranchLength" => $surveys[$i]->getLinearBranchLength(),
 					"submittedThroughApp" => $surveys[$i]->getSubmittedThroughApp(),
 					"arthropodSightings" => $arthropodSightingsArray,
+                                        "qcComment" => $surveys[$i]->getQCComment(),
 					"flags" => $flags
 				);
 			}

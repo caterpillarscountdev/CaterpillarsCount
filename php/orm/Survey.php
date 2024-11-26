@@ -26,6 +26,7 @@ class Survey
 	private $linearBranchLength;
 	private $submittedThroughApp;
 	private $reviewedAndApproved;
+	private $qcComment;
 	
 	private $deleted;
 
@@ -53,7 +54,7 @@ class Survey
 		$linearBranchLength = $isConifer ? self::validLinearBranchLength($dbconn, $linearBranchLength) : -1;
 		$submittedThroughApp = filter_var($submittedThroughApp, FILTER_VALIDATE_BOOLEAN);
 		$reviewedAndApproved = false;
-		
+		$qcComment = null;
 		
 		$failures = "";
 		
@@ -110,9 +111,9 @@ class Survey
 			$plant->getSite()->setDateEstablished($localDate);
 		}
 		
-		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved);
+		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved, $qcComment);
 	}
-	private function __construct($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved) {
+	private function __construct($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved, $qcComment) {
 		$this->id = intval($id);
 		$this->submissionTimestamp = intval($submissionTimestamp);
 		$this->observer = $observer;
@@ -131,7 +132,8 @@ class Survey
 		$this->submittedThroughApp = $submittedThroughApp;
 		$this->arthropodSightings = null;
 		$this->reviewedAndApproved = filter_var($reviewedAndApproved, FILTER_VALIDATE_BOOLEAN);
-		
+                $this->qcComment = $qcComment;
+                  
 		$this->deleted = false;
 	}
 
@@ -164,8 +166,9 @@ class Survey
 		$linearBranchLength = $surveyRow["LinearBranchLength"];
 		$submittedThroughApp = $surveyRow["SubmittedThroughApp"];
 		$reviewedAndApproved = $surveyRow["ReviewedAndApproved"];
+                $qcComment = $surveyRow["QCComment"];
 		
-		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved);
+		return new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved, $qcComment);
 	}
 	
 	public static function findSurveysByIDs($surveyIDs, $orderBy="", $start=null, $limit=null) {
@@ -244,8 +247,9 @@ class Survey
 			$linearBranchLength = $surveyRow["LinearBranchLength"];
 			$submittedThroughApp = $surveyRow["SubmittedThroughApp"];
 			$reviewedAndApproved = $surveyRow["ReviewedAndApproved"];
+                        $qcComment = $surveyRow["QCComment"];
 
-			$surveysArray[] = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved);
+			$surveysArray[] = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved, $qcComment);
 		}
 		return $surveysArray;
 	}
@@ -386,8 +390,9 @@ class Survey
 			$linearBranchLength = $surveyRow["LinearBranchLength"];
 			$submittedThroughApp = $surveyRow["SubmittedThroughApp"];
 			$reviewedAndApproved = $surveyRow["ReviewedAndApproved"];
+                        $qcComment = $surveyRow["QCComment"];
 			
-			$survey = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved);
+			$survey = new Survey($id, $submissionTimestamp, $observer, $plant, $localDate, $localTime, $observationMethod, $notes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp, $reviewedAndApproved, $qcComment);
 
                         $flags = $survey->getFlags();
                         
@@ -545,19 +550,32 @@ class Survey
 		if($this->deleted){return null;}
 		return filter_var($this->reviewedAndApproved, FILTER_VALIDATE_BOOLEAN);
 	}
+
+        public function getQCComment(){
+		if($this->deleted){return null;}
+		return $this->qcComment;
+        }
 		
 	public function getFlags(){
           if($this->_flags) { return $this->_flags; };
 
           $dbconn = (new Keychain)->getDatabaseConnection();
 
+          $id = $this->getID();
+          $query = mysqli_query($dbconn, "SELECT QCNumberOfLeavesOK, QCAverageLeafLengthOK, QCArthropodLengthOK, QCArthropodQuantityOK FROM `Survey` WHERE `ID`='$id' LIMIT 1");
+          if(mysqli_num_rows($query) !== 0){
+            $flagOverrides = mysqli_fetch_assoc($query);
+          }
+		
                 $flaggingRules = SurveyFlaggingRules();
 
 		//grab flags based on info provided above...
-		$flags = array("text" => array(), "raw" => array());
+		$flags = array();
 
                 $sets = array();
-		
+
+                $hasSetArthLength = false;
+                $hasSetArthQuant = false;
 		$arthropodSightings = $this->getArthropodSightings();
 		for($i = 0; $i < count($arthropodSightings); $i++){
 			$updatedArthropodGroup = $arthropodSightings[$i]->getUpdatedGroup();
@@ -569,11 +587,12 @@ class Survey
 			$arthropodLength = $arthropodSightings[$i]->getLength();
 			
 			if(array_key_exists($updatedArthropodGroup, $flaggingRules["arthropodGroupFlaggingRules"]) && $arthropodLength > $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"]){
-                          $flags["text"][] = "LONG ARTHROPOD: " . $arthropodLength . "mm more than expected \"" . $updatedArthropodGroup . "\" limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"] . "mm.";
-                          if (!$flags["raw"]["ArthropodLengthHigh"]) {
-                            $sets[] = "QCArthropodLengthHigh = 1";
+                          $key = "QCArthropodLengthHigh";
+                          $flags[] = array("text" => "LONG ARTHROPOD: " . $arthropodLength . "mm more than expected \"" . $updatedArthropodGroup . "\" limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeLength"] . "mm.", "key" => $key, "ok" => $flagOverrides["QCArthropodLengthOK"]);
+                          if (!$hasSetArthLength) {
+                            $sets[] = $key . " = 1";
                           }
-                          $flags["raw"]["ArthropodLengthHigh"] = 1;
+                          $hasSetArthLength = true;
                           
                           mysqli_query($dbconn, "UPDATE ArthropodSighting SET QCArthropodLengthHigh = 1 WHERE ID = " . $arthropodSightings[$i]->getID());
                         }
@@ -582,12 +601,13 @@ class Survey
 			$arthropodQuantity = $arthropodSightings[$i]->getQuantity();
 			
 			if(array_key_exists($updatedArthropodGroup, $flaggingRules["arthropodGroupFlaggingRules"]) && $arthropodQuantity > $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"]){
-                          $flags{"text"}[] = "LARGE ARTHROPOD QUANTITY: " . $arthropodQuantity . " more than expected \"" . $updatedArthropodGroup . "\" quantity limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"] . ".";
+                          $key = "QCArthropodQuantityHigh";
+                          $flags[] = array("text"=> "LARGE ARTHROPOD QUANTITY: " . $arthropodQuantity . " more than expected \"" . $updatedArthropodGroup . "\" quantity limit of " . $flaggingRules["arthropodGroupFlaggingRules"][$updatedArthropodGroup]["maxSafeQuantity"] . ".", "key" => $key, "ok" => $flagOverrides["QCArthropodQuantityOK"]);
 
-                          if (!$flags["raw"]["ArthropodQuantityHigh"]) {
-                            $sets[] = "QCArthropodQuantityHigh = 1";
+                          if (!$hasSetArthQuant) {
+                            $sets[] = $key . " = 1";
                           }
-                          $flags["raw"]["ArthropodQuantityHigh"] = 1;
+                          $hasSetArthQuant = true;
                           
                           mysqli_query($dbconn, "UPDATE ArthropodSighting SET QCArthropodQuantityHigh = 1 WHERE ID = " . $arthropodSightings[$i]->getID() );
 			}
@@ -597,24 +617,24 @@ class Survey
 		$isConifer = $this->isConifer();
 		$numberOfLeaves = $this->getNumberOfLeaves();
 		if(!$isConifer && $numberOfLeaves < $flaggingRules["minSafeLeaves"]){
-			$flags["text"][] = "TOO FEW LEAVES: " . $numberOfLeaves . " leaves less than expected " . $flaggingRules["minSafeLeaves"] . " leaves.";
-                        $flags["raw"]["NumberOfLeavesLow"] = 1;
-                        $sets[] = "QCNuberOfLeavesLow = 1";
+                  $key = "QCNumberOfLeavesLow";
+                  $flags[] = array("text" => "TOO FEW LEAVES: " . $numberOfLeaves . " leaves less than expected " . $flaggingRules["minSafeLeaves"] . " leaves.", "key" => $key, "ok" => $flagOverrides["QCNumberOfLeavesOK"]);
+                  $sets[] = $key . " = 1";
 		}
 		
 		//flag too many leaves
 		if(!$isConifer && $numberOfLeaves > $flaggingRules["maxSafeLeaves"]){
-			$flags["text"][] = "TOO MANY LEAVES: " . $numberOfLeaves . " leaves more than expected " . $flaggingRules["maxSafeLeaves"] . " leaves.";
-                        $flags["raw"]["NumberOfLeavesHigh"] = 1;
-                        $sets[] = "QCNuberOfLeavesHigh = 1";
+                  $key = "QCNuberOfLeavesHigh";
+                  $flags[] = array("text" => "TOO MANY LEAVES: " . $numberOfLeaves . " leaves more than expected " . $flaggingRules["maxSafeLeaves"] . " leaves.", "key" => $key, "ok" => $flagOverrides["QCNumberOfLeavesOK"]);
+                        $sets[] = $key . " = 1";
 		}
 		
 		//flag long leaves
 		$averageLeafLength = $this->getAverageLeafLength();
 		if(!$isConifer && $averageLeafLength > $flaggingRules["maxSafeLeafLength"]){
-			$flags["text"][] = "LONG LEAVES: " . $averageLeafLength . "cm more than expected " . $flaggingRules["maxSafeLeafLength"] . "cm.";
-                        $flags["raw"]["AverageLeafLengthHigh"] = 1;
-                        $sets[] = "QCAverageLeafLengthHigh = 1";
+                  $key = "QCAverageLeafLengthHigh";
+                  $flags[] = array("text" => "LONG LEAVES: " . $averageLeafLength . "cm more than expected " . $flaggingRules["maxSafeLeafLength"] . "cm.", "key" => $key, "ok" => $flagOverrides["QCAverageLeafLengthOK"]);
+                        $sets[] = $key ." = 1";
 		}
 
                 $sql = "UPDATE Survey SET " . join(", ", $sets) . " WHERE ID = " . $this->getID() . ";";
@@ -843,22 +863,37 @@ class Survey
 		return false;
 	}
 	
-	public function setReviewedAndApproved($reviewedAndApproved, $qccomment = ""){
+	public function setReviewedAndApproved($reviewedAndApproved, $isSuperUser, $qccomment, $overrides){
 		if(!$this->deleted){
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$reviewedAndApproved = filter_var($reviewedAndApproved, FILTER_VALIDATE_INT);
+                        
 			if ($reviewedAndApproved ===0 or $reviewedAndApproved>0) { //either update to 0 or update to something >0 , null and "" filtered out
-				if (empty($qccomment)) {
-				  //only update ReviewedAndApproved	 
-				  mysqli_query($dbconn, "UPDATE Survey SET `ReviewedAndApproved`='$reviewedAndApproved' WHERE ID='" . $this->id . "'");	
-				} else {
-				  mysqli_query($dbconn, "UPDATE Survey SET `ReviewedAndApproved`='$reviewedAndApproved', `QCComment`='" . 
-				  mysqli_real_escape_string($dbconn, $qccomment)
-					. "' WHERE ID='" . $this->id . "'");
-				}
-				mysqli_close($dbconn);
-				$this->reviewedAndApproved = $reviewedAndApproved;
-				return true;
+                          $sql = "UPDATE Survey SET ";
+                          if ($isSuperUser) {
+                            $sql .= "`ReviewedAndApproved`";
+                          } else {
+                            $sql .= "`ReviewedAndApprovedSite`";
+                          }
+                          $sql .= "='$reviewedAndApproved'";
+                          if (!empty($qccomment)) {
+                            $sql .= " , `QCComment` = '" . mysqli_real_escape_string($dbconn, $qccomment) . "'";
+                          }
+                          $overFields = array("QCNumberOfLeavesOK", "QCAverageLeafLengthOK", "QCArthropodLengthOK", "QCArthropodQuantityOK");
+                          foreach($overFields as $k => $over) {
+                            $sql .= " , `$over` = ";
+                            if (in_array($over, $overrides)) {
+                              $sql .= "1";
+                            } else {
+                              $sql .= "null";
+                            }
+                          }
+                          $sql .= " WHERE ID='" . $this->id . "'";
+                          //error_log($sql);
+                          mysqli_query($dbconn, $sql);	
+                          mysqli_close($dbconn);
+                          $this->reviewedAndApproved = $reviewedAndApproved;
+                          return true;
 			}
 		}
 		return false;
