@@ -319,7 +319,7 @@ class Survey
                       $sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingData["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingData["maxSafeQuantity"]) . "'))";
                     }
 
-                    $additionalSQL .=  " AND (" . $sql . ")";
+                    $additionalSQL .=  " AND ReviewedAndApproved < 1 AND (" . $sql . ")";
                   }
 		}
                 
@@ -401,56 +401,6 @@ class Survey
 		return array($totalCount, $surveysArray);
 	}
 	
-	public static function findSurveysByFlagged($user, $start, $limit){
-		if(!User::isSuperUser($user)){
-			return array();
-		}
-		
-		$start = $start == "last" ? $start : intval($start);
-		$limit = intval($limit);
-		
-		$dbconn = (new Keychain)->getDatabaseConnection();
-		
-		$flaggingRules = SurveyFlaggingRules();
-		
-		
-		$flaggedSurveyIDs = array();
-		
-		//survey flags
-		$sql = "SELECT `ID` FROM `Survey` WHERE `AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
-		$query = mysqli_query($dbconn, $sql);
-		while($row = mysqli_fetch_assoc($query)){
-			$flaggedSurveyIDs[$row["ID"]] = 1;
-		}
-		
-		//arthropod flags
-                $sql = "(`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["arthropodGroupFlaggingRules"]["sawfly"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["arthropodGroupFlaggingRules"]["sawfly"]["maxSafeQuantity"]) . "'))";
-		foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
-                  if ($arthropodGroup == "sawfly") { continue; }
-                  $sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingData["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingData["maxSafeQuantity"]) . "'))";
-		}
-
-                // Exclude example site and already reviewed surveys
-                
-                $sql = "SELECT DISTINCT A.SurveyFK FROM `ArthropodSighting` A JOIN `Survey` S ON A.SurveyFK = S.ID JOIN `Plant` P ON P.ID = S.PlantFK  WHERE S.ReviewedAndApproved < 1 AND P.SiteFK <> '2' AND (" . $sql . ")";
-
-                
-		$query = mysqli_query($dbconn, $sql);
-		while($row = mysqli_fetch_assoc($query)){
-                  $flaggedSurveyIDs[] = $row["SurveyFK"];
-		}
-		
-		$totalCount = count($flaggedSurveyIDs);
-		
-		if($start === "last"){
-			$start = $totalCount - ($totalCount % intval($limit));
-			if($start == $totalCount && $totalCount > 0){
-				$start = $totalCount - intval($limit);
-			}
-		}
-		
-		return array($totalCount, self::findSurveysByIDs($flaggedSurveyIDs, "LocalDate DESC, LocalTime DESC", $start, $limit));
-	}
 
 //GETTERS
 	public function getID() {
