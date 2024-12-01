@@ -64,7 +64,6 @@
 		}
 
 		$query = mysqli_query($dbconn, "SELECT Survey.LocalDate, SUBSTR(Survey.LocalTime, 1, 5) AS `LocalTime`, Plant.Code AS SurveyLocationCode, Plant.Circle, Plant.Orientation, Survey.PlantSpecies AS PlantSpeciesMarkedByObserver, Plant.Species AS OfficialPlantSpecies, Plant.IsConifer AS PlantIsConiferous, Site.Name AS SiteName, Site.Description AS SiteDescription, Site.Latitude, Site.Longitude, Site.Region, Survey.ObservationMethod, Survey.Notes AS SurveyNotes, Survey.WetLeaves AS WetLeavesOrNeedles, Survey.NumberOfLeaves, Survey.AverageLeafLength, Survey.HerbivoryScore, Survey.AverageNeedleLength, Survey.LinearBranchLength FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK=Site.ID WHERE Survey.ID NOT IN (" . join(", ", $surveyIDsWithSightings) . ") AND Site.ID<>'2' AND Plant.SiteFK LIKE '$siteID' AND YEAR(Survey.LocalDate)>='$yearStart' AND YEAR(Survey.LocalDate)<='$yearEnd'");
-		mysqli_close($dbconn);
 		while ($row = mysqli_fetch_assoc($query)){
 			$rowArray = array();
 			for($i = 0; $i < count($colHeaders); $i++){
@@ -151,7 +150,6 @@
 		$yearStart = intval($_POST["yearStart"]);
 		$yearEnd = intval($_POST["yearEnd"]);
 		$arthropod = mysqli_real_escape_string($dbconn, htmlentities($_POST["arthropod"]));
-		mysqli_close($dbconn);
 		
 		$tableArray = getArrayFromTable($siteID, $yearStart, $yearEnd, $arthropod);
 		usort($tableArray, "customSort");

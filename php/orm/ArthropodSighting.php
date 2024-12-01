@@ -73,7 +73,6 @@ class ArthropodSighting
 		
 		mysqli_query($dbconn, "INSERT INTO ArthropodSighting (`SurveyFK`, `OriginalGroup`, `UpdatedGroup`, `Length`, `Quantity`, `PhotoURL`, `Notes`, `Pupa`, `Hairy`, `Rolled`, `Tented`, `OriginalSawfly`, `UpdatedSawfly`, `OriginalBeetleLarva`, `UpdatedBeetleLarva`) VALUES ('" . $survey->getID() . "', '$originalGroup', '$originalGroup', '$length', '$quantity', '', '$notes', '$pupa', '$hairy', '$rolled', '$tented', '$originalSawfly', '$originalSawfly', '$originalBeetleLarva', '$originalBeetleLarva')");
 		$id = intval(mysqli_insert_id($dbconn));
-		mysqli_close($dbconn);
 		
 		return new ArthropodSighting($id, $survey, $originalGroup, $originalGroup, $length, $quantity, "", $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalSawfly, $originalBeetleLarva, $originalBeetleLarva, "");
 	}
@@ -104,7 +103,6 @@ class ArthropodSighting
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `ArthropodSighting` WHERE `ID`='$id' LIMIT 1");
-		mysqli_close($dbconn);
 		
 		if(mysqli_num_rows($query) == 0){
 			return null;
@@ -143,7 +141,6 @@ class ArthropodSighting
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `ArthropodSighting` WHERE `ID` IN ('" . implode("', '", $arthropodSightingIDs) . "')");
-		mysqli_close($dbconn);
 		
 		//get associated surveys
 		$associatedSurveyFKs = array();
@@ -188,7 +185,6 @@ class ArthropodSighting
 	public static function findArthropodSightingsBySurvey($survey){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `ArthropodSighting` WHERE `SurveyFK`='" . $survey->getID() . "'");
-		mysqli_close($dbconn);
 		
 		$arthropodSightingsArray = array();
 		while($arthropodSightingRow = mysqli_fetch_assoc($query)){
@@ -225,7 +221,6 @@ class ArthropodSighting
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `ArthropodSighting` WHERE `SurveyFK` IN (" . implode(",", $surveyIDs) . ")");
-		mysqli_close($dbconn);
 		
 		$arthropodSightingsArray = array();
 		while($arthropodSightingRow = mysqli_fetch_assoc($query)){
@@ -355,11 +350,9 @@ class ArthropodSighting
 					$needToSendToINaturalist = 0;
 				}
 				mysqli_query($dbconn, "UPDATE ArthropodSighting SET PhotoURL='$photoURL', NeedToSendToINaturalist='$needToSendToINaturalist' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->photoURL = $photoURL;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -415,12 +408,9 @@ class ArthropodSighting
 			
 			if (!($as_result===true)) {
 				$failures = 'SQL failed';
-				mysqli_close($dbconn);
 				return $failures;
 			}
 			
-			mysqli_close($dbconn);
-
 			$this->originalGroup = $originalGroup;
 			$this->length = $length;
 			$this->quantity = $quantity;
@@ -445,7 +435,6 @@ class ArthropodSighting
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			mysqli_query($dbconn, "DELETE FROM `ArthropodSighting` WHERE `ID`='" . $this->id . "'");
 			$this->deleted = true;
-			mysqli_close($dbconn);
 			return true;
 		}
 	}
@@ -456,7 +445,6 @@ class ArthropodSighting
 		{
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			mysqli_query($dbconn, "DELETE FROM `ArthropodSighting` WHERE `ID` IN ('" . implode("', '", $ids) . "')");
-			mysqli_close($dbconn);
 			return true;
 		}
 	}
@@ -464,7 +452,6 @@ class ArthropodSighting
 	public static function permanentDeleteAllLooseEnds(){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `ArthropodSighting`.`ID` FROM `ArthropodSighting` LEFT JOIN `Survey` ON `ArthropodSighting`.`SurveyFK`=`Survey`.`ID` WHERE `Survey`.`ID` IS NULL");
-		mysqli_close($dbconn);
 		$idsToDelete = array();
 		while($row = mysqli_fetch_assoc($query)){
 			$idsToDelete[] = $row["ID"];

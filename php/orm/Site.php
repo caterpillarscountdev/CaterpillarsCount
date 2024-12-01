@@ -85,7 +85,6 @@ class Site
 		
 		mysqli_query($dbconn, "INSERT INTO Site (`UserFKOfCreator`, `Name`, `DateEstablished`, `Description`, `URL`, `Latitude`, `Longitude`, `Region`, `Salt`, `SaltedPasswordHash`, `OpenToPublic`, `Active`) VALUES ('" . $creator->getID() . "', '$name', '" . date("Y-m-d") . "', '$description', '$url', '$latitude', '$longitude', '$region', '$salt', '$saltedPasswordHash', '$openToPublic', '1')");
 		$id = intval(mysqli_insert_id($dbconn));
-		mysqli_close($dbconn);
 		
 		$publicPrivateString = "Private";
 		if($openToPublic){$publicPrivateString = "Public";}
@@ -116,7 +115,6 @@ class Site
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `ID`='$id' LIMIT 1");
-		mysqli_close($dbconn);
 		
 		if(mysqli_num_rows($query) == 0){
 			return null;
@@ -147,7 +145,6 @@ class Site
 			return null;
 		}
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `Site` WHERE `Name`='$name' LIMIT 1");
-		mysqli_close($dbconn);
 		if(mysqli_num_rows($query) == 0){
 			return null;
 		}
@@ -157,7 +154,6 @@ class Site
 	public static function findSitesByCreator($creator){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `UserFKOfCreator`='" . $creator->getID() . "'");
-		mysqli_close($dbconn);
 		
 		$sitesArray = array();
 		while($siteRow = mysqli_fetch_assoc($query)){
@@ -183,7 +179,6 @@ class Site
 	public static function findManagedSitesByManager($manager){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `Site`.`ID` FROM `ManagerRequest` JOIN Site ON `ManagerRequest`.`SiteFK`=`Site`.`ID` WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `Status`='Approved'");
-		mysqli_close($dbconn);
 		
 		$sitesArray = array();
 		if(mysqli_num_rows($query) > 0){
@@ -208,7 +203,6 @@ class Site
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `ID` IN (" . implode(",", $siteIDs) . ")");
-		mysqli_close($dbconn);
 		
 		//get associated users
 		$associatedCreatorFKs = array();
@@ -249,7 +243,6 @@ class Site
 	public static function findAllActivePublicSites(){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `Site` WHERE `OpenToPublic`='1'");
-		mysqli_close($dbconn);
 		
 		$sitesArray = array();
 		while($siteRow = mysqli_fetch_assoc($query)){
@@ -282,7 +275,6 @@ class Site
 			$limitSQL = "";
 		}
 		$query = mysqli_query($dbconn, "SELECT * FROM `Site`" . $limitSQL);
-		mysqli_close($dbconn);
 		
 		$siteCreatorFKs = array();
 		while($siteRow = mysqli_fetch_assoc($query)){
@@ -401,7 +393,6 @@ class Site
 	public function getWantsToReceiveEmails(){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(YEAR(Survey.LocalDate)) AS MostRecentYear FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $this->id . "'");
-		mysqli_close($dbconn);
 		if(mysqli_num_rows($query) > 0 && ((intval(date("Y")) - intval($row["MostRecentYear"])) < 2)){
 			//if the site has surveyed in the past, and it hasnt been more than a year, return active preference
 			return $this->getActive();
@@ -412,7 +403,6 @@ class Site
 	public function getObservationMethodPreset($user){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `ObservationMethod` FROM `SiteUserPreset` WHERE `UserFK`='" . intval($user->getID()) . "' AND `SiteFK`='" . $this->id . "' LIMIT 1");
-		mysqli_close($dbconn);
 		if(mysqli_num_rows($query) == 0){
 			return "";
 		}
@@ -422,7 +412,6 @@ class Site
 	public function getValidationStatus($user){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `SiteUserValidation` WHERE `UserFK`='" . intval($user->getID()) . "' AND `SiteFK`='" . $this->id . "' AND `SaltedSitePasswordHash`='" . $this->saltedPasswordHash . "' LIMIT 1");
-		mysqli_close($dbconn);
 		if(mysqli_num_rows($query) == 0){
 			return false;
 		}
@@ -433,7 +422,6 @@ class Site
 		$year = intval($year);
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT COUNT(Survey.ID) AS Count FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Plant.SiteFK='" . $this->id . "' AND YEAR(Survey.LocalDate)='$year'");
-		mysqli_close($dbconn);
 		return intval(mysqli_fetch_assoc($query)["Count"]);
 	}
 	
@@ -467,14 +455,12 @@ class Site
 					mysqli_query($dbconn, "INSERT INTO ManagerRequest (`UserFKOfManager`, `SiteFK`, `HasCompleteAuthority`, `Status`) VALUES ('" . $lastCreator->getID() . "', '" . $this->id . "', '" . ($demotedPosition == "highManagement") . "', 'Approved')");
 				}
 				
-				mysqli_close($dbconn);
 				
 				$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">" . $lastCreator->getFullName() . " has resigned and promoted you to the position of Owner of the \"" . $this->name . "\" Caterpillars Count! site in " . $this->region . ". Please sign in to your <a href='https://caterpillarscount.unc.edu/manageMySites'>Manage My Sites</a> page using this email address (" . $manager->getEmail() . ") to maintain this site as needed.</div><a href='https://caterpillarscount.unc.edu/manageMySites'><button style=\"border:0px none transparent;background:#fed136; border-radius:5px;padding:20px 40px;font-size:20px;color:#fff;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;font-weight:bold;cursor:pointer;\">MANAGE MY SITES</button></a><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"></div></div>";
 				email($manager->getEmail(), "You are now the owner of " . $this->name . " for Caterpillars Count!", $message);
 				
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -485,11 +471,9 @@ class Site
 			$name = self::validName($dbconn, $name);
 			if($name !== false){
 				mysqli_query($dbconn, "UPDATE Site SET Name='$name' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->name = $name;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -500,11 +484,9 @@ class Site
 			$dateEstablished = self::validDate($dbconn, $dateEstablished);
 			if($dateEstablished !== false){
 				mysqli_query($dbconn, "UPDATE Site SET DateEstablished='$dateEstablished' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->dateEstablished = $dateEstablished;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -515,11 +497,9 @@ class Site
 			$description = self::validDescription($dbconn, $description);
 			if($description !== false){
 				mysqli_query($dbconn, "UPDATE Site SET Description='$description' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->description = $description;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -530,11 +510,9 @@ class Site
 			$url = self::validURL($dbconn, $url);
 			if($url !== false){
 				mysqli_query($dbconn, "UPDATE Site SET URL='$url' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->url = $url;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -544,7 +522,6 @@ class Site
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$openToPublic = filter_var($openToPublic, FILTER_VALIDATE_BOOLEAN);
 			mysqli_query($dbconn, "UPDATE Site SET OpenToPublic='$openToPublic' WHERE ID='" . $this->id . "'");
-			mysqli_close($dbconn);
 			$this->openToPublic = $openToPublic;
 			return true;
 		}
@@ -556,7 +533,6 @@ class Site
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$active = filter_var($active, FILTER_VALIDATE_BOOLEAN);
 			mysqli_query($dbconn, "UPDATE Site SET `Active`='$active' WHERE ID='" . $this->id . "'");
-			mysqli_close($dbconn);
 			$this->active = $active;
 			return true;
 		}
@@ -571,11 +547,9 @@ class Site
 			if($password != false){
 				$saltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $this->salt . $password)));
 				mysqli_query($dbconn, "UPDATE Site SET SaltedPasswordHash='$saltedPasswordHash' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->saltedPasswordHash = $saltedPasswordHash;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -586,11 +560,9 @@ class Site
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `SiteUserPreset` WHERE `UserFK`='" . intval($user->getID()) . "' AND `SiteFK`='" . $this->id . "' LIMIT 1");
 		if(mysqli_num_rows($query) == 1){
 			$query = mysqli_query($dbconn, "UPDATE `SiteUserPreset` SET `ObservationMethod`='" . $observationMethod . "' WHERE `UserFK`='" . intval($user->getID()) . "' AND `SiteFK`='" . $this->id . "'");
-			mysqli_close($dbconn);
 			return true;
 		}
 		mysqli_query($dbconn, "INSERT INTO `SiteUserPreset`(`UserFK`, `SiteFK`, `ObservationMethod`) VALUES ('" . intval($user->getID()) . "', '" . $this->id . "', '" . $observationMethod . "')");
-		mysqli_close($dbconn);
 		return true;
 	}
 	
@@ -615,15 +587,12 @@ class Site
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `SiteUserValidation` WHERE `UserFK`='" . intval($user->getID()) . "' AND `SiteFK`='" . $this->id . "' AND `SaltedSitePasswordHash`='" . $this->saltedPasswordHash . "' LIMIT 1");
 		if(mysqli_num_rows($query) == 1){
-			mysqli_close($dbconn);
 			return true;
 		}
 		else if($this->passwordIsCorrect($password)){
 			mysqli_query($dbconn, "INSERT INTO `SiteUserValidation`(`UserFK`, `SiteFK`, `SaltedSitePasswordHash`) VALUES ('" . intval($user->getID()) . "', '" . $this->id . "', '" . $this->saltedPasswordHash . "')");
-			mysqli_close($dbconn);
 			return true;
 		}
-		mysqli_close($dbconn);
 		
 		if(User::isSuperUser($user)){
 			return true;
@@ -640,7 +609,6 @@ class Site
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			mysqli_query($dbconn, "DELETE FROM `Site` WHERE `ID`='" . $this->id . "'");
 			$this->deleted = true;
-			mysqli_close($dbconn);
 			return true;
 		}
 	}
@@ -790,7 +758,6 @@ class Site
 		$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">Congratulations on creating your new Caterpillars Count! site, \"" . $this->name . "\". Once you have located and identified your survey branches, you can click the \"Edit Survey Plants\" button on the <a href=\"" . $root . "/manageMySites\" style=\"color:#70c6ff;\">Manage My Sites</a> page of the website to enter the tree species names for each survey.<br/><br/>You can then <a href=\"" . $root . "/php/printPlantCodes.php?q=" . $this->id . "\" style=\"color:#70c6ff;\">click here</a> to print the Branch Survey Code tags to hang on each survey branch. (We recommend printing in color, then \"laminating\" by folding each tag in a strip of packing tape, then hanging by twist tie or other means.)<br/><br/>If you have entered the plant species names for each survey using the web link above, they will appear on the tags. Otherwise, the plant species will be listed as \"N/A\".<br/><br/>We encourage you to join the Caterpillars Count! Slack workspace where you can post questions or comments and engage with other Caterpillars Count! sites around the globe. <a href='https://join.slack.com/t/caterpillarscounthq/shared_invite/zt-1umyzuflj-YRLEGcfNB4uqe4fbN6fWZg'>Simply click this link</a> to create an account and join the workspace.</div><a href=\"" . $root . "/manageMySites\"><button style=\"border:0px none transparent;background:#fed136; border-radius:5px;padding:20px 40px;font-size:20px;color:#fff;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;font-weight:bold;cursor:pointer;\">MANAGE MY SITES</button></a><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"><div>Alternatively, use this link and then click \"Edit Survey Plants\" to enter the tree species names for each survey: <a href=\"" . $root . "/manageMySites\" style=\"color:#70c6ff;\">" . $root . "/manageMySites</a></div><div>And then use this link to print the tags for your new site: <a href=\"" . $root . "/php/printPlantCodes.php?q=" . $this->id . "\" style=\"color:#70c6ff;\">" . $root . "/php/printPlantCodes.php?q=" . $this->id . "</a></div></div></div>";
 		email($this->creator->getEmail(), "Your new Caterpillars Count! site", $message);//, $headers);
 		
-		mysqli_close($dbconn);
 		return true;
 	}
 	
@@ -807,7 +774,6 @@ class Site
 			$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">Here's what you need to know to set up your \"" . $this->name . "\" Caterpillars Count! site!<br/><br/>If you haven't done so yet, locate and identify your survey branches first. Then click the \"Edit Survey Plants\" button on the <a href=\"" . $root . "/manageMySites\" style=\"color:#70c6ff;\">Manage My Sites</a> page of the website to enter the tree species names for each survey.<br/><br/>You can then proceed to <a href=\"" . $root . "/php/printPlantCodes.php?q=" . $this->id . "\" style=\"color:#70c6ff;\">click here</a> to print the Branch Survey Code tags to hang on each survey branch. (We recommend printing in color, then \"laminating\" by folding each tag in a strip of packing tape, then hanging by twist tie or other means.)<br/><br/>If you have entered the plant species names for each survey using the web link above, they will appear on the tags. Otherwise, the plant species will be listed as \"N/A\".</div><a href=\"" . $root . "/manageMySites\"><button style=\"border:0px none transparent;background:#fed136; border-radius:5px;padding:20px 40px;font-size:20px;color:#fff;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;font-weight:bold;cursor:pointer;\">MANAGE MY SITES</button></a><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"><div>Alternatively, use this link and then click \"Edit Survey Plants\" to enter the tree species names for each survey: <a href=\"" . $root . "/manageMySites\" style=\"color:#70c6ff;\">" . $root . "/manageMySites</a></div><div>And then use this link to print the tags for your new site: <a href=\"" . $root . "/php/printPlantCodes.php?q=" . $this->id . "\" style=\"color:#70c6ff;\">" . $root . "/php/printPlantCodes.php?q=" . $this->id . "</a></div></div></div>";
 			email($user->getEmail(), "Print tags for your \"" . $this->name . "\" Caterpillars Count! site", $message);//, $headers);
 		
-			mysqli_close($dbconn);
 			return true;
 		}
 		return false;
@@ -818,10 +784,8 @@ class Site
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$testSaltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $this->salt . $password)));
 		if($testSaltedPasswordHash == $this->saltedPasswordHash){
-			mysqli_close($dbconn);
 			return true;
 		}
-		mysqli_close($dbconn);
 		return false;
 	}
 	
