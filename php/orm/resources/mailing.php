@@ -61,7 +61,7 @@
 		$mail->AltBody = strip_tags($body);
 
                 if(getenv('LOCAL_DEV')) {
-                  error_log("Mail to " . $to . " : " . $body);
+                  error_log("Mail to " . $to . " and " . join(", ", $ccs) . ": " . $body);
                   return true;
                 }
 
