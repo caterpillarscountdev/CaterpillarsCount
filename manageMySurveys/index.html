@@ -752,6 +752,7 @@
 				padding:10px;
                                 border-radius: 0 0 5px 5px;
 				margin-bottom: 20px;
+                                display: block;
 			}
                         main .panel .flags:has(+ .flags) {
                             border-radius: 0;
@@ -777,6 +778,10 @@
 				margin:0px 0px 0px 5px;
 				display:inline-block;
 			}
+
+                        main .panel .flags .flagButtons .left  {
+                            float: left;
+                        }
 
 			@media screen and (max-width: 900px) {
 				.iconButton{
@@ -880,10 +885,13 @@
 			});
 			
 			
-			function emailSurveyContributor(fullName, emailParts, surveyid) {
+		        async function emailSurveyContributor(fullName, emailParts, surveyid) {
+                            let response = await fetch("../php/getPrivacySettings.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + encodeURIComponent(window.localStorage.getItem("salt")));
+                            let user = JSON.parse((await response.text()).replace('true|', ''));
+
 			    // send email to user from the site to ask about info
-				var fullName = decodeQuotesAndBackslashes(fullName);
-				for(var i =0; i < emailParts.length; i++){
+			    var fullName = decodeQuotesAndBackslashes(fullName);
+			    for(var i =0; i < emailParts.length; i++){
 					emailParts[i] = decodeQuotesAndBackslashes(emailParts[i]);
 				}
 				var emailaddress = emailParts.join("@");
@@ -899,7 +907,7 @@
 				var surveyPlaceEls = mainData.find('div.siteInfo');
 			    var surveyPlace = "(unknown survey place)";
 				if (surveyPlaceEls.length>0) {
-				  surveyPlace = surveyPlaceEls[0].textContent.replace(/(January|February|March|April|May|June|July|August|September|October|November|December)/," @ $1").replace(/([0-9][0-9]?:[0-9][0-9])/," $1");
+				  surveyPlace = surveyPlaceEls[0].textContent.replace(/(January|February|March|April|May|June|July|August|September|October|November|December)/," @ $1").replace(/([0-9][0-9][0-9][0-9])/,"$1 ");
 				}
 				
 				//alert('place is ' + surveyPlace);
@@ -907,18 +915,20 @@
 				var qcissues = $('#' + surveyid).next().find("ul").clone();
                                 qcissues.find(".ok").remove();
                                 qcissues = qcissues.prop('outerHTML');
-				//alert('have ' + qcissues.length); 
-				
-				
-				var emailBody = 'Hi '  + fullName + ', <br/><br/>' +
-				     'There was a QC issue with some data you submitted.  Could you please <a href="https://caterpillarscount.unc.edu/manageMySurveys/">check the site data</a> for issues below and let us know if this looks correct, ' +
-					 ' or edit the survey if there is some simple fix for the data?<br/><br/>' +
-					 surveyPlace  + '<br/><br/>' +
-					 qcissues  + '<br/><br/>' +
-                     'Thanks!<br/>The Caterpillars Count team' ;
-					 
-				promptConfirm('Send this email to ' +  emailaddress + ' and cc site managers?<hr/><div id="emailBody" contenteditable>' + emailBody + "</div>", "No, cancel", "Send Email!", function(){}, 
-				  function(){
+			    //alert('have ' + qcissues.length); 
+			    
+			    
+			    var emailBody = 'Hi '  + fullName + ', <br/><br/>' +
+				            'The survey listed below was flagged for having one or more unusual values during our automatic quality control checks.<br/></br/>' +
+					    surveyPlace  + '<br/><br/>' +
+					    qcissues  + '<br/><br/>' +
+                                            'Could you please double check this record by visiting the <a href="https://caterpillarscount.unc.edu/manageMySurveys/">Manage My Surveys</a> page, and using the Filter Surveys button to select the branch code and date as indicated above?<br/><br/>' + 
+                            'If you are no longer able to edit the survey yourself, could you please email back with any clarifications, edits, or a confirmation that the value or values are correct?<br/><br/>' +
+                                            'Thanks for helping us ensure a high quality dataset!<br/>' +
+                                            user.firstName + " " + user.lastName + "<br/>";
+			    
+			    promptConfirm('Send this email to ' +  emailaddress + ' and cc site managers?<hr/><div id="emailBody" contenteditable>' + emailBody + "</div>", "No, cancel", "Send Email!", function(){}, 
+				          function(){
                                       let body = document.getElementById("emailBody").innerHTML;
 				    // alert('sending')
 						$.post("../php/emailUserAskSurvey.php", {email: (window.localStorage.getItem("email")), 
@@ -960,7 +970,7 @@
 				}
 				if(getDeviceType() == "desktop"){
 					promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join("@").replace() + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput')[0].select();\"/>", "Never mind.", "Copy to clipboard!", function(){}, function(){
-						$('.promptInput')[0].outerHTML = $('.promptInput')[0].outerHTML;
+					    $('.promptInput')[0].outerHTML = $('.promptInput')[0].outerHTML;
 						$('.promptInput')[0].select();
 						var copied = true;
 						try{
@@ -1481,9 +1491,9 @@
                                                                 }
                                                                 flagsM += "</li>";
                                                             })
-                                                            htmlToAdd += surveys[i]["flags"].length > 0 ? "<div class=\"flags flagsChecks\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul>" + flagsM + "</ul></div>" : "";
+                                                            htmlToAdd += surveys[i]["flags"].length > 0 ? "<div class=\"flags flagsChecks hint--bottom\" data-hint=\"Values in this survey were flagged for review.\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul>" + flagsM + "</ul></div>" : "";
 
-							            htmlToAdd += surveys[i]["canQC"] ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\" value=\"" + (surveys[i]["qcComment"] || "") + "\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Mark as rejected and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; Reject</button><button class='hint--bottom' data-hint=\"Mark as reviwed and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Reviewed</button><button class='hint--bottom' data-hint=\"Save comments and checks for later\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",0,this);\">&darr; Save</button></div></div>") : "";
+							            htmlToAdd += surveys[i]["canQC"] ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\" value=\"" + (surveys[i]["qcComment"] || "") + "\"></input></div><div class=\"flagButtons\"><div class=\"left\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button></div><button class='hint--bottom' data-hint=\"Mark as rejected and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; Reject</button><button class='hint--bottom' data-hint=\"Mark as accepted and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Accept</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
@@ -2063,7 +2073,7 @@
 				verbToUser = "save comments on";
 			    } 
 			    if (approvedLevel == 1) {
-				verbToUser = "approve";
+				verbToUser = "accept";
 			    } 
 			    if (approvedLevel == 2) {
 				verbToUser = "say you're not sure";
@@ -2990,7 +3000,13 @@
 						    <div class="option" onclick="selectOption(this);">
                                                       <div class="shown">
                                                         
-                                                        <div class="value">reviewed</div><div class="text">Reviewed</div>
+                                                        <div class="value">accepted</div><div class="text">Accepted</div>
+                                                      </div>
+                                                    </div>
+						    <div class="option" onclick="selectOption(this);">
+                                                      <div class="shown">
+                                                        
+                                                        <div class="value">rejected</div><div class="text">Rejected</div>
                                                       </div>
                                                     </div>
 						  </div>
