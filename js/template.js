@@ -188,12 +188,14 @@
 						if (this.readyState == 4 && this.status == 200) {
 							showingLoggedInNav = false;
 							if(this.responseText == "true"){
+                                                          $("nav>")
 								$("nav>ul>li:last-of-type").eq(0)[0].onclick = function(){
 									accessSubMenu($("nav>ul>li:last-of-type").eq(0)[0]);
 								}
 								$("nav>ul>li:last-of-type").eq(0).find("span").eq(0)[0].innerHTML = "My Account";
 							}
-							$("nav").eq(0)[0].className = "";
+							$("nav").eq(0)[0].className = "loggedIn";
+                                                  
 						}
 					};
 					if($("h1").eq(0)[0].innerHTML == "Caterpillars Count!"){
@@ -455,7 +457,7 @@
 					}
 				}
 				else{
-					$("nav span").stop().fadeOut(200);
+					$("nav li>span").stop().fadeOut(200);
 					
 					var mainMenuElements = $("nav>ul>li");
 					for(var i = 0; i < mainMenuElements.length; i++){
@@ -592,3 +594,24 @@
 					});
 				}
 			}
+
+function hasOfflineSurveys() {
+  window.localStorage.setItem("pendingSurveys", JSON.stringify([1,2]));
+  let pendingSurveys = window.localStorage.getItem("pendingSurveys");
+  return pendingSurveys && JSON.parse(pendingSurveys).length;
+}
+
+function showNotifyOffline() {
+  let count = hasOfflineSurveys();
+  if (!count) { return };
+  document.querySelectorAll(".notifyOffline").forEach((el) => {
+    let t = document.createElement('span');
+    t.title = "Offline observations";
+    t.textContent = count;
+    el.append(t);
+  })
+}
+
+$(document).ready(function() {
+  showNotifyOffline()
+})
