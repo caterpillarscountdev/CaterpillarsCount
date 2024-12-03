@@ -41,14 +41,12 @@ class ManagerRequest
 			$id = intval(mysqli_insert_id($dbconn));
 			$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">" . $site->getCreator()->getFullName() . " would like you to be a manager of the \"" . $site->getName() . "\" site in " . $site->getRegion() . ". Please sign in to <a href='https://caterpillarscount.unc.edu/signIn'>caterpillarscount.unc.edu</a> using this email address (" . $manager->getEmail() . ") to approve or deny this request. If you are not prompted to approve this requst when you log in, this request has expired.</div><a href='https://caterpillarscount.unc.edu/signIn'><button style=\"border:0px none transparent;background:#fed136; border-radius:5px;padding:20px 40px;font-size:20px;color:#fff;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;font-weight:bold;cursor:pointer;\">SIGN IN NOW</button></a><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"></div></div>";
 			email($manager->getEmail(), "New Caterpillars Count! site manager request!", $message);
-			mysqli_close($dbconn);
 			return new ManagerRequest($id, $manager, $site, false, "Pending");
 		}
 		else if($existingManagerRequest->getStatus() == "Denied"){
 			mysqli_query($dbconn, "UPDATE ManagerRequest SET `Status`='Pending' WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `SiteFK`='" . $site->getID() . "'");
 			$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">" . $site->getCreator()->getFullName() . " would like you to reconsider being a manager of the \"" . $site->getName() . "\" site in " . $site->getRegion() . ". Please sign in to <a href='https://caterpillarscount.unc.edu/signIn'>caterpillarscount.unc.edu</a> using this email address (" . $manager->getEmail() . ") to approve or deny this request. If you are not prompted to approve this requst when you log in, this request has expired.</div><a href='https://caterpillarscount.unc.edu/signIn'><button style=\"border:0px none transparent;background:#fed136; border-radius:5px;padding:20px 40px;font-size:20px;color:#fff;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;font-weight:bold;cursor:pointer;\">SIGN IN NOW</button></a><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"></div></div>";
 			email($manager->getEmail(), "New Caterpillars Count! site manager request!", $message);
-			mysqli_close($dbconn);
 			return $existingManagerRequest;
 		}
 	}
@@ -67,8 +65,6 @@ class ManagerRequest
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `ManagerRequest` WHERE `ID`='$id' LIMIT 1");
-		mysqli_close($dbconn);
-		
 		if(mysqli_num_rows($query) == 0){
 			return null;
 		}
@@ -87,7 +83,6 @@ class ManagerRequest
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		// this was not doing anything before, so commenting out. MLee 7/20/2023: $id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `ManagerRequest` WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `SiteFK`='" . $site->getID() . "' LIMIT 1");
-		mysqli_close($dbconn);
 		
 		if(mysqli_num_rows($query) == 0){
 			return null;
@@ -105,7 +100,6 @@ class ManagerRequest
   	public static function findManagerRequestsBySite($site){
     		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `ManagerRequest` WHERE `SiteFK`='" . $site->getID() . "'");
-		mysqli_close($dbconn);
 		
 		$managerRequestsArray = array();
 		while($managerRequestRow = mysqli_fetch_assoc($query)){
@@ -124,7 +118,6 @@ class ManagerRequest
   	public static function findPendingManagerRequestsByManager($manager){
     		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `ManagerRequest` WHERE `UserFKOfManager`='" . $manager->getID() . "' AND `Status`='Pending'");
-		mysqli_close($dbconn);
 		
 		$managerRequestsArray = array();
 		while($managerRequestRow = mysqli_fetch_assoc($query)){
@@ -178,11 +171,9 @@ class ManagerRequest
 			$hasCompleteAuthority = filter_var($hasCompleteAuthority, FILTER_VALIDATE_BOOLEAN);
 			if($status !== false){
 				mysqli_query($dbconn, "UPDATE ManagerRequest SET HasCompleteAuthority='$hasCompleteAuthority' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->hasCompleteAuthority = $hasCompleteAuthority;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -193,11 +184,9 @@ class ManagerRequest
 			$status = self::validStatus($dbconn, $status);
 			if($status !== false){
 				mysqli_query($dbconn, "UPDATE ManagerRequest SET Status='$status' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->status = $status;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -219,7 +208,6 @@ class ManagerRequest
 			
 			mysqli_query($dbconn, "DELETE FROM `ManagerRequest` WHERE `ID`='" . $this->id . "'");
 			$this->deleted = true;
-			mysqli_close($dbconn);
 			return true;
 		}
   	}
@@ -235,7 +223,6 @@ class ManagerRequest
 		if(count($idsToDelete) > 0){
 			mysqli_query($dbconn, "DELETE FROM `ManagerRequest` WHERE `ID` IN ('" . implode("', '", $idsToDelete) . "')");
 		}
-		mysqli_close($dbconn);
 	}
 	
 	//validity ensurance

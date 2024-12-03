@@ -108,7 +108,6 @@ class Survey
 		}
 		mysqli_query($dbconn, "INSERT INTO Survey (`SubmissionTimestamp`, `UserFKOfObserver`, `PlantFK`, `LocalDate`, `LocalTime`, `ObservationMethod`, `Notes`, `WetLeaves`, `PlantSpecies`, `NumberOfLeaves`, `AverageLeafLength`, `HerbivoryScore`, `AverageNeedleLength`, `LinearBranchLength`, `SubmittedThroughApp`, `NeedToSendToSciStarter`, `ReviewedAndApproved`) VALUES ('" . $submissionTimestamp . "', '" . $observer->getID() . "', '" . $plant->getID() . "', '$localDate', '$localTime', '$observationMethod', '$notes', '$wetLeaves', '$plantSpecies', '$numberOfLeaves', '$averageLeafLength', '$herbivoryScore', '$averageNeedleLength', '$linearBranchLength', '$submittedThroughApp', '$needToSendToSciStarter', '$reviewedAndApproved')");
 		$id = intval(mysqli_insert_id($dbconn));
-		mysqli_close($dbconn);
 		
 		if($plant->getSite()->getDateEstablished() == "0000-00-00"){
 			$plant->getSite()->setDateEstablished($localDate);
@@ -145,7 +144,6 @@ class Survey
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$id = intval($id);
 		$query = mysqli_query($dbconn, "SELECT * FROM `Survey` WHERE `ID`='$id' LIMIT 1");
-		mysqli_close($dbconn);
 		
 		if(mysqli_num_rows($query) == 0){
 			return null;
@@ -200,7 +198,6 @@ class Survey
 		}
 		
 		$query = mysqli_query($dbconn, "SELECT * FROM `Survey` WHERE `ID` IN ('" . implode("', '", $surveyIDs) . "') " . (in_array($orderBy, $acceptableOrderBys) ? "ORDER BY " . $orderBy . " " : "") . $limitSQL);
-		mysqli_close($dbconn);
 		
 		//get associated plants
 		$associatedPlantFKs = array();
@@ -607,11 +604,9 @@ class Survey
 			$plant = self::validPlant($dbconn, $plant);
 			if($plant !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET PlantFK='" . $plant->getID() . "' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->plant = $plant;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -622,11 +617,9 @@ class Survey
 			$localDate = self::validLocalDate($dbconn, $localDate);
 			if($localDate !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET LocalDate='$localDate' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->localDate = $localDate;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -637,11 +630,9 @@ class Survey
 			$localTime = self::validLocalTime($dbconn, $localTime);
 			if($localTime !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET LocalTime='$localTime' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->localTime = $localTime;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -652,11 +643,9 @@ class Survey
 			$observationMethod = self::validObservationMethod($dbconn, $observationMethod);
 			if($observationMethod !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET ObservationMethod='$observationMethod' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->observationMethod = $observationMethod;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -667,11 +656,9 @@ class Survey
 			$notes = self::validNotes($dbconn, $notes);
 			if($notes !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET Notes='$notes' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->notes = $notes;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -681,7 +668,6 @@ class Survey
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$wetLeaves = filter_var($wetLeaves, FILTER_VALIDATE_BOOLEAN);
 			mysqli_query($dbconn, "UPDATE Survey SET WetLeaves='$wetLeaves' WHERE ID='" . $this->id . "'");
-			mysqli_close($dbconn);
 			$this->wetLeaves = $wetLeaves;
 			return true;
 		}
@@ -694,11 +680,9 @@ class Survey
 			$plantSpecies = self::validPlantSpecies($dbconn, $plantSpecies);
 			if($plantSpecies !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET PlantSpecies='$plantSpecies' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->plantSpecies = $plantSpecies;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -709,11 +693,9 @@ class Survey
 			$numberOfLeaves = self::validNumberOfLeaves($dbconn, $numberOfLeaves);
 			if($numberOfLeaves !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET NumberOfLeaves='$numberOfLeaves' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->numberOfLeaves = $numberOfLeaves;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -724,11 +706,9 @@ class Survey
 			$averageLeafLength = self::validAverageLeafLength($dbconn, $averageLeafLength);
 			if($averageLeafLength !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET AverageLeafLength='$averageLeafLength' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->averageLeafLength = $averageLeafLength;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -739,11 +719,9 @@ class Survey
 			$herbivoryScore = self::validHerbivoryScore($dbconn, $herbivoryScore);
 			if($herbivoryScore !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET HerbivoryScore='$herbivoryScore' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->herbivoryScore = $herbivoryScore;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -754,11 +732,9 @@ class Survey
 			$averageNeedleLength = self::validAverageNeedleLength($dbconn, $averageNeedleLength);
 			if($averageNeedleLength !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET AverageNeedleLength='$averageNeedleLength' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->averageNeedleLength = $averageNeedleLength;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -769,11 +745,9 @@ class Survey
 			$linearBranchLength = self::validLinearBranchLength($dbconn, $linearBranchLength);
 			if($linearBranchLength !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET LinearBranchLength='$linearBranchLength' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->linearBranchLength = $linearBranchLength;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -785,7 +759,6 @@ class Survey
 			$linearBranchLength = self::validLinearBranchLength($dbconn, $linearBranchLength);
 			if($averageNeedleLength !== false && $linearBranchLength !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET NumberOfLeaves='-1', AverageLeafLength='-1', HerbivoryScore='-1', AverageNeedleLength='$averageNeedleLength', LinearBranchLength='$linearBranchLength' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->numberOfLeaves = -1;
 				$this->averageLeafLength = -1;
 				$this->herbivoryScore = -1;
@@ -793,7 +766,6 @@ class Survey
 				$this->linearBranchLength = $linearBranchLength;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -806,7 +778,6 @@ class Survey
 			$herbivoryScore = self::validHerbivoryScore($dbconn, $herbivoryScore);
 			if($numberOfLeaves !== false && $averageLeafLength !== false && $herbivoryScore !== false){
 				mysqli_query($dbconn, "UPDATE Survey SET NumberOfLeaves='$numberOfLeaves', AverageLeafLength='$averageLeafLength', HerbivoryScore='$herbivoryScore', AverageNeedleLength='-1', LinearBranchLength='-1' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->numberOfLeaves = $numberOfLeaves;
 				$this->averageLeafLength = $averageLeafLength;
 				$this->herbivoryScore = $herbivoryScore;
@@ -814,7 +785,6 @@ class Survey
 				$this->linearBranchLength = -1;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -847,7 +817,6 @@ class Survey
                           $sql .= " WHERE ID='" . $this->id . "'";
                           //error_log($sql);
                           mysqli_query($dbconn, $sql);	
-                          mysqli_close($dbconn);
                           $this->reviewedAndApproved = $reviewedAndApproved;
                           return true;
 			}
@@ -868,7 +837,6 @@ class Survey
 			}
 			mysqli_query($dbconn, "DELETE FROM `Survey` WHERE `ID`='" . $this->id . "'");
 			$this->deleted = true;
-			mysqli_close($dbconn);
 			return true;
 		}
 	}
@@ -880,7 +848,6 @@ class Survey
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			mysqli_query($dbconn, "DELETE FROM `Survey` WHERE `ID` IN ('" . implode("', '", $ids) . "')");
 			mysqli_query($dbconn, "DELETE FROM `ArthropodSighting` WHERE `SurveyFK` IN ('" . implode("', '", $ids) . "')");
-			mysqli_close($dbconn);
 			return true;
 		}
 	}
@@ -888,7 +855,6 @@ class Survey
 	public static function permanentDeleteAllLooseEnds(){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `Survey`.`ID` FROM `Survey` LEFT JOIN `Plant` ON `Survey`.`PlantFK`=`Plant`.`ID` WHERE `Plant`.`ID` IS NULL");
-		mysqli_close($dbconn);
 		$idsToDelete = array();
 		while($row = mysqli_fetch_assoc($query)){
 			$idsToDelete[] = $row["ID"];

@@ -10,6 +10,8 @@
 		</script>
 		<!-- End of Google Analytics -->
 
+                <link rel="manifest" href="/manifest.json" />
+
 		<title>Edit Survey Plants | Caterpillars Count!</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
@@ -405,7 +407,7 @@
 			}
                         siteID = encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3));
                         siteLocation = {lat: 0, lng: 0};
-			function loadCircles(){
+		        function loadCircles(){
 			    var xhttp = new XMLHttpRequest();
 			    xhttp.onreadystatechange = function() {
 			        if (this.readyState == 4 && this.status == 200) {

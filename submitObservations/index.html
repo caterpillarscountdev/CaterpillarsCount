@@ -3,12 +3,15 @@
 		<!-- Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
 		<script>
-  			window.dataLayer = window.dataLayer || [];
-  			function gtag(){dataLayer.push(arguments);}
-  			gtag('js', new Date());
-			gtag('config', 'UA-113319025-1');
+  		 window.dataLayer = window.dataLayer || [];
+  		 function gtag(){dataLayer.push(arguments);}
+  		 gtag('js', new Date());
+		 gtag('config', 'UA-113319025-1');
 		</script>
 		<!-- End of Google Analytics -->
+
+                <link rel="manifest" href="/manifest.json" />
+		<script src="/cache.js"></script>
 
 		<title>Submit Observations | Caterpillars Count!</title>
 		<meta charset="utf-8" />
@@ -125,6 +128,20 @@
 				setTimeout(function(){
 					clearInterval(stopAutocompleteInterval);
 				}, 2000);
+
+
+                            let count = hasOfflineSurveys();
+                            if (count) {
+                                let el = document.createElement('span');
+                                el.classList.add('panelIcon');
+                                el.title = "Offline observations waiting to upload.";
+                                el.onclick = (event) => {
+                                    event.stopPropagation();
+                                    queueNotice('alert', 'Offline observations waiting to upload.');
+                                };
+                                el.textContent = count;
+                                document.querySelector('#iconBar').prepend(el);
+                            }
 			});
 
 			$(window).resize(function(){
@@ -192,12 +209,12 @@
 			<nav class="loadingNav">
 			        <ul>
 					<li onclick="accessSubMenu(this);">
-						<span>Participate</span>
+					  <span>Participate</span>
 						<ul onclick="event.stopPropagation();">
 							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
 							<li><a href="../getStarted">Get Started</a></li>
 							<li><a href="../conductASurvey">Conduct a Survey</a></li>
-							<li><a href="../submitObservations">Submit Observations</a></li>
+							<li><a href="../submitObservations" class="notifyOffline">Submit Observations</a></li>
 							<li><a href="../hostASurveySite">Host a Survey Site</a></li>
 							<li><a href="../resources">Resources</a></li>
 						</ul>
