@@ -1,0 +1,712 @@
+<html>
+	<head>
+		<!-- Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+			gtag('config', 'UA-113319025-1');
+		</script>
+		<!-- End of Google Analytics -->
+
+		<title>User Stats | Caterpillars Count!</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../images/favicon/apple-touch-icon-114x114.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../images/favicon/apple-touch-icon-72x72.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../images/favicon/apple-touch-icon-144x144.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="60x60" href="../images/favicon/apple-touch-icon-60x60.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="120x120" href="../images/favicon/apple-touch-icon-120x120.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="76x76" href="../images/favicon/apple-touch-icon-76x76.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="152x152" href="../images/favicon/apple-touch-icon-152x152.png" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-196x196.png" sizes="196x196" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-32x32.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-16x16.png" sizes="16x16" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-128.png" sizes="128x128" />
+		<meta name="msapplication-TileColor" content="transparent" />
+		<meta name="msapplication-TileImage" content="../images/favicon/mstile-144x144.png" />
+		<meta name="msapplication-square70x70logo" content="../images/favicon/mstile-70x70.png" />
+		<meta name="msapplication-square150x150logo" content="../images/favicon/mstile-150x150.png" />
+		<meta name="msapplication-wide310x150logo" content="../images/favicon/mstile-310x150.png" />
+		<meta name="msapplication-square310x310logo" content="../images/favicon/mstile-310x310.png" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<link href="../css/template.css" rel="stylesheet">
+		<script src="../js/template.js?v=3"></script>
+		<link href="../css/checkbox.css?v=1" rel="stylesheet">
+		<script src="../js/checkbox.js?v=1"></script>
+		<style>
+		 .loading{
+		     background:rgba(0,0,0,0.1);
+		     padding:20px;
+		     text-align:center;
+		     border-radius:5px;
+		 }
+		 .loading>img{
+		     height:30px;
+		 }
+
+                 .content p.note {
+                     margin-bottom: 1.5em;
+                     text-align: left;
+                 }
+
+                 h3 img {
+                     padding-left: 10px;
+                     height: 20px;
+                     opacity: .2;                     
+                 }
+
+                 #quizNotice {
+                     padding-left: 10px;
+                     font-size: 12px;
+                     font-weight: normal;
+                     display: none;
+                     text-transform: none;
+                 }
+
+		 .content table{
+		     width:100%;
+		     border-collapse:collapse;
+		     font-family: 'Roboto Slab', serif;
+		     color:#666;
+		 }
+		 .roundedTop{
+		     border-radius:4px;
+		     overflow:hidden;
+		 }
+		 .content table thead{
+		     background:#666;
+		     color:#fff;
+		 }
+		 .content table th{
+                     padding: 5px 7px;
+		 }
+
+                 .content table td:nth-of-type(1), #sightingStats td:nth-of-type(2) {
+                     text-align: left;
+                 }
+
+		 .content table tr:nth-of-type(even){
+		     background:rgba(0,0,0,0.025);
+		 }
+
+                 .content table .alt {
+                     background: #555;
+                 }
+                 .content td{
+                     padding: 0.3em;
+                 }
+		 .content td{
+		     text-align:center;
+		     background:rgba(0,0,0,0.025);
+		 }
+
+                 .spanner {
+                     text-align: center;
+                     text-transform: uppercase;                     
+                 }
+
+                 .group {
+                     position: relative;
+                     padding: 1em;
+                 }
+                 
+                 .group .image{
+		     width:34px;
+                     height: 34px;
+		     background-size:contain;
+		     background-repeat:no-repeat;
+		     background-position:center;
+		     display:inline-block;
+		     opacity:.4;
+		     right:0px;
+		     top:0px;
+		     bottom:10px;
+		 }
+		 
+		 .text{
+		     display:inline-block;
+		 }
+
+                 .tooltip {
+                     text-decoration: underline;
+                     position:relative;
+                 }
+                 
+		 .bottomToolTip{
+		     display:none;
+		     position:absolute;
+		     top:100%;
+		     margin-top:10px;
+		     right:0px;
+		     width:180px;
+		     font-size:13px;
+		     padding:9px;
+		     border-radius:4px;
+		     background:#444;
+		     color:#fff;
+		     box-sizing:border-box;
+		     z-index:1;
+		     text-align:left;
+                     left: 0px;
+                     margin-left: 0px;
+		 }
+		 .bottomToolTip .arrow{
+		     position:relative;
+		     right:-30%;
+		     margin:-15px 0px 0px 0px;
+		     border:5px solid transparent;
+		     border-top:0px none transparent;
+		     border-bottom:7px solid #444;
+		     width:0px;
+		 }
+
+		 #switch {
+		     color:#666;
+		     background:#eee;
+		     display:none;;
+		     border-radius:5px;
+		     border-bottom:1px solid rgba(0,0,0,0.2);
+		     white-space:nowrap;
+		     margin-bottom:20px;
+		 }
+                 #switch.active {
+                     display:inline-block;
+                 }
+                 
+		 #switch button{
+		     color:inherit;
+		     cursor:pointer;
+		     outline:none;
+		     margin:0px;
+		     border:0px none transparent;
+		     border-radius:0px;
+		     padding:7px 15px;
+		     font-size:14px;
+		     background:transparent;
+		     display:inline-block;
+		     text-align:center;
+		     min-width:70px;
+		 }
+		 #switch button:last-of-type{
+		     margin-left:-4px;
+		 }
+		 #switch .active {
+		     background:rgba(0,0,0,.1);
+		     -webkit-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+		     -moz-box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+		     box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
+		 }
+
+
+		 .siteSelect{
+		     position:relative;
+		     display:inline-block;
+		     text-decoration:inherit;
+                     font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;		 }
+		 .siteSelect .selected{
+		     border-radius:4px;
+		     text-decoration:inherit;
+		     cursor:pointer;
+		     background:rgba(0,0,0,0.1);
+		     padding:0px 2px;
+		 }
+		 .siteSelect .options{
+		     position:absolute;
+		     top:1em;
+		     left:0px;
+		     background:#fff;
+		     min-width:100%;
+		     border-radius:5px;
+		     overflow:hidden;
+		     border:1px solid #ddd;
+		     border-bottom:2px solid #ddd;
+		     font-size:12px;
+		     display:none;
+		     z-index:1;
+		 }
+		 .siteSelect .options>div{
+		     padding:5px;
+		     cursor:pointer;
+                     text-align:left;
+		 }
+		 .siteSelect .options>div:hover{
+		     background:#ebfeff;
+		 }                 
+                 
+		</style>
+		<script>
+		 requireLogIn();
+
+                 function queryParam(key) {
+                     let u = new URL(window.location);
+                     return u.searchParams.get(key);
+                 }
+
+                 let siteID = queryParam('s');
+                 let sites = null;
+
+                 window.addEventListener("popstate", (ev) => {
+                     console.log("popstate", ev.state)
+                     //loadUserStats();
+                 })
+                 
+                 
+		 $(document).click(function(){
+		     $(".siteSelect .options").fadeOut(0);
+		 });
+
+		 $(document).ready(function(){
+		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
+                     loadUserStats();
+                     sortableInit(document.querySelector('#quizStats'));
+                     sortableInit(document.querySelector('#gameStats'));
+                     sortableInit(document.querySelector('#surveyStats'));
+                     sortableInit(document.querySelector('#sightingStats'));
+                     
+                     
+                 });
+
+                 async function loadUserSites() {
+                     let response = await fetch("../php/getOwnedSitesLIGHT.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"));
+                     var data = JSON.parse((await response.text()).replace("true|", ""));
+
+                     if (data.length > 0) {
+                         document.querySelector('#switch').classList.add('active');
+                         sites = data;
+                         showSiteSelect(data);
+                     }
+                 }
+
+                 async function loadUserStats() {
+                     if (!sites) {
+                         await loadUserSites();
+                     }
+
+                     let userID = queryParam('u');
+
+                     if (siteID && !userID) {
+                         let label;
+                         let site = sites.filter((x) => {return x.id == siteID});
+                         if (site.length == 1) {
+                           label = "Site: " + site[0].name;   
+                         }
+                         switchButtonStates('Site', 'User', label);
+                     } else {
+                         switchButtonStates('User', 'Site');
+                     }
+                     
+                     let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID));
+                     var data = JSON.parse((await response.text()).replace("true|", ""));
+
+                     document.querySelector("#gameStats tbody").innerHTML="";
+                     document.querySelector("#quizStats tbody").innerHTML="";
+                     document.querySelector("#surveyStats tbody").innerHTML="";
+                     document.querySelector("#sightingStats tbody").innerHTML="";
+                     
+                     for (let row of data.Users) {
+                         showQuiz(row);
+                         showGame(row);
+                         showSurveys(row);
+
+                         if (Object.values(row.ArthropodGroups).length > 0) {
+                             document.querySelector("#groups").style.display = "block";
+                             showGroups(row.ArthropodGroups, row)
+                         } else {
+                             document.querySelector("#groups").style.display = "none";
+                         }
+                     }
+
+                     $(".loading").each((i,e) => e.style.display = "none");
+                     
+                 }
+
+                 let arthropodGroups = [
+                     {label: 'ant', name: "Ants", icon: "../images/selectIcons/orders/ant.png", taxon: "Ants"},
+                     {label: 'aphid', name: "Aphids and Psyllids", icon: "../images/selectIcons/orders/aphid.png", taxon: "Sternorrhyncha"},
+                     {label: 'bee', name: "Bees, Wasps, and Adult Sawflies", icon: "../images/selectIcons/orders/bee.png", taxon: "Hymenoptera"},
+                     {label: 'sawfly', name: "Sawfly Larvae", icon: "data:null", taxon: "Tenthredinoidea&term_id=1&term_value_id=6"},
+                     {label: 'beetle', name: "Beetles", icon: "../images/selectIcons/orders/beetle.png", taxon: "Beetles"},
+                     {label: 'caterpillar', name: "Caterpillars", icon: "../images/selectIcons/orders/caterpillar.png", taxon: "Lepidoptera&term_id=1&term_value_id=6"},
+                     {label: 'daddylonglegs', name: "Daddy longlegs", icon: "../images/selectIcons/orders/daddylonglegs.png", taxon: "Daddy longlegs"},
+                     {label: 'fly', name: "Flies", icon: "../images/selectIcons/orders/fly.png", taxon: "Flies"},
+                     {label: 'grasshopper', name: "Grasshoppers, Crickets", icon: "../images/selectIcons/orders/grasshopper.png", taxon: "Orthoptera"},
+                     {label: 'leafhopper', name: "Leaf Hoppers and Cicadas", icon: "../images/selectIcons/orders/leafhopper.png", taxon: "Auchenorrhyncha"},
+                     {label: 'moths', name: "Moths, Butterflies", icon: "../images/selectIcons/orders/moths.png", taxon: "Lepidoptera&term_id=1&term_value_id=2"},
+                     {label: 'spider', name: "Spiders", icon: "../images/selectIcons/orders/spider.png", taxon: "Spiders"},
+                     {label: 'truebugs', name: "True Bugs", icon: "../images/selectIcons/orders/truebugs.png", taxon: "True Bugs"},
+                     {label: 'other', name: "Other", icon: "../images/selectIcons/orders/other.png", hideAccuracy: true},
+                     {label: 'unidentified', name: "Unidentified", icon: "../images/selectIcons/orders/unidentified.png", hideAccuracy: true},
+                 ];
+
+                 function showQuiz(row) {
+                     let tr = document.createElement("tr");
+                     for (let k of Object.keys(row).filter(x => x.startsWith('Quiz'))) {
+                         row[k] = parseInt(row[k]);
+                     }
+                     tr.innerHTML = `<td data-sort="${row.LastName}">${row.Name}</td><td>${row.QuizCount}</td><td>${row.QuizMean}%</td><td>${row.QuizHigh}%</td>`;
+                     document.querySelector("#quizStats tbody").appendChild(tr);
+                 }
+
+                 function showGame(row) {
+                     let tr = document.createElement("tr");
+
+                     for (let k of Object.keys(row).filter(x => x.startsWith('Game'))) {
+                         row[k] = parseInt(row[k]);
+                     }
+                     let content = `<td data-sort="${row.LastName}">${row.Name}</td><td>${row.GameCount}</td><td>${row.GameScoreHigh} (${row.GameScoreMean})</td>`;
+                     if (row.GameFoundHigh == -1 && row.GameIdentificationHigh == -1) {
+                         content += `<td>-</td><td>-</td><td>-</td>`                         
+                     } else {
+                         content += `<td>${row.GameFoundHigh}% (${row.GameFoundMean}%)</td><td>${row.GameIdentificationHigh}% (${row.GameIdentificationMean}%)</td><td>${row.GameLengthHigh}% (${row.GameLengthMean}%)</td>`;
+                     }
+                     tr.innerHTML = content;
+                     document.querySelector("#gameStats tbody").appendChild(tr);
+                 }
+
+                 function showSurveys(row) {
+                     let tr = document.createElement("tr");
+                     let name = row.Name;
+                     if (siteID) {
+                         name = `<a href="?u=${row.ID}&s=${siteID}">${row.Name}</a>`;
+                     }
+                     tr.innerHTML = `<td data-sort="${row.LastName}">${name}</td><td>${row.SurveysWeek}</td><td>${row.SurveysMonth}</td><td>${row.SurveysYear}</td><td>${row.SurveysTotal}</td><td>${row.SurveysCaterpillars}%</td><td>${row.SurveysAccuracy}</td>`;
+                     document.querySelector("#surveyStats tbody").appendChild(tr);
+                     
+                 }
+
+                 function showGroups(groups, row) {
+                     for (let arth of arthropodGroups) {
+                         let group = groups[arth.label];
+                         let groupHTML = `<td class="group"><div class="image" style="background-image:url('${arth.icon}');"></div></td><td><div class="text">${arth.name}</div></td>`;
+                         let tr = document.createElement("tr");
+                         if (group) {
+                             tr.innerHTML = `${groupHTML}<td>${group.Surveys}</td><td><a target="_blank" href="https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=${row.iNatObserverID}&taxon_name=${arth.taxon}">${group.WithPhotos}</a></td><td>${group.WithIDs} (${arth.hideAccuracy ? "-" : group.WithMatches})</td><td>${arth.hideAccuracy ? "N/A" : group.Accuracy}</td>`;
+                         } else {
+                             tr.innerHTML = `${groupHTML}<td></td><td></td><td></td><td></td>`;
+                         }
+                         
+                         document.querySelector("#sightingStats tbody").appendChild(tr);
+                     }                     
+                 }
+
+		 function switchStatsTo(viewType, otherType, label){
+                     if (viewType == 'User') {
+                         window.history.pushState({}, "", `${window.location.pathname}`);
+                         siteID = null;
+                     } else {
+                         window.history.pushState({}, "", `${window.location.pathname}?s=${siteID}`);
+                     }
+                     loadUserStats();
+                 }
+
+                 function switchButtonStates(viewType, otherType, label) {
+                     let id = `#${viewType.toLowerCase()}SwitchButton`;
+                     let other = `#${otherType.toLowerCase()}SwitchButton`;
+		     $(id)[0].className = "active";
+		     $(other)[0].className = "";
+		     $(id)[0].innerHTML = ". . .";
+                     $(other)[0].innerHTML = otherType;
+		     setTimeout(function(){
+			 $(id)[0].innerHTML = label || viewType;
+		     }, 1);
+		 }
+
+
+                 function showSiteSelect(sites) {
+                     let parent = document.querySelector(".siteSelect .options");
+
+                     sites = sites.filter((x) => x.active).sort((a,b) => a.name.localeCompare(b.name));
+
+                     for (let site of sites) {
+                         let div = document.createElement('div');
+                         div.innerHTML = site.name;
+                         div.addEventListener('click', () => siteSelectOption(site));
+                         div.dataset.siteid = site.id;
+                         parent.appendChild(div);
+                     }
+                 }
+                 
+		 function showSiteSelectOptions(selectedOption){
+		     setTimeout(function(){
+			 $(".siteSelect .options").eq(0).css({display:"block"});
+		     }, 1);
+		 }
+                 function siteSelectOption(site) {
+                     siteID = site.id;
+                     switchStatsTo('Site', 'User', `Site: ${site.name}`);              
+		     setTimeout(function(){
+			 $(".siteSelect .options").eq(0).css({display:"none"});
+		     }, 1);
+                     
+                 }
+
+                 
+                 function sortableInit(table) {
+                     table.querySelectorAll('th.sortable').forEach((c, i) => {
+                         let idx = c.dataset.sortIndex || i;
+                         c.addEventListener('click', () => sortableColumn(table, idx, c.dataset.hasOwnProperty('sortNumeric')))
+                     })
+                 }
+
+                 function sortableColumn(table, idx, numeric) {
+                     let switchCount = 0;
+                     let switching = true;
+                     let shouldSwitch;
+                     let dir = "asc";
+                     let extract = (a) => {
+                         let val = a.dataset.sort || a.textContent.toLowerCase();
+                         if (numeric) {
+                             val = parseFloat(val);
+                             if (Number.isNaN(val)) {
+                                 val = Infinity;
+                             }
+                         }
+                         return val
+                     }
+                     let compare = (a,b) => { return a > b };
+                     while (switching) {
+                         switching = false;
+                         rows = table.rows;
+                         for (i = 0; i < (rows.length - 1); i++) {
+                             if(rows[i].querySelector('th')) continue;
+                             shouldSwitch = false;
+                             x = rows[i].getElementsByTagName("td")[idx];
+                             y = rows[i + 1].getElementsByTagName("td")[idx];
+
+                             if (compare(extract(x), extract(y))) {
+                                     shouldSwitch = true;
+                                     break;
+                             }
+                         }
+                         if (shouldSwitch) {
+                             rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                             switching = true;
+                             switchCount ++;
+                         } else {
+                             if (switchCount == 0 && dir == "asc") {
+                                 dir = "desc";
+                                 compare = (a,b) => { return a < b };
+                                 switching = true;
+                             }
+                         }
+                     }
+                 }
+                 
+		</script>
+	</head>
+	<body>
+		<div id="managerRequest">
+			<div id="managerRequestMessage"></div>
+			<div id="managerRequestButtons">
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('deny');">Deny</div>
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('approve');">Accept</div>
+			</div>
+		</div>
+		<div id="error" onclick="hideNotice();"></div>
+		<div id="confirmation" onclick="hideNotice();"></div>
+		<div id="alert" onclick="hideNotice();"></div>
+		<div id="promptInteractionBlock"></div>
+		<div id="noticeInteractionBlock" onclick="hideNotice();"></div>
+		<div id="confirm">
+			<div></div>
+			<div>
+				<button>OK</button>
+				<button>Cancel</button>
+				<div class="clearBoth"></div>
+			</div>
+		</div>
+
+		<div id="splash">
+			<div id="splashImage"></div>
+			<div id="splashOverlay">
+				<div id="splashIntroText">Welcome to</div>
+				<div id="splashMainText">Caterpillars Count!</div>
+				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">View settings</button>
+			</div>
+		</div>
+		<header>
+			<h1><a href="../">Caterpillars Count!</a></h1>
+			<div id="hamburger" onclick="toggleNav();">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div id="navKnockDown" class="clearBoth"></div>
+			<nav class="loadingNav">
+				<ul>
+					<li onclick="accessSubMenu(this);">
+						<span>Participate</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../getStarted">Get Started</a></li>
+							<li><a href="../conductASurvey">Conduct a Survey</a></li>
+							<li><a href="../submitObservations">Submit Observations</a></li>
+							<li><a href="../hostASurveySite">Host a Survey Site</a></li>
+							<li><a href="../resources">Resources</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Explore</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
+							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="../reports">Reports</a></li>
+							<li><a href="../publications">Publications</a></li>
+							<li><a href="../dataDownload">Data Download</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Learn</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../identificationSkills">Identification Skills</a></li>
+							<li><a href="../virtualSurvey">Virtual Survey Game</a></li>
+							<li><a href="../forEducators">For Educators</a></li>
+						</ul>
+					</li>
+					<li onclick="window.location = '../news';">
+						<span>News</span>
+					</li>
+					<li onclick="window.location = '../faq';">
+						<span>FAQ</span>
+					</li>
+					<li onclick="window.location = '../signIn';">
+						<span>Sign In</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../createNewSite">Create New Site</a></li>
+							<li><a href="../manageMySites">Manage My Sites</a></li>
+							<li><a href="../manageMySurveys">Manage My Surveys</a></li>
+							<li><a href="../userDashboard">My Stats</a></li>
+							<li><a href="../settings">Settings</a></li>
+							<li><a href="" onclick="logOut();">Sign Out</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="navBack" onclick="resetMenu(false);">&#10094;</div>
+		</header>
+		<main>
+		  <div class="panel">
+		    <h2>User Stats Dashboard</h2>
+		    <div class="content">
+		      <div class="centeredText">
+			<div id="switch">
+			  <button id="userSwitchButton" class="active" onclick="switchStatsTo('User', 'Site');">User</button>
+                          <div class="siteSelect">
+		            <div class="options" style="min-width:153px;">
+                            </div>
+                          </div>
+			  <button id="siteSwitchButton" onclick="showSiteSelectOptions(this);">Site</button>
+			</div>
+		      </div>
+		      <div id="quiz">
+		        <h3><a href="../arthropodQuiz">Photo ID Quiz</a><img onmouseover="$('#quizNotice').css('display','inline-block')" onmouseout="$('#quizNotice').css('display','none')" src="../images/question.png"><div id="quizNotice">Quiz Scores before October 2024 were not collected.</div></h3>
+		        <div>
+                          <table id="quizStats">
+                            <thead>
+                              <tr>
+                                <th class="sortable">User name</th>
+                                <th class="sortable" data-sort-numeric>Quizzes</th>
+                                <th class="sortable" data-sort-numeric>Mean Score</th>
+                                <th class="sortable" data-sort-numeric>Best Score</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                          </table>
+		        </div>
+			<div class="loading"><img src="../images/rolling.svg"/></div>
+		      </div>
+		      <div id="game">
+		        <h3><a href="../virtualSurvey">Virtual Survey</a></h3>
+		        <div>
+                          <table id="gameStats">
+                            <thead>
+                              <tr>
+                                <th class="sortable">User name</th>
+                                <th class="sortable" data-sort-numeric>Games</th>
+                                <th class="sortable alt" data-sort-numeric>Score</th>
+                                <th class="sortable alt" data-sort-numeric>Percent Found</th>
+                                <th class="sortable alt" data-sort-numeric>ID Accuracy</th>
+                                <th class="sortable alt" data-sort-numeric>Length Accuracy</th>
+                              </tr>
+                              <tr>
+                                <th colspan="2"></th>
+                                <th class="alt" colspan="4"><em>Best (Mean)</em></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                          </table>
+		        </div>
+			<div class="loading"><img src="../images/rolling.svg"/></div>
+		      </div>
+		      <h3><a href="../manageMySurveys">Surveys</a></h3>
+		      <div>
+                        <table id="surveyStats">
+                          <thead>
+                            <tr class="roundedTop">
+                              <th rowspan="2" class="sortable" data-sort-index="0">User name</th>
+                              <th colspan="4" class="spanner alt">Surveys this...</th>
+                              <th rowspan="2" class="sortable" data-sort-index="5" data-sort-numeric>With Caterpillars</th>
+                              <th rowspan="2" class="alt tooltip sortable" data-sort-index="6" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">Overall Accuracy<div class="bottomToolTip"><div class="arrow"></div>Sightings with Expert IDs that match the reported group, across all sites.</div></th>
+
+                            </tr>
+                            <tr>
+                              <th class="alt sortable" data-sort-index="1" data-sort-numeric>Week</th>
+                              <th class="alt sortable" data-sort-index="2" data-sort-numeric>Month</th>
+                              <th class="alt sortable" data-sort-index="3" data-sort-numeric>Year</th>
+                              <th class="alt sortable" data-sort-index="4" data-sort-numeric>Millenium</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          </tbody>
+                        </table>
+			<div class="loading"><img src="../images/rolling.svg"/></div>
+		      </div>
+                      <div id="groups">
+		        <h3>Sightings (across all Sites)</h3>
+		        <div>
+                          <table id="sightingStats">
+                            <thead>
+                              <tr>
+                                <th colspan="2" class="sortable" data-sort-index="1">Arthropod Group</th>
+                                <th class="alt sortable" data-sort-index="2" data-sort-numeric>Total Surveys</th>
+                                <th class="alt sortable tooltip" data-sort-index="3" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">With Photos<div class="bottomToolTip"><div class="arrow"></div>The number of photos on iNaturalist may be fewer due to corrected identifications.</div>
+                                  <th class="alt sortable tooltip" data-sort-index="4" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">With Expert IDs (Matching)<div class="bottomToolTip"><div class="arrow"></div>Matching if at least 2 other IDs and 2/3 of identifiers agree.</div>
+                                    <th class="alt sortable tooltip" data-sort-index="5" data-sort-numeric onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);">ID Accuracy<div class="bottomToolTip"><div class="arrow"></div>Sightings with Expert IDs that match the reported group.</div></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                          </table>
+			  <div class="loading"><img src="../images/rolling.svg"/></div>
+		        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+		</main>
+		<footer>
+			<div>Part of the <a href="http://pheno-mismatch.org" target="_blank">Pheno Mismatch</a> project funded by the National Science Foundation</div>
+
+			<div><img src="../images/unc.png"/></div><div>
+				<a target="_blank" href="https://www.facebook.com/Caterpillars-Count-1854259101283140/"><img src="../images/facebook.png" alt="facebook"/></a><a target="_blank" href="https://twitter.com/CaterpillarsCt"><img src="../images/twitter.png" alt="twitter"/></a>
+			</div>
+
+			<div>Contact us: <a href="mailto:caterpillarscount@gmail.com">caterpillarscount@gmail.com</a></div>
+
+			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
+		</footer>
+	</body>
+</html>

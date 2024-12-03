@@ -1391,7 +1391,7 @@
                      $("#noPlantsSection").hide();
                      $("#hasPlantsSection").hide();
                      
-                     let response = await fetch("../php/getPlantsBySite.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0")
+                     let response = await fetch("../php/getPlantsBySite.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.6.0")
                      var data = JSON.parse((await response.text()).replace("true|", ""));
 		     var siteName = data[0];
 		     var circles = data[1];
@@ -2049,7 +2049,7 @@
 					var minRawValue = -1;
 					var maxRawValue = -1;
 					for(var i = 0; i < sites.length; i++){
-                                            if (sites[i]["Active"] == "0") { continue }
+                                            if (sites[i]["Active"] == "0" && sites[i]["SurveyCount"] == 0) { continue }
 					    siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
                                             var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
 						markers[sites[i]["ID"] + ""] = marker;
@@ -4581,6 +4581,7 @@
 							<li><a href="../createNewSite">Create New Site</a></li>
 							<li><a href="../manageMySites">Manage My Sites</a></li>
 							<li><a href="../manageMySurveys">Manage My Surveys</a></li>
+							<li><a href="../userDashboard">My Stats</a></li>
 							<li><a href="../settings">Settings</a></li>
 							<li><a href="" onclick="logOut();">Sign Out</a></li>
 						</ul>

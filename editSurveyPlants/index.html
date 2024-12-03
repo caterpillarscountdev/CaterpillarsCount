@@ -436,7 +436,7 @@
 			            }
 			        }
 			    };
-			    xhttp.open("GET", "../php/getPlantsBySite.php?siteID=" + siteID + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
+			    xhttp.open("GET", "../php/getPlantsBySite.php?siteID=" + siteID + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.6.0", true);
 			    xhttp.send();
 			}
 
@@ -916,6 +916,7 @@
 							<li><a href="../createNewSite">Create New Site</a></li>
 							<li><a href="../manageMySites">Manage My Sites</a></li>
 							<li><a href="../manageMySurveys">Manage My Surveys</a></li>
+							<li><a href="../userDashboard">My Stats</a></li>
 							<li><a href="../settings">Settings</a></li>
 							<li><a href="" onclick="logOut();">Sign Out</a></li>
 						</ul>
