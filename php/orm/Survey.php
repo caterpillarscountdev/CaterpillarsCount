@@ -307,19 +307,19 @@ class Survey
                 $flaggingRules = SurveyFlaggingRules();
 
 		if(strlen($flagSearch) > 0){
-                  if ($flagSearch == 'reviewed') {
+                  if ($flagSearch == 'accepted' || $flagSearch == 'rejected') {
                     $field = 'ReviewedAndApprovedSite';
                     if ($superUser) {
                       $field = 'ReviewedAndApproved';
                     }
-                    $additionalSQL .= " AND " . $field . " > 0";
+                    $additionalSQL .= " AND " . $field . ($flagSearch == 'accepted' ? " = 1" : " > 1");
                   } else if ($flagSearch == 'flagged') {
                     $sql = "`AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
                     //arthropod flags
                     $sql .= " OR (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["arthropodGroupFlaggingRules"]["sawfly"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["arthropodGroupFlaggingRules"]["sawfly"]["maxSafeQuantity"]) . "'))";
                     foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
                       if ($arthropodGroup == "sawfly") { continue; }
-                      $sql .= " OR (`UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingData["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingData["maxSafeQuantity"]) . "'))";
+                      $sql .= " OR (`UpdatedSawfly`='0' AND `UpdatedGroup`='" . mysqli_real_escape_string($dbconn, $arthropodGroup) . "' AND (`Length`>'" . intval($flaggingData["maxSafeLength"]) . "' OR `Quantity`>'" . intval($flaggingData["maxSafeQuantity"]) . "'))";
                     }
 
                     $additionalSQL .=  " AND ReviewedAndApproved < 1 AND (" . $sql . ")";
