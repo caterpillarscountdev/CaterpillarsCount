@@ -1,24 +1,32 @@
 <?php
-	require_once('orm/User.php');
-	require_once('orm/resources/mailing.php');
-    require_once('orm/resources/Customlogging.php');
-	require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
-	$email = custgetparam("email");
-	$salt = custgetparam("salt");
-	$emailto = custgetparam("emailto");
-	$emailmessage = custgetparam("emailmessage");
-    $user = User::findBySignInKey($email, $salt);
-	//custom_error_log('email to ' . $emailto);
-	if(is_object($user) && get_class($user) == "User"){
-		if(User::isSuperUser($user)){
-			if (email($emailto,"QC issue with your Survey",$emailmessage)) {
-			  die("true|");	 
-			} else {
-		      die("false|Email failed to send.");		
-			}
-		}
-		die("false|You do not have authority to approve this survey.");
-	}
-	die("false|Your log in dissolved. Maybe you logged in on another device.");
-		
+require_once('orm/User.php');
+require_once('orm/Survey.php');
+require_once('orm/resources/mailing.php');
+require_once('orm/resources/Customlogging.php');
+require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
+$email = custgetparam("email");
+$salt = custgetparam("salt");
+$surveyID = custgetparam("survey");
+$emailmessage = custgetparam("emailmessage");
+
+$user = User::findBySignInKey($email, $salt);
+
+if(is_object($user) && get_class($user) == "User"){
+  $survey = Survey::findByID($surveyID);
+  if(is_object($survey) && get_class($survey) == "Survey") {
+    $site = $survey->getPlant()->getSite();
+    if(User::isSuperUser($user) || $site->isAuthority($user)){
+      $emailto = $survey->getObserver()->getEmail();
+      $ccs = $site->getAuthorityEmails();
+      if (emailAndCC($emailto, $ccs, "QC issue with your Survey",$emailmessage)) {
+        die("true|");	 
+      } else {
+        die("false|Email failed to send.");		
+      }
+    }
+  }
+  die("false|You do not have authority to approve this survey.");
+}
+die("false|Your log in dissolved. Maybe you logged in on another device.");
+
 ?>
