@@ -924,7 +924,9 @@
 					    qcissues  + '<br/><br/>' +
                                             'Could you please double check this record by visiting the <a href="https://caterpillarscount.unc.edu/manageMySurveys/">Manage My Surveys</a> page, and using the Filter Surveys button to select the branch code and date as indicated above?<br/><br/>' + 
                             'If you are no longer able to edit the survey yourself, could you please email back with any clarifications, edits, or a confirmation that the value or values are correct?<br/><br/>' +
-                                            'Thanks for helping us ensure a high quality dataset!<br/>' +
+                                            'As a reminder, arthropod length refers to head + body length only, and does not include legs or antennae. And while arthropod length is measured in mm, leaf length is measured in cm.<br/><br>' +
+				    
+				    	    'Thanks for helping us ensure a high quality dataset!<br/>' +
                                             user.firstName + " " + user.lastName + "<br/>";
 			    
 			    promptConfirm('Send this email to ' +  emailaddress + ' and cc site managers?<hr/><div id="emailBody" contenteditable>' + emailBody + "</div>", "No, cancel", "Send Email!", function(){}, 
