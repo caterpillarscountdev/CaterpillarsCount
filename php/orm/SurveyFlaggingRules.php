@@ -3,68 +3,68 @@
 function SurveyFlaggingRules () {
   return array(
     "minSafeLeaves" => 5,
-    "maxSafeLeaves" => 400,
+    "maxSafeLeaves" => 600,
     "maxSafeLeafLength" => 30,
     "arthropodGroupFlaggingRules" => array(
       "ant" => array(
-        "maxSafeLength" => 17,
-        "maxSafeQuantity" => 50
+        "maxSafeLength" => 20,
+        "maxSafeQuantity" => 200
         ),
       "aphid" => array(
         "maxSafeLength" => 10,
-        "maxSafeQuantity" => 50
+        "maxSafeQuantity" => 400
         ),
       "bee" =>  array(
-        "maxSafeLength" => 25,
-        "maxSafeQuantity" => 6
+        "maxSafeLength" => 40,
+        "maxSafeQuantity" => 9
         ),
       "sawfly" => array(
-        "maxSafeLength" => 50,
-        "maxSafeQuantity" => 20
+        "maxSafeLength" => 60,
+        "maxSafeQuantity" => 30
         ),
       "beetle" =>  array(
-        "maxSafeLength" => 20,
-        "maxSafeQuantity" => 10
+        "maxSafeLength" => 30,
+        "maxSafeQuantity" => 20
         ),
       "caterpillar" =>  array(
-        "maxSafeLength" => 50,
-        "maxSafeQuantity" => 6
+        "maxSafeLength" => 60,
+        "maxSafeQuantity" => 9
         ),
       "daddylonglegs" =>  array(
         "maxSafeLength" => 15,
-        "maxSafeQuantity" => 6
+        "maxSafeQuantity" => 9
         ),
       "fly" =>  array(
-        "maxSafeLength" => 20,
-        "maxSafeQuantity" => 6
+        "maxSafeLength" => 30,
+        "maxSafeQuantity" => 9
         ),
       "grasshopper" =>  array(
-        "maxSafeLength" => 30,
-        "maxSafeQuantity" => 6
+        "maxSafeLength" => 50,
+        "maxSafeQuantity" => 9
         ),
       "leafhopper" =>  array(
-        "maxSafeLength" => 20,
-        "maxSafeQuantity" => 6
+        "maxSafeLength" => 50,
+        "maxSafeQuantity" => 9
         ),
       "moths" =>  array(
         "maxSafeLength" => 30,
-        "maxSafeQuantity" => 6
+        "maxSafeQuantity" => 9
         ),
       "spider" =>  array(
-        "maxSafeLength" => 20,
-        "maxSafeQuantity" => 6
+        "maxSafeLength" => 30,
+        "maxSafeQuantity" => 9
         ),
       "truebugs" =>  array(
-        "maxSafeLength" => 25,
-        "maxSafeQuantity" => 6
+        "maxSafeLength" => 30,
+        "maxSafeQuantity" => 9
         ),
       "other" =>  array(
-        "maxSafeLength" => 25,
-        "maxSafeQuantity" => 6
+        "maxSafeLength" => 50,
+        "maxSafeQuantity" => 100
         ),
       "unidentified" =>  array(
-        "maxSafeLength" => 25,
-        "maxSafeQuantity" => 6
+        "maxSafeLength" => 50,
+        "maxSafeQuantity" => 100
         )
       )
     );
