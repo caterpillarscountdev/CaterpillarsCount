@@ -363,7 +363,7 @@
 									<div class="group">
 										<div class="observationFieldTitle">Arthropod group:</div>
 
-										<div class="select" id="orderType" data-on-change="askToConfirmLongOrderLength();">
+										<div class="select" id="orderType" data-on-change="askToConfirmOrderLength();">
 											<div class="option selected" onclick="selectOption(this);$('.arthropodOptionsTable').parent().hide(300);">	<div class="value"></div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
 											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#butterflyOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
 											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#butterflyOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);">		<div class="value">aphid</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/aphid.png');"></div>		<div class="text">Aphids and Psyllids</div></div></div>
@@ -438,14 +438,14 @@
 
 									<div>
 									<div class="half group">
-										<div class="observationFieldTitle">Length (mm):</div>
-										<input type="number" id="orderLength" placeholder="1mm - 300mm" onclick="this.select();"  pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');" onblur="enforceRange(this, 1, 300, 1); askToConfirmLongOrderLength();"/>
+									  <div class="observationFieldTitle">Length (mm):</div>
+									  <input type="number" id="orderLength" placeholder="1mm - 300mm" onclick="this.select();"  pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');" onblur="askToConfirmOrderLength();"/>
 									</div>
 
 									<div class="half group">
 										<div class="observationFieldTitle">Quantity:</div>
 										<div class="countInput">
-											<input type="number" id="orderQuantity" placeholder="1 - 1000" pattern="\d*" onclick="this.select();" oninput="this.value = this.value.replace(/\D/g, '');" onblur="enforceRange(this, 1, 1000, 1);" value="1"/>
+										  <input type="number" id="orderQuantity" placeholder="1 - 1000" pattern="\d*" onclick="this.select();" oninput="this.value = this.value.replace(/\D/g, '');" onblur="askToConfirmOrderQuantity();" value="1"/>
 											<div class="countAttachment">
 												<div onclick="incrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 1000, 1);"></div>
 												<div onclick="decrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 1000, 1);"></div>
@@ -505,13 +505,13 @@
 								<div id="leafInputs">
 									<div class="half group">
 										<div class="observationFieldTitle">Avg. leaf length (cm):</div>
-										<input type="number" id="averageLeafLength" placeholder="1cm - 60cm" onclick="this.select();"  pattern="\d*" onblur="enforceRange(this, 1, 60, 1); if(Number(this.value) > 30){promptConfirm('Wow, that\'s a long leaf! Are you sure you\'re measuring in centimeters?', 'Whoops!', 'Yes, I am sure!', function(){$('#averageLeafLength')[0].focus();$('#averageLeafLength')[0].select();}, function(){});}"/>
+										<input type="number" id="averageLeafLength" placeholder="1cm - 60cm" onclick="this.select();"  pattern="\d*" onblur="askToConfirmLeafLength()"/>
 									</div>
 									
 									<div class="half group">
 										<div class="observationFieldTitle">Number of leaves:</div>
 										<div class="countInput" onclick="if(autocompleteIsActive){return false;}if($('#numberOfLeaves')[0].readOnly){$('#numberOfLeaves')[0].blur();queueNotice('alert', 'Visual observation method requires a count of exactly 50 leaves.');}">
-											<input type="number" id="numberOfLeaves" placeholder="1 - 500" pattern="\d*"  onclick="if(!this.readOnly){this.select();}" onblur="enforceRange(this, 1, 500, 1); if(Number(this.value) > 300){promptConfirm('Wow, that\'s a lot of leaves! Are you sure ' + this.value + ' leaves were <strong><em>over the beat sheet</em></strong> while beating?', 'Whoops!', 'Yes, I am sure!', function(){$('#numberOfLeaves')[0].focus();$('#numberOfLeaves')[0].select();}, function(){});}"/>
+											<input type="number" id="numberOfLeaves" placeholder="1 - 500" pattern="\d*"  onclick="if(!this.readOnly){this.select();}" onblur="askToConfirmLeafQuantity()"/>
 											<div class="countAttachment">
 												<div onclick="if(autocompleteIsActive){return false;}if(!$(this.parentNode.parentNode).find('input').eq(0)[0].readOnly){incrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 500, 1);}"></div>
 												<div onclick="if(autocompleteIsActive){return false;}if(!$(this.parentNode.parentNode).find('input').eq(0)[0].readOnly){decrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 500, 1);}"></div>
