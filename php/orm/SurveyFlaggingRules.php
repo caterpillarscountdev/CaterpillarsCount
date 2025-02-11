@@ -1,7 +1,11 @@
-<?php
+<?php                                           
+
+require("SurveyFlaggingExceptions.php");
 
 function SurveyFlaggingRules () {
   return array(
+    "leafLengthExceptions" => SurveyFlaggingExceptions(),
+    "compoundLeafExceptions" => SurveyFlaggingCompoundLeaves(),
     "minSafeLeaves" => 5,
     "maxSafeLeaves" => 600,
     "maxSafeLeafLength" => 30,
