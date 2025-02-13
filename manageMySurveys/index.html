@@ -870,8 +870,19 @@
 		<script>
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-				
-				loadFirstPage(true);
+
+                                if (window.location.search) {
+                                    let incoming = new URLSearchParams(window.location.search);
+                                    let filters = Object.assign({}, GLOBALFilters);
+                                    let page = 1
+                                    for (let [p,v] of incoming.entries()) {
+                                        if (p == 'page') page = v;
+                                        else filters[p] = v;
+                                    }
+                                    loadPage(page, filters, true);
+                                } else {
+				    loadFirstPage(true);
+                                }
 
 				populateSurveySites();
 
@@ -1083,6 +1094,20 @@
 				return param;
 			}
 
+                        function paramsToURL(params) {
+                            let n = new URLSearchParams()
+                            for (let [p, v] of Object.entries(params)) {
+                                if (p == 'page' && v == 1) {
+                                    continue
+                                }
+                                if (!v || v == GLOBALFilters[p]) {
+                                    continue
+                                }
+                                n.set(p, v);
+                            }
+                            return n.toString();
+                        }
+
 			var selected = [];
 			var unselected = [];
 			var GLOBALPageNumber = 1;
@@ -1091,6 +1116,7 @@
 			var GLOBALFilters = {"user":"", "arthropod":"", "minArthropodLength":0, "site":"", "circle":"", "code":"", date:"____-__-__"};
 			var loadingPage = false;
 			function loadPage(pageNumber, filters, firstLoad){
+                            window.history.pushState({}, "", `${window.location.pathname}?${paramsToURL(Object.assign({page: pageNumber}, filters))}`);
 				firstLoad = firstLoad || false;
 				if(!loadingPage){
 					loadingPage = true;
@@ -1209,10 +1235,12 @@
 								htmlToAdd += 				"<div class=\"underline pointer\" onclick=\"email('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']);\">" + surveys[i]["observerFullName"] + "</div>";
 								htmlToAdd +=			"</div>";
 								htmlToAdd += 			"<div>";
-								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/" + surveys[i]["observaionMethod"].replace(/ /g, "").replace(surveys[i]["observaionMethod"][0], surveys[i]["observaionMethod"][0].toLowerCase()) + ".png');\"></div>";
-								htmlToAdd += 				"<div>";
+                                                                if(surveys[i]["observationMethod"]) {
+							            htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/" + surveys[i]["observationMethod"].replace(/ /g, "").replace(surveys[i]["observationMethod"][0], surveys[i]["observationMethod"][0].toLowerCase()) + ".png');\"></div>";
+                                                                }
+							        htmlToAdd += 				"<div>";
 								htmlToAdd += 					"<div class=\"smallSelect\">";
-								htmlToAdd +=						"<div class=\"selected\">" + surveys[i]["observaionMethod"] + "</div>";
+								htmlToAdd +=						"<div class=\"selected\">" + surveys[i]["observationMethod"] + "</div>";
 								htmlToAdd +=						"<div class=\"options\">";
 								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/beatsheet.png')&quot;;\">BEAT SHEET</div>";
 								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/visual.png')&quot;;\">VISUAL</div>";
@@ -1528,8 +1556,8 @@
 			}
 
 			function loadFirstPage(firstLoad){
-				firstLoad = firstLoad || false;
-				loadPage(1, GLOBALFilters, firstLoad);
+			    firstLoad = firstLoad || false;
+			    loadPage(1, GLOBALFilters, firstLoad);
 			}
 
 			function loadLastPage(){

@@ -289,9 +289,14 @@ class Survey
                 
 		$arthropodSearch = trim($filters["arthropod"]);
 		$minArthropodLength = intval($filters["minArthropodLength"]);
-		if($flagSearch == 'flagged' || strlen($arthropodSearch) > 0 || $minArthropodLength > 0){
+                error_log("arth" . $arthropodSearch . "+" . $minArthropodLength . "=" . $flagSearch);
+		if(strlen($arthropodSearch) > 0 || $minArthropodLength > 0){
 			$baseTable = "`ArthropodSighting` JOIN `Survey` ON ArthropodSighting.SurveyFK = Survey.ID";
 			$groupBy = " GROUP BY ArthropodSighting.SurveyFK";
+		}
+		if($flagSearch == 'flagged'){
+			$baseTable = "`ArthropodSighting` RIGHT JOIN `Survey` ON ArthropodSighting.SurveyFK = Survey.ID";
+			$groupBy = " GROUP BY Survey.ID";
 		}
 		
 		if($minArthropodLength > 0){
@@ -354,7 +359,6 @@ class Survey
 		}
 		
 		$dateSearch = mysqli_real_escape_string($dbconn, trim(htmlentities(strval($filters["date"]))));
-
 		$totalCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS `Count` FROM (SELECT DISTINCT Survey.ID FROM " . $baseTable . " JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `User` ON Survey.UserFKOfObserver=User.ID WHERE (Plant.SiteFK IN (" . join(",", $siteIDs) . ") OR Survey.UserFKOfObserver='" . $user->getID() . "') AND Survey.LocalDate LIKE '" . $dateSearch . "'" . $additionalSQL . $groupBy . ") AS Results"))["Count"]);
 		if($limit === "max"){
 			$limit = $totalCount;
