@@ -286,9 +286,14 @@ class Survey
                 
 		$arthropodSearch = trim($filters["arthropod"]);
 		$minArthropodLength = intval($filters["minArthropodLength"]);
-		if($flagSearch == 'flagged' || strlen($arthropodSearch) > 0 || $minArthropodLength > 0){
+                error_log("arth" . $arthropodSearch . "+" . $minArthropodLength . "=" . $flagSearch);
+		if(strlen($arthropodSearch) > 0 || $minArthropodLength > 0){
 			$baseTable = "`ArthropodSighting` JOIN `Survey` ON ArthropodSighting.SurveyFK = Survey.ID";
 			$groupBy = " GROUP BY ArthropodSighting.SurveyFK";
+		}
+		if($flagSearch == 'flagged'){
+			$baseTable = "`ArthropodSighting` RIGHT JOIN `Survey` ON ArthropodSighting.SurveyFK = Survey.ID";
+			$groupBy = " GROUP BY Survey.ID";
 		}
 		
 		if($minArthropodLength > 0){
@@ -314,7 +319,16 @@ class Survey
                     }
                     $additionalSQL .= " AND " . $field . ($flagSearch == 'accepted' ? " = 1" : " > 1");
                   } else if ($flagSearch == 'flagged') {
-                    $sql = "`AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR `AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "')";
+                    $llExclude = array();
+                    $llRule = array();
+                    foreach($flaggingRules["leafLengthExceptions"] as $llName => $llValue) {
+                      $llExclude[] = '"'.$llName.'"';
+                      $llRule[] = "(PlantSpecies = '" . $llName. "' AND AverageLeafLength > '". $llValue ."')";
+                    }
+                    $llExclude = join(",", $llExclude);
+                    $llRule = join(" OR ", $llRule);
+                  
+                    $sql = "`AverageNeedleLength`='-1' AND (`NumberOfLeaves`<'" . intval($flaggingRules["minSafeLeaves"]) . "' OR `NumberOfLeaves`>'" . intval($flaggingRules["maxSafeLeaves"]) . "' OR (`AverageLeafLength`>'" . intval($flaggingRules["maxSafeLeafLength"]) . "' AND PlantSpecies NOT IN (".$llExclude.") ) OR (" . $llRule . "))";
                     //arthropod flags
                     $sql .= " OR (`UpdatedSawfly`='1' AND (`Length`>'" . intval($flaggingRules["arthropodGroupFlaggingRules"]["sawfly"]["maxSafeLength"]) . "' OR Quantity>'" . intval($flaggingRules["arthropodGroupFlaggingRules"]["sawfly"]["maxSafeQuantity"]) . "'))";
                     foreach($flaggingRules["arthropodGroupFlaggingRules"] as $arthropodGroup => $flaggingData){
@@ -342,7 +356,6 @@ class Survey
 		}
 		
 		$dateSearch = mysqli_real_escape_string($dbconn, trim(htmlentities(strval($filters["date"]))));
-
 		$totalCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS `Count` FROM (SELECT DISTINCT Survey.ID FROM " . $baseTable . " JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `User` ON Survey.UserFKOfObserver=User.ID WHERE (Plant.SiteFK IN (" . join(",", $siteIDs) . ") OR Survey.UserFKOfObserver='" . $user->getID() . "') AND Survey.LocalDate LIKE '" . $dateSearch . "'" . $additionalSQL . $groupBy . ") AS Results"))["Count"]);
 		if($limit === "max"){
 			$limit = $totalCount;

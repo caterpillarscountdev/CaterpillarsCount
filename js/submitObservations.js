@@ -22,6 +22,7 @@
                           if (plantCode > -1) {
                             $("#plantCode").val(window.location.search.slice(plantCode+10, plantCode+13)).trigger("input");
                           }
+                          loadSurveyFlaggingRules();
 			});
 			function tap(){
 				return !hasMoved;
@@ -965,32 +966,107 @@
 				}
 			}
 
-			function askToConfirmLongOrderLength(){
+                        surveyFlaggingRules = {};
+
+                        async function loadSurveyFlaggingRules() {
+                          let response = await fetch("../php/cacheSurveyFlaggingRules.php");
+                          surveyFlaggingRules = JSON.parse((await response.text()));
+                        }
+
+                        function promptWithNotes(notesInput, message, cancelMessage, confirmMessage, cancelFunction, confirmFunction){
+                          let notes = document.createElement('textarea')
+                          let confirm = function() {
+                            if (newNotes = $(notes).val()) {
+                              $(notesInput).val((i, val) => {return val + "\n" + newNotes});
+                            }
+                            confirmFunction();
+                          }
+                          promptConfirm(message, cancelMessage, confirmMessage, cancelFunction, confirm);
+                          $("#confirm div").eq(0).append(notes);
+                        }
+
+			function askToConfirmOrderLength(){
 				var orderTypeValue = getSelectValue($("#orderType"));
-				if(orderTypeValue == ""){
+				if(orderTypeValue == "" || !surveyFlaggingRules["arthropodGroupFlaggingRules"][orderTypeValue]){
+					return false;
+				}
+
+			        var maxOrderLength = surveyFlaggingRules["arthropodGroupFlaggingRules"][orderTypeValue]["maxSafeLength"];
+				if(Number($('#orderLength')[0].value) > maxOrderLength){
+				  promptWithNotes("#orderNotes", 'Wow, "' + getSelectText($("#orderType")) + '" measurements aren\'t usually that long! Are you sure ' + $('#orderLength')[0].value + 'mm is accurate? Remember that length does not include legs or antennae. Add a note for review if sure:', 'Whoops!', 'Yes, I am sure!', function(){
+				    $('#orderLength')[0].focus();
+				    $('#orderLength')[0].select(0, 9999);
+				  }, function(){
+				    
+				  });
+				}
+			}
+
+			function askToConfirmOrderQuantity(){
+				var orderTypeValue = getSelectValue($("#orderType"));
+				if(orderTypeValue == "" || !surveyFlaggingRules["arthropodGroupFlaggingRules"][orderTypeValue]){
 					return false;
 				}
 				
-				var maxOrderLength = 30;
-				if(orderTypeValue == "caterpillar"){
-					maxOrderLength = 60;
-				}
-				else if(orderTypeValue == "aphid"){
-					maxOrderLength = 10;
-				}
-				else if(orderTypeValue == "ant"){
-					maxOrderLength = 20;
-				}
-				
-				if(Number($('#orderLength')[0].value) > maxOrderLength){
-					promptConfirm('Wow, "' + getSelectText($("#orderType")) + '" measurements aren\'t usually that long! Are you sure ' + $('#orderLength')[0].value + 'mm is accurate? Remember that length does not include legs or antennae.', 'Whoops!', 'Yes, I am sure!', function(){
-						$('#orderLength')[0].focus();
-						$('#orderLength')[0].select(0, 9999);
-					}, function(){
-						
-					});
+			        var maxOrderQuantity = surveyFlaggingRules["arthropodGroupFlaggingRules"][orderTypeValue]["maxSafeQuantity"];
+
+			        if(Number($('#orderQuantity')[0].value) > maxOrderQuantity){
+				  promptWithNotes("#orderNotes", 'Wow, that is a lot of "' + getSelectText($("#orderType")) + '"! Are you sure ' + $('#orderQuantity')[0].value + ' is accurate? Add a note for review if sure:', 'Whoops!', 'Yes, I am sure!', function(){
+				    $('#orderQuantity')[0].focus();
+				    $('#orderQuantity')[0].select(0, 9999);
+				  }, function(){
+				    
+				  });
 				}
 			}
+
+			function askToConfirmLeafLength(){
+			  var species = $("#plantSpecies").val();
+			  
+			  var maxLength = surveyFlaggingRules["leafLengthExceptions"][species] || surveyFlaggingRules["maxSafeLeafLength"];
+                          var speciesCompound = surveyFlaggingRules["compoundLeafExceptions"][species] || false;
+			  let entry = Number($('#averageLeafLength')[0].value);
+                          let prompt;
+			  if(entry > maxLength) {
+                            prompt = 'Wow, that is a long leaf! Are you sure you\'re measuring in centimeters?';
+                            if (speciesCompound) {
+                              prompt += ' Measure just one leaflet for compound leaves on this species.';
+                            }
+                            prompt += ' Add a note for review if sure:';
+                          
+			    promptWithNotes("#siteNotes", prompt, 'Whoops!', 'Yes, I am sure!', function(){
+			      $('#averageLeafLength')[0].focus();
+			      $('#averageLeafLegnth')[0].select(0, 9999);
+			    }, function(){
+			      
+			    });
+                          }
+			}
+
+			function askToConfirmLeafQuantity(){
+			  var species = $("#plantSpecies").val();
+			  
+			  var maxQuantity = surveyFlaggingRules["maxSafeLeaves"];
+                          var minQuantity = surveyFlaggingRules["minSafeLeaves"];
+			  let entry = Number($('#numberOfLeaves')[0].value);
+                          let prompt;
+			  if(entry > maxQuantity) {
+                            prompt = 'Wow, that\'s a lot of leaves! Are you sure ' + entry + ' leaves were <strong><em>over the beat sheet</em></strong> while beating?'
+                          }
+                          if(entry < minQuantity) {
+                            prompt = 'Wow, that\'s not many leaves.'
+                          }
+                          if (prompt) {
+                            prompt += ' Add a note for review if sure:';
+			    promptWithNotes("#siteNotes", prompt, 'Whoops!', 'Yes, I am sure!', function(){
+			      $('#numberOfLeaves')[0].focus();
+			      $('#numberOfLeaves')[0].select(0, 9999);
+			    }, function(){
+			      
+			    });
+                          }
+                        }
+
 
 			function getWordAtIndex(str, index){
 				var left = str.slice(0, index + 1).search(/\S+$/);
