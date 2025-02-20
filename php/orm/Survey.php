@@ -833,6 +833,7 @@ class Survey
 	}
 	
 	public function setReviewedAndApproved($reviewedAndApproved, $isSuperUser, $qccomment, $overrides){
+          // 0 = flagged, 1 = Approved, 3 = Rejected
 		if(!$this->deleted){
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$reviewedAndApproved = filter_var($reviewedAndApproved, FILTER_VALIDATE_INT);
