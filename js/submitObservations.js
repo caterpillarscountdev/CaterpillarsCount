@@ -1355,12 +1355,6 @@
 					}
 				}
 				else{
-					if(numberOfLeaves.length != numberOfLeaves.replace(/\D/g, "").length || numberOfLeaves.length == 0 || Number(numberOfLeaves) > 500 || Number(numberOfLeaves) < 1){
-						errors += "Enter a number of leaves between 1 and 500. ";
-					}
-					if(averageLeafLength.length != averageLeafLength.replace(/\D/g, "").length || averageLeafLength.length == 0 || Number(averageLeafLength) > 60 || Number(averageLeafLength) < 1){
-						errors += "Enter an average leaf length between 1 and 60 centimeters. ";
-					}
 					if(herbivoryScore == ""){
 						errors += "Select an herbivory score. ";
 					}
@@ -1605,8 +1599,8 @@
 					
 					var errors = "";
 					if(orderType == ""){errors += "Select an arthropod group. ";}
-					if(orderLength == "" || isNaN(orderLength) || Number(orderLength) < 1 || Number(orderLength) > 300){errors += "Enter a length between 1mm and 300mm. ";}
-					if(orderQuantity == "" || isNaN(orderQuantity) || Number(orderQuantity) < 1 || Number(orderQuantity) > 1000){errors += "Enter a quantity between 1 and 1000. ";}
+				        if(orderLength == "" || isNaN(orderLength) || Number(orderLength) < 1){errors += "Enter a length between 1mm and 300mm. ";}
+				        if(orderQuantity == "" || isNaN(orderQuantity) || Number(orderQuantity) < 1){errors += "Enter a quantity between 1 and 1000. ";}
 					if((orderType == "unidentified" || orderType == "other") && orderNotes == ""){errors += "Notes are required for \"" + orderType + "\" arthropod groups, and photos are requested but optional.";}
 					
 					if(errors.length > 0){
