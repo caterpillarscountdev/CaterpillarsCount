@@ -1010,7 +1010,7 @@ class Survey
 	
 	public static function validNumberOfLeaves($dbconn, $numberOfLeaves){
 		$numberOfLeaves = intval($numberOfLeaves);
-		if($numberOfLeaves >= 1 && $numberOfLeaves <= 500){
+		if($numberOfLeaves >= 1){
 			return $numberOfLeaves;
 		}
 		return false;
@@ -1018,7 +1018,7 @@ class Survey
 	
 	public static function validAverageLeafLength($dbconn, $averageLeafLength){
 		$averageLeafLength = intval($averageLeafLength);
-		if($averageLeafLength >= 1 && $averageLeafLength <= 60){
+		if($averageLeafLength >= 1){
 			return $averageLeafLength;
 		}
 		return false;

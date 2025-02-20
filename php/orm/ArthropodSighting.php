@@ -508,7 +508,7 @@ class ArthropodSighting
 	
 	public static function validLength($dbconn, $length){
 		$length = intval(preg_replace("/[^0-9]/", "", rawurldecode($length)));
-		if($length < 1 || $length > 300){
+		if($length < 1){
 			return false;
 		}
 		return $length;
@@ -516,7 +516,7 @@ class ArthropodSighting
 	
 	public static function validQuantity($dbconn, $quantity){
 		$quantity = intval(preg_replace("/[^0-9]/", "", rawurldecode($quantity)));
-		if($quantity < 1 || $quantity > 1000){
+		if($quantity < 1){
 			return false;
 		}
 		return $quantity;
