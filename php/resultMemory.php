@@ -36,7 +36,6 @@
 			mysqli_query($dbconn, "UPDATE `CachedResult` SET `Timestamp`='" . time() . "', `Result`='$result' WHERE `Name`='$baseFileName'");
 		}
 		
-		mysqli_close($dbconn);
 	}
   
 	function getSaveFromDatabase($baseFileName, $timeLimit){
@@ -47,7 +46,6 @@
 		
 		//fetch requested save
 		$query = mysqli_query($dbconn, "SELECT * FROM CachedResult WHERE `Name`='$baseFileName' LIMIT 1");
-		mysqli_close($dbconn);
 		
 		if(mysqli_num_rows($query) > 0){
 			$row = mysqli_fetch_assoc($query);

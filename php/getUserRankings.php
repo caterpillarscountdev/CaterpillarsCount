@@ -80,7 +80,6 @@
 	while($row = mysqli_fetch_assoc($query)){
 		$rankingsArray[strval($row["UserFKOfObserver"])]["Caterpillars"] = round(((floatval($row["Caterpillars"]) / floatval($rankingsArray[strval($row["UserFKOfObserver"])]["Total"])) * 100), 2) . "%";
 	}
-	mysqli_close($dbconn);
 	
 	if($siteID <= 0 && $MIN_SURVEY_REQUIREMENT == 0){
 		$allUsers = User::findAll();
