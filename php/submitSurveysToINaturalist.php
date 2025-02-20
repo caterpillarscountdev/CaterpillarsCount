@@ -10,13 +10,13 @@
 	$query = mysqli_query($dbconn, "SELECT `Processing` FROM `CronJobStatus` WHERE `Name`='iNaturalistSurveySubmission'");
 	if(mysqli_num_rows($query) > 0){
 		if(intval(mysqli_fetch_assoc($query)["Processing"]) == 1){
-			mysqli_close($dbconn);
+	
 			echo("<!-- closing because we are already processing cron -->");
 			die();
 		}
 	}
 	else{
-		mysqli_close($dbconn);
+
 		echo("<!-- closing because no rows need processing -->");
 		die();
 	}
@@ -37,7 +37,6 @@
 		//Mark that we're finished submitting to iNaturalist
 		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistSurveySubmission'");
 		echo("<!-- update to iNat complete, no remaining records need to send to iNat -->");
-		mysqli_close($dbconn);
 		die();
 	}
 	
@@ -59,5 +58,4 @@
 			submitINaturalistObservation($dbconn, $ids[1], $observerID, $row["Code"], $row["LocalDate"], $row["LocalTime"], $row["ObservationMethod"], $row["SurveyNotes"], filter_var($row["WetLeaves"], FILTER_VALIDATE_BOOLEAN), $row["OriginalGroup"], filter_var($row["Hairy"], FILTER_VALIDATE_BOOLEAN), filter_var($row["Rolled"], FILTER_VALIDATE_BOOLEAN), filter_var($row["Tented"], FILTER_VALIDATE_BOOLEAN), filter_var($row["OriginalSawfly"], FILTER_VALIDATE_BOOLEAN), filter_var($row["OriginalBeetleLarva"], FILTER_VALIDATE_BOOLEAN), intval($row["Quantity"]), intval($row["Length"]), "/" . $row["PhotoURL"], $row["ArthropodSightingNotes"], intval($row["NumberOfLeaves"]), intval($row["AverageLeafLength"]), intval($row["HerbivoryScore"]));
 		}
 	}
-	mysqli_close($dbconn);
 ?>

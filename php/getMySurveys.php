@@ -114,7 +114,6 @@
 		$sitesArray = array();
 		$query = mysqli_query($dbconn, "SELECT * FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `UserFKOfObserver`='" . $user->getID() . "' AND PhotoURL<>'' AND SiteFK<>'2' LIMIT 1");
 		$userHasINaturalistObservations = (mysqli_num_rows($query) > 0);
-		mysqli_close($dbconn);
 		for($i = 0; $i < count($sites); $i++){
 			$siteName = $sites[$i][1];
 			if($siteName != "Example Site"){

@@ -31,5 +31,4 @@
   $query = mysqli_multi_query($dbconn, $updateMySQL);
   while(mysqli_more_results($dbconn)){$temp = mysqli_next_result($dbconn);}
   
-  mysqli_close($dbconn);
 ?>

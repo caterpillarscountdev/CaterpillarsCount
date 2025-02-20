@@ -129,7 +129,6 @@
 		}
 	}
 	
-	mysqli_close($dbconn);
 	for($i = 0; $i < count($siteIDs); $i++){
 		if(!array_key_exists("SurveyCount", $sitesArray[$siteIDs[$i]])){
 			$sitesArray[$siteIDs[$i]]["SurveyCount"] = 0;

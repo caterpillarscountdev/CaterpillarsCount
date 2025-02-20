@@ -98,7 +98,6 @@
 			}
 		}
 	}
-	mysqli_close($dbconn);
 	
 	$result = json_encode(array_values($rankingsArray));
 	if($HIGH_TRAFFIC_MODE){
