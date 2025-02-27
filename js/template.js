@@ -596,15 +596,31 @@
 			}
 
 function hasOfflineSurveys() {
-  window.localStorage.setItem("pendingSurveys", JSON.stringify([1,2]));
-  let pendingSurveys = window.localStorage.getItem("pendingSurveys");
-  return pendingSurveys && JSON.parse(pendingSurveys).length;
+  let pending = window.localStorage.getItem("pendingSurveys");
+  // Dev checking
+  if (!pending ||  pending == 'null' || pending == "[1,2]") {
+//    window.localStorage.setItem("pendingSurveys", "[]"); //[["AAA", "xxx", ["2025-01-01", "12:00:00"]]]));
+    window.localStorage.removeItem("pendingSurveys");
+  }
+  // Always
+  return pending && JSON.parse(pending).length;
+}
+
+function offlineSurveysSummary() {
+  let pending = JSON.parse(window.localStorage.getItem("pendingSurveys"));
+  s = "";
+  for (let p of pending) {
+    s = `${s}\nBranch ${p[0]} on ${p[2][0]};`;
+  }
+  return s
 }
 
 function showNotifyOffline() {
   let count = hasOfflineSurveys();
   if (!count) { return };
   document.querySelectorAll(".notifyOffline").forEach((el) => {
+    let existing = el.querySelector('span');
+    if (existing) { existing.remove()};
     let t = document.createElement('span');
     t.title = "Offline observations";
     t.textContent = count;
