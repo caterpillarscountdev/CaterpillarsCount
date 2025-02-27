@@ -233,8 +233,8 @@
 		     display:none;
 		     z-index:1;
 		 }
-		 .siteSelect .options>div .groupSelect .options>div{
-		     padding:5px;
+		 .siteSelect .options>div, .groupSelect .options>div{
+		     padding:10px;
 		     cursor:pointer;
                      text-align:left;
 		 }
@@ -269,7 +269,7 @@
 		     padding:20px;
 		 }
 
-		 .groupDetails button.save{
+		 .groupDetails button.action{
 		     margin:20px auto 5px auto;
 		 }
 
@@ -366,7 +366,7 @@
                          let label;
                          let group = userGroups.filter((x) => {return x.id == userGroupID});
                          if (group.length == 1) {
-                             label = "Group: " + group[0].name;
+                             label = "Group: " + userGroupName(group[0]);
                              editableUserGroup(group[0]);
                          }
                          switchButtonStates('Group', label);
@@ -382,7 +382,7 @@
                          switchButtonStates('User');
                      }
                      
-                     let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID));
+                     let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID) + "&groupID=" + encodeURIComponent(userGroupID));
                      var data = JSON.parse((await response.text()).replace("true|", ""));
 
                      document.querySelector("#gameStats tbody").innerHTML="";
@@ -537,7 +537,17 @@
                      
                  }
 
-                 function showUserGroupSelect(groups) {
+                 function userGroupName(group) {
+                     let users;
+                     if (group.invitedCount == group.acceptedCount) {
+                         users = `${group.acceptedCount}`
+                     } else {
+                         users = `${group.acceptedCount} of ${group.invitedCount}`
+                     }
+                     return `${group.name} (${users} people)`
+                     }
+
+                     function showUserGroupSelect(groups) {
                      let parent = document.querySelector(".groupSelect .options");
                      parent.replaceChildren();
 
@@ -545,7 +555,13 @@
 
                      for (let group of groups) {
                          let div = document.createElement('div');
-                         div.innerHTML = group.name;
+                         div.innerHTML = userGroupName(group);
+                         //let edit = document.createElement('div');
+                         //edit.style.float = 'right';
+                         //edit.style.fontWeight = 'bold';
+                         //edit.innerHTML = '&#9998;'
+                         //edit.addEventListener('click', () => {userGroupSelectOption(group); showEditableUserGroup(group) });
+                         //div.appendChild(edit);
                          div.addEventListener('click', () => userGroupSelectOption(group));
                          parent.appendChild(div);
                      }
@@ -624,9 +640,16 @@
                      }
                  }
 
+                 function showEditableUserGroup(group) {
+                     let con = document.getElementById('groupDetails');
+                     con.style.display = 'block';
+                     showUserGroupDetails(con);
+                 }
+                 
                  function editableUserGroup(group) {
                      let con = document.getElementById('groupDetails');
-                     con.querySelector('h2').innerHTML = 'Edit Group Details';
+                     con.querySelector('h2').innerHTML = 'Group Management';
+                     con.querySelector('#downloadData').style.display = 'block';
                      con.style.display = 'block';
                      $(con).find("input[name='name']").val(group.name);
                      $(con).find("textarea[name='emails']").val(group.emails);
@@ -635,6 +658,7 @@
                  function createNewUserGroup() {
                      let con = document.getElementById('groupDetails');
                      con.querySelector('h2').innerHTML = 'Create New Group';
+                     con.querySelector('#downloadData').style.display = 'none';
                      con.style.display = 'block';
                      showUserGroupDetails(con);
                  }
@@ -782,13 +806,14 @@
 			</div>
 		      </div>
                       <div id="groupDetails" class="groupDetails">
-			<h2 onclick="showUserGroupDetails(this.parentNode);">Edit Group Details</h2>
+			<h2 onclick="showUserGroupDetails(this.parentNode);">Group Management</h2>
 			<div class="formBody">
+			  <button class="action" onclick="downloadUserGroup();" id="downloadData">Download Group Data</button>
 			  <div id="">
 			    <input type="text" id="" name="name" placeholder="Group Name" />
 			    <textarea name="emails" placeholder="Emails, one per line"></textarea>
                             <p>Emails will be sent to existing users to join this group, and invites will be sent to new users.</p>
-			    <button class="save" onclick="saveUserGroupDetails(this.parentNode);" id="saveUserGroupDetails">Save Group</button>
+			    <button class="action" onclick="saveUserGroupDetails(this.parentNode);" id="saveUserGroupDetails">Save Group</button>
 			  </div>
 			</div>
                       </div>

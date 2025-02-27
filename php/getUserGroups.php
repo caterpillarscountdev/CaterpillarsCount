@@ -22,7 +22,9 @@ if(is_object($user) && get_class($user) == "User"){
       $groupsArray[$i] = array(
         "id" => $groups[$i]->getID(),
         "name" => $groups[$i]->getName(),
-        "emails" => implode("\n", $groups[$i]->getEmails())
+        "emails" => implode("\n", $groups[$i]->getEmails()),
+        "invitedCount" => count($groups[$i]->getEmails()),
+        "acceptedCount" => count($groups[$i]->getUsers())
         );
     }
   }

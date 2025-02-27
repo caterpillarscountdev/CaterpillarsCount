@@ -77,6 +77,10 @@ if(is_object($user) && get_class($user) == "User"){
     "Users" => array()
   );
 
+  if (count($users) < 1) {
+    die("true|" . json_encode($results));
+  }
+  
   $userIDs = array();
 
   uasort($users, function($a, $b) { return strcmp($a->getLastName(), $b->getLastName());});
