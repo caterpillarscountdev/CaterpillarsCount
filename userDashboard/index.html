@@ -206,22 +206,23 @@
 		 }
 
 
-		 .siteSelect{
+		 .siteSelect, .groupSelect{
 		     position:relative;
 		     display:inline-block;
 		     text-decoration:inherit;
                      font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;		 }
-		 .siteSelect .selected{
+		 .siteSelect .selected, .groupSelect .selected {
 		     border-radius:4px;
 		     text-decoration:inherit;
 		     cursor:pointer;
 		     background:rgba(0,0,0,0.1);
 		     padding:0px 2px;
 		 }
-		 .siteSelect .options{
+		 .siteSelect .options, .groupSelect .options{
 		     position:absolute;
 		     top:1em;
 		     left:0px;
+		     cursor:pointer;
 		     background:#fff;
 		     min-width:100%;
 		     border-radius:5px;
@@ -232,14 +233,66 @@
 		     display:none;
 		     z-index:1;
 		 }
-		 .siteSelect .options>div{
+		 .siteSelect .options>div .groupSelect .options>div{
 		     padding:5px;
 		     cursor:pointer;
                      text-align:left;
 		 }
-		 .siteSelect .options>div:hover{
+		 .siteSelect .options>div:hover, .groupSelect .options>div:hover{
 		     background:#ebfeff;
 		 }                 
+
+		 .groupDetails{
+		     font-family: 'Roboto Slab', serif;
+		     margin:20px 0px;
+		     border-radius:4px;
+		     overflow:hidden;
+                     display: none;
+		 }
+
+		 .groupDetails h2{
+		     font-size:20px;
+		     background:#f7f7f7;
+		     color:#aaa;
+		     padding:20px;
+		     cursor:pointer;
+
+		 }
+		 .groupDetails .formBody{
+		     font-size:14px;
+		     background:#f7f7f7;
+		     max-height:0px;
+		     overflow:hidden;
+		 }
+
+		 .groupDetails .formBody>div{
+		     padding:20px;
+		 }
+
+		 .groupDetails button.save{
+		     margin:20px auto 5px auto;
+		 }
+
+                 .groupDetails textarea{
+		     width:100%;
+		     background:#fff;
+		     border:1px solid #ddd;
+		     border-bottom:2px solid #ddd;
+		     font-size:16px;
+		     padding:16px;
+		     box-sizing:border-box;
+		     border-radius:4px;
+		     margin:5px 0px;
+		     color:#aaa;
+		     -webkit-appearance: none;
+    		     -moz-appearance: none;
+    		     appearance: none;
+		     font-family: Arial, sans-serif;
+		     overflow:hidden;
+		     resize: vertical;
+		     height:162px;
+		 }
+
                  
 		</style>
 		<script>
@@ -251,7 +304,9 @@
                  }
 
                  let siteID = queryParam('s');
+                 let userGroupID = queryParam('g');
                  let sites = null;
+                 let userGroups = null;
 
                  window.addEventListener("popstate", (ev) => {
                      console.log("popstate", ev.state)
@@ -261,6 +316,7 @@
                  
 		 $(document).click(function(){
 		     $(".siteSelect .options").fadeOut(0);
+		     $(".groupSelect .options").fadeOut(0);
 		 });
 
 		 $(document).ready(function(){
@@ -285,22 +341,45 @@
                      }
                  }
 
+                 async function loadUserGroups() {
+                     let response = await fetch("../php/getUserGroups.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"));
+                     var data = JSON.parse((await response.text()).replace("true|", ""));
+
+                     if (data.allowed) {
+                         document.querySelector('#switch').classList.add('active');
+                         userGroups = data.groups;
+                         showUserGroupSelect(data.groups);
+                     }
+                 }
+                 
                  async function loadUserStats() {
                      if (!sites) {
                          await loadUserSites();
                      }
+                     if (!userGroups) {
+                         await loadUserGroups();
+                     }
 
                      let userID = queryParam('u');
 
-                     if (siteID && !userID) {
+                     if (userGroupID && !userID) {
+                         let label;
+                         let group = userGroups.filter((x) => {return x.id == userGroupID});
+                         if (group.length == 1) {
+                             label = "Group: " + group[0].name;
+                             editableUserGroup(group[0]);
+                         }
+                         switchButtonStates('Group', label);
+                         
+                     } else if (siteID && !userID) {
                          let label;
                          let site = sites.filter((x) => {return x.id == siteID});
                          if (site.length == 1) {
-                           label = "Site: " + site[0].name;   
+                             label = "Site: " + site[0].name;   
                          }
-                         switchButtonStates('Site', 'User', label);
+                         switchButtonStates('Site', label);
                      } else {
-                         switchButtonStates('User', 'Site');
+                         switchButtonStates('User');
                      }
                      
                      let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID));
@@ -397,27 +476,37 @@
                      }                     
                  }
 
-		 function switchStatsTo(viewType, otherType, label){
+		 function switchStatsTo(viewType){
                      if (viewType == 'User') {
                          window.history.pushState({}, "", `${window.location.pathname}`);
                          siteID = null;
+                         userGroupID = null;
+                     } else if (viewType == 'Group')  {
+                         window.history.pushState({}, "", `${window.location.pathname}?g=${userGroupID}`);
+                         siteID = null;
                      } else {
                          window.history.pushState({}, "", `${window.location.pathname}?s=${siteID}`);
+                         userGroupID = null;
                      }
                      loadUserStats();
                  }
 
-                 function switchButtonStates(viewType, otherType, label) {
-                     let id = `#${viewType.toLowerCase()}SwitchButton`;
-                     let other = `#${otherType.toLowerCase()}SwitchButton`;
-		     $(id)[0].className = "active";
-		     $(other)[0].className = "";
-		     $(id)[0].innerHTML = ". . .";
-                     $(other)[0].innerHTML = otherType;
-		     setTimeout(function(){
-			 $(id)[0].innerHTML = label || viewType;
-		     }, 1);
-		 }
+                 function switchButtonStates(viewType, label) {
+                     let states = ['User', 'Site', 'Group'];
+                     for (let state of states) {
+                         let id = `#${state.toLowerCase()}SwitchButton`;
+		         $(id)[0].innerHTML = ". . .";
+                         if (viewType == state) {
+		             $(id)[0].className = "active";
+		             setTimeout(function(){
+			         $(id)[0].innerHTML = label || viewType;
+		             }, 1);
+                         } else {
+		             $(id)[0].className = "";
+                             $(id)[0].innerHTML = state;
+                         }
+		     }
+                 }
 
 
                  function showSiteSelect(sites) {
@@ -441,12 +530,47 @@
 		 }
                  function siteSelectOption(site) {
                      siteID = site.id;
-                     switchStatsTo('Site', 'User', `Site: ${site.name}`);              
+                     switchStatsTo('Site');              
 		     setTimeout(function(){
 			 $(".siteSelect .options").eq(0).css({display:"none"});
 		     }, 1);
                      
                  }
+
+                 function showUserGroupSelect(groups) {
+                     let parent = document.querySelector(".groupSelect .options");
+                     parent.replaceChildren();
+
+                     groups = groups.sort((a,b) => a.name.localeCompare(b.name));
+
+                     for (let group of groups) {
+                         let div = document.createElement('div');
+                         div.innerHTML = group.name;
+                         div.addEventListener('click', () => userGroupSelectOption(group));
+                         parent.appendChild(div);
+                     }
+                     let div = document.createElement('div');
+                     div.innerHTML = "<em>Create New</em>";
+                     div.addEventListener('click', () => createNewUserGroup());
+                     parent.appendChild(div);
+                     
+                 }
+
+		 function showUserGroupSelectOptions(selectedOption){
+		     setTimeout(function(){
+			 $(".groupSelect .options").eq(0).css({display:"block"});
+		     }, 1);
+		 }
+                 function userGroupSelectOption(group) {
+                     userGroupID = group.id;
+                     switchStatsTo('Group');
+                     editableUserGroup(group);
+		     setTimeout(function(){
+			 $(".groupSelect .options").eq(0).css({display:"none"});
+		     }, 1);
+                     
+                 }
+                 
 
                  
                  function sortableInit(table) {
@@ -482,8 +606,8 @@
                              y = rows[i + 1].getElementsByTagName("td")[idx];
 
                              if (compare(extract(x), extract(y))) {
-                                     shouldSwitch = true;
-                                     break;
+                                 shouldSwitch = true;
+                                 break;
                              }
                          }
                          if (shouldSwitch) {
@@ -498,6 +622,49 @@
                              }
                          }
                      }
+                 }
+
+                 function editableUserGroup(group) {
+                     let con = document.getElementById('groupDetails');
+                     con.querySelector('h2').innerHTML = 'Edit Group Details';
+                     con.style.display = 'block';
+                     $(con).find("input[name='name']").val(group.name);
+                     $(con).find("textarea[name='emails']").val(group.emails);
+                 }
+
+                 function createNewUserGroup() {
+                     let con = document.getElementById('groupDetails');
+                     con.querySelector('h2').innerHTML = 'Create New Group';
+                     con.style.display = 'block';
+                     showUserGroupDetails(con);
+                 }
+
+                 async function saveUserGroupDetails(con) {
+                     let name = $(con).find("input[name='name']").val();
+                     let emails = $(con).find("textarea[name='emails']").val();
+
+                     let idClause = '';
+                     if (userGroupID) {
+                         idClause = '&id=' + userGroupID;
+                     }
+                     let response = await fetch('../php/editUserGroup.php?email=' + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + idClause + "&name=" + encodeURIComponent(name) + "&emails=" + encodeURIComponent(emails), {method: "POST"});
+                     showUserGroupDetails(document.querySelector("#groupDetails"));
+                     await loadUserGroups();
+                     return loadUserStats();
+                 }
+
+                 function showUserGroupDetails(con) {
+		     var body = $(con).find(".formBody").eq(0)[0];
+
+		     if(body.style.maxHeight == "" || body.style.maxHeight == "0px"){
+			 $(con).css({border:"0px none transparent"});
+			 $(body).stop().animate({maxHeight:"500px"});
+			 //$(con).find("h2").eq(0).stop().animate({backgroundColor:"#444", color:"#fff"});
+		     }
+		     else{
+			 $(body).stop().animate({maxHeight:"0px"});
+		     }
+                     
                  }
                  
 		</script>
@@ -601,14 +768,30 @@
 		    <div class="content">
 		      <div class="centeredText">
 			<div id="switch">
-			  <button id="userSwitchButton" class="active" onclick="switchStatsTo('User', 'Site');">User</button>
+			  <button id="userSwitchButton" class="active" onclick="switchStatsTo('User');">User</button>
                           <div class="siteSelect">
 		            <div class="options" style="min-width:153px;">
                             </div>
                           </div>
 			  <button id="siteSwitchButton" onclick="showSiteSelectOptions(this);">Site</button>
+                          <div class="groupSelect">
+		            <div class="options" style="min-width:153px;">
+                            </div>
+                          </div>
+			  <button id="groupSwitchButton" onclick="showUserGroupSelectOptions(this);">Group</button>
 			</div>
 		      </div>
+                      <div id="groupDetails" class="groupDetails">
+			<h2 onclick="showUserGroupDetails(this.parentNode);">Edit Group Details</h2>
+			<div class="formBody">
+			  <div id="">
+			    <input type="text" id="" name="name" placeholder="Group Name" />
+			    <textarea name="emails" placeholder="Emails, one per line"></textarea>
+                            <p>Emails will be sent to existing users to join this group, and invites will be sent to new users.</p>
+			    <button class="save" onclick="saveUserGroupDetails(this.parentNode);" id="saveUserGroupDetails">Save Group</button>
+			  </div>
+			</div>
+                      </div>
 		      <div id="quiz">
 		        <h3><a href="../arthropodQuiz">Photo ID Quiz</a><img onmouseover="$('#quizNotice').css('display','inline-block')" onmouseout="$('#quizNotice').css('display','none')" src="../images/question.png"><div id="quizNotice">Quiz Scores before October 2024 were not collected.</div></h3>
 		        <div>
