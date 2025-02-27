@@ -1,4 +1,24 @@
-			function haveInternet(){
+function showNotifyOfflineSubmit() {
+  showNotifyOffline();
+  let existing = document.querySelector('#iconBar .offlineIcon');
+  if (existing) { existing.remove()};
+  let count = hasOfflineSurveys();
+  if (count) {
+    let el = document.createElement('span');
+    el.classList.add('panelIcon');
+    el.classList.add('offlineIcon');
+    el.title = "Offline observations waiting to upload.";
+    el.onclick = (event) => {
+      event.stopPropagation();
+      queueNotice('alert', 'Offline observations waiting to upload. ' + offlineSurveysSummary());
+    };
+    el.textContent = count;
+    document.querySelector('#iconBar').prepend(el);
+  }
+}
+
+
+                        function haveInternet(){
 				//return whether or not we have an internet connection that we are allowed to use
 				return navigator.onLine;
 			}
@@ -271,6 +291,7 @@
 							else{
 								window.localStorage.removeItem("pendingSurveys");
 							}
+                                                        showNotifyOfflineSubmit();
 	//alert("updated pending surveys: " + window.localStorage.getItem("pendingSurveys"));
 							successfullySubmittedPendingSurveyIndexes = [];
 							queuedPendingSurveys = false;
@@ -808,6 +829,7 @@
 			function accessPanelBlindly(secondPanelID){
 				//once a user is logged in, this function allows them to switch between "site", "arthropod", and "plant" panels.
 				if(!switchingToPanel){
+                                  showNotifyOfflineSubmit();
 					if(secondPanelID != currentPanelID){
 						switchingToPanel = true;
 						scrollToElement($('#iconBar'));
@@ -1932,6 +1954,8 @@
 			}
 			
 			function restart(){
+                                showNotifyOfflineSubmit();
+                          
 				lastPass = $("#sitePassword")[0].value;
 				$("#sitePassword")[0].value = "";
 				if($("#sitePasswordGroup")[0].style.display != "none"){

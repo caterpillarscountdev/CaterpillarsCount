@@ -109,44 +109,33 @@
 			}
 		</style>
 		<script>
-			requireLogIn();
+		 requireLogIn();
 
-			$(document).ready(function(){
-				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-				for(var i = 0; i < $(".noautocomplete").length; i++){
-					$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
-					$(".noautocomplete").eq(i)[0].style.display = "inline-block";
-					$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
-				}
-			    var stopAutocompleteInterval = setInterval(function(){
-                                try {
-					for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
-						$("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
-					}
-                                } catch {};
-				}, 1);
-				setTimeout(function(){
-					clearInterval(stopAutocompleteInterval);
-				}, 2000);
+		 $(document).ready(function(){
+		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
+		     for(var i = 0; i < $(".noautocomplete").length; i++){
+			 $(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
+			 $(".noautocomplete").eq(i)[0].style.display = "inline-block";
+			 $(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
+		     }
+		     var stopAutocompleteInterval = setInterval(function(){
+                         try {
+			     for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
+				 $("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
+			     }
+                         } catch {};
+		     }, 1);
+		     setTimeout(function(){
+			 clearInterval(stopAutocompleteInterval);
+		     }, 2000);
 
+                     showNotifyOfflineSubmit();
+		 });
 
-                            let count = hasOfflineSurveys();
-                            if (count) {
-                                let el = document.createElement('span');
-                                el.classList.add('panelIcon');
-                                el.title = "Offline observations waiting to upload.";
-                                el.onclick = (event) => {
-                                    event.stopPropagation();
-                                    queueNotice('alert', 'Offline observations waiting to upload.');
-                                };
-                                el.textContent = count;
-                                document.querySelector('#iconBar').prepend(el);
-                            }
-			});
-
-			$(window).resize(function(){
-				$('.ui-autocomplete').css({display:"none"});
-			});
+		 $(window).resize(function(){
+		     $('.ui-autocomplete').css({display:"none"});
+		 });
+                 
 		</script>
 	</head>
 	<body>
