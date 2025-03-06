@@ -46,8 +46,9 @@
 			);
 		}
 	}
-	
+echo "SELECT Plant.SiteFK, COUNT(DISTINCT LocalDate) AS UniqueDatesThisWeek FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndpproved < 3 AND Plant.SiteFK IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND Plant.SiteFK<>2 AND Survey.LocalDate >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) GROUP BY Plant.SiteFK";
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT LocalDate) AS UniqueDatesThisWeek FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndpproved < 3 AND Plant.SiteFK IN (0, " . implode(", ", array_keys($rankingsArray)) . ") AND Plant.SiteFK<>2 AND Survey.LocalDate >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) GROUP BY Plant.SiteFK");
+echo $mysqli->error;
 	while($row = mysqli_fetch_assoc($query)){
           $rankingsArray[strval($row["SiteFK"])]["UniqueDatesThisWeek"] = intval($row["UniqueDatesThisWeek"]);
 	}
