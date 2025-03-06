@@ -2,8 +2,8 @@ CREATE TABLE `UserGroup` (
   `ID` int(11) NOT NULL,
   `UserFKOfManager` int(11) NOT NULL,
   `Name` text NOT NULL,
-  `Emails` text NOT NULL;
-  `RequestedEmails` text NOT NULL;
+  `Emails` text NOT NULL,
+  `RequestedEmails` text NOT NULL,
   `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `DateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
