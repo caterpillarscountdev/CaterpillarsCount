@@ -3,12 +3,15 @@
 		<!-- Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
 		<script>
-  			window.dataLayer = window.dataLayer || [];
-  			function gtag(){dataLayer.push(arguments);}
-  			gtag('js', new Date());
-			gtag('config', 'UA-113319025-1');
+  		 window.dataLayer = window.dataLayer || [];
+  		 function gtag(){dataLayer.push(arguments);}
+  		 gtag('js', new Date());
+		 gtag('config', 'UA-113319025-1');
 		</script>
 		<!-- End of Google Analytics -->
+
+                <link rel="manifest" href="/manifest.json" />
+		<script src="/cache.js"></script>
 
 		<title>Submit Observations | Caterpillars Count!</title>
 		<meta charset="utf-8" />
@@ -106,30 +109,33 @@
 			}
 		</style>
 		<script>
-			requireLogIn();
+		 requireLogIn();
 
-			$(document).ready(function(){
-				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-				for(var i = 0; i < $(".noautocomplete").length; i++){
-					$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
-					$(".noautocomplete").eq(i)[0].style.display = "inline-block";
-					$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
-				}
-			    var stopAutocompleteInterval = setInterval(function(){
-                                try {
-					for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
-						$("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
-					}
-                                } catch {};
-				}, 1);
-				setTimeout(function(){
-					clearInterval(stopAutocompleteInterval);
-				}, 2000);
-			});
+		 $(document).ready(function(){
+		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
+		     for(var i = 0; i < $(".noautocomplete").length; i++){
+			 $(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
+			 $(".noautocomplete").eq(i)[0].style.display = "inline-block";
+			 $(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
+		     }
+		     var stopAutocompleteInterval = setInterval(function(){
+                         try {
+			     for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
+				 $("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
+			     }
+                         } catch {};
+		     }, 1);
+		     setTimeout(function(){
+			 clearInterval(stopAutocompleteInterval);
+		     }, 2000);
 
-			$(window).resize(function(){
-				$('.ui-autocomplete').css({display:"none"});
-			});
+                     showNotifyOfflineSubmit();
+		 });
+
+		 $(window).resize(function(){
+		     $('.ui-autocomplete').css({display:"none"});
+		 });
+                 
 		</script>
 	</head>
 	<body>
@@ -173,7 +179,7 @@
 			</div>
 		</div>
 
-		<div id="splash">
+		<div id="splash" class="mobileOptional">
 			<div id="splashImage"></div>
 			<div id="splashOverlay">
 				<div id="splashIntroText">Welcome to</div>
@@ -190,14 +196,14 @@
 			</div>
 			<div id="navKnockDown" class="clearBoth"></div>
 			<nav class="loadingNav">
-				<ul>
+			        <ul>
 					<li onclick="accessSubMenu(this);">
-						<span>Participate</span>
+					  <span>Participate</span>
 						<ul onclick="event.stopPropagation();">
 							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
 							<li><a href="../getStarted">Get Started</a></li>
 							<li><a href="../conductASurvey">Conduct a Survey</a></li>
-							<li><a href="../submitObservations">Submit Observations</a></li>
+							<li><a href="../submitObservations" class="notifyOffline">Submit Observations</a></li>
 							<li><a href="../hostASurveySite">Host a Survey Site</a></li>
 							<li><a href="../resources">Resources</a></li>
 						</ul>
