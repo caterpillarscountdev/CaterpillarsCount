@@ -416,6 +416,11 @@
 					scrollTop: $(element).offset().top - 51
 				}, 500);
 			}
+
+function accessManageMenu() {
+  toggleNav();
+  $("nav>ul>li:last-of-type").eq(0)[0].click();
+}
 			
 			function accessSubMenu(parentElement){
 				if(animatingMenu){
