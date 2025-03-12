@@ -39,10 +39,10 @@ self.addEventListener("fetch", (event) => {
     // so we need to make a copy.
     // (see https://developer.mozilla.org/en-US/docs/Web/API/Request/clone)
     let response;
+    let cache = await caches.open(CURRENT_CACHES.offline);
     try {
       response = await fetch(event.request.clone());
     } catch (e) {
-      let cache = await caches.open(CURRENT_CACHES.offline);
       response = await cache.match(event.request)
       if (response) {
         console.log(" Found response in cache:", response);
