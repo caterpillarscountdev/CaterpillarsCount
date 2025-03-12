@@ -47,7 +47,8 @@ self.addEventListener("fetch", (event) => {
       if (response) {
         console.log(" Found response in cache:", response);
         return response;
-      }
+      } 
+      return;
     }
     console.log(
       "  Response for %s from network is: %O",

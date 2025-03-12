@@ -1065,7 +1065,7 @@ function showNotifyOfflineSubmit() {
                           if (prompt) {
 			    promptWithNotes("#siteNotes", prompt, 'Whoops!', 'Yes, I am sure!', function(){
 			      $('#averageLeafLength')[0].focus();
-			      $('#averageLeafLegnth')[0].select(0, 9999);
+			      $('#averageLeafLength')[0].select(0, 9999);
 			    }, function(){
 			      
 			    });
