@@ -72,7 +72,7 @@
 					"color" => $surveys[$i]->getPlant()->getColor(),
 					"localDate" => $surveys[$i]->getLocalDate(),
 					"localTime" => $surveys[$i]->getLocalTime(),
-					"observaionMethod" => $surveys[$i]->getObservationMethod(),
+					"observationMethod" => $surveys[$i]->getObservationMethod(),
 					"notes" => $surveys[$i]->getNotes(),
 					"wetLeaves" => $surveys[$i]->getWetLeaves(),
 					"plantSpecies" => $surveys[$i]->getPlantSpecies(),

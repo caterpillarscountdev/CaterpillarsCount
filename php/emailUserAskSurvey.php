@@ -18,7 +18,7 @@ if(is_object($user) && get_class($user) == "User"){
     if(User::isSuperUser($user) || $site->isAuthority($user)){
       $emailto = $survey->getObserver()->getEmail();
       $ccs = $site->getAuthorityEmails();
-      if (emailAndCC($emailto, $ccs, "QC issue with your Survey",$emailmessage)) {
+      if (emailAsAndCCUs($user->getEmail(), $emailto, $ccs, "Data issue with your Survey",$emailmessage)) {
         die("true|");	 
       } else {
         die("false|Email failed to send.");		
