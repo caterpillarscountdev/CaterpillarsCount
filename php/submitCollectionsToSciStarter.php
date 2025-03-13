@@ -10,12 +10,10 @@
 	$query = mysqli_query($dbconn, "SELECT `Processing` FROM `CronJobStatus` WHERE `Name`='SciStarterCollectionSubmission'");
 	if(mysqli_num_rows($query) > 0){
 		if(intval(mysqli_fetch_assoc($query)["Processing"]) == 1){
-			mysqli_close($dbconn);
 			die();
 		}
 	}
 	else{
-		mysqli_close($dbconn);
 		die();
 	}
 
@@ -34,7 +32,6 @@
 	else{
 		//Mark that we're finished submitting to SciStarter
 		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='SciStarterCollectionSubmission'");
-		mysqli_close($dbconn);
 		die();
 	}
 
@@ -50,5 +47,4 @@
 			submitToSciStarter($dbconn, $ids[1], $row["Email"], "collection", null, $row["LocalDate"] . "T" . $row["LocalTime"], 300, 2, null);
 		}
 	}
-	mysqli_close($dbconn);
 ?>

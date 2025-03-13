@@ -29,7 +29,6 @@
 	if(date('H:i') == "07:00" || date('H:i') == "07:01" || date('H:i') == "07:02"){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		mysqli_query($dbconn, "DELETE FROM TemporaryEmailLog WHERE `Date`<'" . date("Y-m-d") . "'");
-		mysqli_close($dbconn);
 	}
 
 	function logSend($userIdentifier, $emailTypeIdentifier = "DEFAULT TO CURRENT DATE"){
@@ -40,7 +39,6 @@
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		mysqli_query($dbconn, "INSERT INTO TemporaryEmailLog (`UserIdentifier`, `EmailTypeIdentifier`, `Date`) VALUES ('$userIdentifier', '$emailTypeIdentifier', '$date')");
-		mysqli_close($dbconn);
 	}
 	
 	function getSends($emailTypeIdentifier = "DEFAULT TO CURRENT DATE"){
@@ -53,7 +51,6 @@
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `UserIdentifier` FROM TemporaryEmailLog WHERE (`Date`='$date' OR `Date`='$yesterday') AND `EmailTypeIdentifier`='$emailTypeIdentifier'");
-		mysqli_close($dbconn);
 		$userIdentifiers = array();
 		while($row = mysqli_fetch_assoc($query)){
 			$userIdentifiers[] = strval($row["UserIdentifier"]);
@@ -110,7 +107,6 @@
 				}
 			}
 		}
-		mysqli_close($dbconn);
 	}
 	function send6(){
 		global $emailsSent;
@@ -135,7 +131,6 @@
 				}
 			}
 		}
-		mysqli_close($dbconn);
 	}
 	function send7(){
 		global $emailsSent;
@@ -207,7 +202,6 @@
 				}
 			}
 		}
-		mysqli_close($dbconn);
 	}
 	function send8(){
 		global $emailsSent;
@@ -242,7 +236,6 @@
 				}
 			}
 		}
-		mysqli_close($dbconn);
 	}
 	function send4ToAuthorities($site){
 		global $emailsSent;
@@ -300,7 +293,6 @@
 					}
 				}
 			}
-			mysqli_close($dbconn);
 		}
 	}
 
@@ -446,12 +438,10 @@
 					}
 
 					$query = mysqli_query($dbconn, "DELETE FROM TemporaryExpertIdentificationChangeLog WHERE ID IN ('" . implode("', '", $processedTemporaryExpertIdentificationChangeLogIDs) . "');");
-					mysqli_close($dbconn);
 					emailExpertIdentifications($userEmail, $numberOfChanges, $userFirstName, $firstNewExpertIdentification, $firstNewExpertIdentificationPhotoURL, $percentSuppporting, $changeLIs, $distinctFeatureLIs, $iNaturalistObserverID);
 					$emailsSent++;
 				}
 				else{
-					mysqli_close($dbconn);
 					save($baseFileName . "finishedExpertIdentificationEmailsBeforeWeeksMonday", intval(date("d", strtotime('Monday this week'))));
 				}
 			}

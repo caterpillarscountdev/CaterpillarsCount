@@ -11,5 +11,4 @@
   $filters = mysqli_real_escape_string($dbconn, trim(htmlentities(rawurldecode(custgetparam("filters")))));
   
   mysqli_query($dbconn, "INSERT INTO Download (`Date`, `UTCTime`, `IP`, `Page`, `File`, `Filters`) VALUES ('$date', '$time', '$ip', '$page', '$file', '$filters')");
-  mysqli_close($dbconn);
 ?>
