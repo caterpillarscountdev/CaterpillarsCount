@@ -164,7 +164,7 @@
 						if (this.readyState == 4 && this.status == 200) {
 							requiringLogIn = false;
 							if(this.responseText == "false"){
-								window.location = "../signIn/index.html?p=../" + window.location.toString().substring(window.location.toString().indexOf("unc.edu") + 8);
+								window.location = "../signIn?p=" + window.location.pathname;
 							}
 						}
 					};
@@ -193,7 +193,8 @@
 								}
 								$("nav>ul>li:last-of-type").eq(0).find("span").eq(0)[0].innerHTML = "My Account";
 							}
-							$("nav").eq(0)[0].className = "";
+							$("nav").eq(0)[0].className = "loggedIn";
+                                                  
 						}
 					};
 					if($("h1").eq(0)[0].innerHTML == "Caterpillars Count!"){
@@ -414,6 +415,11 @@
 					scrollTop: $(element).offset().top - 51
 				}, 500);
 			}
+
+function accessManageMenu() {
+  toggleNav();
+  $("nav>ul>li:last-of-type").eq(0)[0].click();
+}
 			
 			function accessSubMenu(parentElement){
 				if(animatingMenu){
@@ -455,7 +461,7 @@
 					}
 				}
 				else{
-					$("nav span").stop().fadeOut(200);
+					$("nav li>span").stop().fadeOut(200);
 					
 					var mainMenuElements = $("nav>ul>li");
 					for(var i = 0; i < mainMenuElements.length; i++){
@@ -592,3 +598,40 @@
 					});
 				}
 			}
+
+function hasOfflineSurveys() {
+  let pending = window.localStorage.getItem("pendingSurveys");
+  // Dev checking
+  if (!pending ||  pending == 'null' || pending == "[1,2]") {
+//    window.localStorage.setItem("pendingSurveys", "[]"); //[["AAA", "xxx", ["2025-01-01", "12:00:00"]]]));
+    window.localStorage.removeItem("pendingSurveys");
+  }
+  // Always
+  return pending && JSON.parse(pending).length;
+}
+
+function offlineSurveysSummary() {
+  let pending = JSON.parse(window.localStorage.getItem("pendingSurveys"));
+  s = "";
+  for (let p of pending) {
+    s = `${s}\nBranch ${p[0]} on ${p[2][0]};`;
+  }
+  return s
+}
+
+function showNotifyOffline() {
+  let count = hasOfflineSurveys();
+  if (!count) { return };
+  document.querySelectorAll(".notifyOffline").forEach((el) => {
+    let existing = el.querySelector('span');
+    if (existing) { existing.remove()};
+    let t = document.createElement('span');
+    t.title = "Offline observations";
+    t.textContent = count;
+    el.append(t);
+  })
+}
+
+$(document).ready(function() {
+  showNotifyOffline()
+})

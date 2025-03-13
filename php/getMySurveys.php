@@ -9,7 +9,6 @@
 	$salt = custgetparam("salt");
 	$page = custgetparam("page");
 	$filters = json_decode(rawurldecode(custgetparam("filters")), true);
-	$inQCMode = filter_var(custgetparam("inQCMode"), FILTER_VALIDATE_BOOLEAN);
 	$PAGE_LENGTH = 25;
 	
 	$user = User::findBySignInKey($email, $salt);
@@ -19,7 +18,7 @@
 			$start = ((intval($page) - 1) * $PAGE_LENGTH);
 		}
 		
-		$surveys = $inQCMode ? Survey::findSurveysByFlagged($user, $start, $PAGE_LENGTH) : Survey::findSurveysByUser($user, $filters, $start, $PAGE_LENGTH);
+		$surveys = Survey::findSurveysByUser($user, $filters, $start, $PAGE_LENGTH);
 		$totalCount = $surveys[0];
 		$totalPages = ceil($totalCount/$PAGE_LENGTH);
 		$surveys = $surveys[1];
@@ -55,8 +54,10 @@
 						);
 					}
 				}
+                                $flags = $surveys[$i]->getFlags();
 				$surveysArray[] = array(
 					"id" => $surveys[$i]->getID(),
+                                        "canQC" => ($flags && ($surveys[$i]->getPlant()->getSite()->isAuthority($user) || User::isSuperUser($user->getEmail()))),
 					"editable" => ($surveys[$i]->getPlant()->getSite()->isAuthority($user) || $surveys[$i]->getSubmissionTimestamp() >= (time() - (2 * 7 * 24 * 60 * 60)) || User::isSuperUser($user->getEmail())),
 					"observerID" => $surveys[$i]->getObserver()->getID(),
 					"observerFullName" => $surveys[$i]->getObserver()->getFullName(),
@@ -71,7 +72,7 @@
 					"color" => $surveys[$i]->getPlant()->getColor(),
 					"localDate" => $surveys[$i]->getLocalDate(),
 					"localTime" => $surveys[$i]->getLocalTime(),
-					"observaionMethod" => $surveys[$i]->getObservationMethod(),
+					"observationMethod" => $surveys[$i]->getObservationMethod(),
 					"notes" => $surveys[$i]->getNotes(),
 					"wetLeaves" => $surveys[$i]->getWetLeaves(),
 					"plantSpecies" => $surveys[$i]->getPlantSpecies(),
@@ -82,7 +83,8 @@
 					"linearBranchLength" => $surveys[$i]->getLinearBranchLength(),
 					"submittedThroughApp" => $surveys[$i]->getSubmittedThroughApp(),
 					"arthropodSightings" => $arthropodSightingsArray,
-					"flags" => $surveys[$i]->getFlags()
+                                        "qcComment" => $surveys[$i]->getQCComment(),
+					"flags" => $flags
 				);
 			}
 		}
@@ -112,7 +114,6 @@
 		$sitesArray = array();
 		$query = mysqli_query($dbconn, "SELECT * FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE `UserFKOfObserver`='" . $user->getID() . "' AND PhotoURL<>'' AND SiteFK<>'2' LIMIT 1");
 		$userHasINaturalistObservations = (mysqli_num_rows($query) > 0);
-		mysqli_close($dbconn);
 		for($i = 0; $i < count($sites); $i++){
 			$siteName = $sites[$i][1];
 			if($siteName != "Example Site"){

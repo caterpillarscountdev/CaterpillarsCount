@@ -10,6 +10,8 @@
 		</script>
 		<!-- End of Google Analytics -->
 
+                <link rel="manifest" href="/manifest.json" />
+                
 		<title>Manage My Surveys | Caterpillars Count!</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
@@ -61,12 +63,27 @@
 				width:100%
 			}
 
+                        .ok {
+                            display: inline-flex;
+                            height: 24px;
+                            border-radius: 4px;
+                            background-color: #fff;
+                            padding: 1px 3px 1px 3px;
+                            justify-content: center;
+                            align-items: center;
+                        }
+
 			#surveys .survey{
 				margin-bottom:20px;
 				font-family: 'Roboto Slab', serif;
 				border-radius:5px;
 				background:rgba(0,0,0,0.05);
 			}
+
+                        #surveys .survey:has(+ .flags) {
+                            border-radius: 5px 5px 0 0;
+                            margin-bottom: 0;
+                        }
 
 			#surveys .survey .headInfo{
 				background:#333;
@@ -735,15 +752,21 @@
 			main .panel .flags{
 				background:#f8d7da;
 				padding:10px;
-				border-radius:5px;
-				margin:-13px 0px 80px 0px;
+                                border-radius: 0 0 5px 5px;
+				margin-bottom: 20px;
+                                display: block;
 			}
-			
-			main .panel .flags ul li, main .panel .flags span {
-				font-size:14px;
-				color:#721c24;
-				list-style-type:disc;
-			}
+                        main .panel .flags:has(+ .flags) {
+                            border-radius: 0;
+                            margin-bottom: 0;
+                        }
+                 
+		 
+		        main .panel .flags ul li, main .panel .flags span {
+		            font-size:14px;
+		            color:#721c24;
+		            list-style-type:disc;
+		        }
 			
 			main .panel .flags .flagButtons{
 				padding-top:10px;
@@ -757,6 +780,10 @@
 				margin:0px 0px 0px 5px;
 				display:inline-block;
 			}
+
+                        main .panel .flags .flagButtons .left  {
+                            float: left;
+                        }
 
 			@media screen and (max-width: 900px) {
 				.iconButton{
@@ -845,10 +872,19 @@
 		<script>
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-				
-				showQCButtonIfSuperUser();
 
-				loadFirstPage(true);
+                                if (window.location.search) {
+                                    let incoming = new URLSearchParams(window.location.search);
+                                    let filters = Object.assign({}, GLOBALFilters);
+                                    let page = 1
+                                    for (let [p,v] of incoming.entries()) {
+                                        if (p == 'page') page = v;
+                                        else filters[p] = v;
+                                    }
+                                    loadPage(page, filters, true);
+                                } else {
+				    loadFirstPage(true);
+                                }
 
 				populateSurveySites();
 
@@ -861,47 +897,14 @@
 				requireLogIn();
 			});
 			
-			function showQCButtonIfSuperUser(){
-				$.get("../php/getIsSuperUser.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
-					if(data == "true"){
-						$("#qcModeIconButton")[0].style.display = "";
-						$("#qcIcon")[0].style.display = "";
-					}
-				});
-			}
 			
-			var inQCMode = false;
-			var filtersBeforeQCMode = {};
-			function toggleQCMode(){
-				inQCMode = !inQCMode;
-				
-				if(inQCMode){
-					$("#enterQCModeButtonText").html("Exit QC Mode");
-					$(".hiddenInQcMode").css({display: "none"});
-					$(".shownInQCMode").css({display: "block"});
-					
-					filtersBeforeQCMode = GLOBALFilters;
-					loadPage(1, {});
-				}
-				else{
-					$("#enterQCModeButtonText").html("Enter QC Mode");
-					
-					var hiddenInQcModeElements = $(".hiddenInQcMode");
-					for(var i = 0; i < hiddenInQcModeElements.length; i++){
-						hiddenInQcModeElements[i].style.display = "";
-					}
-					
-					$(".shownInQCMode").css({display: "none"});
-					
-					loadPage(1, filtersBeforeQCMode);
-					filtersBeforeQCMode = {};
-				}
-			}
-			
-			function emailSurveyContributor(fullName, emailParts, surveyid) {
+		        async function emailSurveyContributor(fullName, emailParts, surveyid) {
+                            let response = await fetch("../php/getPrivacySettings.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + encodeURIComponent(window.localStorage.getItem("salt")));
+                            let user = JSON.parse((await response.text()).replace('true|', ''));
+
 			    // send email to user from the site to ask about info
-				var fullName = decodeQuotesAndBackslashes(fullName);
-				for(var i =0; i < emailParts.length; i++){
+			    var fullName = decodeQuotesAndBackslashes(fullName);
+			    for(var i =0; i < emailParts.length; i++){
 					emailParts[i] = decodeQuotesAndBackslashes(emailParts[i]);
 				}
 				var emailaddress = emailParts.join("@");
@@ -917,27 +920,34 @@
 				var surveyPlaceEls = mainData.find('div.siteInfo');
 			    var surveyPlace = "(unknown survey place)";
 				if (surveyPlaceEls.length>0) {
-				  surveyPlace = surveyPlaceEls[0].textContent.replace(/(January|February|March|April|May|June|July|August|September|October|November|December)/," @ $1").replace(/([0-9][0-9]?:[0-9][0-9])/," $1");
+				  surveyPlace = surveyPlaceEls[0].textContent.replace(/(January|February|March|April|May|June|July|August|September|October|November|December)/," @ $1").replace(/([0-9][0-9][0-9][0-9])/,"$1 ");
 				}
 				
 				//alert('place is ' + surveyPlace);
 				
-				var qcissues = $('#' + surveyid).next().find("ul").prop('outerHTML');
-				//alert('have ' + qcissues.length); 
-				
-				
-				var emailBody = 'Hi '  + fullName + ', <br/><br/>' +
-				     'There was a QC issue with some data you submitted.  Could you please <a href="https://caterpillarscount.unc.edu/manageMySurveys/">check the site data</a> for issues below and let us know if this looks correct, ' +
-					 ' or if there is some simple fix for the data?<br/><br/>' +
-					 surveyPlace  + '<br/><br/>' +
-					 qcissues  + '<br/><br/>' +
-                     'Thanks!<br/>The Caterpillars Count team' ;
-					 
-				promptConfirm('Send this email to ' +  emailaddress + '?<hr/>' + emailBody, "No, cancel", "Send Email!", function(){}, 
-				  function(){
+				var qcissues = $('#' + surveyid).next().find("ul").clone();
+                                qcissues.find(".ok").remove();
+                                qcissues = qcissues.prop('outerHTML');
+			    //alert('have ' + qcissues.length); 
+			    
+			    
+			    var emailBody = 'Hi '  + fullName + ', <br/><br/>' +
+				            'The survey listed below was flagged for having one or more unusual values during our automatic quality control checks.<br/></br/>' +
+					    surveyPlace  + '<br/><br/>' +
+					    qcissues  + '<br/><br/>' +
+                                            'Could you please double check this record by visiting the <a href="https://caterpillarscount.unc.edu/manageMySurveys/">Manage My Surveys</a> page, and using the Filter Surveys button to select the branch code and date as indicated above?<br/><br/>' + 
+                            'If you are no longer able to edit the survey yourself, could you please email back with any clarifications, edits, or a confirmation that the value or values are correct?<br/><br/>' +
+                                            'As a reminder, arthropod length refers to head + body length only, and does not include legs or antennae. And while arthropod length is measured in mm, leaf length is measured in cm.<br/><br>' +
+				    
+				    	    'Thanks for helping us ensure a high quality dataset!<br/>' +
+                                            user.firstName + " " + user.lastName + "<br/>";
+			    
+			    promptConfirm('Send this email to ' +  emailaddress + ' and cc site managers?<hr/><div id="emailBody" contenteditable>' + emailBody + "</div>", "No, cancel", "Send Email!", function(){}, 
+				          function(){
+                                      let body = document.getElementById("emailBody").innerHTML;
 				    // alert('sending')
 						$.post("../php/emailUserAskSurvey.php", {email: (window.localStorage.getItem("email")), 
-						      salt: window.localStorage.getItem("salt"), emailto:(emailaddress), emailmessage:(emailBody)},function(data){
+						      salt: window.localStorage.getItem("salt"), survey: surveyid, emailmessage:(body)},function(data){
 						//success
 						if(data.indexOf("true|") == 0){
 							queueNotice("confirmation", "Email sent!");
@@ -975,7 +985,7 @@
 				}
 				if(getDeviceType() == "desktop"){
 					promptConfirm(fullName + "'" + possessiveS + " email address is:<br/><input type=\"text\" class=\"promptInput\" value=\"" + emailParts.join("@").replace() + "\" readonly onclick=\"this.outerHTML=this.outerHTML;this.blur();$('.promptInput')[0].select();\"/>", "Never mind.", "Copy to clipboard!", function(){}, function(){
-						$('.promptInput')[0].outerHTML = $('.promptInput')[0].outerHTML;
+					    $('.promptInput')[0].outerHTML = $('.promptInput')[0].outerHTML;
 						$('.promptInput')[0].select();
 						var copied = true;
 						try{
@@ -1086,6 +1096,20 @@
 				return param;
 			}
 
+                        function paramsToURL(params) {
+                            let n = new URLSearchParams()
+                            for (let [p, v] of Object.entries(params)) {
+                                if (p == 'page' && v == 1) {
+                                    continue
+                                }
+                                if (!v || v == GLOBALFilters[p]) {
+                                    continue
+                                }
+                                n.set(p, v);
+                            }
+                            return n.toString();
+                        }
+
 			var selected = [];
 			var unselected = [];
 			var GLOBALPageNumber = 1;
@@ -1094,13 +1118,14 @@
 			var GLOBALFilters = {"user":"", "arthropod":"", "minArthropodLength":0, "site":"", "circle":"", "code":"", date:"____-__-__"};
 			var loadingPage = false;
 			function loadPage(pageNumber, filters, firstLoad){
+                            window.history.pushState({}, "", `${window.location.pathname}?${paramsToURL(Object.assign({page: pageNumber}, filters))}`);
 				firstLoad = firstLoad || false;
 				if(!loadingPage){
 					loadingPage = true;
 					$("#resultsPage").css({display:"none"});
 					$(".loading").css({display:"block"});
 					
-					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)) + "&inQCMode=" + inQCMode, function(data){
+					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)), function(data){
 						//success
 						if(data.indexOf("true|") == 0){
 							GLOBALFilters = filters;
@@ -1212,10 +1237,12 @@
 								htmlToAdd += 				"<div class=\"underline pointer\" onclick=\"email('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']);\">" + surveys[i]["observerFullName"] + "</div>";
 								htmlToAdd +=			"</div>";
 								htmlToAdd += 			"<div>";
-								htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/" + surveys[i]["observaionMethod"].replace(/ /g, "").replace(surveys[i]["observaionMethod"][0], surveys[i]["observaionMethod"][0].toLowerCase()) + ".png');\"></div>";
-								htmlToAdd += 				"<div>";
+                                                                if(surveys[i]["observationMethod"]) {
+							            htmlToAdd += 				"<div class=\"surveyInfoIcon\" style=\"background-image:url('../images/" + surveys[i]["observationMethod"].replace(/ /g, "").replace(surveys[i]["observationMethod"][0], surveys[i]["observationMethod"][0].toLowerCase()) + ".png');\"></div>";
+                                                                }
+							        htmlToAdd += 				"<div>";
 								htmlToAdd += 					"<div class=\"smallSelect\">";
-								htmlToAdd +=						"<div class=\"selected\">" + surveys[i]["observaionMethod"] + "</div>";
+								htmlToAdd +=						"<div class=\"selected\">" + surveys[i]["observationMethod"] + "</div>";
 								htmlToAdd +=						"<div class=\"options\">";
 								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/beatsheet.png')&quot;;\">BEAT SHEET</div>";
 								htmlToAdd +=							"<div onclick=\"smallSelectOption(this);$(this).parent().parent().parent().parent().find('.surveyInfoIcon')[0].style.backgroundImage=&quot;url('../images/visual.png')&quot;;\">VISUAL</div>";
@@ -1486,8 +1513,19 @@
 									htmlToAdd += 	"<div class=\"arthropodSightingsDropdownButtonDiv\" style=\"display:none;\" onclick=\"toggleArthropodSightings(this.parentNode.getElementsByClassName('arthropodSightingsInfo')[0]);\">Show 0 Arthropods Found</div>";
 								}
 								htmlToAdd += "</div>";
-								
-								htmlToAdd += inQCMode ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul><li>" + surveys[i]["flags"].join("</li><li>") + "</li></ul><div class=\"flagButtons\"><span>QC Comments (optional, choose item in list or write anything): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\"></input></div><div class=\"flagButtons\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button><button class='hint--bottom' data-hint=\"Click this button if the values are correct in your opinion, even if out of standard range\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Approve</button><button class='hint--bottom' data-hint=\"Click this button if you aren't sure if the data are right or wrong but that's all you can say.  You don't want to see this again.\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",2,this);\">? I'm not sure</button><button class='hint--bottom' data-hint=\"Click this button to remove the entire survey because it's invalid or has errors\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; REJECT SURVEY</button></div></div>") : "";
+
+                                                            let flagsM = ""
+                                                            surveys[i]["flags"].forEach(f => {
+                                                                flagsM += "<li onclick=\"toggleCheckbox($(this).find('.checkbox'));\">";
+                                                                flagsM += f.text
+                                                                if (surveys[i]["canQC"]) {
+                                                                    flagsM += "<div class='ok'>OK?&nbsp; <div class='checkbox" + (f.ok ? " checked" : "") + "' data-override='" + f.key.replace("Low", "OK").replace("High", "OK") + "'></div></div>";
+                                                                }
+                                                                flagsM += "</li>";
+                                                            })
+                                                            htmlToAdd += surveys[i]["flags"].length > 0 ? "<div class=\"flags flagsChecks hint--bottom\" data-hint=\"Values in this survey were flagged for review.\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul>" + flagsM + "</ul></div>" : "";
+
+							            htmlToAdd += surveys[i]["canQC"] ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\" value=\"" + (surveys[i]["qcComment"] || "") + "\"></input></div><div class=\"flagButtons\"><div class=\"left\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button></div><button class='hint--bottom' data-hint=\"Mark as rejected and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; Reject</button><button class='hint--bottom' data-hint=\"Mark as accepted and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Accept</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
@@ -1520,8 +1558,8 @@
 			}
 
 			function loadFirstPage(firstLoad){
-				firstLoad = firstLoad || false;
-				loadPage(1, GLOBALFilters, firstLoad);
+			    firstLoad = firstLoad || false;
+			    loadPage(1, GLOBALFilters, firstLoad);
 			}
 
 			function loadLastPage(){
@@ -1663,7 +1701,7 @@
 
 			function filter(){
 				if(!loadingPage){
-					var filters = {"user": $('#userSearch')[0].value.trim(), "arthropod": getSelectValue($('#arthropodSearch')), "minArthropodLength": Number($("#minLength").val().replace(/\D/g, "")), "site": getSelectValue($('#siteSearch .select').eq(0)), "circle": $('#circleSearch')[0].value.trim(), "code": $('#codeSearch')[0].value.trim(), "date": getSelectValue($("#yearFilter")) + "-" + getSelectValue($("#monthFilter")) + "-" + getSelectValue($("#dayFilter"))};
+					var filters = {"user": $('#userSearch')[0].value.trim(), "arthropod": getSelectValue($('#arthropodSearch')), "minArthropodLength": Number($("#minLength").val().replace(/\D/g, "")), "site": getSelectValue($('#siteSearch .select').eq(0)), "circle": $('#circleSearch')[0].value.trim(), "code": $('#codeSearch')[0].value.trim(), "date": getSelectValue($("#yearFilter")) + "-" + getSelectValue($("#monthFilter")) + "-" + getSelectValue($("#dayFilter")), "flagged": getSelectValue($("#flagFilter"))};
 					$("#filtersDropdown button")[0].innerHTML = "<img src=\"../images/rolling.svg\" alt=\"loading...\"/>";
 					loadPage(1, filters);
 					/*
@@ -2062,35 +2100,45 @@
 			function askToApproveSurvey(id, approvedLevel, buttonEl){
 			    // ask user if they want to update approvedlevel
 				// buttonEl is button they pushed and is used to find qc comments just before
-				var verbToUser = "";
-				if (approvedLevel == 1) {
-				   verbToUser = "approve";
-				} 
-				if (approvedLevel == 2) {
-				   verbToUser = "say you're not sure";
-				} 
-				if (approvedLevel == 3) {
-				   verbToUser = "REJECT";
-				} 
-				var qccomment = $(buttonEl).parent().prev().children('.qccomment')[0].value;
-                var qcNoteToUser = "";
+			    var verbToUser = "";
+			    if (approvedLevel == 0) {
+				verbToUser = "save comments on";
+			    } 
+			    if (approvedLevel == 1) {
+				verbToUser = "accept";
+			    } 
+			    if (approvedLevel == 2) {
+				verbToUser = "say you're not sure";
+			    } 
+			    if (approvedLevel == 3) {
+				verbToUser = "REJECT";
+			    } 
+			    var qccomment = $(buttonEl).parent().prev().children('.qccomment')[0].value;
+                            var qcNoteToUser = "";
 				if (qccomment.length >0) {
 				  qcNoteToUser = "You have specified a QC Comment.";
 				} else {
-				  qcNoteToUser = "You have not specified a QC Comment, but they are optional.  Press 'Never mind.' if you want to go back and add a comment.";
+				  qcNoteToUser = "You have not specified a QC Comment, but they are optional.  Press 'Never mind.' if you want to go back and add an explanatory note.";
 				}
-				promptConfirm("Are you sure you want to **" + verbToUser + "** this survey? It won't show up as being flagged again unless someone edits it. " + qcNoteToUser, 'Never mind.', 'Yes, I am sure!', function(){}, function(){
+				promptConfirm("Are you sure you want to **" + verbToUser + "** this survey? " + (approvedLevel > 0 ? "It won't show up as being flagged again unless someone edits it. " : "") + qcNoteToUser, 'Never mind.', 'Yes, I am sure!', function(){}, function(){
 					approveSurvey(id, approvedLevel, qccomment);
 				});
 			}
 			
 			function approveSurvey(id, approvedLevel, qccomment){
-				$('.loading').fadeIn(0);
-				$('#surveys').fadeOut(0);
-				
-				$.get("../php/approveSurvey.php?surveyID=" + id + "&approvedLevel=" + approvedLevel + "&qccomment=" + encodeURIComponent(qccomment) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
-					//success
-					if(data.indexOf("true|") == 0){
+			    $('.loading').fadeIn(0);
+			    $('#surveys').fadeOut(0);
+
+                            let overrides = [];
+                            document.querySelectorAll('.flagsChecks[data-associated-survey="' + id + '"] .checkbox')
+                                    .forEach(v => {
+                                        if (checkboxIsChecked(v)) {
+                                            overrides.push(v.dataset.override);
+                                        }});
+
+			    $.get("../php/approveSurvey.php?surveyID=" + id + "&approvedLevel=" + approvedLevel + "&qccomment=" + encodeURIComponent(qccomment) + "&overrides=" + encodeURIComponent(overrides) +  "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+				//success
+				if(data.indexOf("true|") == 0){
 						reloadPage();
 					}
 					else{
@@ -2099,14 +2147,14 @@
 						
 						queueNotice("error", data.replace("false|", ""));
 					}
-				})
-				.fail(function(){
-					//error
-					$('.loading').fadeOut(0);
-					$('#surveys').fadeIn(0);
+			    })
+			     .fail(function(){
+				 //error
+				 $('.loading').fadeOut(0);
+				 $('#surveys').fadeIn(0);
 					
-					queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
-				});
+				 queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+			     });
 			}
 
 			var batchDeleting = false;
@@ -2843,7 +2891,7 @@
 			</div>
 		</div>
 
-		<div id="splash">
+		<div id="splash" class="mobileOptional">
 			<div id="splashImage"></div>
 			<div id="splashOverlay">
 				<div id="splashIntroText">Welcome to</div>
@@ -2920,7 +2968,6 @@
 					<div>
 						<img src="../images/filterIcon.png" id="filterIcon" class="iconImg hiddenInQcMode" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));"/>
 						<img src="../images/delete.png" id="batchDeleteIcon" class="iconImg hiddenInQcMode" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();"/>
-						<img src="../images/qcIcon.png" id="qcIcon" class="iconImg" onclick="closeHeight($('#filtersDropdown'));closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleQCMode();" style="display:none;"/>
 						<div class="iconButton hiddenInQcMode" id="filterIconButton" onclick="closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleHeight($('#filtersDropdown'));">
 							<img src="../images/filterIconWhite.png"/>
 							<div>Filter surveys</div>
@@ -2928,10 +2975,6 @@
 						<div class="iconButton hiddenInQcMode" id="batchDeleteIconButton" onclick="closeHeight($('#filtersDropdown'));toggleHeight($('#batchDeleteDropdown'));toggleCheckboxes();">
 							<img src="../images/deleteWhite.png"/>
 							<div>Batch delete</div>
-						</div>
-						<div class="iconButton" id="qcModeIconButton" onclick="closeHeight($('#filtersDropdown'));closeHeight($('#batchDeleteDropdown'));hideCheckboxes();toggleQCMode();" style="display:none;">
-							<img src="../images/qcIconWhite.png"/>
-							<div id="enterQCModeButtonText">Enter QC Mode</div>
 						</div>
 						<div class="clearBoth"></div>
 					</div>
@@ -2974,15 +3017,32 @@
 							<input type="number" id="minLength" placeholder="0" onclick="this.select();" pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');"/>
 						</div>
 						<div class="filter">
-						  <datalist id='qccomment'>
-						    <option>seems plausible</option>
-							<option>seems reasonable</option>
-							<option>abnormal, but verified</option>
-							<option>far too many</option>
-							<option>far too long</option>
-							<option>type of insect is only good data</option>
-						  </datalist>
-						</div>
+						  <div class="inputTitle">Flagged Surveys:</div>
+						  <div class="select" id="flagFilter">
+						    <div class="option selected" onclick="selectOption(this);">
+                                                      <div class="shown">
+                                                        <div class="value">all</div><div class="text">Show All</div>
+                                                      </div>
+                                                    </div>
+						    <div class="option" onclick="selectOption(this);">
+                                                      <div class="shown">
+                                                        <div class="value">flagged</div><div class="text">Needs Review</div>
+                                                      </div>
+                                                    </div>
+						    <div class="option" onclick="selectOption(this);">
+                                                      <div class="shown">
+                                                        
+                                                        <div class="value">accepted</div><div class="text">Accepted</div>
+                                                      </div>
+                                                    </div>
+						    <div class="option" onclick="selectOption(this);">
+                                                      <div class="shown">
+                                                        
+                                                        <div class="value">rejected</div><div class="text">Rejected</div>
+                                                      </div>
+                                                    </div>
+						  </div>
+                                                </div>
 						<div class="filter">
 							<div id="locationFilters" style="max-height:999999px;">
 								<div id="siteCircleFilter">

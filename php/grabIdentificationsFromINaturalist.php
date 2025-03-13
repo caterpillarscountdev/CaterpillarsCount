@@ -15,7 +15,6 @@
 	}
 	$query = mysqli_query($dbconn, "SELECT `Processing`, `Iteration`, `UTCLastCalled` FROM `CronJobStatus` WHERE `Name`='iNaturalistIdentificationFetch'");
 	if(mysqli_num_rows($query) == 0){
-		mysqli_close($dbconn);
 		die("\"iNaturalistIdentificationFetch\" not in CronJobStatus table.");
 	}
 	$cronJobStatusRow = mysqli_fetch_assoc($query);
@@ -26,12 +25,10 @@
 		if(strtotime($cronJobStatusRow["UTCLastCalled"]) < strtotime("-10 minutes")){
 			mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0' WHERE `Name`='iNaturalistIdentificationFetch'");
 		}
-		mysqli_close($dbconn);
 		die("Already processing.");
 	}
 	if($lastCalledDateTime->getTimestamp() >= strtotime('Monday this week 00:00:00') && $iteration == 0){
 		save($baseFileName . "finishedWeeksMonday", intval(date("d", strtotime('Monday this week'))));
-		mysqli_close($dbconn);
 		die("Already finished this week based on CronJobStatus table.");
 	}
 	
@@ -382,5 +379,4 @@
 		$query = mysqli_query($dbconn, "UPDATE `CronJobStatus` SET `Processing`='0', `Iteration`='$iteration', `UTCLastCalled`=NOW() WHERE `Name`='iNaturalistIdentificationFetch'");
 	}
 	
-	mysqli_close($dbconn);
 ?>

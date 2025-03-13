@@ -40,7 +40,6 @@
 				}
 		 	}
       
-		  	mysqli_close($dbconn);
 		  	die("true|" . json_encode($emailsArray));
     		}
     		die("false|You do not have permission to get emails from the Caterpillars Count! database.");
