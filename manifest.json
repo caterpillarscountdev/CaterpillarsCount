@@ -1,6 +1,8 @@
 {
   "id": "/submitObservations",
   "name": "Caterpillars Count!",
+  "description": "A citizen science project for measuring the seasonal variation, also known as phenology, and abundance of arthropods like caterpillars, beetles, and spiders found on the foliage of trees and shrubs.",
+  "short_name": "Caterpillars Count!",
   "start_url": "/submitObservations/",
   "scope": "/",
   "display": "standalone",

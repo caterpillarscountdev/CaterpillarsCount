@@ -3,14 +3,16 @@
 		<!-- Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
 		<script>
-  			window.dataLayer = window.dataLayer || [];
-  			function gtag(){dataLayer.push(arguments);}
-  			gtag('js', new Date());
-			gtag('config', 'UA-113319025-1');
+  		 window.dataLayer = window.dataLayer || [];
+  		 function gtag(){dataLayer.push(arguments);}
+  		 gtag('js', new Date());
+		 gtag('config', 'UA-113319025-1');
 		</script>
 		<!-- End of Google Analytics -->
 
-		<title>iOS App | Caterpillars Count!</title>
+                <link rel="manifest" href="/manifest.json" />                
+
+		<title>Mobile Web Instructions | Caterpillars Count!</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../images/favicon/apple-touch-icon-114x114.png" />
@@ -43,6 +45,23 @@
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
 			});
+
+			function trackDownload(downloadedFileURL){
+				var downloadedFileURL = downloadedFileURL.replace("http://", "").replace("https://", "");
+				if(downloadedFileURL.slice(-1) == "/"){
+					downloadedFileURL = downloadedFileURL.substring(0, downloadedFileURL.length - 1);
+				}
+				var downloadedFile = downloadedFileURL.substring(downloadedFileURL.lastIndexOf("/") + 1);
+				if(downloadedFile.indexOf(".pdf") > -1 && downloadedFile.lastIndexOf(".pdf") == (downloadedFile.length - 4)){
+					var downloadFilters = "";
+					var page = window.location.toString().replace("http://", "").replace("https://", "");
+					page = page.substring(page.indexOf("/") + 1);
+					if(page.slice(-1) == "/"){
+						page = page.substring(0, page.length - 1);
+					}
+					$.get("../php/trackDownload.php?page=" + page + "&file=" + downloadedFile + "&filters=" + downloadFilters, function(data){});
+				}
+			}
 		</script>
 	</head>
 	<body>
@@ -67,12 +86,12 @@
 			</div>
 		</div>
 
-		<div id="splash">
+		<div id="splash" class="mobileOptional">
 			<div id="splashImage"></div>
 			<div id="splashOverlay">
 				<div id="splashIntroText">Welcome to</div>
 				<div id="splashMainText">Caterpillars Count!</div>
-				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">Explore maps & graphs</button>
+				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">Mobile Web Instructions</button>
 			</div>
 		</div>
 		<header>
@@ -119,6 +138,7 @@
 					<li onclick="window.location = '../news';">
 						<span>News</span>
 					</li>
+
 					<li onclick="window.location = '../faq';">
 						<span>FAQ</span>
 					</li>
@@ -140,9 +160,51 @@
 		</header>
 		<main>
 			<div class="panel">
-			  <h2>The Caterpillars Count! iOS App</h2>
-			  <div class="tagline">You can easily conduct surveys on your phone using our <a href="../mobileWeb">mobile web</a> site, or by installing this app.</div>
-			  <button onclick="window.open('https://itunes.apple.com/us/app/caterpillars-count/id1366400875?mt=8');">Check it out!</button>
+				<h2>Caterpillars Count! Mobile Website</h2>
+				<div class="centeredText" style="margin:20px 0px;">
+				  <div class="captionedCircleIconDiv" style="width:100%;cursor:default;">
+				    <div class="circleIcon" style="background:#66ff66;width:200px;height:200px;">
+				      <div class="shadow"></div>
+				      <div class="circleIconImage" style="background-image:url('../images/smartPhone.png');top:25%;height:50%;"></div>
+				    </div>
+				    <div class="caption" style="overflow: visible;">You don't need to install an app to <a href="../submitObservations/">conduct surveys</a> or <a href="#" onclick="accessManageMenu(); return false">manage your account</a> with Caterpillars Count! All the same functionality is available here on our website.</div>
+				  </div>
+				</div>
+			</div>
+			<div class="panel">
+				<h2>Adding to your Home Screen</h2>
+				<div class="tagline"></div>
+				<div class="content">
+					<div>
+						<div class="imageTextTable tableDiv">
+							<div class="cellDiv">
+								<div class="circleImage" style="background-image:url('../images/mobileAppInHand.png');"></div>
+							</div>
+							<div class="cellDiv">
+							  <h3>Safari on Apple iOS</h3>
+							  <ul class="scrollAnimationElement fadeInOnScroll">
+							    <li>Launch Safari.</li>
+                                                            <li>Open <a href="">our website</a>, if you're not already here.</li>
+							    <li>Tap the Action or Share icon  <img src="../images/ios-share-icon-15.png" style="height: 1em;" /> at the bottom of the screen.</li>
+                                                            <li>Select "Add to Home Screen" - you may need to swipe up from the bottom of the screen with two fingers to reveal additional options.</li>
+                                                            <li>Tap on "Add" at the top right corner of the screen to finish and add the icon to your home screen.
+							  </ul>
+
+							  <h3>Chrome on Google Android</h3>
+							  <ul class="scrollAnimationElement fadeInOnScroll">
+							    <li>Launch Chrome.</li>
+                                                            <li>Open <a href="">our website</a>, if you're not already here.</li>
+							    <li>Tap the 3 dots menu <img src="../images/android-three-dots-icon-11.png" style="height: 1em;" /> by the address bar.</li>
+                                                            <li>Select "Add to Home Screen".</li>
+                                                            <li>Tap "Install" to finish and add the icon to your home screen.
+							  </ul>
+							</div>
+						</div>
+                                        </div>
+                                </div>
+                                <h2>Learn how to submit a survey</h2>
+				<div class="tagline">with <a href="/extra/mobileAppInstructions">these instructions.</a></div>
+
 			</div>
 		</main>
 		<footer>

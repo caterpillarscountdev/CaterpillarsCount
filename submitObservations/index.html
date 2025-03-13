@@ -109,44 +109,37 @@
 			}
 		</style>
 		<script>
-			requireLogIn();
+		 requireLogIn();
 
-			$(document).ready(function(){
-				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-				for(var i = 0; i < $(".noautocomplete").length; i++){
-					$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
-					$(".noautocomplete").eq(i)[0].style.display = "inline-block";
-					$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
-				}
-			    var stopAutocompleteInterval = setInterval(function(){
-                                try {
-					for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
-						$("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
-					}
-                                } catch {};
-				}, 1);
-				setTimeout(function(){
-					clearInterval(stopAutocompleteInterval);
-				}, 2000);
+		 $(document).ready(function(){
+		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
+		     for(var i = 0; i < $(".noautocomplete").length; i++){
+			 $(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
+			 $(".noautocomplete").eq(i)[0].style.display = "inline-block";
+			 $(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
+		     }
+		     var stopAutocompleteInterval = setInterval(function(){
+                         try {
+			     for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
+				 $("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
+			     }
+                         } catch {};
+		     }, 1);
+		     setTimeout(function(){
+			 clearInterval(stopAutocompleteInterval);
+		     }, 2000);
 
+                     showNotifyOfflineSubmit();
 
-                            let count = hasOfflineSurveys();
-                            if (count) {
-                                let el = document.createElement('span');
-                                el.classList.add('panelIcon');
-                                el.title = "Offline observations waiting to upload.";
-                                el.onclick = (event) => {
-                                    event.stopPropagation();
-                                    queueNotice('alert', 'Offline observations waiting to upload.');
-                                };
-                                el.textContent = count;
-                                document.querySelector('#iconBar').prepend(el);
-                            }
-			});
+                     if(!haveInternet()) {
+                         $("#plantSpecies").attr('placeholder', 'offline? leave this blank to use site plant data');
+                     }
+		 });
 
-			$(window).resize(function(){
-				$('.ui-autocomplete').css({display:"none"});
-			});
+		 $(window).resize(function(){
+		     $('.ui-autocomplete').css({display:"none"});
+		 });
+                 
 		</script>
 	</head>
 	<body>
@@ -161,6 +154,24 @@
 		<div id="error" onclick="hideNotice();"></div>
 		<div id="confirmation" onclick="hideNotice();"></div>
 		<div id="alert" onclick="hideNotice();"></div>
+                <div id="hiddenImages" style="display:none">
+                  <img src='../images/submitObservationsHairy.jpg'/>
+                  <img src='../images/submitObservationsLeafRoll.png'/>
+                  <img src='../images/submitObservationsSilkTent.png'/>
+                  <img src='../images/submitObservationsPupa.jpg'/>
+                  <img src='../images/sawflyLarva.png'/>
+                  <img src='../images/ladybugLarva.jpg'/>
+                  <img src='../images/linerBranchLengthExplanation.gif'/>
+                  <img src='../images/checkGrey.png'/>
+                  <img src='../images/upCountArrow.png'/>
+                  <img src='../images/downCountArrow.png'/>
+                  <img src='../images/selectIcons/notselected.png'/>
+                  <img src='../images/selectIcons/herbivoryScores/none.png'/>
+                  <img src='../images/selectIcons/herbivoryScores/trace.png'/>
+                  <img src='../images/selectIcons/herbivoryScores/light.png'/>
+                  <img src='../images/selectIcons/herbivoryScores/moderate.png'/>
+                  <img src='../images/selectIcons/herbivoryScores/heavy.png'/>
+                </div>
 		<div id="retryPlantCredentials">
 			<div class="message"></div>
 			<div class="form">
@@ -509,7 +520,7 @@
 								<div class="tagline">Step 3: Plant Information</div>
 
 								<div class="group">
-									<div class="observationFieldTitle">Plant species:</div>
+								  <div class="observationFieldTitle">Plant species: <span id="offlinePlantSpeciesNotes"></span></div>
 									<input type="text" id="plantSpecies" placeholder="" oninput="setCustomPlantSpeciesConfirmed(false);" onclick="if(this.readOnly){this.blur();queueNotice('alert', 'The creator of this site has locked in this plant\'s species, so there\'s no need for you to worry about it.');}" onblur="if($('.ui-autocomplete').has(currentElement).length > 0){this.value = $(currentElement).text();this.focus();}else if(!this.readOnly && this.value.replace(/ /g, '') != '' && !inArrayIgnoreCaseAndWhitespace(this.value, plantSpeciesList) && !customPlantSpeciesConfirmed){promptConfirm('&quot;' + this.value + '&quot; is not a species name in our database. Are you sure this is the correct name and spelling of your tree species?', 'Try again.', 'Continue. I am sure!', function(){document.getElementById('plantSpecies').focus();document.getElementById('plantSpecies').select();}, function(){setCustomPlantSpeciesConfirmed(true);});setTimeout(function(){for(var i = 1; i < $('#plant input').length; i++){$('#plant input').eq(i).blur();}},1);}"/>
 								</div>
 
