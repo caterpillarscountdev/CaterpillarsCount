@@ -188,7 +188,6 @@
 						if (this.readyState == 4 && this.status == 200) {
 							showingLoggedInNav = false;
 							if(this.responseText == "true"){
-                                                          $("nav>")
 								$("nav>ul>li:last-of-type").eq(0)[0].onclick = function(){
 									accessSubMenu($("nav>ul>li:last-of-type").eq(0)[0]);
 								}
