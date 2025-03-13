@@ -164,7 +164,7 @@
 						if (this.readyState == 4 && this.status == 200) {
 							requiringLogIn = false;
 							if(this.responseText == "false"){
-								window.location = "../signIn/index.html?p=../" + window.location.toString().substring(window.location.toString().indexOf("unc.edu") + 8);
+								window.location = "../signIn?p=" + window.location.pathname;
 							}
 						}
 					};
