@@ -1,6 +1,6 @@
 <?php
 	header('Access-Control-Allow-Origin: *');
-	
+        require_once('orm/resources/Keychain.php');
 	require_once('orm/User.php');
 	require_once('orm/Plant.php');
 	require_once('orm/Survey.php');
@@ -76,6 +76,10 @@
 			$site->setActive(true);
 		}
 		if($site->validateUser($user, $sitePassword)){
+                  $conn = (new Keychain)->getDatabaseConnection();
+                  mysqli_begin_transaction($conn);
+                  try {
+                
 			$user->setObservationMethodPreset($site, $observationMethod);
 			//submit data to database
 			$survey = Survey::create($user, $plant, $date, $time, $observationMethod, $siteNotes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
@@ -106,22 +110,29 @@
 					}
 					$arthropodSighting = $survey->addArthropodSighting($arthropodData[$i][0], $arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6], $arthropodData[$i][7], $arthropodData[$i][8], $arthropodData[$i][9]);
 					if(is_object($arthropodSighting) && get_class($arthropodSighting) == "ArthropodSighting"){
-						$attachResult = attachPhotoToArthropodSighting($_FILES['file' . $i], $arthropodSighting);
-						if($attachResult != "File not uploaded." && $attachResult !== true){
-							$arthropodSightingFailures .= strval($attachResult);
-						}
-					}
+                                          if(array_key_exists('file' . $i, $_FILES)) {
+                                              $attachResult = attachPhotoToArthropodSighting($_FILES['file' . $i], $arthropodSighting);
+                                              if($attachResult != "File not uploaded." && $attachResult !== true){
+                                                $arthropodSightingFailures .= strval($attachResult);
+                                              }
+                                          }
+                                        }
 					else{
 						$arthropodSightingFailures .= $arthropodSighting;
 					}
 				}
 				
 				if($arthropodSightingFailures == ""){
-					die("true|");
+                                  mysqli_commit($conn);
+                                  die("true|");
 				}
 				die("false|" . $arthropodSightingFailures);
 			}
 			die("false|" . $survey);
+                  } catch (Exception $exception) {
+                    mysqli_rollback($conn);
+                    throw $exception;
+                  }
 		}
 		die("false|Enter a valid password.");
 	}

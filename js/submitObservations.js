@@ -1,4 +1,24 @@
-			function haveInternet(){
+function showNotifyOfflineSubmit() {
+  showNotifyOffline();
+  let existing = document.querySelector('#iconBar .offlineIcon');
+  if (existing) { existing.remove()};
+  let count = hasOfflineSurveys();
+  if (count) {
+    let el = document.createElement('span');
+    el.classList.add('panelIcon');
+    el.classList.add('offlineIcon');
+    el.title = "Offline observations waiting to upload.";
+    el.onclick = (event) => {
+      event.stopPropagation();
+      queueNotice('alert', 'Offline observations waiting to upload. ' + offlineSurveysSummary());
+    };
+    el.textContent = count;
+    document.querySelector('#iconBar').prepend(el);
+  }
+}
+
+
+                        function haveInternet(){
 				//return whether or not we have an internet connection that we are allowed to use
 				return navigator.onLine;
 			}
@@ -22,6 +42,7 @@
                           if (plantCode > -1) {
                             $("#plantCode").val(window.location.search.slice(plantCode+10, plantCode+13)).trigger("input");
                           }
+                          loadSurveyFlaggingRules();
 			});
 			function tap(){
 				return !hasMoved;
@@ -271,6 +292,7 @@
 							else{
 								window.localStorage.removeItem("pendingSurveys");
 							}
+                                                        showNotifyOfflineSubmit();
 	//alert("updated pending surveys: " + window.localStorage.getItem("pendingSurveys"));
 							successfullySubmittedPendingSurveyIndexes = [];
 							queuedPendingSurveys = false;
@@ -808,6 +830,7 @@
 			function accessPanelBlindly(secondPanelID){
 				//once a user is logged in, this function allows them to switch between "site", "arthropod", and "plant" panels.
 				if(!switchingToPanel){
+                                  showNotifyOfflineSubmit();
 					if(secondPanelID != currentPanelID){
 						switchingToPanel = true;
 						scrollToElement($('#iconBar'));
@@ -965,32 +988,107 @@
 				}
 			}
 
-			function askToConfirmLongOrderLength(){
+                        surveyFlaggingRules = {};
+
+                        async function loadSurveyFlaggingRules() {
+                          let response = await fetch("../php/cacheSurveyFlaggingRules.php");
+                          surveyFlaggingRules = JSON.parse((await response.text()));
+                        }
+
+                        function promptWithNotes(notesInput, message, cancelMessage, confirmMessage, cancelFunction, confirmFunction){
+                          let notes = document.createElement('textarea')
+                          let confirm = function() {
+                            if (newNotes = $(notes).val()) {
+                              $(notesInput).val((i, val) => {return val + "\n" + newNotes});
+                            }
+                            confirmFunction();
+                          }
+                          promptConfirm(message, cancelMessage, confirmMessage, cancelFunction, confirm);
+                          $("#confirm div").eq(0).append(notes);
+                        }
+
+			function askToConfirmOrderLength(){
 				var orderTypeValue = getSelectValue($("#orderType"));
-				if(orderTypeValue == ""){
+				if(orderTypeValue == "" || !surveyFlaggingRules["arthropodGroupFlaggingRules"][orderTypeValue]){
+					return false;
+				}
+
+			        var maxOrderLength = surveyFlaggingRules["arthropodGroupFlaggingRules"][orderTypeValue]["maxSafeLength"];
+				if(Number($('#orderLength')[0].value) > maxOrderLength){
+				  promptWithNotes("#orderNotes", 'Wow, "' + getSelectText($("#orderType")) + '" measurements aren\'t usually that long! Are you sure ' + $('#orderLength')[0].value + 'mm is accurate? Remember that length does not include legs or antennae. Add a note for review if sure:', 'Whoops!', 'Yes, I am sure!', function(){
+				    $('#orderLength')[0].focus();
+				    $('#orderLength')[0].select(0, 9999);
+				  }, function(){
+				    
+				  });
+				}
+			}
+
+			function askToConfirmOrderQuantity(){
+				var orderTypeValue = getSelectValue($("#orderType"));
+				if(orderTypeValue == "" || !surveyFlaggingRules["arthropodGroupFlaggingRules"][orderTypeValue]){
 					return false;
 				}
 				
-				var maxOrderLength = 30;
-				if(orderTypeValue == "caterpillar"){
-					maxOrderLength = 60;
-				}
-				else if(orderTypeValue == "aphid"){
-					maxOrderLength = 10;
-				}
-				else if(orderTypeValue == "ant"){
-					maxOrderLength = 20;
-				}
-				
-				if(Number($('#orderLength')[0].value) > maxOrderLength){
-					promptConfirm('Wow, "' + getSelectText($("#orderType")) + '" measurements aren\'t usually that long! Are you sure ' + $('#orderLength')[0].value + 'mm is accurate? Remember that length does not include legs or antennae.', 'Whoops!', 'Yes, I am sure!', function(){
-						$('#orderLength')[0].focus();
-						$('#orderLength')[0].select(0, 9999);
-					}, function(){
-						
-					});
+			        var maxOrderQuantity = surveyFlaggingRules["arthropodGroupFlaggingRules"][orderTypeValue]["maxSafeQuantity"];
+
+			        if(Number($('#orderQuantity')[0].value) > maxOrderQuantity){
+				  promptWithNotes("#orderNotes", 'Wow, that is a lot of "' + getSelectText($("#orderType")) + '"! Are you sure ' + $('#orderQuantity')[0].value + ' is accurate? Add a note for review if sure:', 'Whoops!', 'Yes, I am sure!', function(){
+				    $('#orderQuantity')[0].focus();
+				    $('#orderQuantity')[0].select(0, 9999);
+				  }, function(){
+				    
+				  });
 				}
 			}
+
+			function askToConfirmLeafLength(){
+			  var species = $("#plantSpecies").val();
+			  
+			  var maxLength = surveyFlaggingRules["leafLengthExceptions"][species] || surveyFlaggingRules["maxSafeLeafLength"];
+                          var speciesCompound = surveyFlaggingRules["compoundLeafExceptions"][species] || false;
+			  let entry = Number($('#averageLeafLength')[0].value);
+                          let prompt;
+			  if(entry > maxLength) {
+                            prompt = 'Wow, that is a long leaf! Are you sure you\'re measuring in centimeters?';
+                            if (speciesCompound) {
+                              prompt += ' Measure just one leaflet for compound leaves on this species.';
+                            }
+                            prompt += ' Add a note for review if sure:';
+                          
+			    promptWithNotes("#siteNotes", prompt, 'Whoops!', 'Yes, I am sure!', function(){
+			      $('#averageLeafLength')[0].focus();
+			      $('#averageLeafLength')[0].select(0, 9999);
+			    }, function(){
+			      
+			    });
+                          }
+			}
+
+			function askToConfirmLeafQuantity(){
+			  var species = $("#plantSpecies").val();
+			  
+			  var maxQuantity = surveyFlaggingRules["maxSafeLeaves"];
+                          var minQuantity = surveyFlaggingRules["minSafeLeaves"];
+			  let entry = Number($('#numberOfLeaves')[0].value);
+                          let prompt;
+			  if(entry > maxQuantity) {
+                            prompt = 'Wow, that\'s a lot of leaves! Are you sure ' + entry + ' leaves were <strong><em>over the beat sheet</em></strong> while beating?'
+                          }
+                          if(entry < minQuantity) {
+                            prompt = 'Wow, that\'s not many leaves.'
+                          }
+                          if (prompt) {
+                            prompt += ' Add a note for review if sure:';
+			    promptWithNotes("#siteNotes", prompt, 'Whoops!', 'Yes, I am sure!', function(){
+			      $('#numberOfLeaves')[0].focus();
+			      $('#numberOfLeaves')[0].select(0, 9999);
+			    }, function(){
+			      
+			    });
+                          }
+                        }
+
 
 			function getWordAtIndex(str, index){
 				var left = str.slice(0, index + 1).search(/\S+$/);
@@ -1279,12 +1377,6 @@
 					}
 				}
 				else{
-					if(numberOfLeaves.length != numberOfLeaves.replace(/\D/g, "").length || numberOfLeaves.length == 0 || Number(numberOfLeaves) > 500 || Number(numberOfLeaves) < 1){
-						errors += "Enter a number of leaves between 1 and 500. ";
-					}
-					if(averageLeafLength.length != averageLeafLength.replace(/\D/g, "").length || averageLeafLength.length == 0 || Number(averageLeafLength) > 60 || Number(averageLeafLength) < 1){
-						errors += "Enter an average leaf length between 1 and 60 centimeters. ";
-					}
 					if(herbivoryScore == ""){
 						errors += "Select an herbivory score. ";
 					}
@@ -1529,8 +1621,8 @@
 					
 					var errors = "";
 					if(orderType == ""){errors += "Select an arthropod group. ";}
-					if(orderLength == "" || isNaN(orderLength) || Number(orderLength) < 1 || Number(orderLength) > 300){errors += "Enter a length between 1mm and 300mm. ";}
-					if(orderQuantity == "" || isNaN(orderQuantity) || Number(orderQuantity) < 1 || Number(orderQuantity) > 1000){errors += "Enter a quantity between 1 and 1000. ";}
+				        if(orderLength == "" || isNaN(orderLength) || Number(orderLength) < 1){errors += "Enter a length between 1mm and 300mm. ";}
+				        if(orderQuantity == "" || isNaN(orderQuantity) || Number(orderQuantity) < 1){errors += "Enter a quantity between 1 and 1000. ";}
 					if((orderType == "unidentified" || orderType == "other") && orderNotes == ""){errors += "Notes are required for \"" + orderType + "\" arthropod groups, and photos are requested but optional.";}
 					
 					if(errors.length > 0){
@@ -1932,6 +2024,8 @@
 			}
 			
 			function restart(){
+                                showNotifyOfflineSubmit();
+                          
 				lastPass = $("#sitePassword")[0].value;
 				$("#sitePassword")[0].value = "";
 				if($("#sitePasswordGroup")[0].style.display != "none"){

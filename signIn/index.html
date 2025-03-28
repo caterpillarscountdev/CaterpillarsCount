@@ -10,6 +10,8 @@
 		</script>
 		<!-- End of Google Analytics -->
 
+                <link rel="manifest" href="/manifest.json" />
+                
 		<title>Sign In | Caterpillars Count!</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
@@ -110,7 +112,7 @@
 
 				var loggedInPage = "";
 				if(window.location.toString().indexOf("?p=") > -1){
-					loggedInPage = "/index.html" + window.location.toString().substring(window.location.toString().indexOf("?p="));
+					loggedInPage = window.location.toString().substring(window.location.toString().indexOf("?p="));
 					$(".link").eq(0).find("a").eq(0)[0].href = ("../signUp" + loggedInPage);
 					$(".link").eq(1).find("a").eq(0)[0].href = ("../recover" + loggedInPage);
 				}
@@ -238,7 +240,7 @@
 								window.localStorage.removeItem("salt");
 								window.localStorage.setItem("email", logInEmail.toLowerCase().trim());
 								window.localStorage.setItem("salt", this.responseText.replace("success", ""));
-								var loggedInPage = "../settings";
+								var loggedInPage = "../submitObservations";
 								if(window.location.toString().indexOf("?p=") > -1){
 									loggedInPage = window.location.toString().substring(window.location.toString().indexOf("?p=") + 3);
 								}
@@ -277,7 +279,7 @@
 			</div>
 		</div>
 
-		<div id="splash">
+		<div id="splash" class="mobileOptional">
 			<div id="splashImage"></div>
 			<div id="splashOverlay">
 				<div id="splashIntroText">Welcome to</div>

@@ -69,7 +69,6 @@ class User
 
 		mysqli_query($dbconn, "INSERT INTO User (`FirstName`, `LastName`, `DesiredEmail`, `Salt`, `SaltedPasswordHash`) VALUES ('$firstName', '$lastName', '$desiredEmail', '$salt', '$saltedPasswordHash')");
 		$id = intval(mysqli_insert_id($dbconn));
-		mysqli_close($dbconn);
 		if ($id ===0) {
 			return 'Did not add a user to the database successfully for ' . $desiredEmail;
 		}
@@ -94,7 +93,6 @@ class User
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$id = mysqli_real_escape_string($dbconn, htmlentities($id));
 		$query = mysqli_query($dbconn, "SELECT * FROM `User` WHERE `ID`='$id' LIMIT 1");
-		mysqli_close($dbconn);
 
 		if(mysqli_num_rows($query) == 0){
 			return null;
@@ -121,7 +119,6 @@ class User
 			return null;
 		}
 		$query = mysqli_query($dbconn, "SELECT * FROM `User` WHERE `Email`='$email' LIMIT 1");
-		mysqli_close($dbconn);
 
 		if(mysqli_num_rows($query) == 0){
 			return null;
@@ -149,7 +146,6 @@ class User
 			return null;
 		}
 		$query = mysqli_query($dbconn, "SELECT * FROM `User` WHERE `Email`='" . $email . "' AND `Salt`='" . $salt . "' LIMIT 1");
-		mysqli_close($dbconn);
 
 		if(mysqli_num_rows($query) == 0){
 			return null;
@@ -179,7 +175,6 @@ class User
 		
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `User` WHERE ID IN (" . implode(",", $userIDs) . ")");
-		mysqli_close($dbconn);
 
 		$usersArray = array();
 		while($userRow = mysqli_fetch_assoc($query)){
@@ -201,7 +196,6 @@ class User
 	public static function findAll(){
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT * FROM `User`");
-		mysqli_close($dbconn);
 
 		$usersArray = array();
 		while($userRow = mysqli_fetch_assoc($query)){
@@ -229,7 +223,6 @@ class User
 				//sign in
 				return $this->salt;
 			}
-			mysqli_close($dbconn);
 			return false;
 		}
 	}
@@ -244,13 +237,11 @@ class User
 
 
 				mysqli_query($dbconn, "UPDATE User SET `Salt`='$salt', `SaltedPasswordHash`='$saltedPasswordHash' WHERE `ID`='" . $this->id . "'");
-				mysqli_close($dbconn);
 
 				$this->salt = $salt;
 				$this->saltedPasswordHash = $saltedPasswordHash;
 				return $salt;
 			}
-			mysqli_close($dbconn);
 			return false;
 		}
 	}
@@ -333,11 +324,9 @@ class User
 			$firstName = self::validFirstName($dbconn, $firstName);
 			if($firstName !== false){
 				mysqli_query($dbconn, "UPDATE User SET FirstName='$firstName' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->firstName = $firstName;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -348,11 +337,9 @@ class User
 			$lastName = self::validLastName($dbconn, $lastName);
 			if($lastName !== false){
 				mysqli_query($dbconn, "UPDATE User SET LastName='$lastName' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->lastName = $lastName;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -365,13 +352,11 @@ class User
                           $existing = User::findByEmail($email);
                           if ($existing == null) {
 				mysqli_query($dbconn, "UPDATE User SET DesiredEmail='$email' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->desiredEmail = $email;
 				self::sendEmailVerificationCodeToUser($this->id);
 				return true;
                           }
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -383,11 +368,9 @@ class User
 			if($password !== false){
 				$saltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $this->salt . $password)));
 				mysqli_query($dbconn, "UPDATE User SET SaltedPasswordHash='$saltedPasswordHash' WHERE ID='" . $this->id . "'");
-				mysqli_close($dbconn);
 				$this->saltedPasswordHash = $saltedPasswordHash;
 				return true;
 			}
-			mysqli_close($dbconn);
 		}
 		return false;
 	}
@@ -411,7 +394,6 @@ class User
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$hidden = filter_var($hidden, FILTER_VALIDATE_BOOLEAN);
 			mysqli_query($dbconn, "UPDATE User SET Hidden='$hidden' WHERE ID='" . $this->id . "'");
-			mysqli_close($dbconn);
 			$this->hidden = $hidden;
 			return true;
 		}
@@ -432,7 +414,6 @@ class User
 					$query = mysqli_query($dbconn, "SELECT `INaturalistObserverID` FROM `User` WHERE `INaturalistObserverID`='$uniqueObserverID' LIMIT 1");
 					if(mysqli_num_rows($query) == 0){
 						mysqli_query($dbconn, "UPDATE `User` SET `INaturalistObserverID`='$uniqueObserverID' WHERE ID='" . $this->id . "'");
-						mysqli_close($dbconn);
 						$this->iNaturalistObserverID = $uniqueObserverID;
 						email($this->email, "We've linked your Caterpillars Count! account with iNaturalist and SciStarter!", "<div style=\"line-height:150%;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"color:#777;margin-bottom:40px;font-size:20px;\">Thanks for verifying your <b>Caterpillars Count!</b> account! You can now sign in to our <a href=\"https://caterpillarscount.unc.edu/\" style=\"color:#e6bf31;\">website</a> and mobile app to <a href=\"https://caterpillarscount.unc.edu/hostASurveySite/\" style=\"color:#e6bf31;\">create sites</a>, <a href=\"https://caterpillarscount.unc.edu/submitObservations/\" style=\"color:#e6bf31;\">submit observations</a>, review your data, and more!<br/><br/>We encourage you to try out our <a href=\"https://caterpillarscount.unc.edu/virtualSurvey/\" style=\"color:#e6bf31;\">Virtual Survey Game</a> to get practice identifying arthropods and following survey protocols before getting out in the field.<br/><br/>Also, we've gone ahead and linked your Caterpillars Count! account to a couple other websites that you might enjoy.<br/><br/>We've connected you to SciStarter, which is useful if you want to participate in other citizen science projects in addition to Caterpillars Count! and track your participation all in one place. Learn more about SciStarter on our website, <a href=\"https://caterpillarscount.unc.edu/SciStarter/\" style=\"color:#e6bf31;\">here</a>.<br/><br/>We've also made you a unique Caterpillars Count! Observer ID and used that to link you up with iNaturalist! <b>Your unique Caterpillars Count! Observer ID is \"" . $uniqueObserverID . "\".</b> When you choose to include a photo with any observations you submit, that photo will be automatically submitted to <a href=\"https://www.inaturalist.org\" style=\"color:#e6bf31;\">iNaturalist.org</a>, an independent website that will allow experts to review and potentially identify your observation. Although all photo observations are submitted to the project-wide <a href=\"https://www.inaturalist.org/observations?place_id=any&user_id=caterpillarscount&verifiable=any\" style=\"color:#e6bf31;\">Caterpillars Count! iNaturalist account</a>, you will be able to find your own observations by referring to your Caterpillars Count! Observer ID. Once you've submitted observations with photos, they will be available, along with any potential taxonomic identifications, at this <a href=\"https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=" . $uniqueObserverID . "\" style=\"color:#e6bf31;\">link</a>, or by going to My Account > Manage My Surveys on the website.<br/><br/><b>PRIVACY:</b> If you do not wish your name to appear on our <a href=\"https://caterpillarscount.unc.edu/mapsAndGraphs\" style=\"color:#e6bf31;\">User Leaderboard</a> or your username to appear in observations posted to iNaturalist (example <a href=\"https://www.inaturalist.org/observations/17704507\" style=\"color:#e6bf31;\">here</a>), you may change your privacy settings by logging in to our website and visiting your \"Settings\" page. Your name or username will instead appear simply as \"anonymous\".<br/><br/>Thanks for creating an account, and happy arthropod hunting!<br/><br/>The Caterpillars Count! Team</div></div>");
 						return true;
@@ -453,7 +434,6 @@ class User
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			mysqli_query($dbconn, "DELETE FROM `User` WHERE `ID`='" . $this->id . "'");
 			$this->deleted = true;
-			mysqli_close($dbconn);
 			return true;
 		}
 	}
@@ -548,7 +528,6 @@ class User
 		$usersId = mysqli_real_escape_string($dbconn, htmlentities($usersId));
 		$query = mysqli_query($dbconn, "SELECT `DesiredEmail` FROM `User` WHERE `ID`='$usersId' LIMIT 1");
 		if(mysqli_num_rows($query) == 0){
-			mysqli_close($dbconn);
 			return false;
 		}
 		$usersEmail = mysqli_fetch_assoc($query)["DesiredEmail"];
@@ -558,7 +537,6 @@ class User
 
 		email($usersEmail, "Verify your email for Caterpillars Count!", "<div style=\"text-align:center;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"color:#777;margin-bottom:40px;font-size:20px;\">Welcome to Caterpillars Count! You need to verify your email before you can use your account. Click the following button to confirm your email address.</div><a href=\"" . (new Keychain)->getRoot() . "/php/verifyemail.php?confirmation=$confirmationLink\"><button style=\"border:0px none transparent;background:#fed136; border-radius:5px;padding:20px 40px;font-size:20px;color:#fff;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;font-weight:bold;cursor:pointer;\">VERIFY EMAIL</button></a><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\">Alternatively, use link: <a href=\"" . (new Keychain)->getRoot() . "/php/verifyemail.php?confirmation=$confirmationLink\" style=\"color:#70c6ff;\">" . (new Keychain)->getRoot() . "/php/verifyemail.php?confirmation=$confirmationLink</a></div></div>");
 
-		mysqli_close($dbconn);
 		return true;
 	}
 	
@@ -570,12 +548,10 @@ class User
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `User` WHERE `Email`='$email' LIMIT 1");
 		
 		if(mysqli_num_rows($query) > 0){
-			mysqli_close($dbconn);
 			return false;
 		}
 		
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `User` WHERE `DesiredEmail`='$email' LIMIT 1");
-		mysqli_close($dbconn);
 		
 		if(mysqli_num_rows($query) == 0){
 			return false;
@@ -594,7 +570,6 @@ class User
 
 		$query = mysqli_query($dbconn, "SELECT `EmailVerificationCode` FROM `User` WHERE `ID`='" . $this->id . "' LIMIT 1");
 		if(mysqli_num_rows($query) == 0){
-			mysqli_close($dbconn);
 			return false;
 		}
 		$usersEmailVerificationCode = mysqli_fetch_assoc($query)["EmailVerificationCode"];
@@ -617,12 +592,10 @@ class User
 			}
 			mysqli_query($dbconn, "UPDATE User SET `Email`=`DesiredEmail` WHERE `ID`='" . $this->id . "'");
 			mysqli_query($dbconn, "UPDATE User SET `EmailVerificationCode`='' WHERE `ID`='" . $this->id . "'");
-			mysqli_close($dbconn);
 			$this->email = $this->desiredEmail;
 			$this->setINaturalistObserverID();
 			return true;
 		}
-		mysqli_close($dbconn);
 		return false;
 	}
 
@@ -631,7 +604,6 @@ class User
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `Email` FROM `User` WHERE `Email` = `DesiredEmail` AND `ID`='" . $this->id . "' LIMIT 1");
 		if(mysqli_num_rows($query) == 0){
-			mysqli_close($dbconn);
 			return false;
 		}
 		$usersEmail = mysqli_fetch_assoc($query)["Email"];
@@ -645,7 +617,6 @@ class User
 			return false;
 		}
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `User` WHERE `DesiredEmail`='$desiredEmail' LIMIT 1");
-		mysqli_close($dbconn);
 		if(mysqli_num_rows($query) == 0){
 			return false;
 		}
@@ -657,10 +628,8 @@ class User
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$testSaltedPasswordHash = mysqli_real_escape_string($dbconn, htmlentities(hash("sha512", $this->salt . $password)));
 		if($testSaltedPasswordHash == $this->saltedPasswordHash){
-			mysqli_close($dbconn);
 			return true;
 		}
-		mysqli_close($dbconn);
 		return false;
 	}
 
@@ -708,7 +677,6 @@ class User
 		   $lengthPercentage >= 0 && $lengthPercentage <= 100){
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			mysqli_query($dbconn, "INSERT INTO VirtualSurveyScore (`UserFK`, `Score`, `PercentFound`, `IdentificationAccuracy`, `LengthAccuracy`) VALUES ('" . $this->id . "', '$score', '$findingPercentage', '$identifyingPercentage', '$lengthPercentage')");
-			mysqli_close($dbconn);
 			return true;
 		}
 		return false;
@@ -734,7 +702,6 @@ class User
 				$best = mysqli_fetch_assoc($query)["Score"];
 			}
 
-			mysqli_close($dbconn);
 
 			return array((($lesserCount / $total) * 100), $best);
 		}

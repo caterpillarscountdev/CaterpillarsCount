@@ -7,22 +7,23 @@
 	$surveyID = custgetparam("surveyID");
 	$approvedLevel = custgetparam("approvedLevel");
 	$qccomment = custgetparam("qccomment");
-    if (!empty($approvedLevel)) {
-		$user = User::findBySignInKey($email, $salt);
-		if(is_object($user) && get_class($user) == "User"){
-			if(User::isSuperUser($user)){
-				$survey = Survey::findByID($surveyID);
-				if(is_object($survey) && get_class($survey) == "Survey"){
-					if($survey->setReviewedAndApproved($approvedLevel, $qccomment)){
-						die("true|");
-					}
-					die("false|Could not approve survey. Please try again.");
-				}
-				die("false|Could not find survey. Please refresh the page and try again.");
-			}
-			die("false|You do not have authority to approve this survey.");
-		}
-		die("false|Your log in dissolved. Maybe you logged in on another device.");
-		}
-	die("false|No approval level was specified");
+        $overrides = explode(",", custgetparam("overrides"));
+
+$user = User::findBySignInKey($email, $salt);
+if(is_object($user) && get_class($user) == "User"){
+  $survey = Survey::findByID($surveyID);
+  if(is_object($survey) && get_class($survey) == "Survey"){
+    $site = $survey->getPlant()->getSite();
+    if(User::isSuperUser($user) || $site->isAuthority($user)){
+      if($survey->setReviewedAndApproved($approvedLevel, User::isSuperUser($user), $qccomment, $overrides)){
+        die("true|");
+      }
+      die("false|Could not approve survey. Please try again.");
+    }
+    die("false|You do not have authority to approve this survey.");
+  }
+  die("false|Could not find survey. Please refresh the page and try again.");
+}
+die("false|Your log in dissolved. Maybe you logged in on another device.");
+
 ?>

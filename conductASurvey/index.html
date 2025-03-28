@@ -3,12 +3,14 @@
 		<!-- Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
 		<script>
-  			window.dataLayer = window.dataLayer || [];
-  			function gtag(){dataLayer.push(arguments);}
-  			gtag('js', new Date());
-			gtag('config', 'UA-113319025-1');
+  		 window.dataLayer = window.dataLayer || [];
+  		 function gtag(){dataLayer.push(arguments);}
+  		 gtag('js', new Date());
+		 gtag('config', 'UA-113319025-1');
 		</script>
 		<!-- End of Google Analytics -->
+
+                <link rel="manifest" href="/manifest.json" />
 
 		<title>Conduct a Survey | Caterpillars Count!</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -84,7 +86,7 @@
 			</div>
 		</div>
 
-		<div id="splash">
+		<div id="splash" class="mobileOptional">
 			<div id="splashImage"></div>
 			<div id="splashOverlay">
 				<div id="splashIntroText">Welcome to</div>
@@ -160,15 +162,22 @@
 			<div class="panel">
 				<h2>Choose a Submission Method</h2>
 				<div class="centeredText" style="margin:20px 0px;">
-					<div class="captionedCircleIconDiv" style="width:300px;cursor:default;">
-						<div class="circleIcon" style="background:#4affcc;width:200px;height:200px;">
-							<div class="shadow"></div>
-							<div class="circleIconImage" style="background-image:url('../images/smartPhone.png');top:25%;height:50%;"></div>
-						</div>
-						<div class="caption">Get the <a href="../mobileAppITunes">iTunes</a> or <a href="../mobileAppGooglePlay">Android</a> app and <a href="../extra/mobileAppInstructions">learn how to use it</a></div>
-					</div>
+				  <div class="captionedCircleIconDiv" style="width:300px;cursor:default;">
+				    <div class="circleIcon" style="background:#66ff66;width:200px;height:200px;">
+				      <div class="shadow"></div>
+				      <div class="circleIconImage" style="background-image:url('../images/smartPhone.png');top:25%;height:50%;"></div>
+				    </div>
+				    <div class="caption">Add the <a href="../mobileWeb">mobile web</a> site on your phone and <a href="../extra/mobileAppInstructions">learn how to use it</a></div>
+				  </div>
+				  <div class="captionedCircleIconDiv" style="width:300px;cursor:default;">
+				    <div class="circleIcon" style="background:#4affcc;width:200px;height:200px;">
+				      <div class="shadow"></div>
+				      <div class="circleIconImage" style="background-image:url('../images/smartPhone.png');top:25%;height:50%;"></div>
+				    </div>
+				    <div class="caption">Or download the app for <a href="../mobileAppITunes">iTunes</a> or <a href="../mobileAppGooglePlay">Android</a> and <a href="../extra/mobileAppInstructions">learn how to use it</a></div>
+				  </div>
 
-					<div class="captionedCircleIconDiv" style="width:300px;cursor:default;">
+				  <div class="captionedCircleIconDiv" style="width:300px;cursor:default;">
 						<div class="circleIcon" style="background:#6ef5ff;width:200px;height:200px;">
 							<div class="shadow"></div>
 							<div class="circleIconImage" style="background-image:url('../images/document.png');top:25%;height:50%;"></div>

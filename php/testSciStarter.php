@@ -50,7 +50,6 @@
     die("[" . $response . "]");
 		}
 	}
-	mysqli_close($dbconn);
   
   
   

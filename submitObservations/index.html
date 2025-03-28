@@ -3,12 +3,15 @@
 		<!-- Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
 		<script>
-  			window.dataLayer = window.dataLayer || [];
-  			function gtag(){dataLayer.push(arguments);}
-  			gtag('js', new Date());
-			gtag('config', 'UA-113319025-1');
+  		 window.dataLayer = window.dataLayer || [];
+  		 function gtag(){dataLayer.push(arguments);}
+  		 gtag('js', new Date());
+		 gtag('config', 'UA-113319025-1');
 		</script>
 		<!-- End of Google Analytics -->
+
+                <link rel="manifest" href="/manifest.json" />
+		<script src="/cache.js"></script>
 
 		<title>Submit Observations | Caterpillars Count!</title>
 		<meta charset="utf-8" />
@@ -106,30 +109,37 @@
 			}
 		</style>
 		<script>
-			requireLogIn();
+		 requireLogIn();
 
-			$(document).ready(function(){
-				loadBackgroundImage($("#splashImage"), "../images/splash.png");
-				for(var i = 0; i < $(".noautocomplete").length; i++){
-					$(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
-					$(".noautocomplete").eq(i)[0].style.display = "inline-block";
-					$(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
-				}
-			    var stopAutocompleteInterval = setInterval(function(){
-                                try {
-					for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
-						$("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
-					}
-                                } catch {};
-				}, 1);
-				setTimeout(function(){
-					clearInterval(stopAutocompleteInterval);
-				}, 2000);
-			});
+		 $(document).ready(function(){
+		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
+		     for(var i = 0; i < $(".noautocomplete").length; i++){
+			 $(".noautocomplete").eq(i)[0].removeAttribute('readOnly');
+			 $(".noautocomplete").eq(i)[0].style.display = "inline-block";
+			 $(".noautocomplete").eq(i)[0].value = $(".noautocomplete").eq(i)[0].defaultValue;
+		     }
+		     var stopAutocompleteInterval = setInterval(function(){
+                         try {
+			     for(var i = ($("input:-internal-autofill-selected").length - 1); i >= 0; i--){
+				 $("input:-internal-autofill-selected").eq(i)[0].value = $("input:-internal-autofill-selected").eq(i)[0].defaultValue;
+			     }
+                         } catch {};
+		     }, 1);
+		     setTimeout(function(){
+			 clearInterval(stopAutocompleteInterval);
+		     }, 2000);
 
-			$(window).resize(function(){
-				$('.ui-autocomplete').css({display:"none"});
-			});
+                     showNotifyOfflineSubmit();
+
+                     if(!haveInternet()) {
+                         $("#plantSpecies").attr('placeholder', 'offline? leave this blank to use site plant data');
+                     }
+		 });
+
+		 $(window).resize(function(){
+		     $('.ui-autocomplete').css({display:"none"});
+		 });
+                 
 		</script>
 	</head>
 	<body>
@@ -144,6 +154,24 @@
 		<div id="error" onclick="hideNotice();"></div>
 		<div id="confirmation" onclick="hideNotice();"></div>
 		<div id="alert" onclick="hideNotice();"></div>
+                <div id="hiddenImages" style="display:none">
+                  <img src='../images/submitObservationsHairy.jpg'/>
+                  <img src='../images/submitObservationsLeafRoll.png'/>
+                  <img src='../images/submitObservationsSilkTent.png'/>
+                  <img src='../images/submitObservationsPupa.jpg'/>
+                  <img src='../images/sawflyLarva.png'/>
+                  <img src='../images/ladybugLarva.jpg'/>
+                  <img src='../images/linerBranchLengthExplanation.gif'/>
+                  <img src='../images/checkGrey.png'/>
+                  <img src='../images/upCountArrow.png'/>
+                  <img src='../images/downCountArrow.png'/>
+                  <img src='../images/selectIcons/notselected.png'/>
+                  <img src='../images/selectIcons/herbivoryScores/none.png'/>
+                  <img src='../images/selectIcons/herbivoryScores/trace.png'/>
+                  <img src='../images/selectIcons/herbivoryScores/light.png'/>
+                  <img src='../images/selectIcons/herbivoryScores/moderate.png'/>
+                  <img src='../images/selectIcons/herbivoryScores/heavy.png'/>
+                </div>
 		<div id="retryPlantCredentials">
 			<div class="message"></div>
 			<div class="form">
@@ -173,7 +201,7 @@
 			</div>
 		</div>
 
-		<div id="splash">
+		<div id="splash" class="mobileOptional">
 			<div id="splashImage"></div>
 			<div id="splashOverlay">
 				<div id="splashIntroText">Welcome to</div>
@@ -190,14 +218,14 @@
 			</div>
 			<div id="navKnockDown" class="clearBoth"></div>
 			<nav class="loadingNav">
-				<ul>
+			        <ul>
 					<li onclick="accessSubMenu(this);">
-						<span>Participate</span>
+					  <span>Participate</span>
 						<ul onclick="event.stopPropagation();">
 							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
 							<li><a href="../getStarted">Get Started</a></li>
 							<li><a href="../conductASurvey">Conduct a Survey</a></li>
-							<li><a href="../submitObservations">Submit Observations</a></li>
+							<li><a href="../submitObservations" class="notifyOffline">Submit Observations</a></li>
 							<li><a href="../hostASurveySite">Host a Survey Site</a></li>
 							<li><a href="../resources">Resources</a></li>
 						</ul>
@@ -357,7 +385,7 @@
 									<div class="group">
 										<div class="observationFieldTitle">Arthropod group:</div>
 
-										<div class="select" id="orderType" data-on-change="askToConfirmLongOrderLength();">
+										<div class="select" id="orderType" data-on-change="askToConfirmOrderLength();">
 											<div class="option selected" onclick="selectOption(this);$('.arthropodOptionsTable').parent().hide(300);">	<div class="value"></div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/notselected.png');"></div>		<div class="text">Not selected</div></div></div>
 											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#butterflyOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);">		<div class="value">ant</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/ant.png');"></div>			<div class="text">Ants</div></div></div>
 											<div class="option" onclick="selectOption(this);$('#caterpillarOptionsGroup').hide(300);$('#butterflyOptionsGroup').hide(300);$('#beeOptionsGroup').hide(300);$('#beetleOptionsGroup').hide(300);">		<div class="value">aphid</div>		<div class="shown"><div class="image" style="background-image:url('../images/selectIcons/orders/aphid.png');"></div>		<div class="text">Aphids and Psyllids</div></div></div>
@@ -432,14 +460,14 @@
 
 									<div>
 									<div class="half group">
-										<div class="observationFieldTitle">Length (mm):</div>
-										<input type="number" id="orderLength" placeholder="1mm - 300mm" onclick="this.select();"  pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');" onblur="enforceRange(this, 1, 300, 1); askToConfirmLongOrderLength();"/>
+									  <div class="observationFieldTitle">Length (mm):</div>
+									  <input type="number" id="orderLength" placeholder="1mm - 300mm" onclick="this.select();"  pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '');" onblur="askToConfirmOrderLength();"/>
 									</div>
 
 									<div class="half group">
 										<div class="observationFieldTitle">Quantity:</div>
 										<div class="countInput">
-											<input type="number" id="orderQuantity" placeholder="1 - 1000" pattern="\d*" onclick="this.select();" oninput="this.value = this.value.replace(/\D/g, '');" onblur="enforceRange(this, 1, 1000, 1);" value="1"/>
+										  <input type="number" id="orderQuantity" placeholder="1 - 1000" pattern="\d*" onclick="this.select();" oninput="this.value = this.value.replace(/\D/g, '');" onblur="askToConfirmOrderQuantity();" value="1"/>
 											<div class="countAttachment">
 												<div onclick="incrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 1000, 1);"></div>
 												<div onclick="decrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 1000, 1);"></div>
@@ -492,20 +520,20 @@
 								<div class="tagline">Step 3: Plant Information</div>
 
 								<div class="group">
-									<div class="observationFieldTitle">Plant species:</div>
+								  <div class="observationFieldTitle">Plant species: <span id="offlinePlantSpeciesNotes"></span></div>
 									<input type="text" id="plantSpecies" placeholder="" oninput="setCustomPlantSpeciesConfirmed(false);" onclick="if(this.readOnly){this.blur();queueNotice('alert', 'The creator of this site has locked in this plant\'s species, so there\'s no need for you to worry about it.');}" onblur="if($('.ui-autocomplete').has(currentElement).length > 0){this.value = $(currentElement).text();this.focus();}else if(!this.readOnly && this.value.replace(/ /g, '') != '' && !inArrayIgnoreCaseAndWhitespace(this.value, plantSpeciesList) && !customPlantSpeciesConfirmed){promptConfirm('&quot;' + this.value + '&quot; is not a species name in our database. Are you sure this is the correct name and spelling of your tree species?', 'Try again.', 'Continue. I am sure!', function(){document.getElementById('plantSpecies').focus();document.getElementById('plantSpecies').select();}, function(){setCustomPlantSpeciesConfirmed(true);});setTimeout(function(){for(var i = 1; i < $('#plant input').length; i++){$('#plant input').eq(i).blur();}},1);}"/>
 								</div>
 
 								<div id="leafInputs">
 									<div class="half group">
 										<div class="observationFieldTitle">Avg. leaf length (cm):</div>
-										<input type="number" id="averageLeafLength" placeholder="1cm - 60cm" onclick="this.select();"  pattern="\d*" onblur="enforceRange(this, 1, 60, 1); if(Number(this.value) > 30){promptConfirm('Wow, that\'s a long leaf! Are you sure you\'re measuring in centimeters?', 'Whoops!', 'Yes, I am sure!', function(){$('#averageLeafLength')[0].focus();$('#averageLeafLength')[0].select();}, function(){});}"/>
+										<input type="number" id="averageLeafLength" placeholder="1cm - 60cm" onclick="this.select();"  pattern="\d*" onblur="askToConfirmLeafLength()"/>
 									</div>
 									
 									<div class="half group">
 										<div class="observationFieldTitle">Number of leaves:</div>
 										<div class="countInput" onclick="if(autocompleteIsActive){return false;}if($('#numberOfLeaves')[0].readOnly){$('#numberOfLeaves')[0].blur();queueNotice('alert', 'Visual observation method requires a count of exactly 50 leaves.');}">
-											<input type="number" id="numberOfLeaves" placeholder="1 - 500" pattern="\d*"  onclick="if(!this.readOnly){this.select();}" onblur="enforceRange(this, 1, 500, 1); if(Number(this.value) > 300){promptConfirm('Wow, that\'s a lot of leaves! Are you sure ' + this.value + ' leaves were <strong><em>over the beat sheet</em></strong> while beating?', 'Whoops!', 'Yes, I am sure!', function(){$('#numberOfLeaves')[0].focus();$('#numberOfLeaves')[0].select();}, function(){});}"/>
+											<input type="number" id="numberOfLeaves" placeholder="1 - 500" pattern="\d*"  onclick="if(!this.readOnly){this.select();}" onblur="askToConfirmLeafQuantity()"/>
 											<div class="countAttachment">
 												<div onclick="if(autocompleteIsActive){return false;}if(!$(this.parentNode.parentNode).find('input').eq(0)[0].readOnly){incrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 500, 1);}"></div>
 												<div onclick="if(autocompleteIsActive){return false;}if(!$(this.parentNode.parentNode).find('input').eq(0)[0].readOnly){decrementCountInput($(this.parentNode.parentNode).find('input').eq(0), 1, 500, 1);}"></div>
@@ -563,6 +591,6 @@
 
 			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
 		</footer>
-		<script type="text/javascript" src="../js/submitObservations.js?v=9"></script>
+		<script type="text/javascript" src="../js/submitObservations.js?v=10"></script>
 	</body>
 </html>

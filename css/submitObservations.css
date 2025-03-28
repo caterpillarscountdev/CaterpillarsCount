@@ -177,12 +177,14 @@
 				border-bottom:0px none transparent;
 				padding:10px;
 				background:#444;
+                                position:relative;
 			}
 			
 			#iconBar .panelIcon{
 				height:30px;
 				margin:2px 4px 0px 0px;
 				opacity:.2;
+				border-radius:50%;
 				border:3px solid transparent;
 				cursor:pointer;
 			}
@@ -201,6 +203,21 @@
 			#iconBar .panelIcon:nth-of-type(2){
 				margin-right:5px;
 			}
+
+                        #iconBar span.panelIcon {
+			    opacity:1;
+			    background-color:#00a800;
+                            color: white;
+                            display: inline-block;
+                            position: absolute;
+                            width: 30px;
+                            text-align: center;
+                            font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                            font-weight: 700;
+                            line-height: 30px;
+                            position: absolute;
+                            margin-left: -45;                            
+                        }
 			
 			select, .select{
 				width:100%;
@@ -692,3 +709,4 @@
 			.clearBoth{
 				clear:both;
 			}
+

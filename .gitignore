@@ -3,3 +3,4 @@ composer.lock
 /vendor
 /php/orm/resources/vendor
 /php/get*.txt
+/images/arthropods/

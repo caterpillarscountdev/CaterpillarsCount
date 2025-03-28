@@ -105,6 +105,5 @@
 	else {
 		die("false|no lines specified");
 	}
-  	mysqli_close($dbconn);
   	die("true|" . json_encode($weightedLines));//in the form of: [LABEL: [[YEAR, OCCURRENCE, DENSITY, MEAN BIOMASS]]] //example: ["All arthropods at Example Site": [[2018, 30, 2.51, 9.7], [2019, 25, 3.1, 25.2]], [[2020, 21.3, 0.12, 7.7], [2021, 70, 0.7, 3.12]]]
 ?>

@@ -46,7 +46,7 @@
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
 
 				if(window.location.toString().indexOf("?p=") > -1){
-					loggedInPage = "/index.html" + window.location.toString().substring(window.location.toString().indexOf("?p="));
+					loggedInPage = window.location.toString().substring(window.location.toString().indexOf("?p="));
 					$(".link").eq(0).find("a").eq(0)[0].href = ("../signIn" + loggedInPage);
 				}
 			});
