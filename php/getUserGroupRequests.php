@@ -8,24 +8,21 @@ require_once('orm/resources/Customfunctions.php'); // contains new function cust
 $email = custgetparam("email");
 $salt = custgetparam("salt");
 
-$id = custgetparam("id");
-$name = custgetparam("name");
-$emails = custgetparam("emails");
-
 $conn = (new Keychain)->getDatabaseConnection();
 
 $user = User::findBySignInKey($email, $salt);
 
 if(is_object($user) && get_class($user) == "User"){
-  $group = UserGroup::findByID($id);
-  if(is_object($group) && get_class($group) == "UserGroup") {
-    $group->setName($name);
-    $group->setEmails($emails);
-  } else {
-    $group = UserGroup::create($user, $name, $emails);
-  }
-  $group->requestUserConsents();
-  die("true|" . $group->getID());
+  $groupsArray = array();
+  $groups = UserGroup::requestsForUser($user);
+    for($i = 0; $i < count($groups); $i++){
+      $groupsArray[$i] = array(
+        "id" => $groups[$i]->getID(),
+        "manager" => $groups[$i]->getManager()->getFullName(),
+        "name" => $groups[$i]->getName()
+        );
+    }
+  die("true|" . json_encode($groupsArray));
 }
 die("false|Your log in dissolved. Maybe you logged in on another device.");
 
