@@ -41,6 +41,7 @@
 		<script src="../js/template.js?v=3"></script>
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
 		<script src="../js/checkbox.js?v=1"></script>
+		<script src="../js/libraries/FileSaver.js"></script>
 		<style>
 		 .loading{
 		     background:rgba(0,0,0,0.1);
@@ -307,6 +308,7 @@
                  let userGroupID = queryParam('g');
                  let sites = null;
                  let userGroups = null;
+                 let userData = null;
 
                  window.addEventListener("popstate", (ev) => {
                      console.log("popstate", ev.state)
@@ -384,7 +386,8 @@
                      
                      let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID) + "&groupID=" + encodeURIComponent(userGroupID));
                      var data = JSON.parse((await response.text()).replace("true|", ""));
-
+                     userData = data.Users;
+                     
                      document.querySelector("#gameStats tbody").innerHTML="";
                      document.querySelector("#quizStats tbody").innerHTML="";
                      document.querySelector("#surveyStats tbody").innerHTML="";
@@ -586,7 +589,46 @@
 		     }, 1);
                      
                  }
-                 
+
+                 function downloadUserGroup() {
+                     let group = userGroups.filter((x) => {return x.id == userGroupID});
+                     if (group.length == 1) {
+			 var headers = ["User Name", "Quizzes", "Quiz Score Mean", "Quiz Score Best", "Virtual Survey Games", "VS Score Mean", "VS Score Best", "VS Percent Found Mean", "VS Percent Found Best", "VS ID Accuracy Mean", "VS ID Accuracy Best", "VS Length Accuracy Mean", "VS Length Accuracy Best", "Surveys This Week", "Surveys This Month", "Surveys This Year", "Surveys This Millenium", "Surveys WIth Caterpillars", "Survey Overall Accuracy"];
+			 var csvString = headers.join(",") + "\r\n";
+
+                         for(var u of userData) {
+                             var row = [
+                                 u.Name,
+                                 u.QuizCount,
+                                 u.QuizMean,
+                                 u.QuizHigh,
+                                 u.GameScoreMean,
+                                 u.GameScoreHigh,
+                                 u.GameFoundMean,
+                                 u.GameFoundHigh,
+                                 u.GameIdentificationMean,
+                                 u.GameIdentificationHigh,
+                                 u.GameLengthMean,
+                                 u.GameLengthHigh,
+                                 u.SurveysWeek,
+                                 u.SurveysMonth,
+                                 u.SurveysYear,
+                                 u.SurveysTotal,
+                                 u.SurveysCaterpillars,
+                                 u.SurveyAccuracy
+                             ];
+                             
+                             csvString += row.join(",") + "\r\n";
+                         }
+                         
+		         var date = new Date();
+                         var filename = "CaterpillarsCountGroup-" + group[0].name.replace(" ", "_") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv"
+                         console.log(csvString, filename);
+                         saveAs(new Blob([csvString], {type: "text/csv"}), filename)
+                     } else {
+                         queueNotice("error", "Problem saving this group data, try reloading the page.")
+                     }
+                 }
 
                  
                  function sortableInit(table) {
