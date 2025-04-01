@@ -137,13 +137,17 @@ class UserGroup {
  }
 
   public function declineFromUser($user) {
+    $this->removeUser($user);
+    $updatedEmails = array_diff($this->emails, array($user->getEmail()));
+    $this->setEmails($updatedEmails);
+    return true;
+  }
+
+  public function removeUser($user) {
     $dbconn = (new Keychain)->getDatabaseConnection();
     mysqli_query($dbconn, "DELETE FROM UserGroupConsent WHERE `UserGroupFK` = '". $this->id . "' AND UserFK = '" . $user->getID() . "'");
     $updatedRequested = array_diff($this->requestedEmails, array($user->getEmail()));
-    $updatedEmails = array_diff($this->emails, array($user->getEmail()));
     $this->setRequestedEmails($updatedRequested);
-    $this->setEmails($updatedEmails);
-    return true;
   }
   
 
@@ -199,6 +203,13 @@ class UserGroup {
   public function setEmails($emails){
     $dbconn = (new Keychain)->getDatabaseConnection();
     $emails = self::validEmails($emails);
+    $removed = array_diff($this->emails, $emails);
+    foreach($removed as $rem) {
+      $u = User::findByEmail($rem);
+      if(is_object($u) && get_class($u) == "User") {
+        $this->removeUser($u);
+      }
+    }
     $emailsR = implode(',', $emails);
     mysqli_query($dbconn, "UPDATE UserGroup SET Emails='$emailsR' WHERE ID='" . $this->id . "'");
     $this->emails = $emails;

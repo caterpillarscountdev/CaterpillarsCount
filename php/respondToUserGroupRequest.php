@@ -16,7 +16,7 @@ $conn = (new Keychain)->getDatabaseConnection();
 $user = User::findBySignInKey($email, $salt);
 
 if(is_object($user) && get_class($user) == "User"){
-  $groups = UserGroup::requestsForUser($user);
+  $groups = array_merge(UserGroup::requestsForUser($user), UserGroup::groupsForUser($user));
   $found = false;
   foreach($groups as $group) {
     if ($group->getID() == $groupID) {
@@ -29,7 +29,7 @@ if(is_object($user) && get_class($user) == "User"){
       }
       else if($response == "deny"){
         if($group->declineFromUser($user)){
-          die("true|");
+          die("true|" . $group->getName());
         }
         die("false|Could not deny request.");
       }

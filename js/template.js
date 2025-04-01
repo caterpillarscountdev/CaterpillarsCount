@@ -349,7 +349,7 @@
 				})
 				.fail(function(){
 					//error
-					queueNotice("error", "Your request to deny a group request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+					queueNotice("error", "Your request to respond to a group request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
 				});
 			}
 			
