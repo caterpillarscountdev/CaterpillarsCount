@@ -206,6 +206,15 @@
 		     box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
 		 }
 
+                 .downloadImage {
+                     height: 1em;
+                     width: 1em;
+                     display: inline-block;
+		     background-position:center;
+		     background-size:contain;
+		     background-repeat:no-repeat;
+		 }                 
+
 
 		 .siteSelect, .groupSelect{
 		     position:relative;
@@ -268,10 +277,6 @@
 
 		 .groupDetails .formBody>div{
 		     padding:20px;
-		 }
-
-		 .groupDetails button.action{
-		     margin:20px auto 5px auto;
 		 }
 
                  .groupDetails textarea{
@@ -379,8 +384,10 @@
                          if (site.length == 1) {
                              label = "Site: " + site[0].name;   
                          }
+                         hideUserGroup();
                          switchButtonStates('Site', label);
                      } else {
+                         hideUserGroup();
                          switchButtonStates('User');
                      }
                      
@@ -622,7 +629,8 @@
                          }
                          
 		         var date = new Date();
-                         var filename = "CaterpillarsCountGroup-" + group[0].name.replace(" ", "_") + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv"
+                         if (date) {}
+                         var filename = "CaterpillarsCountStats-" + name + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv"
                          console.log(csvString, filename);
                          saveAs(new Blob([csvString], {type: "text/csv"}), filename)
                      } else {
@@ -682,16 +690,14 @@
                      }
                  }
 
-                 function showEditableUserGroup(group) {
+                 function hideUserGroup() {
                      let con = document.getElementById('groupDetails');
-                     con.style.display = 'block';
-                     showUserGroupDetails(con);
+                     con.style.display = "none";
                  }
                  
                  function editableUserGroup(group) {
                      let con = document.getElementById('groupDetails');
                      con.querySelector('h2').innerHTML = 'Group Management';
-                     con.querySelector('#downloadData').style.display = 'block';
                      con.style.display = 'block';
                      $(con).find("input[name='name']").val(group.name);
                      $(con).find("textarea[name='emails']").val(group.emails);
@@ -700,8 +706,10 @@
                  function createNewUserGroup() {
                      let con = document.getElementById('groupDetails');
                      con.querySelector('h2').innerHTML = 'Create New Group';
-                     con.querySelector('#downloadData').style.display = 'none';
                      con.style.display = 'block';
+                     $(con).find("input[name='name']").val("");
+                     $(con).find("textarea[name='emails']").val("");
+                     userGroupID = null;
                      showUserGroupDetails(con);
                  }
 
@@ -850,7 +858,10 @@
                       <div id="groupDetails" class="groupDetails">
 			<h2 onclick="showUserGroupDetails(this.parentNode);">Group Management</h2>
 			<div class="formBody">
-			  <button class="action" onclick="downloadUserGroup();" id="downloadData">Download Group Data</button>
+		          <button onclick="downloadUserGroup();" id="downloadData" style="margin: 1em auto 1em; auto; padding: 1em;">
+		            <div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+                            Download Data
+                          </button>
 			  <div id="">
 			    <input type="text" id="" name="name" placeholder="Group Name" />
 			    <textarea name="emails" placeholder="Emails, one per line"></textarea>
