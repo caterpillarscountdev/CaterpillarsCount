@@ -2,9 +2,11 @@
 
 require_once('orm/resources/Keychain.php');
 require_once('orm/User.php');
+require_once('orm/UserGroup.php');
 require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
 
 $siteID = intval(custgetparam("siteID"));
+$groupID = intval(custgetparam("groupID"));
 $userID = intval(custgetparam("userID"));
 
 $email = custgetparam("email");
@@ -29,27 +31,37 @@ if(is_object($user) && get_class($user) == "User"){
 
   $users = array($user);
 
-  $sites = $user->getSites();
-  for($i = 0; $i < count($sites); $i++){
-    $sites[$i] = $sites[$i]->getID();
-  }
-  $site = Site::findByID($siteID);
-  if(is_object($site) && get_class($site) == "Site" && in_array($site->getID(), $sites)){
-    // get site Users
-    $users = array();
-    $query = mysqli_query($conn, "SELECT DISTINCT Survey.UserFKOfObserver AS UserFK FROM Survey JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK =" . $site->getID());
+  if ($siteID) {
+    $sites = $user->getSites();
+    for($i = 0; $i < count($sites); $i++){
+      $sites[$i] = $sites[$i]->getID();
+    }
+    $site = Site::findByID($siteID);
+    if(is_object($site) && get_class($site) == "Site" && in_array($site->getID(), $sites)){
+      // get site Users
+      $users = array();
+      $query = mysqli_query($conn, "SELECT DISTINCT Survey.UserFKOfObserver AS UserFK FROM Survey JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK =" . $site->getID());
 
-    while($row = mysqli_fetch_assoc($query)){
-      $u = User::findByID($row["UserFK"]);
-      if (is_object($u) && get_class($u) == "User") {
-        // if Site and User params, just show that user
-        if (!$userID || $u->getID() == $userID) {
-          $users[] = $u;
+      while($row = mysqli_fetch_assoc($query)){
+        $u = User::findByID($row["UserFK"]);
+        if (is_object($u) && get_class($u) == "User") {
+          // if Site and User params, just show that user
+          if (!$userID || $u->getID() == $userID) {
+            $users[] = $u;
+          }
         }
       }
     }
-
-  };
+  } else if ($groupID) {
+    $groups = UserGroup::findByManager($user);
+    for($i = 0; $i < count($groups); $i++){
+      $groups[$i] = $groups[$i]->getID();
+    }
+    $group = UserGroup::findByID($groupID);
+    if(is_object($group) && get_class($group) == "UserGroup" && in_array($group->getID(), $groups)){
+      $users = $group->getUsers();
+    }
+  }
 
   $baseSiteRestriction = "<>2";
   if($siteID > 0){
@@ -65,6 +77,10 @@ if(is_object($user) && get_class($user) == "User"){
     "Users" => array()
   );
 
+  if (count($users) < 1) {
+    die("true|" . json_encode($results));
+  }
+  
   $userIDs = array();
 
   uasort($users, function($a, $b) { return strcmp($a->getLastName(), $b->getLastName());});

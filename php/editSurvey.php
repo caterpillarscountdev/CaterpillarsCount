@@ -89,7 +89,6 @@
 					die("false|For sites that you do not own or manage, you only have 2 weeks after submitting a survey to come back and edit it. You can no longer edit this survey. If you really must edit this survey, ask your site director to do so for you.");
 				}
 				//edit survey
-				$survey->setReviewedAndApproved(0);
 				$survey->setPlant($plant);
 				$survey->setLocalDate($date);
 				$survey->setLocalTime($time);

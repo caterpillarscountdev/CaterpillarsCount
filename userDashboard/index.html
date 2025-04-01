@@ -41,6 +41,7 @@
 		<script src="../js/template.js?v=3"></script>
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
 		<script src="../js/checkbox.js?v=1"></script>
+		<script src="../js/libraries/FileSaver.js"></script>
 		<style>
 		 .loading{
 		     background:rgba(0,0,0,0.1);
@@ -205,23 +206,33 @@
 		     box-shadow: inset 2px 2px 5px 0px rgba(0,0,0,0.17);
 		 }
 
+                 .downloadImage {
+                     height: 1em;
+                     width: 1em;
+                     display: inline-block;
+		     background-position:center;
+		     background-size:contain;
+		     background-repeat:no-repeat;
+		 }                 
 
-		 .siteSelect{
+
+		 .siteSelect, .groupSelect{
 		     position:relative;
 		     display:inline-block;
 		     text-decoration:inherit;
                      font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;		 }
-		 .siteSelect .selected{
+		 .siteSelect .selected, .groupSelect .selected {
 		     border-radius:4px;
 		     text-decoration:inherit;
 		     cursor:pointer;
 		     background:rgba(0,0,0,0.1);
 		     padding:0px 2px;
 		 }
-		 .siteSelect .options{
+		 .siteSelect .options, .groupSelect .options{
 		     position:absolute;
 		     top:1em;
 		     left:0px;
+		     cursor:pointer;
 		     background:#fff;
 		     min-width:100%;
 		     border-radius:5px;
@@ -232,14 +243,62 @@
 		     display:none;
 		     z-index:1;
 		 }
-		 .siteSelect .options>div{
-		     padding:5px;
+		 .siteSelect .options>div, .groupSelect .options>div{
+		     padding:10px;
 		     cursor:pointer;
                      text-align:left;
 		 }
-		 .siteSelect .options>div:hover{
+		 .siteSelect .options>div:hover, .groupSelect .options>div:hover{
 		     background:#ebfeff;
 		 }                 
+
+		 .groupDetails{
+		     font-family: 'Roboto Slab', serif;
+		     margin:20px 0px;
+		     border-radius:4px;
+		     overflow:hidden;
+                     display: none;
+		 }
+
+		 .groupDetails h2{
+		     font-size:20px;
+		     background:#f7f7f7;
+		     color:#aaa;
+		     padding:20px;
+		     cursor:pointer;
+
+		 }
+		 .groupDetails .formBody{
+		     font-size:14px;
+		     background:#f7f7f7;
+		     max-height:0px;
+		     overflow:hidden;
+		 }
+
+		 .groupDetails .formBody>div{
+		     padding:20px;
+		 }
+
+                 .groupDetails textarea{
+		     width:100%;
+		     background:#fff;
+		     border:1px solid #ddd;
+		     border-bottom:2px solid #ddd;
+		     font-size:16px;
+		     padding:16px;
+		     box-sizing:border-box;
+		     border-radius:4px;
+		     margin:5px 0px;
+		     color:#aaa;
+		     -webkit-appearance: none;
+    		     -moz-appearance: none;
+    		     appearance: none;
+		     font-family: Arial, sans-serif;
+		     overflow:hidden;
+		     resize: vertical;
+		     height:162px;
+		 }
+
                  
 		</style>
 		<script>
@@ -251,7 +310,10 @@
                  }
 
                  let siteID = queryParam('s');
+                 let userGroupID = queryParam('g');
                  let sites = null;
+                 let userGroups = null;
+                 let userData = null;
 
                  window.addEventListener("popstate", (ev) => {
                      console.log("popstate", ev.state)
@@ -261,6 +323,7 @@
                  
 		 $(document).click(function(){
 		     $(".siteSelect .options").fadeOut(0);
+		     $(".groupSelect .options").fadeOut(0);
 		 });
 
 		 $(document).ready(function(){
@@ -285,27 +348,53 @@
                      }
                  }
 
+                 async function loadUserGroups() {
+                     let response = await fetch("../php/getUserGroups.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"));
+                     var data = JSON.parse((await response.text()).replace("true|", ""));
+
+                     if (data.allowed) {
+                         document.querySelector('#switch').classList.add('active');
+                         userGroups = data.groups;
+                         showUserGroupSelect(data.groups);
+                     }
+                 }
+                 
                  async function loadUserStats() {
                      if (!sites) {
                          await loadUserSites();
                      }
+                     if (!userGroups) {
+                         await loadUserGroups();
+                     }
 
                      let userID = queryParam('u');
 
-                     if (siteID && !userID) {
+                     if (userGroupID && !userID) {
+                         let label;
+                         let group = userGroups.filter((x) => {return x.id == userGroupID});
+                         if (group.length == 1) {
+                             label = "Group: " + userGroupName(group[0]);
+                             editableUserGroup(group[0]);
+                         }
+                         switchButtonStates('Group', label);
+                         
+                     } else if (siteID && !userID) {
                          let label;
                          let site = sites.filter((x) => {return x.id == siteID});
                          if (site.length == 1) {
-                           label = "Site: " + site[0].name;   
+                             label = "Site: " + site[0].name;   
                          }
-                         switchButtonStates('Site', 'User', label);
+                         hideUserGroup();
+                         switchButtonStates('Site', label);
                      } else {
-                         switchButtonStates('User', 'Site');
+                         hideUserGroup();
+                         switchButtonStates('User');
                      }
                      
-                     let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID));
+                     let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID) + "&groupID=" + encodeURIComponent(userGroupID));
                      var data = JSON.parse((await response.text()).replace("true|", ""));
-
+                     userData = data.Users;
+                     
                      document.querySelector("#gameStats tbody").innerHTML="";
                      document.querySelector("#quizStats tbody").innerHTML="";
                      document.querySelector("#surveyStats tbody").innerHTML="";
@@ -397,27 +486,37 @@
                      }                     
                  }
 
-		 function switchStatsTo(viewType, otherType, label){
+		 function switchStatsTo(viewType){
                      if (viewType == 'User') {
                          window.history.pushState({}, "", `${window.location.pathname}`);
                          siteID = null;
+                         userGroupID = null;
+                     } else if (viewType == 'Group')  {
+                         window.history.pushState({}, "", `${window.location.pathname}?g=${userGroupID}`);
+                         siteID = null;
                      } else {
                          window.history.pushState({}, "", `${window.location.pathname}?s=${siteID}`);
+                         userGroupID = null;
                      }
                      loadUserStats();
                  }
 
-                 function switchButtonStates(viewType, otherType, label) {
-                     let id = `#${viewType.toLowerCase()}SwitchButton`;
-                     let other = `#${otherType.toLowerCase()}SwitchButton`;
-		     $(id)[0].className = "active";
-		     $(other)[0].className = "";
-		     $(id)[0].innerHTML = ". . .";
-                     $(other)[0].innerHTML = otherType;
-		     setTimeout(function(){
-			 $(id)[0].innerHTML = label || viewType;
-		     }, 1);
-		 }
+                 function switchButtonStates(viewType, label) {
+                     let states = ['User', 'Site', 'Group'];
+                     for (let state of states) {
+                         let id = `#${state.toLowerCase()}SwitchButton`;
+		         $(id)[0].innerHTML = ". . .";
+                         if (viewType == state) {
+		             $(id)[0].className = "active";
+		             setTimeout(function(){
+			         $(id)[0].innerHTML = label || viewType;
+		             }, 1);
+                         } else {
+		             $(id)[0].className = "";
+                             $(id)[0].innerHTML = state;
+                         }
+		     }
+                 }
 
 
                  function showSiteSelect(sites) {
@@ -441,11 +540,102 @@
 		 }
                  function siteSelectOption(site) {
                      siteID = site.id;
-                     switchStatsTo('Site', 'User', `Site: ${site.name}`);              
+                     switchStatsTo('Site');              
 		     setTimeout(function(){
 			 $(".siteSelect .options").eq(0).css({display:"none"});
 		     }, 1);
                      
+                 }
+
+                 function userGroupName(group) {
+                     let users;
+                     if (group.invitedCount == group.acceptedCount) {
+                         users = `${group.acceptedCount}`
+                     } else {
+                         users = `${group.acceptedCount} of ${group.invitedCount}`
+                     }
+                     return `${group.name} (${users} people)`
+                     }
+
+                     function showUserGroupSelect(groups) {
+                     let parent = document.querySelector(".groupSelect .options");
+                     parent.replaceChildren();
+
+                     groups = groups.sort((a,b) => a.name.localeCompare(b.name));
+
+                     for (let group of groups) {
+                         let div = document.createElement('div');
+                         div.innerHTML = userGroupName(group);
+                         //let edit = document.createElement('div');
+                         //edit.style.float = 'right';
+                         //edit.style.fontWeight = 'bold';
+                         //edit.innerHTML = '&#9998;'
+                         //edit.addEventListener('click', () => {userGroupSelectOption(group); showEditableUserGroup(group) });
+                         //div.appendChild(edit);
+                         div.addEventListener('click', () => userGroupSelectOption(group));
+                         parent.appendChild(div);
+                     }
+                     let div = document.createElement('div');
+                     div.innerHTML = "<em>Create New</em>";
+                     div.addEventListener('click', () => createNewUserGroup());
+                     parent.appendChild(div);
+                     
+                 }
+
+		 function showUserGroupSelectOptions(selectedOption){
+		     setTimeout(function(){
+			 $(".groupSelect .options").eq(0).css({display:"block"});
+		     }, 1);
+		 }
+                 function userGroupSelectOption(group) {
+                     userGroupID = group.id;
+                     switchStatsTo('Group');
+                     editableUserGroup(group);
+		     setTimeout(function(){
+			 $(".groupSelect .options").eq(0).css({display:"none"});
+		     }, 1);
+                     
+                 }
+
+                 function downloadUserGroup() {
+                     let group = userGroups.filter((x) => {return x.id == userGroupID});
+                     if (group.length == 1) {
+			 var headers = ["User Name", "Quizzes", "Quiz Score Mean", "Quiz Score Best", "Virtual Survey Games", "VS Score Mean", "VS Score Best", "VS Percent Found Mean", "VS Percent Found Best", "VS ID Accuracy Mean", "VS ID Accuracy Best", "VS Length Accuracy Mean", "VS Length Accuracy Best", "Surveys This Week", "Surveys This Month", "Surveys This Year", "Surveys This Millenium", "Surveys WIth Caterpillars", "Survey Overall Accuracy"];
+			 var csvString = headers.join(",") + "\r\n";
+
+                         for(var u of userData) {
+                             var row = [
+                                 u.Name,
+                                 u.QuizCount,
+                                 u.QuizMean,
+                                 u.QuizHigh,
+                                 u.GameScoreMean,
+                                 u.GameScoreHigh,
+                                 u.GameFoundMean,
+                                 u.GameFoundHigh,
+                                 u.GameIdentificationMean,
+                                 u.GameIdentificationHigh,
+                                 u.GameLengthMean,
+                                 u.GameLengthHigh,
+                                 u.SurveysWeek,
+                                 u.SurveysMonth,
+                                 u.SurveysYear,
+                                 u.SurveysTotal,
+                                 u.SurveysCaterpillars,
+                                 u.SurveyAccuracy
+                             ];
+                             
+                             csvString += row.join(",") + "\r\n";
+                         }
+                         
+		         var date = new Date();
+                         if (date) {}
+                         var filename = "CaterpillarsCountStats-" + name + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv"
+                         console.log(csvString, filename);
+                         saveAs(new Blob([csvString], {type: "text/csv"}), filename)
+                     } else {
+                         queueNotice("error", "Problem saving this group data, try reloading the page.")
+                     }
                  }
 
                  
@@ -482,8 +672,8 @@
                              y = rows[i + 1].getElementsByTagName("td")[idx];
 
                              if (compare(extract(x), extract(y))) {
-                                     shouldSwitch = true;
-                                     break;
+                                 shouldSwitch = true;
+                                 break;
                              }
                          }
                          if (shouldSwitch) {
@@ -498,6 +688,57 @@
                              }
                          }
                      }
+                 }
+
+                 function hideUserGroup() {
+                     let con = document.getElementById('groupDetails');
+                     con.style.display = "none";
+                 }
+                 
+                 function editableUserGroup(group) {
+                     let con = document.getElementById('groupDetails');
+                     con.querySelector('h2').innerHTML = 'Group Management';
+                     con.style.display = 'block';
+                     $(con).find("input[name='name']").val(group.name);
+                     $(con).find("textarea[name='emails']").val(group.emails);
+                 }
+
+                 function createNewUserGroup() {
+                     let con = document.getElementById('groupDetails');
+                     con.querySelector('h2').innerHTML = 'Create New Group';
+                     con.style.display = 'block';
+                     $(con).find("input[name='name']").val("");
+                     $(con).find("textarea[name='emails']").val("");
+                     userGroupID = null;
+                     showUserGroupDetails(con);
+                 }
+
+                 async function saveUserGroupDetails(con) {
+                     let name = $(con).find("input[name='name']").val();
+                     let emails = $(con).find("textarea[name='emails']").val();
+
+                     let idClause = '';
+                     if (userGroupID) {
+                         idClause = '&id=' + userGroupID;
+                     }
+                     let response = await fetch('../php/editUserGroup.php?email=' + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + idClause + "&name=" + encodeURIComponent(name) + "&emails=" + encodeURIComponent(emails), {method: "POST"});
+                     showUserGroupDetails(document.querySelector("#groupDetails"));
+                     await loadUserGroups();
+                     return loadUserStats();
+                 }
+
+                 function showUserGroupDetails(con) {
+		     var body = $(con).find(".formBody").eq(0)[0];
+
+		     if(body.style.maxHeight == "" || body.style.maxHeight == "0px"){
+			 $(con).css({border:"0px none transparent"});
+			 $(body).stop().animate({maxHeight:"500px"});
+			 //$(con).find("h2").eq(0).stop().animate({backgroundColor:"#444", color:"#fff"});
+		     }
+		     else{
+			 $(body).stop().animate({maxHeight:"0px"});
+		     }
+                     
                  }
                  
 		</script>
@@ -601,14 +842,34 @@
 		    <div class="content">
 		      <div class="centeredText">
 			<div id="switch">
-			  <button id="userSwitchButton" class="active" onclick="switchStatsTo('User', 'Site');">User</button>
+			  <button id="userSwitchButton" class="active" onclick="switchStatsTo('User');">User</button>
                           <div class="siteSelect">
 		            <div class="options" style="min-width:153px;">
                             </div>
                           </div>
 			  <button id="siteSwitchButton" onclick="showSiteSelectOptions(this);">Site</button>
+                          <div class="groupSelect">
+		            <div class="options" style="min-width:153px;">
+                            </div>
+                          </div>
+			  <button id="groupSwitchButton" onclick="showUserGroupSelectOptions(this);">Group</button>
 			</div>
 		      </div>
+                      <div id="groupDetails" class="groupDetails">
+			<h2 onclick="showUserGroupDetails(this.parentNode);">Group Management</h2>
+			<div class="formBody">
+		          <button onclick="downloadUserGroup();" id="downloadData" style="margin: 1em auto 1em; auto; padding: 1em;">
+		            <div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+                            Download Data
+                          </button>
+			  <div id="">
+			    <input type="text" id="" name="name" placeholder="Group Name" />
+			    <textarea name="emails" placeholder="Emails, one per line"></textarea>
+                            <p>Emails will be sent to existing users to join this group, and invites will be sent to new users.</p>
+			    <button class="action" onclick="saveUserGroupDetails(this.parentNode);" id="saveUserGroupDetails">Save Group</button>
+			  </div>
+			</div>
+                      </div>
 		      <div id="quiz">
 		        <h3><a href="../arthropodQuiz">Photo ID Quiz</a><img onmouseover="$('#quizNotice').css('display','inline-block')" onmouseout="$('#quizNotice').css('display','none')" src="../images/question.png"><div id="quizNotice">Quiz Scores before October 2024 were not collected.</div></h3>
 		        <div>
