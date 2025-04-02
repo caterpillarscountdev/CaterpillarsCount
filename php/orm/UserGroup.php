@@ -101,7 +101,7 @@ class UserGroup {
     $dbconn = (new Keychain)->getDatabaseConnection();
     $id = mysqli_real_escape_string($dbconn, htmlentities($user->getID()));
     $email = mysqli_real_escape_string($dbconn, htmlentities($user->getEmail()));
-    $query = mysqli_query($dbconn, "SELECT G.ID, C.UserFK FROM `UserGroup` G LEFT JOIN `UserGroupConsent` C ON G.ID = C.UserGroupFK WHERE C.UserFK = '$id' OR G.Emails LIKE '%$email%'");
+    $query = mysqli_query($dbconn, "SELECT G.ID, C.UserFK FROM `UserGroup` G LEFT JOIN (SELECT * FROM `UserGroupConsent` WHERE UserFK=$id) C ON G.ID = C.UserGroupFK WHERE C.UserFK IS NULL AND G.Emails LIKE '%$email%'");
     
     $groups = array();
     while($row = mysqli_fetch_assoc($query)){
