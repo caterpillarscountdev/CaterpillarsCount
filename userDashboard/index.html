@@ -597,9 +597,8 @@
                      
                  }
 
-                 function downloadUserGroup() {
-                     let group = userGroups.filter((x) => {return x.id == userGroupID});
-                     if (group.length == 1) {
+                 function downloadUserStats() {
+                     if (userData) {
 			 var headers = ["User Name", "Quizzes", "Quiz Score Mean", "Quiz Score Best", "Virtual Survey Games", "VS Score Mean", "VS Score Best", "VS Percent Found Mean", "VS Percent Found Best", "VS ID Accuracy Mean", "VS ID Accuracy Best", "VS Length Accuracy Mean", "VS Length Accuracy Best", "Surveys This Week", "Surveys This Month", "Surveys This Year", "Surveys This Millenium", "Surveys WIth Caterpillars", "Survey Overall Accuracy"];
 			 var csvString = headers.join(",") + "\r\n";
 
@@ -629,7 +628,19 @@
                          }
                          
 		         var date = new Date();
-                         if (date) {}
+                         var name = 'user';
+                         if (userGroupID) {
+                             let group = userGroups.filter((x) => {return x.id == userGroupID});
+                             if (group.length == 1) {
+                                 name = group[0].name
+                             }
+                         } else if (siteID) {
+                             let site = sites.filter((x) => {return x.id == siteID});
+                             if (site.length == 1) {
+                                 name = site[0].name;
+                             }
+                         }
+                             
                          var filename = "CaterpillarsCountStats-" + name + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv"
                          saveAs(new Blob([csvString], {type: "text/csv"}), filename)
                      } else {
@@ -854,15 +865,16 @@
                             </div>
                           </div>
 			  <button id="groupSwitchButton" onclick="showUserGroupSelectOptions(this);">Group</button>
+		          <button onclick="downloadUserStats();" id="downloadData" style="background-color:#888;color: #ddd;">
+		            <div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
+                            Download
+                          </button>
+                          
 			</div>
 		      </div>
                       <div id="groupDetails" class="groupDetails">
 			<h2 onclick="showUserGroupDetails(this.parentNode);">Group Management</h2>
 			<div class="formBody">
-		          <button onclick="downloadUserGroup();" id="downloadData" style="margin: 1em auto 1em; auto; padding: 1em;">
-		            <div class="downloadImage" style="background-image:url('../images/downloadIconWhite.png');"></div>
-                            Download Data
-                          </button>
 			  <div id="">
 			    <input type="text" id="" name="name" placeholder="Group Name e.g. BIOL 201 Spring 2026" />
 			    <textarea name="emails" placeholder="Emails, one per line or comma-separated"></textarea>
