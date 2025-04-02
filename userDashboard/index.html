@@ -631,7 +631,6 @@
 		         var date = new Date();
                          if (date) {}
                          var filename = "CaterpillarsCountStats-" + name + "-" + date.toLocaleDateString() + "-" + date.toLocaleTimeString() + ".csv"
-                         console.log(csvString, filename);
                          saveAs(new Blob([csvString], {type: "text/csv"}), filename)
                      } else {
                          queueNotice("error", "Problem saving this group data, try reloading the page.")
@@ -722,6 +721,8 @@
                          idClause = '&id=' + userGroupID;
                      }
                      let response = await fetch('../php/editUserGroup.php?email=' + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + idClause + "&name=" + encodeURIComponent(name) + "&emails=" + encodeURIComponent(emails), {method: "POST"});
+                     userGroupID = Number((await response.text()).replace("true|", ""));
+
                      showUserGroupDetails(document.querySelector("#groupDetails"));
                      await loadUserGroups();
                      return loadUserStats();
@@ -863,8 +864,8 @@
                             Download Data
                           </button>
 			  <div id="">
-			    <input type="text" id="" name="name" placeholder="Group Name" />
-			    <textarea name="emails" placeholder="Emails, one per line"></textarea>
+			    <input type="text" id="" name="name" placeholder="Group Name e.g. BIOL 201 Spring 2026" />
+			    <textarea name="emails" placeholder="Emails, one per line or comma-separated"></textarea>
                             <p>Emails will be sent to existing users to join this group, and invites will be sent to new users.</p>
 			    <button class="action" onclick="saveUserGroupDetails(this.parentNode);" id="saveUserGroupDetails">Save Group</button>
 			  </div>
