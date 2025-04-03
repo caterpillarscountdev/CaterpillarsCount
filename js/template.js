@@ -283,14 +283,11 @@
 			}
 			
 			function respondToManagerRequest(response){
-				var path = "../";
-				if($("h1").eq(0)[0].innerHTML == "Caterpillars Count!"){
-					path = "";
-				}
-				else if($("h1").eq(0)[0].innerHTML.indexOf("../../") > -1){
-					path = "../../";
-				}
-				$.get(path + "php/respondToManagerRequest.php?managerRequestID=" + Number($("#managerRequestMessage span:last-of-type").eq(0)[0].innerHTML) + "&response=" + response + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+                          if ($("#managerRequestMessage .userGroupRequest").length) {
+                            respondToUserGroupRequest(response);
+                            return;
+                          }
+				$.get("/php/respondToManagerRequest.php?managerRequestID=" + Number($("#managerRequestMessage span:last-of-type").eq(0)[0].innerHTML) + "&response=" + response + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						if(response == "approve"){
@@ -308,6 +305,53 @@
 			}
 			
 			
+			var shownUserGroupRequestNames = [];
+			userGroupRequestQueuing = true;
+			function queueUserGroupRequests(){
+				if(window.localStorage.getItem("email") === null || window.localStorage.getItem("salt") === null){
+					setTimeout(queueUserGroupRequests, 1000);
+					return false;
+				}
+				
+				var url = "/php/getUserGroupRequests.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt");
+				$.get(url, function(data){
+					//success
+					if(data.indexOf("true|") == 0){
+					  var userGroupRequests = JSON.parse(data.replace("true|", ""));
+					  for(var i = 0; i < userGroupRequests.length; i++){
+                                            var group = userGroupRequests[i];
+					    if(shownUserGroupRequestNames.indexOf(group["name"]) == -1){
+					      shownUserGroupRequestNames[shownUserGroupRequestNames.length] = group["name"];
+					      queueNotice("managerRequest", group["manager"] + " wants to add you to the group \"" + group["name"] + "\" to let them view your quiz and survey stats <span class=\"userGroupRequest\" style=\"display:none;\">" + group["id"] + "</span>");
+							}
+						}
+					}
+				})
+				.always(function() {
+				  //complete
+				  if(!HIGH_TRAFFIC_MODE){
+				    setTimeout(queueManagerRequests, 30000);
+				  }
+				});
+			}
+
+			function respondToUserGroupRequest(response){
+				$.get("/php/respondToUserGroupRequest.php?groupID=" + Number($("#managerRequestMessage span:last-of-type").eq(0)[0].innerHTML) + "&response=" + response + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+					//success
+					if(data.indexOf("true|") == 0){
+						if(response == "approve"){
+						  queueNotice("confirmation", "You are now in the group \"" + data.replace("true|", "") + "\", thanks!");
+						}
+					}
+					else{
+						queueNotice("error", data.replace("false|", ""));
+					}
+				})
+				.fail(function(){
+					//error
+					queueNotice("error", "Your request to respond to a group request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+				});
+			}
 			
 			
 			
@@ -327,6 +371,7 @@
 				showScrollAnimationElements();
 				optimizeVideoSize();
 				queueManagerRequests();
+				queueUserGroupRequests();
 				
 			});
 			
