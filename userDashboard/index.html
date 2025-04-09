@@ -271,8 +271,8 @@
 		 .groupDetails .formBody{
 		     font-size:14px;
 		     background:#f7f7f7;
-		     max-height:0px;
-		     overflow:hidden;
+                     display: none;
+                     minHeight: 500px;
 		 }
 
 		 .groupDetails .formBody>div{
@@ -742,13 +742,13 @@
                  function showUserGroupDetails(con) {
 		     var body = $(con).find(".formBody").eq(0)[0];
 
-		     if(body.style.maxHeight == "" || body.style.maxHeight == "0px"){
+		     if(body.style.display == '' || body.style.display == 'none'){
 			 $(con).css({border:"0px none transparent"});
-			 $(body).stop().animate({maxHeight:"500px"});
+			 $(body).stop().show();
 			 //$(con).find("h2").eq(0).stop().animate({backgroundColor:"#444", color:"#fff"});
 		     }
 		     else{
-			 $(body).stop().animate({maxHeight:"0px"});
+			 $(body).stop().hide();
 		     }
                      
                  }
