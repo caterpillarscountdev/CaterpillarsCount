@@ -253,7 +253,33 @@ class Survey
 		}
 		return $surveysArray;
 	}
-	
+
+        public static function getFlaggedSurveyManagersThisWeek() {
+          $filters = array();
+          $filters["flagged"] = "flagged";
+          $filters["lastWeek"] = true;
+          $super = 'hurlbert@bio.unc.edu';
+          $surveys = self::findSurveysByUser(User::findByEmail($super), $filters, "0", "max");
+
+          $users = array();
+
+          foreach($surveys[1] as $survey) {
+            $site = $survey->getPlant()->getSite();
+            $siteName = $site->getName();
+            foreach($site->getAuthorityEmails() as $email) {
+              if (!array_key_exists($email, $users)) {
+                $users[$email] = array();
+              }
+              if (!array_key_exists($siteName, $users[$email])) {
+                $users[$email][$siteName] = 0;
+              }
+              $users[$email][$siteName]++;
+            }
+          }
+
+          return $users;
+        }
+        
 	public static function findSurveysByUser($user, $filters, $start, $limit) {
 		//returns all surveys user has completed
 		$dbconn = (new Keychain)->getDatabaseConnection();
@@ -354,9 +380,15 @@ class Survey
 				$additionalSQL .= " AND Plant.Circle='" . $circleSearch . "'";
 			}
 		}
-		
-		$dateSearch = mysqli_real_escape_string($dbconn, trim(htmlentities(strval($filters["date"]))));
-		$totalCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS `Count` FROM (SELECT DISTINCT Survey.ID FROM " . $baseTable . " JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `User` ON Survey.UserFKOfObserver=User.ID WHERE (Plant.SiteFK IN (" . join(",", $siteIDs) . ") OR Survey.UserFKOfObserver='" . $user->getID() . "') AND Survey.LocalDate LIKE '" . $dateSearch . "'" . $additionalSQL . $groupBy . ") AS Results"))["Count"]);
+
+                $dateSearch = "";
+                if ($filters["date"]) {
+                  $dateSearch = " AND Survey.LocalDate LIKE '" . mysqli_real_escape_string($dbconn, trim(htmlentities(strval($filters["date"])))) . "'";
+                }
+                if ($filters["lastWeek"]) {
+                  $dateSearch = " AND Survey.LocalDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)";
+                }
+		$totalCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS `Count` FROM (SELECT DISTINCT Survey.ID FROM " . $baseTable . " JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `User` ON Survey.UserFKOfObserver=User.ID WHERE (Plant.SiteFK IN (" . join(",", $siteIDs) . ") OR Survey.UserFKOfObserver='" . $user->getID() . "')" . $dateSearch . $additionalSQL . $groupBy . ") AS Results"))["Count"]);
 		if($limit === "max"){
 			$limit = $totalCount;
 		}
@@ -366,7 +398,7 @@ class Survey
 				$start = $totalCount - intval($limit);
 			}
 		}
-		$query = mysqli_query($dbconn, "SELECT Survey.* FROM " . $baseTable . " JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `User` ON Survey.UserFKOfObserver=User.ID WHERE (Plant.SiteFK IN (" . join(",", $siteIDs) . ") OR Survey.UserFKOfObserver='" . $user->getID() . "') AND Survey.LocalDate LIKE '" . $dateSearch . "'" . $additionalSQL . $groupBy . " ORDER BY Survey.LocalDate DESC, Survey.LocalTime DESC, Plant.Code DESC LIMIT " . $start . ", " . $limit);
+		$query = mysqli_query($dbconn, "SELECT Survey.* FROM " . $baseTable . " JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `User` ON Survey.UserFKOfObserver=User.ID WHERE (Plant.SiteFK IN (" . join(",", $siteIDs) . ") OR Survey.UserFKOfObserver='" . $user->getID() . "') " . $dateSearch . $additionalSQL . $groupBy . " ORDER BY Survey.LocalDate DESC, Survey.LocalTime DESC, Plant.Code DESC LIMIT " . $start . ", " . $limit);
 		$observerFKs = array();
 		$plantFKs = array();
 		while($surveyRow = mysqli_fetch_assoc($query)){
