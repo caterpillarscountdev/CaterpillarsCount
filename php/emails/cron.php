@@ -8,6 +8,7 @@
 	
 	require_once("/opt/app-root/src/php/orm/Site.php");
 	require_once("/opt/app-root/src/php/orm/User.php");
+	require_once("/opt/app-root/src/php/orm/Survey.php");
 	require_once("/opt/app-root/src/php/orm/resources/Keychain.php");
 	require_once("/opt/app-root/src/php/orm/resources/mailing.php");
 	require_once('/opt/app-root/src/php/resultMemory.php');
@@ -237,6 +238,28 @@
 			}
 		}
 	}
+
+	function send9QCSummary(){
+		global $emailsSent;
+		global $MAX_EMAIL_SENDS;
+		$sends = getSends("email9");
+                $users = Survey::getFlaggedSurveyManagersThisWeek();
+		foreach($users as $email=>$surveySites){
+                  if($emailsSent >= $MAX_EMAIL_SENDS){
+                    return;
+                  }
+                  
+                  $userID = User::findByEmail($email)->getID();
+                  if(!in_array(strval($userID), $sends)){
+                      email9QCSurveys($email, $surveySites);
+                      logSend($userID, "email9");
+                      $emailsSent++;
+                    }
+                  }
+                }
+        }
+        
+        
 	function send4ToAuthorities($site){
 		global $emailsSent;
 		global $MAX_EMAIL_SENDS;
@@ -524,6 +547,7 @@
 	if((date('D') == "Sun" && intval(date('H')) >= $SUNDAY_START_HOUR) || (date('D') == "Mon" && intval(date('H')) <= $MONDAY_END_HOUR)){
 		send7();
 		send8();
+                send9QCSummary();
 	}
 
 	$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php'));
