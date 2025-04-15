@@ -5,7 +5,6 @@ require_once('User.php');
 require_once('Plant.php');
 require_once('ArthropodSighting.php');
 require('SurveyFlaggingRules.php');
-require('PlantSpecies.php');
 
 class Survey
 {
@@ -965,15 +964,7 @@ class Survey
 		}
 		
 		$plantSpecies = trim($plantSpecies);
-		$plantSpeciesList = PlantSpeciesList();
-		for($i = 0; $i < count($plantSpeciesList); $i++){
-			$plantSpeciesList[$i][0] = trim(preg_replace('!\s+!', ' ', $plantSpeciesList[$i][0]));
-			$plantSpeciesList[$i][1] = trim(preg_replace('!\s+!', ' ', $plantSpeciesList[$i][1]));
-			if(strtolower($plantSpecies) == strtolower($plantSpeciesList[$i][1]) || strtolower($plantSpecies) == strtolower($plantSpeciesList[$i][0])){
-				return ucfirst(strtolower($plantSpeciesList[$i][0]));
-			}
-		}
-		return ucfirst(strtolower(trim(preg_replace('!\s+!', ' ', $plantSpecies))));
+                return ucfirst(strtolower(trim(preg_replace('!\s+!', ' ', $plantSpecies))));
 	}
 	
 	public static function validNumberOfLeaves($dbconn, $numberOfLeaves){

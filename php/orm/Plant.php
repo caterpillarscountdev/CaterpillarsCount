@@ -2,7 +2,6 @@
 
 require_once('resources/Keychain.php');
 require_once('Site.php');
-require('PlantSpecies.php');
 
 
 class Plant
@@ -428,14 +427,6 @@ class Plant
 		if(preg_replace('/\s+/', '', $species) == "" || trim(strtoupper($species)) == "N/A"){return false;}
 		
 		$species = trim($species);
-		$speciesList = PlantSpeciesList();
-		for($i = 0; $i < count($speciesList); $i++){
-			$speciesList[$i][0] = trim(preg_replace('!\s+!', ' ', $speciesList[$i][0]));
-			$speciesList[$i][1] = trim(preg_replace('!\s+!', ' ', $speciesList[$i][1]));
-			if(strtolower($species) == strtolower($speciesList[$i][1]) || strtolower($species) == strtolower($speciesList[$i][0])){
-				return $speciesList[$i][0];
-			}
-		}
 		return ucfirst(strtolower(trim(preg_replace('!\s+!', ' ', $species))));
 	}
 	
