@@ -1,0 +1,25 @@
+Generate Survey Flagging Rules Exceptions
+=========================================
+
+Reads the source CSV for columns "compoundLeaves", "longLeafThreshold" to write exceptions as a PHP file.
+
+1. Update csv php/orm/plantRules.csv
+2. Visit php/orm/generateSurveyFlaggingExceptions.php and save the resulting file to php/orm/SurveyFlaggingRulesExceptions.php
+
+
+Generate Plant Species JSON for UI
+==================================
+
+Reads php/orm/PlantSpecies.php arrays and writes out a JSON format for use in dropdowns and validation.
+
+1. Visit php/orm/generatePlantSpeciesJson.php and save resulting file to js/plantSpecies.json
+
+
+Generate new Plant Species from CSV
+===================================
+
+Compares the source CSV to PlantSpecies.php array and prints additional entries for inclusion.
+Adds 'spp.' if not present to rank 'genus' records for consistency.
+
+1. Visit php/orm/generatePlantSpeciesDiff.php
+2. Review new entries and add to php/orm/PlantSpecies.php
