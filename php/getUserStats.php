@@ -122,6 +122,14 @@ if(is_object($user) && get_class($user) == "User"){
     $results["Users"][strval($row["UserFK"])] = array_merge($results["Users"][strval($row["UserFK"])], $row);
   }
   
+  // Survey Protocol
+
+  $query = mysqli_query($conn, "SELECT UserFK, Count(ID) AS SurveyProtocolCount, MAX(Score) AS SurveyProtocolHigh, AVG(Score) AS SurveyProtocolMean FROM SurveyProtocolScore WHERE UserFK IN (" . implode(",", $userIDs) . ") GROUP BY UserFK");
+
+  while($row = mysqli_fetch_assoc($query)){
+    $results["Users"][strval($row["UserFK"])] = array_merge($results["Users"][strval($row["UserFK"])], $row);
+  }
+  
   // Virtual Survey
 
   $query = mysqli_query($conn, "SELECT UserFK, Count(ID) AS GameCount, MAX(Score) AS GameScoreHigh, AVG(Score) AS GameScoreMean, MAX(PercentFound) AS GameFoundHigh, AVG(PercentFound) AS GameFoundMean, MAX(IdentificationAccuracy) AS GameIdentificationHigh, AVG(IdentificationAccuracy) AS GameIdentificationMean, MAX(LengthAccuracy) AS GameLengthHigh, AVG(LengthAccuracy) AS GameLengthMean FROM VirtualSurveyScore WHERE UserFK IN (" . implode(",", $userIDs) . ") GROUP BY UserFK");
