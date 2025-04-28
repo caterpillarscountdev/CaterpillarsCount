@@ -402,6 +402,7 @@
                      
                      for (let row of data.Users) {
                          showQuiz(row);
+                         showProtocol(row);
                          showGame(row);
                          showSurveys(row);
 
@@ -444,6 +445,15 @@
                      document.querySelector("#quizStats tbody").appendChild(tr);
                  }
 
+                 function showProtocol(row) {
+                     let tr = document.createElement("tr");
+                     for (let k of Object.keys(row).filter(x => x.startsWith('SurveyProtocol'))) {
+                         row[k] = parseInt(row[k]);
+                     }
+                     tr.innerHTML = `<td data-sort="${row.LastName}">${row.Name}</td><td>${row.SurveyProtocolCount}</td><td>${row.SurveyProtocolMean}%</td><td>${row.SurveyProtocolHigh}%</td>`;
+                     document.querySelector("#protocolStats tbody").appendChild(tr);
+                 }
+                 
                  function showGame(row) {
                      let tr = document.createElement("tr");
 
@@ -599,7 +609,7 @@
 
                  function downloadUserStats() {
                      if (userData) {
-			 var headers = ["User Name", "Quizzes", "Quiz Score Mean", "Quiz Score Best", "Virtual Survey Games", "VS Score Mean", "VS Score Best", "VS Percent Found Mean", "VS Percent Found Best", "VS ID Accuracy Mean", "VS ID Accuracy Best", "VS Length Accuracy Mean", "VS Length Accuracy Best", "Surveys This Week", "Surveys This Month", "Surveys This Year", "Surveys This Millenium", "Surveys WIth Caterpillars", "Survey Overall Accuracy"];
+			 var headers = ["User Name", "Quizzes", "Quiz Score Mean", "Quiz Score Best", "Protocol Quizzes", "Protocol Quiz Mean", "Protocol Quiz Best", "Virtual Survey Games", "VS Score Mean", "VS Score Best", "VS Percent Found Mean", "VS Percent Found Best", "VS ID Accuracy Mean", "VS ID Accuracy Best", "VS Length Accuracy Mean", "VS Length Accuracy Best", "Surveys This Week", "Surveys This Month", "Surveys This Year", "Surveys This Millenium", "Surveys WIth Caterpillars", "Survey Overall Accuracy"];
 			 var csvString = headers.join(",") + "\r\n";
 
                          for(var u of userData) {
@@ -608,6 +618,9 @@
                                  u.QuizCount,
                                  u.QuizMean,
                                  u.QuizHigh,
+                                 u.SurveyProtocolCount,
+                                 u.SurveyProtocolMean,
+                                 u.SurveyProtocolHigh,
                                  u.GameCount,
                                  u.GameScoreMean,
                                  u.GameScoreHigh,
@@ -903,6 +916,25 @@
 		        </div>
 			<div class="loading"><img src="../images/rolling.svg"/></div>
 		      </div>
+		      <div id="protocol">
+		        <h3><a href="../surveyProtocolQuiz">Survey Protocol Quiz</a></h3>
+		        <div>
+                          <table id="protocolStats">
+                            <thead>
+                              <tr>
+                                <th class="sortable">User name</th>
+                                <th class="sortable" data-sort-numeric>Quizzes</th>
+                                <th class="sortable" data-sort-numeric>Mean Score</th>
+                                <th class="sortable" data-sort-numeric>Best Score</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                          </table>
+		        </div>
+			<div class="loading"><img src="../images/rolling.svg"/></div>
+		      </div>
+                      
 		      <div id="game">
 		        <h3><a href="../virtualSurvey">Virtual Survey</a></h3>
 		        <div>
