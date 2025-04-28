@@ -405,15 +405,34 @@
 				border-radius:0px 0px 5px 5px;
 			}
 
-			#pageNav{
-				text-align:center;
-				font-size:16px;
-				font-family: 'Roboto Slab', serif;
-				background:#333;
-				border-radius:5px;
-				overflow:hidden;
-				display:none;
-			}
+                         .flags textarea {
+                             width:100%;
+                	     background:#fff;
+                	     border:1px solid #ddd;
+                	     border-bottom:2px solid #ddd;
+                	     font-size:16px;
+                	     padding:16px;
+                	     box-sizing:border-box;
+                	     border-radius:4px;
+                	     margin:5px 0px;
+                	     color:#aaa;
+                	     -webkit-appearance: none;
+            		     -moz-appearance: none;
+            		     appearance: none;
+            		     font-family: Arial, sans-serif;
+                	 }
+         
+                         }
+         
+                	 #pageNav{
+                	     text-align:center;
+                	     font-size:16px;
+                	     font-family: 'Roboto Slab', serif;
+                	     background:#333;
+                	     border-radius:5px;
+                	     overflow:hidden;
+                	     display:none;
+                	 }
 
 			#pageNav .autoPage{
 				padding:10px;
@@ -1525,7 +1544,7 @@
                                                             })
                                                             htmlToAdd += surveys[i]["flags"].length > 0 ? "<div class=\"flags flagsChecks hint--bottom\" data-hint=\"Values in this survey were flagged for review.\" data-associated-survey=\"" + surveys[i]["id"] + "\"><ul>" + flagsM + "</ul></div>" : "";
 
-							            htmlToAdd += surveys[i]["canQC"] ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional): </span><input class=\"qccomment\" type=\"text\" list=\"qccomment\" value=\"" + (surveys[i]["qcComment"] || "") + "\"></input></div><div class=\"flagButtons\"><div class=\"left\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button></div><button class='hint--bottom' data-hint=\"Mark as rejected and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; Reject</button><button class='hint--bottom' data-hint=\"Mark as accepted and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Accept</button></div></div>") : "";
+							    htmlToAdd += surveys[i]["canQC"] ? ("<div class=\"flags\" data-associated-survey=\"" + surveys[i]["id"] + "\"><div class=\"flagButtons\"><span>QC Comments (optional): </span><textarea class=\"qccomment\" list=\"qccomment\">" + (surveys[i]["qcComment"] || "") + "</textarea></div><div class=\"flagButtons\"><div class=\"left\"><button class='hint--bottom' data-hint=\"Click this button to edit the underlying data on this survey to fix any errors\"  onclick=\"editSurvey(" + surveys[i]["id"] + ");\">&#x1F589; Edit</button><button class='hint--bottom' data-hint=\"Click this button to email the person who submitted this survey to get more information from them\"  onclick=\"emailSurveyContributor('" + encodeQuotesAndBackslashes(surveys[i]["observerFullName"]) + "', ['" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(surveys[i]["observerEmail"].split("@")[1]) + "']," + surveys[i]["id"]+ ")\">&#x2709; Email...</button></div><button class='hint--bottom' data-hint=\"Mark as rejected and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",3,this);\">&#x274C; Reject</button><button class='hint--bottom' data-hint=\"Mark as accepted and hide from future QC\" onclick=\"askToApproveSurvey(" + surveys[i]["id"] + ",1,this);\">&check; Accept</button></div></div>") : "";
 							}
 							if(surveys.length > 0){
 								$("#surveys")[0].innerHTML = htmlToAdd;
