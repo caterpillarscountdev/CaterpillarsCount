@@ -666,6 +666,16 @@ class User
 		return false;
 	}
 
+        public function submitSurveyProtocolScore($score){
+		$score = intval($score);
+		if($score >= 0 && $score <= 100) {
+                  $dbconn = (new Keychain)->getDatabaseConnection();
+                  mysqli_query($dbconn, "INSERT INTO SurveyProtocolScore (`UserFK`, `Score`) VALUES ('" . $this->id . "', '$score')");
+                  return true;
+		}
+		return false;
+	}
+
         public function submitVirtualSurveyScore($score, $findingPercentage, $identifyingPercentage, $lengthPercentage){
 		$score = intval($score);
 		$findingPercentage = floatval($findingPercentage);

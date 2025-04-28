@@ -1,0 +1,476 @@
+<html>
+	<head>
+		<!-- Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
+		<script>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+			gtag('config', 'UA-113319025-1');
+		</script>
+		<!-- End of Google Analytics -->
+
+		<title>Survey Protocol Quiz | Caterpillars Count!</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../images/favicon/apple-touch-icon-57x57.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../images/favicon/apple-touch-icon-114x114.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../images/favicon/apple-touch-icon-72x72.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../images/favicon/apple-touch-icon-144x144.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="60x60" href="../images/favicon/apple-touch-icon-60x60.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="120x120" href="../images/favicon/apple-touch-icon-120x120.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="76x76" href="../images/favicon/apple-touch-icon-76x76.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="152x152" href="../images/favicon/apple-touch-icon-152x152.png" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-196x196.png" sizes="196x196" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-32x32.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-16x16.png" sizes="16x16" />
+		<link rel="icon" type="image/png" href="../images/favicon/favicon-128.png" sizes="128x128" />
+		<meta name="msapplication-TileColor" content="transparent" />
+		<meta name="msapplication-TileImage" content="../images/favicon/mstile-144x144.png" />
+		<meta name="msapplication-square70x70logo" content="../images/favicon/mstile-70x70.png" />
+		<meta name="msapplication-square150x150logo" content="../images/favicon/mstile-150x150.png" />
+		<meta name="msapplication-wide310x150logo" content="../images/favicon/mstile-310x150.png" />
+		<meta name="msapplication-square310x310logo" content="../images/favicon/mstile-310x310.png" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+		<link href="../css/template.css" rel="stylesheet">
+		<script src="../js/template.js?v=3"></script>
+		<style>
+		 #quiz{
+		     width:100%;
+		     border-radius:0px;
+		     border:0px solid #333;
+		     height:679px;
+                     position: relative;
+		 }
+
+
+		 @media screen and (max-width: 1100px) {
+		     #quiz{
+			 border-radius:4px;
+			 height:830px;
+		     }
+		 }
+
+		 @media screen and (max-width: 950px) {
+		     #quiz{
+			 height:655px;
+		     }
+		 }
+
+		 @media screen and (max-width: 610px) {
+		     #quiz{
+			 height:601px;
+		     }
+		 }
+
+		 @media screen and (max-width: 490px) {
+		     #quiz{
+			 height:819px;
+		     }
+		 }
+
+		 #startScreen{
+		     background:#444;
+		     top:0px;
+		     left:0px;
+		     width:100%;
+		     height:100%;
+		     z-index:5;
+		     text-align:center;
+		     padding:100px 0px;
+		     box-sizing:border-box;
+		 }
+		 
+		 #startScreenTitle{
+		     color:#fed136;
+		     font-family: 'Kaushan Script', cursive;
+		     text-transform:none;
+		     font-size:50px;
+		 }
+		 
+		 #startScreenSubtitle{
+		     color:#fff;
+		     font-size:20px;
+		     margin-bottom:40px;
+		 }
+		 
+		 #finalScore{
+		     margin:20px 0px;
+		     font-size:18px;
+		     color:#eee;
+		 }
+
+		 #startScreen button{
+		     width:40%;
+		     min-width:200px;
+		     padding:10px;
+		     box-sizing:border-box;
+		     border:0px none transparent;
+		     border-radius:100000px;
+		     margin:30%;
+		     font-size:20px;
+		     cursor:pointer;
+		     color:#fff;
+		 }
+		 
+		 #fade{
+		     cursor:pointer;
+		     background:#000;
+                     position: absolute;
+		     top:0px;
+		     left:0px;
+		     width:100%;
+		     height:100%;
+		     z-index:4;
+		     opacity:.5;
+		     text-align:right;
+		     color:#fff;
+		     padding:20px;
+		     box-sizing:border-box;
+		     display:none;
+		 }
+
+                 #quizQuestions {
+                     display: none;
+                 }
+
+                 #quizQuestion {
+                     font-size: larger;
+                     margin: 4em;;
+                     margin-left: 20%;
+                     padding-top: 5em;
+                 }
+		 
+		 
+		 .choiceContainer{
+		     width:33.33%;
+		     padding:5px 10px;
+                     margin-left: 20%;
+		     box-sizing:border-box;
+		 }
+		 
+		 .choice{
+		     background:#fcfccc;
+		     border-radius:8px;
+		     padding:15px 10px;
+                     padding-left: 2em;
+		     box-sizing:border-box;
+		     text-align:left;
+		     cursor:pointer;
+		     position:relative;
+		     color:#1c1c1c;
+		 }
+		 
+		 .choice:hover{
+		     background:#383838;
+		     color:#fff;
+		 }
+		 
+		 .mainChoice{
+		     font-size:18px;
+		 }
+		 
+		 
+		 @media screen and (max-width: 900px) {
+		     .choiceContainer{
+			 width:50%;
+		     }
+		 }
+		 
+		 @media screen and (max-width: 750px) {
+		     .choice{
+			 padding:5px;
+		     }
+		     
+		     .mainChoice{
+			 font-size:13px;
+		     }
+		     
+		     .subChoice{
+			 font-size:8px;
+		     }
+		 }
+		 
+		 @media screen and (max-width: 570px) {
+		     img{
+			 height:300px;
+		     }
+		     
+		     h1{
+			 font-size:11px;
+		     }
+		 }
+		 
+		 @media screen and (max-width: 450px) {
+		     .choiceContainer{
+			 width:100%;
+			 padding:2px 10px;
+			 border-bottom:1px solid rgba(0,0,0,.05);
+		     }
+		 }
+                 
+		</style>
+		<script>
+		 $(document).ready(function(){
+		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
+		 });
+		</script>
+		<script>
+		 var currentQuestionIndex = -1;
+		 var numberCorrect = 0;
+		 var questions = [
+                     ["What parts of the branch are included in a visual survey?",
+                      ["Leaves", "Leaves, twigs", "Leaves, twigs, petioles", "Leaves, twigs, petioles, tree trunk"],
+                      2],
+                     ["How many leaves should be examined within a single visual survey?",
+                      ["20", "50", "100", "However many leaves are on the branch"],
+                      1],
+                     ["A bug flies off the leaf before you can ID it - what do you do?",
+                      ["Ignore it", "Record it as a fly and estimate its length", "Record it as unidentified and estimate its length", "Make a note about the bug in your lab notebook"],
+                      2],
+                     ["Your arthropod length estimate should include the length of antennae and legs.",
+                      ["True", "False"],
+                      1],
+                     ["When conducting a beat sheet survey, you should beat the branch 10 times within 4-5 seconds.",
+                      ["True", "False"],
+                      0],
+                     ["Which of the following should be included in your survey observations when encountered on a survey branch?",
+                      ["Dead insects", "Leaf gall", "An insect egg", "An insect that flies near your survey branch", "None of the above"],
+                      4],
+                     ["Arthropods that are 2 mm or less in length should be included in your surveys.",
+                      ["True", "False"],
+                      1],
+                     ["What unit do you use to estimate leaf length?",
+                      ["Millimeters", "Centimeters", "Inches", "Meters"],
+                      1],
+                     ["Most leaves will have a \"trace\" amount of herbivory with at least a few small holes. If all of the leaf holes were combined together, HOW MANY LEAVES worth of holes out of a 50-leaf survey would be required for the branch to be considered to have MORE than \"trace\" herbivory?",
+                      ["1", "2.5", "5", "7.5"],
+                      1],
+                     ["If you see an arthropod on your survey branch that is not listed as an option in the dropdown menu, you should",
+                      ["ignore it", "select the arthropod group from the list that is most similar", "select \"Unidentified\" and write notes describing it", "select \"Other\" and then write its common or scientific name in the Notes field"],
+                      3]
+                 ];
+		 
+		 function showAnswer(choice){
+                     let question = questions[currentQuestionIndex];
+                     console.log(choice, choice.innerHTML);
+                     
+		     var correct = question[2] == question[1].indexOf(choice.innerHTML);
+		     if(!correct){
+			 $(choice).css({backgroundColor:"#ff0000", color:"#000", zIndex:"4"});
+			 $(choice).unbind("click");
+			 $(choice).click(showNextQuestion);
+		     }
+		     
+		     if(correct){
+					++numberCorrect;
+		     }
+		     var currentScore = Math.round(numberCorrect / (currentQuestionIndex + 1) * 100) + "%";
+		     $("#currentScore").text(currentScore);
+		     $("#finalScore").text("Final Score: " + currentScore);
+		     $("#questionsRemaining").text(questions.length - (currentQuestionIndex + 1));
+		     
+		     var choices = $(".choice");
+		     for(var i = 0; i < choices.length; i++){
+			 if(i == question[2]){
+			     choices.eq(i).css({backgroundColor:"#00ff00", color:"#000", zIndex:"4"});
+			     choices.eq(i).unbind("click");
+			     choices.eq(i).click(showNextQuestion);
+			 }
+		     }
+		     
+		     $("#fade").stop().fadeIn(0);
+		 }
+		 
+		 function showNextQuestion(){
+		     if(++currentQuestionIndex >= questions.length){
+                         let currentScore = Math.round(numberCorrect / (currentQuestionIndex) * 100)
+                         fetch("../../php/submitSurveyProtocolScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + currentScore);
+			 currentQuestionIndex = -1;
+			 numberCorrect = 0;
+		         $("#fade").stop().fadeOut(0);
+                         $("#quizQuestion").stop().fadeOut();
+		         $("#quizQuestions").stop().fadeOut();
+			 $("#startScreen").stop().fadeIn(300);
+			 return false;
+		     }
+
+                     let question = questions[currentQuestionIndex];
+                     
+                     document.getElementById("quizQuestion").innerHTML = `${currentQuestionIndex + 1}. ${question[0]}`;
+                     let qsEl = document.getElementById("quizQuestions");
+                     let contents = ''
+                     for (let q of question[1]) {
+			 contents += `<div class="choiceContainer"><div class="choice">${q}</div></div>`;
+                     }
+                     qsEl.innerHTML = contents;
+                     
+		     $("#fade").stop().fadeOut(0);
+		     $(".choice").css({backgroundColor:"", color:"", zIndex:""});
+		     $(".choice").unbind("click");
+		     $(".choice").click(function(){
+			 showAnswer(this);
+		     });
+                     
+		 }
+		 
+		 function startQuickplay(){
+		     $('#startScreen').fadeOut(500, () => {
+                         showNextQuestion();  
+		         $("#fade").stop().fadeOut(0);
+                         $("#quizQuestion").stop().fadeIn();
+		         $("#quizQuestions").stop().fadeIn();
+                     })
+		 }
+		 
+		</script>
+                
+	</head>
+	<body>
+		<div id="managerRequest">
+			<div id="managerRequestMessage"></div>
+			<div id="managerRequestButtons">
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('deny');">Deny</div>
+				<div class="managerRequestButton" onclick="hideNotice();respondToManagerRequest('approve');">Accept</div>
+			</div>
+		</div>
+		<div id="error" onclick="hideNotice();"></div>
+		<div id="confirmation" onclick="hideNotice();"></div>
+		<div id="alert" onclick="hideNotice();"></div>
+		<div id="promptInteractionBlock"></div>
+		<div id="noticeInteractionBlock" onclick="hideNotice();"></div>
+		<div id="confirm">
+			<div></div>
+			<div>
+				<button>OK</button>
+				<button>Cancel</button>
+				<div class="clearBoth"></div>
+			</div>
+		</div>
+
+		<div id="splash">
+			<div id="splashImage"></div>
+			<div id="splashOverlay">
+				<div id="splashIntroText">Welcome to</div>
+				<div id="splashMainText">Caterpillars Count!</div>
+				<button id="splashButton" onclick="this.blur();scrollToPanel(1);">Learn identification skills</button>
+			</div>
+		</div>
+		<header>
+			<h1><a href="../">Caterpillars Count!</a></h1>
+			<div id="hamburger" onclick="toggleNav();">
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div id="navKnockDown" class="clearBoth"></div>
+			<nav class="loadingNav">
+				<ul>
+					<li onclick="accessSubMenu(this);">
+						<span>Participate</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../getStarted">Get Started</a></li>
+							<li><a href="../conductASurvey">Conduct a Survey</a></li>
+							<li><a href="../submitObservations">Submit Observations</a></li>
+							<li><a href="../hostASurveySite">Host a Survey Site</a></li>
+							<li><a href="../resources">Resources</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Explore</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
+							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="../reports">Reports</a></li>
+							<li><a href="../publications">Publications</a></li>
+							<li><a href="../dataDownload">Data Download</a></li>
+						</ul>
+					</li>
+					<li onclick="accessSubMenu(this);">
+						<span>Learn</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../identificationSkills">Identification Skills</a></li>
+							<li><a href="../surveyProtocolQuiz">Survey Protocol Quiz</a></li>
+							<li><a href="../surveyProtocolQuiz">Survey Protocol Quiz</a></li>
+							<li><a href="../virtualSurvey">Virtual Survey Game</a></li>
+							<li><a href="../forEducators">For Educators</a></li>
+						</ul>
+					</li>
+					<li onclick="window.location = '../news';">
+						<span>News</span>
+					</li>
+					<li onclick="window.location = '../faq';">
+						<span>FAQ</span>
+					</li>
+					<li onclick="window.location = '../signIn';">
+						<span>Sign In</span>
+						<ul onclick="event.stopPropagation();">
+							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
+							<li><a href="../createNewSite">Create New Site</a></li>
+							<li><a href="../manageMySites">Manage My Sites</a></li>
+							<li><a href="../manageMySurveys">Manage My Surveys</a></li>
+							<li><a href="../userDashboard">My Stats</a></li>
+							<li><a href="../settings">Settings</a></li>
+							<li><a href="" onclick="logOut();">Sign Out</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<div id="navBack" onclick="resetMenu(false);">&#10094;</div>
+		</header>
+		<main>
+			<div class="panel">
+				<h2>Survey Protocol Quiz</h2>
+                                <div id="quiz">
+                                  <div class="quizInner">
+			          <div id="startScreen">
+				    <div id="startScreenTitle">Caterpillars Count!</div>
+				    <div id="startScreenSubtitle">Survey Protocol Quiz</div>
+				    <div id="finalScore"></div>
+				    <button style="background:#222;margin-top:20px;" onclick="startQuickplay()">Let's Start</button>
+			          </div>
+			          <div id="fade" onclick="showNextQuestion();">
+				    <div>CURRENT SCORE: <span id="currentScore"></span></div>
+				    <div>QUESTIONS REMAINING: <span id="questionsRemaining"></span></div>
+				    <div>CLICK TO PROCEED</div>
+			          </div>
+                                  <div id="quizQuestion">
+                                    
+                                  </div>
+                                  <div id="quizQuestions">
+			            <div class="choiceContainer">
+				      <div class="choice">
+                                         Question 1
+				      </div>
+			            </div>
+			            <div class="choiceContainer">
+				      <div class="choice">
+                                         Question 1
+				      </div>
+			            </div>
+                                  </div>
+                                  </div>
+                                </div>
+			</div>
+		</main>
+		<footer>
+			<div>Part of the <a href="http://pheno-mismatch.org" target="_blank">Pheno Mismatch</a> project funded by the National Science Foundation</div>
+
+			<div><img src="../images/unc.png"/></div><div>
+				<a target="_blank" href="https://www.facebook.com/Caterpillars-Count-1854259101283140/"><img src="../images/facebook.png" alt="facebook"/></a><a target="_blank" href="https://twitter.com/CaterpillarsCt"><img src="../images/twitter.png" alt="twitter"/></a>
+			</div>
+
+			<div>Contact us: <a href="mailto:caterpillarscount@gmail.com">caterpillarscount@gmail.com</a></div>
+
+			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
+		</footer>
+	</body>
+</html>
