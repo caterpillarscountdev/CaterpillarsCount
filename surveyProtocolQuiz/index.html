@@ -255,7 +255,7 @@
                      ["What unit do you use to estimate leaf length?",
                       ["Millimeters", "Centimeters", "Inches", "Meters"],
                       1],
-                     ["Most leaves will have a \"trace\" amount of herbivory with at least a few small holes. If all of the leaf holes were combined together, HOW MANY LEAVES worth of holes out of a 50-leaf survey would be required for the branch to be considered to have MORE than \"trace\" herbivory?",
+                     ["Most leaves will have a \"trace\" (0-5%) amount of herbivory with at least a few small holes. If all of the leaf holes were combined together, HOW MANY LEAVES worth of holes out of a 50-leaf survey would be required for the branch to be considered to have MORE than \"trace\" (0-5%) herbivory?",
                       ["1", "2.5", "5", "7.5"],
                       1],
                      ["If you see an arthropod on your survey branch that is not listed as an option in the dropdown menu, you should",
@@ -265,7 +265,6 @@
 		 
 		 function showAnswer(choice){
                      let question = questions[currentQuestionIndex];
-                     console.log(choice, choice.innerHTML);
                      
 		     var correct = question[2] == question[1].indexOf(choice.innerHTML);
 		     if(!correct){
@@ -279,7 +278,6 @@
 		     }
 		     var currentScore = Math.round(numberCorrect / (currentQuestionIndex + 1) * 100) + "%";
 		     $("#currentScore").text(currentScore);
-		     $("#finalScore").text("Final Score: " + currentScore);
 		     $("#questionsRemaining").text(questions.length - (currentQuestionIndex + 1));
 		     
 		     var choices = $(".choice");
@@ -296,14 +294,7 @@
 		 
 		 function showNextQuestion(){
 		     if(++currentQuestionIndex >= questions.length){
-                         let currentScore = Math.round(numberCorrect / (currentQuestionIndex) * 100)
-                         fetch("../../php/submitSurveyProtocolScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + currentScore);
-			 currentQuestionIndex = -1;
-			 numberCorrect = 0;
-		         $("#fade").stop().fadeOut(0);
-                         $("#quizQuestion").stop().fadeOut();
-		         $("#quizQuestions").stop().fadeOut();
-			 $("#startScreen").stop().fadeIn(300);
+                         finish();
 			 return false;
 		     }
 
@@ -325,7 +316,28 @@
 		     });
                      
 		 }
-		 
+
+                 function finish() {
+                     let currentScore = Math.round(numberCorrect / (currentQuestionIndex) * 100)
+                     let finalText = `Final Score:  ${currentScore}%<br><br>`;
+                     if (currentScore == 100) {
+                         finalText += ' Great job! You are ready to conduct some real surveys.';
+                     } else {
+                         finalText += ' Not bad, but can you get 100%? Refer to the <a href="https://caterpillarscount.unc.edu/conductASurvey/">survey instructions</a> and come back and take the quiz again.';
+                     }
+                     
+		     $("#finalScore").html(finalText);
+                     
+                     fetch("../../php/submitSurveyProtocolScore.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&score=" + currentScore);
+		     currentQuestionIndex = -1;
+		     numberCorrect = 0;
+		     $("#fade").stop().fadeOut(0);
+                     $("#quizQuestion").stop().fadeOut();
+		     $("#quizQuestions").stop().fadeOut();
+		     $("#startScreen").stop().fadeIn(300);
+                     
+                 }
+                 
 		 function startQuickplay(){
 		     $('#startScreen').fadeOut(500, () => {
                          showNextQuestion();  
