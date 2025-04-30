@@ -95,6 +95,9 @@ if(is_object($user) && get_class($user) == "User"){
       "QuizCount" => 0,
       "QuizMean" => 0,
       "QuizHigh" => 0,
+      "SurveyProtocolCount" => 0,
+      "SurveyProtocolMean" => 0,
+      "SurveyProtocolHigh" => 0,
       "GameCount" => 0,
       "GameScoreMean" => 0,
       "GameScoreHigh" => 0,
@@ -117,6 +120,14 @@ if(is_object($user) && get_class($user) == "User"){
   // Quiz
 
   $query = mysqli_query($conn, "SELECT UserFK, Count(ID) AS QuizCount, MAX(Score) AS QuizHigh, AVG(Score) AS QuizMean FROM QuizScore WHERE UserFK IN (" . implode(",", $userIDs) . ") GROUP BY UserFK");
+
+  while($row = mysqli_fetch_assoc($query)){
+    $results["Users"][strval($row["UserFK"])] = array_merge($results["Users"][strval($row["UserFK"])], $row);
+  }
+  
+  // Survey Protocol
+
+  $query = mysqli_query($conn, "SELECT UserFK, Count(ID) AS SurveyProtocolCount, MAX(Score) AS SurveyProtocolHigh, AVG(Score) AS SurveyProtocolMean FROM SurveyProtocolScore WHERE UserFK IN (" . implode(",", $userIDs) . ") GROUP BY UserFK");
 
   while($row = mysqli_fetch_assoc($query)){
     $results["Users"][strval($row["UserFK"])] = array_merge($results["Users"][strval($row["UserFK"])], $row);
