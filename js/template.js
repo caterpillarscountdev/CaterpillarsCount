@@ -644,6 +644,27 @@ function accessManageMenu() {
 				}
 			}
 
+let _speciesJSON = null;
+async function fetchSpeciesList() {
+  if (_speciesJSON == null) {
+    let response = await fetch("/js/plantSpecies.json");
+    if (!response.ok) {
+      throw new Error(`Species List status: ${response.status}`);
+    }
+    _speciesJSON = await response.json();
+  }
+  return _speciesJSON;
+}
+
+async function getConiferSpeciesList() {
+  return (await fetchSpeciesList())["conifers"];
+}
+
+async function getPlantSpeciesList() {
+  return (await fetchSpeciesList())["plants"];
+}
+
+
 function hasOfflineSurveys() {
   let pending = window.localStorage.getItem("pendingSurveys");
   // Dev checking
