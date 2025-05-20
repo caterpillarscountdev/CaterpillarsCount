@@ -254,7 +254,6 @@
                       email9QCSurveys($email, $surveySites);
                       logSend($userID, "email9");
                       $emailsSent++;
-                    }
                   }
                 }
         }
