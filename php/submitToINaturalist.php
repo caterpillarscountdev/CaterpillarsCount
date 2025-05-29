@@ -134,7 +134,7 @@
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
 		$observation = json_decode(curl_exec($ch), true);
 		curl_close ($ch);
-                echo("\nGot observation for " . $arthropodSightingID . " :" . print_r($observation, true));
+                echo("\nMade observation for " . $arthropodSightingID . " :" . $observation["id"]);
 		if ($debuginat==true) {  echo("<!--done with curl api v1 inat obs -->");}
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
