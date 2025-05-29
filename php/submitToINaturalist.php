@@ -134,6 +134,7 @@
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
 		$observation = json_decode(curl_exec($ch), true);
 		curl_close ($ch);
+                echo("\nGot observation for " . $arthropodSightingID . " :" . print_r($observation, true));
 		if ($debuginat==true) {  echo("<!--done with curl api v1 inat obs -->");}
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
@@ -162,6 +163,7 @@
 		$photoAddResponse = curl_exec($ch);
 		if ($debuginat==true) {  echo("<!-- curl_exec done  -->");}
 		curl_close ($ch);
+                echo("\nGot photo response " . $arthropodSightingID . " :" . $photoAddResponse);
 		
 		if($photoAddResponse !== "Just making sure that the exec is complete."){
 			//LINK OBSERVATION TO CATERPILLARS COUNT PROJECT
@@ -184,6 +186,7 @@
 			$caterpillarsCountLinkResponse = curl_exec($ch);
 			if ($debuginat==true) {  echo("<!-- after exec -->");}
 			curl_close ($ch);
+                        echo("\nGot link response " . $arthropodSightingID . " :" . $caterpillarsCountLinkResponse);
 			
 			if($caterpillarsCountLinkResponse !== "Just making sure that the exec is complete."){
 				if ($debuginat==true) {  echo("<!-- link response check, inside IF  -->");}
@@ -206,16 +209,19 @@
 					$caterpillarsOfEasternNALinkResponse = curl_exec($ch);
 					if ($debuginat==true) {  echo("<!-- post curl_exec  -->");}
 					curl_close ($ch);
+                                        
+                                        echo("\nGot link response " . $arthropodSightingID . " :" . $caterpillarsOfEasternNALinkResponse);
 
 				}
                         }
 		}
                 //Mark this ArthropodSighting as completed and save the INaturalistID to our database
                 if(is_int($observation["id"]) && $observation["id"] > 0){
-                  if ($debuginat==true) {  echo("<!--updating arthropod sighting 2 ...  -->");}  
+                  if ($debuginat==true) {  echo("<!--updating arthropod sighting 2 ...  -->");}
                   mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0', INaturalistID='" . $observation["id"] . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
-                  if ($debuginat==true) {  echo("<!--after arthropod sighting 2 ...  -->");}  
-                }
+                  if ($debuginat==true) {  echo("<!--after arthropod sighting 2 ...  -->");}
 
+                }
+            
         }
 ?>

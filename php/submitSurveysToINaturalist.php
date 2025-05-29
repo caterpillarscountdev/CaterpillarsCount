@@ -47,7 +47,7 @@
 	}
 	
 	//Submit batch to iNaturalist
-	$query = mysqli_query($dbconn, "SELECT ArthropodSighting.ID AS ID, User.INaturalistObserverID, User.Hidden, Plant.Code, Survey.LocalDate, Survey.LocalTime, Survey.ObservationMethod, Survey.Notes AS SurveyNotes, Survey.WetLeaves, ArthropodSighting.OriginalGroup, ArthropodSighting.Hairy, ArthropodSighting.Rolled, ArthropodSighting.Tented, ArthropodSighting.OriginalSawfly, ArthropodSighting.OriginalBeetleLarva, ArthropodSighting.Quantity, ArthropodSighting.Length, ArthropodSighting.PhotoURL, ArthropodSighting.Notes AS ArthropodSightingNotes, Survey.NumberOfLeaves, Survey.AverageLeafLength, Survey.HerbivoryScore FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE ArthropodSighting.ID" . $idMatchSQL . " LIMIT " . $BATCH_SIZE);
+	$query = mysqli_query($dbconn, "SELECT ArthropodSighting.ID AS ID, ArthropodSiting.INaturalistID, User.INaturalistObserverID, User.Hidden, Plant.Code, Survey.LocalDate, Survey.LocalTime, Survey.ObservationMethod, Survey.Notes AS SurveyNotes, Survey.WetLeaves, ArthropodSighting.OriginalGroup, ArthropodSighting.Hairy, ArthropodSighting.Rolled, ArthropodSighting.Tented, ArthropodSighting.OriginalSawfly, ArthropodSighting.OriginalBeetleLarva, ArthropodSighting.Quantity, ArthropodSighting.Length, ArthropodSighting.PhotoURL, ArthropodSighting.Notes AS ArthropodSightingNotes, Survey.NumberOfLeaves, Survey.AverageLeafLength, Survey.HerbivoryScore FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN `User` ON Survey.UserFKOfObserver=`User`.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE ArthropodSighting.ID" . $idMatchSQL . " LIMIT " . $BATCH_SIZE);
 	if(mysqli_num_rows($query) > 0){
 		echo("<!-- starting to send ArthropodSightings to iNat, count:" . mysqli_num_rows($query) . " -->");  
 		while($row = mysqli_fetch_assoc($query)){
@@ -56,6 +56,12 @@
 			if(filter_var($row["Hidden"], FILTER_VALIDATE_BOOLEAN)){
 				$observerID = "anonymous";
 			}
+                        if ($row['INaturalistID']) {
+                          $body = "Error while processing " . $id . ": has iNat ID" . $row['INaturalistID'];
+                          $body .= "\n\n" . print_r($row, true);
+                          email("caterpillarscountdev@gmail.com", "Cron Error for iNat (dupe)", $body);
+                          continue;
+                        }
 			echo("<!-- sending one ID to iNat:" . $id . " -->");
                         try {
                           submitINaturalistObservation($dbconn, $id, $observerID, $row["Code"], $row["LocalDate"], $row["LocalTime"], $row["ObservationMethod"], $row["SurveyNotes"], filter_var($row["WetLeaves"], FILTER_VALIDATE_BOOLEAN), $row["OriginalGroup"], filter_var($row["Hairy"], FILTER_VALIDATE_BOOLEAN), filter_var($row["Rolled"], FILTER_VALIDATE_BOOLEAN), filter_var($row["Tented"], FILTER_VALIDATE_BOOLEAN), filter_var($row["OriginalSawfly"], FILTER_VALIDATE_BOOLEAN), filter_var($row["OriginalBeetleLarva"], FILTER_VALIDATE_BOOLEAN), intval($row["Quantity"]), intval($row["Length"]), "/" . $row["PhotoURL"], $row["ArthropodSightingNotes"], intval($row["NumberOfLeaves"]), intval($row["AverageLeafLength"]), intval($row["HerbivoryScore"]));
