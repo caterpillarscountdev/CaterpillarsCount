@@ -56,40 +56,29 @@
                         "FilteredSurveyCount" => 0
 		);
 	}
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(*) AS SurveyCount FROM Survey JOIN Plant ON Plant.ID=Survey.PlantFK WHERE Survey.ReviewedAndApproved < 3 GROUP BY Plant.SiteFK");
-	while($row = mysqli_fetch_assoc($query)){
-		$sitesArray[strval($row["SiteFK"])]["SurveyCount"] = intval($row["SurveyCount"]);
-	}
 	
 	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(*) AS FilteredSurveyCount FROM Survey JOIN Plant ON Plant.ID=Survey.PlantFK WHERE Survey.ReviewedAndApproved < 3 AND MONTH(Survey.LocalDate)>=$monthStart AND MONTH(Survey.LocalDate)<=$monthEnd AND YEAR(Survey.LocalDate)>=$yearStart AND YEAR(Survey.LocalDate)<=$yearEnd AND (Plant.Species LIKE '$plantSpecies' OR (Plant.Species='N/A' AND Survey.PlantSpecies LIKE '$plantSpecies')) AND Survey.WetLeaves IN (0, $includeWetLeaves) AND Survey.ObservationMethod LIKE '$observationMethod' GROUP BY Plant.SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
 		$sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"] = intval($row["FilteredSurveyCount"]);
 	}
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT Survey.UserFKOfObserver) AS UserCount FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
+
+        
+	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT Survey.ID) AS SurveyCount, COUNT(DISTINCT Survey.UserFKOfObserver) AS UserCount, COUNT(DISTINCT ArthropodSighting.UpdatedGroup) AS ArthropodGroupCount, SUM(ArthropodSighting.Quantity) AS ArthropodCount, MAX(STR_TO_DATE(CONCAT(Survey.LocalDate, ' ', Survey.LocalTime), '%Y-%m-%d %T')) AS MostRecentDateTime, MIN(STR_TO_DATE(CONCAT(Survey.LocalDate, ' ', Survey.LocalTime), '%Y-%m-%d %T')) AS EarliestDateTime FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID LEFT JOIN ArthropodSighting ON Survey.ID=ArthropodSighting.SurveyFK WHERE Survey.ReviewedAndApproved < 3 GROUP BY Plant.SiteFK");
 	while($row = mysqli_fetch_assoc($query)){
+		$sitesArray[strval($row["SiteFK"])]["SurveyCount"] = intval($row["SurveyCount"]);
 		$sitesArray[strval($row["SiteFK"])]["UserCount"] = intval($row["UserCount"]);
-	}
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT ArthropodSighting.UpdatedGroup) AS ArthropodGroupCount FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID JOIN ArthropodSighting ON Survey.ID=ArthropodSighting.SurveyFK WHERE Survey.ReviewedAndApproved < 3 GROUP BY Plant.SiteFK");
-	while($row = mysqli_fetch_assoc($query)){
 		$sitesArray[strval($row["SiteFK"])]["ArthropodGroupCount"] = intval($row["ArthropodGroupCount"]);
-	}
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID JOIN ArthropodSighting ON Survey.ID=ArthropodSighting.SurveyFK WHERE Survey.ReviewedAndApproved < 3 GROUP BY Plant.SiteFK");
-	while($row = mysqli_fetch_assoc($query)){
 		$sitesArray[strval($row["SiteFK"])]["ArthropodCount"] = intval($row["ArthropodCount"]);
-	}
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, SUM(ArthropodSighting.Quantity) AS CaterpillarCount FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID JOIN ArthropodSighting ON Survey.ID=ArthropodSighting.SurveyFK WHERE Survey.ReviewedAndApproved < 3 AND ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Plant.SiteFK");
-	while($row = mysqli_fetch_assoc($query)){
-		$sitesArray[strval($row["SiteFK"])]["CaterpillarCount"] = intval($row["CaterpillarCount"]);
-	}
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Plant.SiteFK");
-	while($row = mysqli_fetch_assoc($query)){
-          $sitesArray[strval($row["SiteFK"])]["Caterpillars"] = $sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"] !=0 ? round(((floatval($row["Caterpillars"]) / floatval($sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"])) * 100), 2) . "%": 0;
-	}
-	$query = mysqli_query($dbconn, "SELECT Plant.SiteFK, MAX(STR_TO_DATE(CONCAT(Survey.LocalDate, ' ', Survey.LocalTime), '%Y-%m-%d %T')) AS MostRecentDateTime, MIN(STR_TO_DATE(CONCAT(Survey.LocalDate, ' ', Survey.LocalTime), '%Y-%m-%d %T')) AS EarliestDateTime FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID GROUP BY Plant.SiteFK");
-	while($row = mysqli_fetch_assoc($query)){
 		$sitesArray[strval($row["SiteFK"])]["MostRecentDateTime"] = $row["MostRecentDateTime"];
 		$sitesArray[strval($row["SiteFK"])]["EarliestDateTime"] = $row["EarliestDateTime"];
 	}
+
+        $query = mysqli_query($dbconn, "SELECT Plant.SiteFK, SUM(ArthropodSighting.Quantity) AS CaterpillarCount, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Caterpillars FROM `Survey` JOIN Plant ON Survey.PlantFK=Plant.ID JOIN ArthropodSighting ON Survey.ID=ArthropodSighting.SurveyFK WHERE Survey.ReviewedAndApproved < 3 AND ArthropodSighting.UpdatedGroup='caterpillar' GROUP BY Plant.SiteFK");
+	while($row = mysqli_fetch_assoc($query)){
+		$sitesArray[strval($row["SiteFK"])]["CaterpillarCount"] = intval($row["CaterpillarCount"]);
+                $sitesArray[strval($row["SiteFK"])]["Caterpillars"] = $sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"] !=0 ? round(((floatval($row["Caterpillars"]) / floatval($sitesArray[strval($row["SiteFK"])]["FilteredSurveyCount"])) * 100), 2) . "%": 0;
+	}
+
 	
 	$minLoggedDensity = 9999;
 	if($comparisonMetric == "occurrence"){
