@@ -187,34 +187,7 @@
 			if ($debuginat==true) {  echo("<!-- after exec -->");}
 			curl_close ($ch);
                         echo("\nGot link response " . $arthropodSightingID . " :" . $caterpillarsCountLinkResponse);
-			
-			if($caterpillarsCountLinkResponse !== "Just making sure that the exec is complete."){
-				if ($debuginat==true) {  echo("<!-- link response check, inside IF  -->");}
-				if($order == "caterpillar"){
-					//LINK OBSERVATION TO CATERPILLARS OF EASTERN NORTH AMERICA PROJECT IF IT'S IN AN ALLOWED REGION
-					$data = array(
-						"project_id" => 9210,
-						"observation_id" => $observation["id"]
-					);
-					$json = json_encode($data);
-                                        if ($debuginat==true) {  echo("<!-- before curl proj obs  -->");}
-					$ch = curl_init("https://api.inaturalist.org/v1/project_observations");
-					curl_setopt($ch, CURLOPT_POST, 1);
-					curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-					curl_setopt($ch, CURLOPT_HEADER, 0);
-					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
-					if ($debuginat==true) {  echo("<!-- before curl_exec  -->");}
-					$caterpillarsOfEasternNALinkResponse = curl_exec($ch);
-					if ($debuginat==true) {  echo("<!-- post curl_exec  -->");}
-					curl_close ($ch);
-                                        
-                                        echo("\nGot link response " . $arthropodSightingID . " :" . $caterpillarsOfEasternNALinkResponse);
-
-				}
-                        }
-		}
+                }
                 //Mark this ArthropodSighting as completed and save the INaturalistID to our database
                 if(is_int($observation["id"]) && $observation["id"] > 0){
                   if ($debuginat==true) {  echo("<!--updating arthropod sighting 2 ...  -->");}
