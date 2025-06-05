@@ -394,7 +394,7 @@
 						
 						if(($previousExpertIdentification == "other" && in_array($newExpertIdentification, array("ant", "aphid", "bee", "beetle", "caterpillar", "daddylonglegs", "fly", "grasshopper", "leafhopper", "moths", "spider", "truebugs", "sawfly", "beetle larva"))) || ($previousExpertIdentificationSingular != "other" && !($previousExpertIdentificationSingular == "beetle" && $newExpertIdentificationSingular == "beetle larva") && $previousExpertIdentificationSingular != $newExpertIdentificationSingular)){
 							if($firstNewExpertIdentification == ""){
-								$firstNewExpertIdentification = $newExpertIdentification;
+								$firstNewExpertIdentification = $newExpertIdentificationSingular;
 								$firstNewExpertIdentificationPhotoURL = "https://caterpillarscount.unc.edu/images/arthropods/" . $row["PhotoURL"];
 							}
 							
