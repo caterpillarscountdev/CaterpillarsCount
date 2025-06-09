@@ -135,11 +135,13 @@
 		$mostRecentCaterpillarsCountIdentification = "";
 		$mostRecentCaterpillarsCountIdentificationTimestamp = -1;
 		$numberOfCaterpillarsCountIdentifications = 0;
+                $numberOfSufficientIdentifications = count($identifications);
 		for($j = 0; $j < count($identifications); $j++){
-			$order = "";
+			$order = ""; 
 			$suborder = "";
 			$family = "";
 			if(!array_key_exists("taxon", $identifications[$j]) || $identifications[$j]["taxon"] === null || !array_key_exists("rank", $identifications[$j]["taxon"]) || $identifications[$j]["taxon"]["rank"] === null || !array_key_exists("name", $identifications[$j]["taxon"]) || $identifications[$j]["taxon"]["name"] === null){
+                                $numberOfSufficientIdentifications--;
 				continue;
 			}
 			$finestRank = $identifications[$j]["taxon"]["rank"];
@@ -214,6 +216,9 @@
 				$vote = "truebugs";
 			}
 			else{
+                                if ($order == "") {
+                                  $numberOfSufficientIdentifications--;
+                                }
 				$vote = $order;
 			}
 			
@@ -236,7 +241,11 @@
 				$identificationVotes[] = $vote;
 			}
 		}
-		
+
+                if($numberOfSufficientIdentifications < 2) {
+                        continue;//still don't allow single-vote winners
+                }
+                
 		$identificationVoteCounts = array_count_values($identificationVotes);
 		arsort($identificationVoteCounts);
 		$keys = array_keys($identificationVoteCounts);
