@@ -120,12 +120,13 @@
 			continue;//don't allow single-vote winners
 		}
 		
-		$isLarva = false;
+		$isLarva = $originalGroup == "caterpillar" || ($originalGroup == "beetle" && $originalBeetleLarva);
 		if(array_key_exists("annotations", $data["results"][$i]) && $data["results"][$i]["annotations"] !== null){
 			for($j = 0; $j < count($data["results"][$i]["annotations"]); $j++){
-				if(array_key_exists("controlled_attribute_id", $data["results"][$i]["annotations"][$j]) && intval($data["results"][$i]["annotations"][$j]["controlled_attribute_id"]) == 1 && array_key_exists("controlled_value_id", $data["results"][$i]["annotations"][$j]) && intval($data["results"][$i]["annotations"][$j]["controlled_value_id"]) == 6){
-					$isLarva = true;
-					break;
+				if(array_key_exists("controlled_attribute_id", $data["results"][$i]["annotations"][$j]) && intval($data["results"][$i]["annotations"][$j]["controlled_attribute_id"]) == 1 && array_key_exists("controlled_value_id", $data["results"][$i]["annotations"][$j])){
+                                  
+                                  $isLarva = intval($data["results"][$i]["annotations"][$j]["controlled_value_id"]) == 6;
+                                  break;
 				}
 			}
 		}
