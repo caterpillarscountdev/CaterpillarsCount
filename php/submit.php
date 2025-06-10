@@ -81,6 +81,20 @@
                   try {
                 
 			$user->setObservationMethodPreset($site, $observationMethod);
+
+                        //check for duplicate first, by [User, Plant, Date, Time] and count of arthropods
+                        $duplicateSQL = "SELECT Survey.ID, COUNT(ArthropodSighting.ID) AS ArthroCount FROM Survey JOIN User ON Survey.UserFKOfObserver = User.ID JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK = Site.ID JOIN ArthropodSighting ON Survey.ID = ArthropodSighting.SurveyFK WHERE Plant.Code='$plantCode' AND User.ID='{$user->getID()}' AND ObservationMethod='$observationMethod' AND Survey.LocalDate='$date' AND Survey.LocalTime='$time' GROUP BY Survey.ID;";
+                        $query = mysqli_query($conn, $duplicateSQL);
+
+                        if(mysqli_num_rows($query) > 0){
+                          $row = mysqli_fetch_assoc($query);
+                          if ($row["ArthroCount"] == count($arthropodData)) {
+                            // silently ignore this duplicate submission
+                            mysqli_rollback($conn);
+                            die("true|");
+                          }
+                        }
+
 			//submit data to database
 			$survey = Survey::create($user, $plant, $date, $time, $observationMethod, $siteNotes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
 			
