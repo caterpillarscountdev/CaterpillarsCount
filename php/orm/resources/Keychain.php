@@ -30,18 +30,24 @@ class Keychain
 		}
 		else{
 			if (getenv("DEVELOPMENT_INSTANCE") == 1) {  
-			  $this->hostPointer = getenv("DEVCCDB_SERVICE_HOST");	
+			  $this->hostPointer = getenv("DEVCCDB_SERVICE_HOST");
+                          if (getenv("LOCAL_DEV")) {
+                            $this->domainName =  "cc.devel";
+
+                          } else {
+                            $this->domainName =  "https://dev-caterpillarscount2-dept-caterpillars-count.apps.cloudapps.unc.edu";
+                          }
+                          
 			} else {
 			  $this->hostPointer = getenv("CATERPILLARSV2_SERVICE_HOST");
+                          $this->domainName =  "caterpillarscount.unc.edu";
 			}	
 			$this->hostUsername = getenv("HOST_USERNAME");
 			$this->hostPassword = getenv("HOST_PASSWORD");
 			$this->databaseName = getenv("DATABASE_NAME");
-			
-			$this->protocol = "https://";
-			$this->domainName =  "caterpillarscount.unc.edu";
-			$this->extraPaths = "";
-		}
+                        $this->protocol = "https://";
+                        $this->extraPaths = "";
+                }
 	}
 
 

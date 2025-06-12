@@ -1,0 +1,3 @@
+ALTER TABLE User ADD COLUMN iNaturalistAccessToken text NULL DEFAULT NULL;
+ALTER TABLE User ADD COLUMN iNaturalistRefreshToken text NULL DEFAULT NULL;
+ALTER TABLE User ADD COLUMN iNaturalistAccountName text NULL DEFAULT NULL;

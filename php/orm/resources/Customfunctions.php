@@ -33,5 +33,35 @@ function custom_filter_var_bool($checkvar) {
      return (null);
   }
 
+function curlINatAPI($path, $data, $acessToken, $useGET) {
+  return curlINat("https://api.inaturalist.org" . $path, $data, $accessToken, $useGET);
+}
+  
+function curlINatOAuth($data) {
+  $data["client_secret"] = getenv("iNaturalistAppSecret");
+  $data["client_id"] = getenv("iNaturalistAppID");
+  return curlINat("https://www.inaturalist.org/oauth/token", $data);
+}
+  
+function curlINat($uri, $data, $accessToken = null, $useGET = false) {
+  $ch = curl_init($uri);
+  $headers = array("Accept: application/json", "Content-Type: application/json");
+  if (!$useGET) {
+    curl_setopt($ch, CURLOPT_POST, 1);
+    if ($data) {
+      curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    }
+  }
+  if ($accessToken) {
+    $headers[] = "Authorization: Bearer " . $accessToken;
+  }
+  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+  curl_setopt($ch, CURLOPT_HEADER, 0);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  $response = curl_exec($ch);
+  curl_close ($ch);
+  return json_decode($response, true);
+}
 	
 ?>

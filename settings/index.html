@@ -154,6 +154,8 @@
 			requireLogIn();
 
 			$(document).ready(function(){
+                            receiveINatToken();
+                            
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
 				
 				$.get("../php/getEmails.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
@@ -471,6 +473,38 @@
 					setLoadingButton($("#savePrivacySettingsButton")[0], "Save privacy settings", false);
 				});
 			}
+
+                 function inatLink() {
+                     window.location = "https://www.inaturalist.org/oauth/authorize?client_id=f288a4e448fb2157ca940efcd471b5148fbb26f5de7dea47593fd863f978ddcb&redirect_uri=https%3A%2F%2Fcc.devel%2Fsettings&response_type=code";
+                 }
+                 
+                 function queryParam(key) {
+                     let u = new URL(window.location);
+                     return u.searchParams.get(key);
+                 }
+
+                 function receiveINatToken() {
+                     let code = queryParam("code");                     
+                     if (code) {
+                         console.log("received inat Code", code);
+                         $.post("../php/linkINatAccount.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent(code),
+                                function (data) {
+                                    console.log("data", data);
+				    if(data.indexOf("true|") == 0){
+                                        var settings = JSON.parse(data.replace("true|", ""));
+					queueNotice("confirmation", "Your iNat account '"+ settings.iNaturalistAccountName +"' is now linked.");
+				    }
+				    else{
+					data = data.replace("false|", "");
+					queueNotice("error", data);
+					if(data == "Your log in dissolved. Maybe you logged in on another device."){
+					    logOut();
+					}
+				    }
+                                })
+                     }
+                 }
+                 
 		</script>
 	</head>
 	<body>

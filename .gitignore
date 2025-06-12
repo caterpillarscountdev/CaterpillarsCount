@@ -1,4 +1,5 @@
 docker-dev/data
+docker-dev/.env
 composer.lock
 /vendor
 /php/orm/resources/vendor

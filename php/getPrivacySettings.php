@@ -11,7 +11,8 @@
                   "firstName" => $user->getFirstName(),
                   "lastName" => $user->getLastName(),
                   "Hidden" => $user->getHidden(),
-                  "iNaturalistObserverID" => $user->getINaturalistObserverID()
+                  "iNaturalistObserverID" => $user->getINaturalistObserverID(),
+                  "iNaturalistAccountName" => $user->getINaturalistAccountName(),
 		);
     		die("true|" . json_encode($privacySettings));
   	}

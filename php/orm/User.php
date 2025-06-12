@@ -72,9 +72,9 @@ class User
 		if ($id ===0) {
 			return 'Did not add a user to the database successfully for ' . $desiredEmail;
 		}
-		return new User($id, $firstName, $lastName, $desiredEmail, "", $salt, $saltedPasswordHash, false, "");
+		return new User($id, $firstName, $lastName, $desiredEmail, "", $salt, $saltedPasswordHash, false, "", "", "", "");
 	}
-	private function __construct($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID) {
+	private function __construct($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistRefreshToken) {
 		$this->id = intval($id);
 		$this->firstName = $firstName;
 		$this->lastName = $lastName;
@@ -84,6 +84,9 @@ class User
 		$this->saltedPasswordHash = $saltedPasswordHash;
 		$this->hidden = $hidden;
 		$this->iNaturalistObserverID = $iNaturalistObserverID;
+		$this->iNaturalistAccountName = $iNaturalistAccountName;
+		$this->iNaturalistAccessToken = $iNaturalistAccessToken;
+		$this->iNaturalistRefreshToken = $iNaturalistRefreshToken;
 
 		$this->deleted = false;
 	}
@@ -108,8 +111,11 @@ class User
 		$saltedPasswordHash = $userRow["SaltedPasswordHash"];
 		$hidden = $userRow["Hidden"];
 		$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+		$iNaturalistAccountName = $userRow["INaturalistAccountName"];
+		$iNaturalistAccessToken = $userRow["INaturalistAccessToken"];
+		$iNaturalistRefreshToken = $userRow["INaturalistRefreshToken"];
 
-		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistRefreshToken);
 	}
 
 	public static function findByEmail($email) {
@@ -134,8 +140,11 @@ class User
 		$saltedPasswordHash = $userRow["SaltedPasswordHash"];
 		$hidden = $userRow["Hidden"];
 		$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+		$iNaturalistAccountName = $userRow["INaturalistAccountName"];
+		$iNaturalistAccessToken = $userRow["INaturalistAccessToken"];
+		$iNaturalistRefreshToken = $userRow["INaturalistRefreshToken"];
 
-		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistRefreshToken);
 	}
 
 	public static function findBySignInKey($email, $salt){
@@ -160,8 +169,11 @@ class User
 		$saltedPasswordHash = $userRow["SaltedPasswordHash"];
 		$hidden = $userRow["Hidden"];
 		$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+		$iNaturalistAccountName = $userRow["INaturalistAccountName"];
+		$iNaturalistAccessToken = $userRow["INaturalistAccessToken"];
+		$iNaturalistRefreshToken = $userRow["INaturalistRefreshToken"];
 
-		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistRefreshToken);
 	}
 	
 	public static function findUsersByIDs($userIDs){
@@ -187,8 +199,11 @@ class User
 			$saltedPasswordHash = $userRow["SaltedPasswordHash"];
 			$hidden = $userRow["Hidden"];
 			$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+                        $iNaturalistAccountName = $userRow["INaturalistAccountName"];
+                        $iNaturalistAccessToken = $userRow["INaturalistAccessToken"];
+                        $iNaturalistRefreshToken = $userRow["INaturalistRefreshToken"];
 
-			$usersArray[] = new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+			$usersArray[] = new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistRefreshToken);
 		}
 		return $usersArray;
 	}
@@ -208,8 +223,11 @@ class User
 			$saltedPasswordHash = $userRow["SaltedPasswordHash"];
 			$hidden = $userRow["Hidden"];
 			$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+                        $iNaturalistAccountName = $userRow["INaturalistAccountName"];
+                        $iNaturalistAccessToken = $userRow["INaturalistAccessToken"];
+                        $iNaturalistRefreshToken = $userRow["INaturalistRefreshToken"];
 
-			$usersArray[] = new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+			$usersArray[] = new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistRefreshToken);
 		}
 		return $usersArray;
 	}
@@ -287,6 +305,22 @@ class User
 		return $this->iNaturalistObserverID;
 	}
 
+	public function getINaturalistAccountName() {
+		if($this->deleted){return null;}
+		return $this->iNaturalistAccountName;
+	}
+
+	public function getINaturalistAccessToken() {
+		if($this->deleted){return null;}
+		return $this->iNaturalistAccessToken;
+	}
+
+	public function getINaturalistRefreshToken() {
+		if($this->deleted){return null;}
+		return $this->iNaturalistRefreshToken;
+	}
+        
+        
 	public function getSites(){
 		if($this->deleted){return null;}
 
@@ -424,6 +458,43 @@ class User
 		}
 		return false;
 	}
+
+        public function setINaturalistLinked($accountName, $accessToken, $refreshToken) {
+          $dbconn = (new Keychain)->getDatabaseConnection();
+          mysqli_query($dbconn, "UPDATE `User` SET `INaturalistAccountName`='$accountName', `INaturalistAccessToken`='$accessToken', `INaturalistRefreshToken`='$refreshToken' WHERE ID='" . $this->id . "'");
+          $this->iNaturalistAccountName = $accountName;
+          $this->iNaturalistAccessToken = $accessToken;
+          $this->iNaturalistRefreshToken = $refreshToken;
+          return true;
+        }
+
+        public function getRefreshedINaturalistAccessToken() {
+          if (!$this->iNaturalistAccessToken) {
+            return false;
+          }
+          
+          $response = $this->getINaturalistUserDetails();
+          if ($response["error"] && $response["status"] == 401) {
+            // refresh
+            $fields = array(
+              "grant_type" => "refresh_token",
+              "refresh_token" => $this->iNaturalistRefreshToken,
+              );
+            $response = curlINatOAuth($fields);
+            if ($response["access_token"]) {
+              $details = $this->getINaturalistUserDetails($response["access_token"]);
+              $this->setINaturalistLinked($details["login"], $response["access_token"], $response["refresh_token"]);
+            }
+          }
+          return $this->iNaturalistAccessToken();
+        }
+
+        public function getINaturalistUserDetails($token) {
+          if (!$token) {
+            $token = $this->iNaturalistAccessToken;
+          }
+          return curlINatAPI("/v1/users/me", null, $token, true);
+        }
 
 
 //REMOVER

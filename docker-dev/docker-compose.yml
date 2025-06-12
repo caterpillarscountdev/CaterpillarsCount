@@ -25,6 +25,8 @@ php:
        - HOST_USERNAME=myuser
        - HOST_PASSWORD=password
        - DATABASE_NAME=mydb
+       - iNaturalistAppID=${iNaturalistAppID}
+       - iNaturalistAppSecret=${iNaturalistAppSecret}
 
 
 mysql:    
