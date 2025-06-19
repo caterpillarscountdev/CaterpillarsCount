@@ -33,28 +33,47 @@ function custom_filter_var_bool($checkvar) {
      return (null);
   }
 
-function curlINatAPI($path, $data, $acessToken, $useGET) {
-  return curlINat("https://api.inaturalist.org" . $path, $data, $accessToken, $useGET);
+function curlINatAPI($path, $data, $accessToken, $options) {
+  return curlINat("https://api.inaturalist.org" . $path, $data, $accessToken, $options);
 }
   
 function curlINatOAuth($data) {
   $data["client_secret"] = getenv("iNaturalistAppSecret");
   $data["client_id"] = getenv("iNaturalistAppID");
+  $data = http_build_query($data);
   return curlINat("https://www.inaturalist.org/oauth/token", $data);
 }
-  
-function curlINat($uri, $data, $accessToken = null, $useGET = false) {
+
+function curlINatJWT($access_token) {
+  return curlINat("https://www.inaturalist.org/users/api_token", null, $access_token, array("GET" => 1, "bearer" => 1));
+}
+
+
+function curlINat($uri, $data, $accessToken = null, $options = array()) {
   $ch = curl_init($uri);
-  $headers = array("Accept: application/json", "Content-Type: application/json");
-  if (!$useGET) {
+  $headers = array("Accept: application/json");
+  if (!$options["GET"]) {
     curl_setopt($ch, CURLOPT_POST, 1);
     if ($data) {
-      curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+      if (is_array($data)) {
+        if ($options["multipart"]) {
+          $headers[] = "Content-Type: multipart/form-data";
+        } else {
+          $data = json_encode($data);
+          $headers[] = "Content-Type: application/json";
+        }
+      } 
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     }
   }
   if ($accessToken) {
-    $headers[] = "Authorization: Bearer " . $accessToken;
+    if($options["bearer"]) {
+      $headers[] = "Authorization: Bearer " . $accessToken;
+    } else {
+      $headers[] = "Authorization: " . $accessToken;
+    }
   }
+  //error_log("curl " . print_r($headers, true) . "\n" . $accessToken . "\n" . print_r($options, true) );
   curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
   curl_setopt($ch, CURLOPT_HEADER, 0);
