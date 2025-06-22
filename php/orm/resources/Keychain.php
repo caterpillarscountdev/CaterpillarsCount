@@ -35,7 +35,7 @@ class Keychain
                             $this->domainName =  "cc.devel";
 
                           } else {
-                            $this->domainName =  "https://dev-caterpillarscount2-dept-caterpillars-count.apps.cloudapps.unc.edu";
+                            $this->domainName =  "dev-caterpillarscount2-dept-caterpillars-count.apps.cloudapps.unc.edu";
                           }
                           
 			} else {
