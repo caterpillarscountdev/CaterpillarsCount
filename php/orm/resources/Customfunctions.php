@@ -52,7 +52,7 @@ function curlINatJWT($access_token) {
 function curlINat($uri, $data, $accessToken = null, $options = array()) {
   $ch = curl_init($uri);
   $headers = array("Accept: application/json");
-  if (!(array_key_exists("GET", $options) && $options["GET"]) {
+  if (!(array_key_exists("GET", $options) && $options["GET"])) {
     curl_setopt($ch, CURLOPT_POST, 1);
     if ($data) {
       if (is_array($data)) {
