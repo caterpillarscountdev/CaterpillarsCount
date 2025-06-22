@@ -52,11 +52,11 @@ function curlINatJWT($access_token) {
 function curlINat($uri, $data, $accessToken = null, $options = array()) {
   $ch = curl_init($uri);
   $headers = array("Accept: application/json");
-  if (!$options["GET"]) {
+  if (!isset($options["GET"])) {
     curl_setopt($ch, CURLOPT_POST, 1);
     if ($data) {
       if (is_array($data)) {
-        if ($options["multipart"]) {
+        if (isset($options["multipart"])) {
           $headers[] = "Content-Type: multipart/form-data";
         } else {
           $data = json_encode($data);
@@ -67,7 +67,7 @@ function curlINat($uri, $data, $accessToken = null, $options = array()) {
     }
   }
   if ($accessToken) {
-    if($options["bearer"]) {
+    if(isset($options["bearer"])) {
       $headers[] = "Authorization: Bearer " . $accessToken;
     } else {
       $headers[] = "Authorization: " . $accessToken;
