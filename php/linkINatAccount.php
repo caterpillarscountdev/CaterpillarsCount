@@ -22,7 +22,7 @@ if(is_object($user) && get_class($user) == "User"){
     );
 
   $response = curlINatOAuth($fields);
-  if ($response["error"]) {
+  if (array_key_exists("error", $response)) {
     $msg = $response["error"];
     if ($msg == "invalid_grant") {
       $msg = "invalid or expired request. Please try again";
