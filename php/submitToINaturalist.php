@@ -24,7 +24,7 @@
         function iNatToken($dbconn, $userID, $accessToken) {
           $token = array_key_exists($accessToken, $cachedTokens) && $cachedTokens[$accessToken];
           if ($token) {
-            return $token
+            return $token;
           }
           // retrieve from access token
           if ($accessToken) {
@@ -33,7 +33,7 @@
               $token = $response["api_token"];
             } else {
               // error getting user token, invalidate
-              mysqli_query($dbconn, "UPDATE User SET `INaturalistAccessToken` = '', `INaturalistJWToken = '' WHERE ID='$userID';")
+              mysqli_query($dbconn, "UPDATE User SET `INaturalistAccessToken` = '', `INaturalistJWToken = '' WHERE ID='$userID';");
             }
           }
           if (!$token) {
