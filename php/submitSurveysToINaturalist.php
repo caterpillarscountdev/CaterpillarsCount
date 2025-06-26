@@ -70,6 +70,7 @@
                   } catch (Exception $e) {
                     $body = "Error while processing " . $id . ": " . $e->getMessage();
                     $body .= "\n\n" . print_r($row, true);
+                    echo($body);
                     email("caterpillarscountdev@gmail.com", "Cron Error for iNat $id", $body);
                   } finally {
                     //Mark that we're finished submitting to iNaturalist

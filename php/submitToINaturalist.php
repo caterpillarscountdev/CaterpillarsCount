@@ -23,7 +23,10 @@
 
         function iNatToken($dbconn, $userID, $accessToken) {
           global $cachedTokens;
-          $token = array_key_exists($accessToken, $cachedTokens) && $cachedTokens[$accessToken];
+          $token = null;
+          if (array_key_exists($accessToken, $cachedTokens)) {
+            $token = $cachedTokens[$accessToken];
+          }
           if ($token) {
             return $token;
           }
@@ -33,6 +36,7 @@
             if (array_key_exists("api_token", $response)) {
               $token = $response["api_token"];
             } else {
+              echo ("\nUser access token error: " . print_r($response, true));
               // error getting user token, invalidate
               mysqli_query($dbconn, "UPDATE User SET `INaturalistAccessToken` = '', `INaturalistJWToken = '' WHERE ID='$userID';");
             }
@@ -151,6 +155,9 @@
 		$data["observation"]["observation_field_values_attributes"] = $observationFieldValuesAttributes;
 
                 $observation = curlINatAPI("/v1/observations", $data, $token);
+                if ($observation["error"]) {
+                  throw new Exception("Observation API error: " . print_r($observation, true));
+                }
                 echo("\nMade observation for " . $arthropodSightingID . " :" . $observation["id"]);
 
 		//ADD PHOTO TO OBSERVATION
