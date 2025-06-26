@@ -22,6 +22,7 @@
         $cachedTokens = array();
 
         function iNatToken($dbconn, $userID, $accessToken) {
+          global $cachedTokens;
           $token = array_key_exists($accessToken, $cachedTokens) && $cachedTokens[$accessToken];
           if ($token) {
             return $token;

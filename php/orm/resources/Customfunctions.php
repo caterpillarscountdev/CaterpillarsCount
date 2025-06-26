@@ -33,7 +33,7 @@ function custom_filter_var_bool($checkvar) {
      return (null);
   }
 
-function curlINatAPI($path, $data, $accessToken, $options) {
+function curlINatAPI($path, $data, $accessToken, $options = array()) {
   return curlINat("https://api.inaturalist.org" . $path, $data, $accessToken, $options);
 }
   
