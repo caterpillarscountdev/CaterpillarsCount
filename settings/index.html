@@ -479,7 +479,8 @@
                      let redirect = new URL(window.location);
                      redirect.search = '';
                      redirect = redirect.toString();
-                     window.location = `https://www.inaturalist.org/oauth/authorize?client_id=f288a4e448fb2157ca940efcd471b5148fbb26f5de7dea47593fd863f978ddcb&redirect_uri=${encodeURIComponent(redirect)}&response_type=code`;
+                     let client_id = window.location.hostname == 'caterpillarscount.unc.edu' ? 'a8c34811086a1c0f819e6ec2f0926ffab664a781cccf2ce8031ffefe25100413' : 'f288a4e448fb2157ca940efcd471b5148fbb26f5de7dea47593fd863f978ddcb';
+                     window.location = `https://www.inaturalist.org/oauth/authorize?client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect)}&response_type=code`;
                  }
 
                  function inatUnlink() {
@@ -597,7 +598,7 @@
 						<ul onclick="event.stopPropagation();">
 							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
 							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
-							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="https://www.inaturalist.org/observations?project_id=5443&verifiable=any">Recent Observations</a></li>
 							<li><a href="../reports">Reports</a></li>
 							<li><a href="../publications">Publications</a></li>
 							<li><a href="../dataDownload">Data Download</a></li>
