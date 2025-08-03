@@ -28,7 +28,7 @@ function SurveyFlaggingRules () {
         ),
       "beetle" =>  array(
         "maxSafeLength" => 50,
-        "maxSafeQuantity" => 20
+        "maxSafeQuantity" => 50
         ),
       "caterpillar" =>  array(
         "maxSafeLength" => 60,
@@ -36,7 +36,7 @@ function SurveyFlaggingRules () {
         ),
       "daddylonglegs" =>  array(
         "maxSafeLength" => 19,
-        "maxSafeQuantity" => 10
+        "maxSafeQuantity" => 30
         ),
       "fly" =>  array(
         "maxSafeLength" => 30,
@@ -44,23 +44,23 @@ function SurveyFlaggingRules () {
         ),
       "grasshopper" =>  array(
         "maxSafeLength" => 50,
-        "maxSafeQuantity" => 20
+        "maxSafeQuantity" => 30
         ),
       "leafhopper" =>  array(
         "maxSafeLength" => 50,
-        "maxSafeQuantity" => 20
+        "maxSafeQuantity" => 30
         ),
       "moths" =>  array(
         "maxSafeLength" => 60,
-        "maxSafeQuantity" => 20
+        "maxSafeQuantity" => 30
         ),
       "spider" =>  array(
         "maxSafeLength" => 30,
-        "maxSafeQuantity" => 20
+        "maxSafeQuantity" => 30
         ),
       "truebugs" =>  array(
         "maxSafeLength" => 50,
-        "maxSafeQuantity" => 20
+        "maxSafeQuantity" => 50
         ),
       "other" =>  array(
         "maxSafeLength" => 70,

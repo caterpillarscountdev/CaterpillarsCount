@@ -22,7 +22,23 @@
 	$averageNeedleLength = array_key_exists("averageNeedleLength", $_POST) ? $_POST["averageNeedleLength"] : -1;
 	$linearBranchLength = array_key_exists("linearBranchLength", $_POST) ? $_POST["linearBranchLength"] : -1;
 	$submittedThroughApp = custgetparam("submittedThroughApp");
-	
+
+        $reportingData = array(
+          "date" => $date,
+          "time" => $time,
+          "observationMethod" => $observationMethod,
+          "siteNotes" => $siteNotes,
+          "wetLeaves" => $wetLeaves,
+          "plantSpecies" => $plantSpecies,
+          "numberOfLeaves" => $numberOfLeaves,
+          "leafLength" => $averageLeafLength,
+          "herbivoryScore" => $herbivoryScore,
+          "needleLength" => $averageNeedleLength,
+          "branchLength" => $linearBranchLength,
+          "arthropodData" => $arthropodData
+          );
+
+
 	function explainError($fileError){
 		if($fileError == UPLOAD_ERR_INI_SIZE){return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';}
 		if($fileError == UPLOAD_ERR_FORM_SIZE){return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';}
@@ -79,7 +95,6 @@
                   $conn = (new Keychain)->getDatabaseConnection();
                   mysqli_begin_transaction($conn);
                   try {
-                
 			$user->setObservationMethodPreset($site, $observationMethod);
 
                         //check for duplicate first, by [User, Plant, Date, Time] and count of arthropods
@@ -143,12 +158,20 @@
 				die("false|" . $arthropodSightingFailures);
 			}
 			die("false|" . $survey);
-                  } catch (Exception $exception) {
+                  } catch (Throwable $exception) {
+                    $subj = "Submit Error for " . $email . " " . $plantCode;
+                    $body = $exception->getMessage();
+                    $body .= "\n\n" . print_r($reportingData, true);
+                    email("caterpillarscountdev@gmail.com", $subj, $body);
                     mysqli_rollback($conn);
                     throw $exception;
                   }
 		}
+                $subj = "Submit Site Password Error for " . $email . " " . $plantCode;
+                $body = "\n\n" . print_r($reportingData, true);
+                email("caterpillarscountdev@gmail.com", $subj, $body);
 		die("false|Enter a valid password.");
+                
 	}
 	die("false|Your log in dissolved. Maybe you logged in on another device.");
 ?>
