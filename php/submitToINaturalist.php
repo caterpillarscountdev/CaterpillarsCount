@@ -156,7 +156,15 @@
 
                 $observation = curlINatAPI("/v1/observations", $data, $token);
                 if ($observation["error"]) {
-                  throw new Exception("Observation API error: " . print_r($observation, true));
+                  try {
+                    if ($observation["status"] < 500) {
+                      // do not retry non-500s, log the result and let us check
+                      $err = $observation["status"] . " " . print_r($observation["error"], true);
+                      mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='-1', INaturalistError='" . $err . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
+                    }
+                  } finally {
+                    throw new Exception("Observation API error: " . print_r($observation, true));
+                  }
                 }
                 echo("\nMade observation for " . $arthropodSightingID . " :" . $observation["id"]);
 
