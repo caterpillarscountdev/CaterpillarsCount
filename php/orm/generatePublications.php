@@ -16,13 +16,13 @@ while (($data = fgetcsv($f)) !== FALSE) {
   if ($existing && !$data[4]) {
     $data[4] = $existing->getImage();
   }
-  if (!$data[5]) {
+/*  if (!$data[5]) {
     $data[5] = 1;
   }
   if ($existing && !$data[5]) {
     $data[5] = $existing->getOrder();
-  }
-  $publications[$data[0]] = Publication::create($data[0], $data[1], $data[2], $data[3], $data[4], $data[5]);
+    } */
+  $publications[$data[0]] = Publication::create($data[0], $data[1], $data[2], $data[3], $data[4]);
 }
 fclose($f);
 $f = fopen($pubsSites, 'r');
