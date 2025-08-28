@@ -16,6 +16,9 @@ while (($data = fgetcsv($f)) !== FALSE) {
   if ($existing && !$data[4]) {
     $data[4] = $existing->getImage();
   }
+  if (!$data[5]) {
+    $data[5] = 1;
+  }
   if ($existing && !$data[5]) {
     $data[5] = $existing->getOrder();
   }
