@@ -1,90 +1,5 @@
 <html>
   <head>
-    <script>
-      var publications = [
-        //////////////////////////////////////////////////////////
-        //                                                      //
-        //	ENTRIES SHOULD BE IN THE FOLLOWING FORM:        //
-        //                                                      //
-        //	[                                               //
-        //		"Image URL",                            //
-        //		"Title",                                //
-        //		"Content",                              //
-        //		"Link URL"                              //
-        //	],                                              //
-        //                                                      //
-        //	LEAVE WHATEVER YOU DON'T NEED EMPTY. (ie. "")   //
-        //                                                      //
-        //	USE \" INSTEAD OF JUST "                        //
-        //                                                      //
-        //////////////////////////////////////////////////////////
-
-
-        [
-          "../images/publications/pub1.png",
-          "",
-          "Hurlbert, AH, TE Hayes, TN McKinnon, and CL Goforth. 2019. Caterpillars Count! A citizen science project for monitoring foliage arthropod abundance and phenology. Citizen Science: Theory and Practice 4: 1-12.",
-          "https://theoryandpractice.citizenscienceassociation.org/articles/10.5334/cstp.148/"
-        ],
-        [
-          "../images/publications/pub2.png",
-          "",
-          "Vance-Chalcraft, HD, TA Gates, KA Hogan, M Evans, A Bunnell, and AH Hurlbert. 2021. Using citizen science to incorporate research into introductory biology courses at multiple universities. Citizen Science: Theory and Practice 6(1): 23.",
-          "https://theoryandpractice.citizenscienceassociation.org/article/10.5334/cstp.424/"
-        ],
-        [
-          "../images/publications/pub3.png",
-          "",
-          "Di Cecco, GJ and AH Hurlbert. 2022. Caterpillar patterns in space and time: insights from and contrasts between two citizen science datasets. In Caterpillars in the Middle, RJ Marquis and S Koptur (eds.). Springer Nature. https://doi.org/10.1007/978-3-030-86688-4_17",
-	  	  "../pdfs/Di Cecco%20and%20Hurlbert%202022%20book%20chapter.pdf"
-        ],
-        [
-	      "../images/publications/pub4.png",
-		  "",
-		  "Di Cecco, GJ, MW Belitz, RJ Cooper, EA Larsen, WB Lewis, L Ries, RP Guralnick, and AH Hurlbert. 2022. Phenology in adult and larva Lepidoptera from structured and unstructured surveys across eastern North America. Frontiers of Biogeography 14: e56346.",
-	  	  "https://escholarship.org/content/qt3mf9t3d9/qt3mf9t3d9_noSplash_3554a50bc8ce4ba6ccc0822e23dd640b.pdf?t=re8tvl"
-		],
-		[
-		  "../images/publications/pub5.png",
-		  "",
-		  "Roper-Edwards, I and AH Hurlbert. 2024. Arthropod community composition in urban landscapes is shaped by both environmental filtering and dispersal limitation. PLoS ONE 19(8): e0297507. https://doi.org/10.1371/journal.pone.0297507",
-		  "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0297507"
-		],
-		[
-		  "../images/publications/persche_etal_2025.png",
-		  "",
-		  "Persche, ME, HSSC Sagar, AM Pidgeon. 2025. Influence of woodland management within interior forests on foliage arthropods and avian insectivores. Avian Conservation and Ecology 20: 20. https://ace-eco.org/vol20/iss1/art20/",
-		  "https://ace-eco.org/vol20/iss1/art20/"
-		],
-
-      ];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		</script>
 		<!-- Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113319025-1"></script>
 		<script>
@@ -125,14 +40,24 @@
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=3"></script>
     		<style>
-      			.publicationsSection{
-    				background:rgba(0,0,0,0.03);
-        			border-radius:7px;
-        			overflow:hidden;
-        			font-family: 'Roboto Slab', serif;
-				margin-bottom:30px;
-        			word-break:break-word;
-    			}
+
+                 #selectedPub {
+                     margin-bottom: 1em;
+                     display: none;
+                     
+                 }
+      		 .publicationsSection{
+    		     background:rgba(0,0,0,0.03);
+        	     border-radius:7px;
+        	     font-family: 'Roboto Slab', serif;
+		     margin-bottom:30px;
+        	     word-break:break-word;
+                     display:flex;
+                     position: relative;
+                     margin-left: 2em;
+                     margin-right: 2em;
+                     vertical-align:middle;
+    		 }
 
     			.publicationsSection .head{
     				position:relative;
@@ -200,88 +125,120 @@
         			cursor:pointer;
     			}
 
-    			@media screen and (max-width: 900px) {
-        			.publicationsSection .head{
-        				padding-left:0px;
-        			}
+                 .publicationsSection .hiLeft {
+                     left: -1em;
+                     position:absolute;
+                     font-size: 1.8em;
+                     top: 30%;
+                     color: #333;
+                 }
+                 .publicationsSection .hiRight {
+                     right: -1em;
+                     position:absolute;
+                     font-size: 1.8em;
+                     top: 30%;
+                     color: #333;
+                 }
 
-        			.publicationsSection .head .image{
-        				position:static;
-            				top:auto;
-            				left:auto;
-            				width:100%;
-            				height:110px;
-        			}
+    		 @media screen and (max-width: 900px) {
+        	     .publicationsSection .head{
+        		 padding-left:0px;
+        	     }
 
-        			.publicationsSection .head .textTable{
-            				padding-left:0px;
-            				min-height:0px;
-					text-align:center;
-        			}
+        	     .publicationsSection .head .image{
+        		 position:static;
+            		 top:auto;
+            		 left:auto;
+            		 width:100%;
+            		 height:110px;
+        	     }
 
-				.publicationsSection .head .textTable .title{
-					font-size:20px;
-				}
+        	     .publicationsSection .head .textTable{
+            		 padding-left:0px;
+            		 min-height:0px;
+			 text-align:center;
+        	     }
 
-				.publicationsSection .head .textTable .body{
-					margin-top:15px;
-				}
+		     .publicationsSection .head .textTable .title{
+			 font-size:20px;
+		     }
 
-        			.publicationsSection .readMore{
-            				font-size:15px;
-        				padding:8px;
-        				background:#ddd;
-            				color:#fff;
-        			}
-    			}
+		     .publicationsSection .head .textTable .body{
+			 margin-top:15px;
+		     }
 
-			@media screen and (max-width: 400px) {
-				main .panel:first-of-type h2{
-					font-size:33px;
-				}
-			}
+        	     .publicationsSection .readMore{
+            		 font-size:15px;
+        		 padding:8px;
+        		 background:#ddd;
+            		 color:#fff;
+        	     }
+    		 }
+
+		 @media screen and (max-width: 400px) {
+		     main .panel:first-of-type h2{
+			 font-size:33px;
+		     }
+		 }
     		</style>
 		<script>
-			$(document).ready(function(){
-				loadBackgroundImage($("#splashImage"), "../images/splash.png");
 
-        			var htmlToAdd = "";
-        			for(var i = 0; i < publications.length; i++){
-        				htmlToAdd += "<div class=\"publicationsSection\">";
-            				htmlToAdd += 	"<div";
-            				if(publications[i][3].trim().length > 0){
-                				var target = "_blank";
-                				if(publications[i][3].trim().indexOf("caterpillarscount.unc.edu") > -1){
-                					target = "_self";
-                				}
-            					htmlToAdd += " onclick=\"trackDownload('" + publications[i][3].trim() + "');window.open('" + publications[i][3].trim() + "', '" + target + "');\" class=\"head highlighted underline pointer\"";
-            				}
-					else{
-						htmlToAdd += " class=\"head\"";
-					}
-            				htmlToAdd += 	">";
-            				htmlToAdd += 		"<div class=\"image\" style=\"background-image:url('" + publications[i][0].trim() + "');\"></div>";
-            				htmlToAdd += 		"<div class=\"textTable\">";
-            				htmlToAdd += 			"<div class=\"text\">";
-            				htmlToAdd += 				"<div class=\"title\"";
-					if(publications[i][3].trim().length > 0){
-					   	htmlToAdd +=			" style=\"color:inherit;\"";
-					}
-					htmlToAdd += 				">" + publications[i][1] + "</div>";
-            				if(publications[i][2].trim().length > 0){
-            					htmlToAdd += 			"<div class=\"body\"";
-						if(publications[i][3].trim().length > 0){
-					   		htmlToAdd +=			" style=\"color:inherit;\"";
-						}
-						htmlToAdd += 				">";
-						htmlToAdd += 		                    publications[i][2];
-                				htmlToAdd +=			"</div>";
-            				}
-            				htmlToAdd += 			"</div>";
-    					htmlToAdd += 		"</div>";
-    					htmlToAdd += 	"</div>";
-    					htmlToAdd += "</div>";
-        			}
+                 function queryParam(key) {
+                     let u = new URL(window.location);
+                     return u.searchParams.get(key);
+                 }
+
+		 $(document).ready(async function(){
+		     loadBackgroundImage($("#splashImage"), "../images/splash.png");
+                     let highlighted = queryParam('h');
+                     if (highlighted) {
+                         highlighted = highlighted.split(',');
+                         $("#selectedPub").show();
+                     } else {
+                         highlighted = [];
+                     }
+                     
+                            let response = await fetch("../php/getPublications.php");
+                            let publications = JSON.parse((await response.text()));
+        		    var htmlToAdd = "";
+        		    for(let pub of publications) {
+        			htmlToAdd += "<div class=\"publicationsSection\">";
+                                if (highlighted.includes(pub.id.toString())) {
+        			    htmlToAdd += "<div class=\"hiLeft\">&#x2B9E;</div>";
+                                }
+            			htmlToAdd += 	"<div";
+            			if(pub.link.trim().length > 0){
+                		    var target = "_blank";
+                		    if(pub.link.trim().indexOf("caterpillarscount.unc.edu") > -1){
+                			target = "_self";
+                		    }
+            			    htmlToAdd += " onclick=\"trackDownload('" + pub.link.trim() + "');window.open('" + pub.link.trim() + "', '" + target + "');\" class=\"head highlighted underline pointer\"";
+            			}
+				else{
+				    htmlToAdd += " class=\"head\"";
+				}
+            			htmlToAdd += 	">";
+            			htmlToAdd += 		"<div class=\"image\" style=\"background-image:url('" + pub.image.trim() + "');\"></div>";
+            			htmlToAdd += 		"<div class=\"textTable\">";
+            			htmlToAdd += 			"<div class=\"text\">";
+            			if(pub.citation.trim().length > 0){
+            			    htmlToAdd += 			"<div class=\"body\"";
+				    if(pub.link.trim().length > 0){
+					htmlToAdd +=			" style=\"color:inherit;\"";
+				    }
+				    htmlToAdd += 				">";
+				    htmlToAdd += 		                    pub.citation;
+                		    htmlToAdd +=			"</div>";
+            			}
+            			htmlToAdd += 			"</div>";
+    				htmlToAdd += 		"</div>";
+    				htmlToAdd += 	"</div>";
+                                if (highlighted.includes(pub.id.toString())) {
+        			    htmlToAdd += "<div class=\"hiRight\">&#x2B9C;</div>";
+                                }
+                                
+    				htmlToAdd += "</div>";
+        		    }
 
         			$("#publications")[0].innerHTML = htmlToAdd;
 			});
@@ -401,6 +358,7 @@
 		<main>
 			<div class="panel">
 				<h2>Publications</h2>
+                                <p id="selectedPub"><em>Selected data included in the &#x2B9E; highlighted &#x2B9C; publications:</em></p>
 				<!--<div class="tagline"></div>-->
 				<div class="content">
 					<div id="publications"></div>

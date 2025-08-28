@@ -3,6 +3,7 @@
 require_once('orm/resources/Keychain.php');
 require_once('orm/User.php');
 require_once('orm/UserGroup.php');
+require_once('orm/Publication.php');
 require_once('orm/resources/Customfunctions.php'); // contains new function custgetparam() to simplify handling if param exists or not for php 8
 
 $siteID = intval(custgetparam("siteID"));
@@ -87,6 +88,7 @@ if(is_object($user) && get_class($user) == "User"){
   
   foreach($users as $u) {
     $userIDs[] = $u->getID();
+    $pubs = 
     $results["Users"][strval($u->getID())] = array(
       "ID" => $u->getID(),
       "LastName" => $u->getLastName(),
@@ -114,6 +116,7 @@ if(is_object($user) && get_class($user) == "User"){
       "SurveysCaterpillars" => 0,
       "SurveysAccuracy" => 0,
       "ArthropodGroups" => array(),
+      "Publications" => array()
       );
   }
 
@@ -169,6 +172,15 @@ if(is_object($user) && get_class($user) == "User"){
   }
 
   if ($getSightings) {
+    // Publications
+    $pubs = array();
+    foreach(Publication::findForUser($userIDs[0]) as $key=>$pub) {
+      $pubs[] = $pub->getID();
+    }
+    
+    $results["Users"][$userIDs[0]]["Publications"] = $pubs;
+    
+  
     // Sightings
 
     $query = mysqli_query($conn, "SELECT Survey.UserFKOfObserver AS UserFK, CASE WHEN (ArthropodSighting.UpdatedGroup = 'bee' AND ArthropodSighting.UpdatedSawfly) THEN 'sawfly' ELSE ArthropodSighting.UpdatedGroup END AS UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS Surveys, COUNT(IF(PhotoURL != '',1, NULL)) As WithPhotos, COUNT(ExpertIdentification.ID) AS WithIDs, COUNT(CASE WHEN ((ExpertIdentification.OriginalGroup=ExpertIdentification.StandardGroup OR (ExpertIdentification.OriginalGroup IN ('other', 'unidentified') AND (ExpertIdentification.StandardGroup NOT IN ('ant', 'aphid', 'bee', 'beetle', 'caterpillar', 'daddylonglegs', 'fly', 'grasshopper', 'leafhopper', 'moths', 'spider', 'truebugs'))))) THEN 1 ELSE NULL END) AS WithMatches FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID LEFT JOIN ExpertIdentification ON ArthropodSighting.ID = ExpertIdentification.ArthropodSightingFK JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Plant.SiteFK " . $baseSiteRestriction . " AND Survey.UserFKOfObserver IN (" . implode(",", $userIDs) . ") GROUP BY Survey.UserFKOfObserver, CASE WHEN (ArthropodSighting.UpdatedGroup = 'bee' AND ArthropodSighting.UpdatedSawfly) THEN 'sawfly' ELSE ArthropodSighting.UpdatedGroup END;");
