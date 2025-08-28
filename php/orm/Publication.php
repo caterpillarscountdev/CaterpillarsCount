@@ -16,15 +16,15 @@ class Publication
 	private $deleted;
 
 //FACTORY
-	public static function create($id, $citation, $doi, $link, $image, $order) {
+	public static function create($id, $citation, $doi, $link, $image) {
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		if(!$dbconn){
 			return "Cannot connect to server.";
 		}
 				
-		mysqli_query($dbconn, "INSERT INTO Publication (`ID`, `Citation`, `DOI`, `Link`, `Image`, `Order`) VALUES ('$id', '$citation', '$doi', '$link', '$image') ON DUPLICATE KEY UPDATE DOI='$doi', Link='$link', Image='$image', Order=$order");
+		mysqli_query($dbconn, "INSERT INTO Publication (`ID`, `Citation`, `DOI`, `Link`, `Image`) VALUES ('$id', '$citation', '$doi', '$link', '$image') ON DUPLICATE KEY UPDATE DOI='$doi', Link='$link', Image='$image'");
 		
-		return new Publication($id, $citation, $doi, $link, $image, $order);
+		return new Publication($id, $citation, $doi, $link, $image, 1);
 	}
 	private function __construct($id, $citation, $doi, $link, $image, $order) {
 		$this->id = intval($id);
