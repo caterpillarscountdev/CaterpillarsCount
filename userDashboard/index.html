@@ -299,7 +299,14 @@
 		     height:162px;
 		 }
 
-                 
+                 #publications p {
+                     padding-top: 2em;
+                 }
+
+                 #publications a {
+                     color: #999;
+                 }
+
 		</style>
 		<script>
 		 requireLogIn();
@@ -411,6 +418,9 @@
                              showGroups(row.ArthropodGroups, row)
                          } else {
                              document.querySelector("#groups").style.display = "none";
+                         }
+                         if (row.Publications.length > 0) {
+                             document.querySelector("#publications").innerHTML = `<p>Survey data from this user has been used in <a href="/publications?h=${row.Publications.join(',')}">${row.Publications.length} research publication${row.Publications.length > 1 ? 's' : ''}</a>!</p>`;
                          }
                      }
 
@@ -1001,8 +1011,8 @@
 			  <div class="loading"><img src="../images/rolling.svg"/></div>
 		        </div>
                       </div>
-                      
-                    </div>
+                      <div id="publications">
+                      </div>
                   </div>
 		</main>
 		<footer>

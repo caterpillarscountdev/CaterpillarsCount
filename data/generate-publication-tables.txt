@@ -1,0 +1,8 @@
+Generate Publication Tables
+===========================
+
+Reads the source CSVs for publications and user/site references
+
+1. Update csvs in php/orm/ - publications.csv, publicationsSites.csv, publicationsUsers.csv
+2. Visit php/orm/generatePublications.php
+
