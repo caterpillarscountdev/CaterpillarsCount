@@ -312,16 +312,13 @@
 				color:#999;
 				font-family: 'Roboto Slab', serif;
 				text-align:center;
-				margin-top:0px;
-				margin-bottom:40px;
+				margin-top:0.5em;
+				margin-bottom:1em;
 			}
 
 			#siteINaturalistLink{
 				font-size:18px;
 				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-			}
-			#selectedSitePanel h3:first-of-type{
-				margin-top:0px;
 			}
 			#noDataSection{
 				text-align:center;
@@ -850,6 +847,10 @@
 
                  #publications p {
                      padding: 0.5em;
+                     color: #555;
+                     border: 1px solid #555;
+                     margin: 0.2em;
+                     
                  }
 
                  #publications a {
@@ -1535,7 +1536,7 @@
 					}
                                     if(marker.siteInformation["Publications"]) {
                                         let pubs = marker.siteInformation["Publications"];
-                                        document.querySelector("#publications").innerHTML = `<p>Survey data from this site has been used in <a href="/publications?h=${pubs.join(',')}">${pubs.length} research publication${pubs.length > 1 ? 's' : ''}</a>!</p>`;
+                                        document.querySelector("#publications").innerHTML = `<p>Survey data from this site has been used in <a href="/publications?h=${pubs.join(',')}">${pubs.length} research publication${pubs.length > 1 ? 's' : ''}</a>.</p>`;
                                     }
 
 				    $("#siteINaturalistLink")[0].href = "https://www.inaturalist.org/observations?field:Site%20Name=" + cleanParam(marker.siteInformation["Name"]);
