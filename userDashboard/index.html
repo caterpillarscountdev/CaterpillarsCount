@@ -300,11 +300,14 @@
 		 }
 
                  #publications p {
-                     padding-top: 2em;
+                     padding: 0.5em;
+                     color: #555;
+                     border: 1px solid #555;
+                     margin: 0.2em;
                  }
 
                  #publications a {
-                     color: #999;
+                     color: #555;
                  }
 
 		</style>
@@ -420,7 +423,7 @@
                              document.querySelector("#groups").style.display = "none";
                          }
                          if (row.Publications.length > 0) {
-                             document.querySelector("#publications").innerHTML = `<p>Survey data from this user has been used in <a href="/publications?h=${row.Publications.join(',')}">${row.Publications.length} research publication${row.Publications.length > 1 ? 's' : ''}</a>!</p>`;
+                             document.querySelector("#publications").innerHTML = `<p>Survey data from this user has been used in <a href="/publications?h=${row.Publications.join(',')}">${row.Publications.length} research publication${row.Publications.length > 1 ? 's' : ''}</a>.</p>`;
                          }
                      }
 
