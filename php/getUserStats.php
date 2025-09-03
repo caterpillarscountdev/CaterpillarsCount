@@ -88,7 +88,6 @@ if(is_object($user) && get_class($user) == "User"){
   
   foreach($users as $u) {
     $userIDs[] = $u->getID();
-    $pubs = 
     $results["Users"][strval($u->getID())] = array(
       "ID" => $u->getID(),
       "LastName" => $u->getLastName(),
