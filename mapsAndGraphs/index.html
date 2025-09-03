@@ -312,16 +312,13 @@
 				color:#999;
 				font-family: 'Roboto Slab', serif;
 				text-align:center;
-				margin-top:0px;
-				margin-bottom:40px;
+				margin-top:0.5em;
+				margin-bottom:1em;
 			}
 
 			#siteINaturalistLink{
 				font-size:18px;
 				font-family:"Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-			}
-			#selectedSitePanel h3:first-of-type{
-				margin-top:0px;
 			}
 			#noDataSection{
 				text-align:center;
@@ -847,6 +844,20 @@
 				font-size:10px;
 				padding-top:1px;
 			}
+
+                 #publications p {
+                     padding: 0.5em;
+                     color: #555;
+                     border: 1px solid #555;
+                     margin: 0.2em;
+                     
+                 }
+
+                 #publications a {
+                     color: #999;
+                 }
+
+                 
 			@media screen and (max-width: 600px){
 				#desktopSiteStats{
 					display:none;
@@ -1523,8 +1534,12 @@
 					else{
 						$("#lastSurveyed")[0].innerHTML = "Last surveyed <div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;display:inline-block;text-decoration:underline;\">" + diffDays + " days ago<div class=\"bottomTooltip\">" + getReadableDate(marker.siteInformation["MostRecentDateTime"].split(" ")[0]) + ", at " + getTwelveHourTime(marker.siteInformation["MostRecentDateTime"].split(" ")[1]) + "<div class=\"arrow\"></div></div></div>.";
 					}
+                                    if(marker.siteInformation["Publications"]) {
+                                        let pubs = marker.siteInformation["Publications"];
+                                        document.querySelector("#publications").innerHTML = `<p>Survey data from this site has been used in <a href="/publications?h=${pubs.join(',')}">${pubs.length} research publication${pubs.length > 1 ? 's' : ''}</a>.</p>`;
+                                    }
 
-					$("#siteINaturalistLink")[0].href = "https://www.inaturalist.org/observations?field:Site%20Name=" + cleanParam(marker.siteInformation["Name"]);
+				    $("#siteINaturalistLink")[0].href = "https://www.inaturalist.org/observations?field:Site%20Name=" + cleanParam(marker.siteInformation["Name"]);
 
 					$("#siteStats")[0].innerHTML = "<table id=\"desktopSiteStats\">" +
 							"<thead>" +
@@ -1876,7 +1891,8 @@
 				    RawValue: site["RawValue"],
 				    Weight: site["Weight"],
 				    MostRecentDateTime: site["MostRecentDateTime"],
-				    EarliestDateTime: site["EarliestDateTime"]
+				    EarliestDateTime: site["EarliestDateTime"],
+                                    Publications: site["Publications"]
 				}
 			    });
 			    marker.addListener('click', physicalMarkerClick);
@@ -4738,7 +4754,7 @@
 					</div>
 					<div id="dataSection">
 						<div id="lastSurveyed"></div>
-
+                                                <div id="publications"></div>
 						<h3>iNaturalist Submissions</h3>
 						<div style="margin-top:-5px;">
 							<a href="#" id="siteINaturalistLink" target="_blank" class="highlighted">Click here to see all of the photo observations submitted at this site's iNaturalist page.</a>
