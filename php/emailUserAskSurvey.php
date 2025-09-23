@@ -12,18 +12,24 @@ $emailmessage = custgetparam("emailmessage");
 $user = User::findBySignInKey($email, $salt);
 
 if(is_object($user) && get_class($user) == "User"){
-  $survey = Survey::findByID($surveyID);
-  if(is_object($survey) && get_class($survey) == "Survey") {
-    $site = $survey->getPlant()->getSite();
-    if(User::isSuperUser($user) || $site->isAuthority($user)){
-      $emailto = $survey->getObserver()->getEmail();
-      $ccs = $site->getAuthorityEmails();
-      if (emailAsAndCCUs($user->getEmail(), $emailto, $ccs, "Data issue with your Survey",$emailmessage)) {
-        die("true|");	 
-      } else {
-        die("false|Email failed to send.");		
+  try {
+    $survey = Survey::findByID($surveyID);
+    if(is_object($survey) && get_class($survey) == "Survey") {
+      $site = $survey->getPlant()->getSite();
+      if(User::isSuperUser($user) || $site->isAuthority($user)){
+        $emailto = $survey->getObserver()->getEmail();
+        $ccs = $site->getAuthorityEmails();
+        if (emailAsAndCCUs($user->getEmail(), $emailto, $ccs, "Data issue with your Survey",$emailmessage)) {
+          die("true|");	 
+        } else {
+          die("false|Email failed to send.");		
+        }
       }
     }
+  } catch (Throwable $exception) {
+    $subj = "Email User Error for " . $email;
+    $body = $exception->getMessage();
+    email("caterpillarscountdev@gmail.com", $subj, $body);
   }
   die("false|You do not have authority to approve this survey.");
 }
