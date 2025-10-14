@@ -978,12 +978,9 @@
 							queueNotice("error", data.replace("false|", ""));
 						}
 					})
-					.fail(function(){
-						//error
-						//$('.loading').fadeOut(0);
-						//$('#surveys').fadeIn(0);
-						
-						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+					.fail(function(req, status, error){
+                                            let msg = [req.status, status, error].join(": ");
+					    queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again. (" + msg + ")");
 					});
 					
 					
