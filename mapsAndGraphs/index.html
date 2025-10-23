@@ -1786,69 +1786,16 @@
 					numberOfShownSiteUserRankings = 10;
 				}
 			}
-			function hexToRgb(hex) {
-				// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-				var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-				hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-					return r + r + g + g + b + b;
-				});
-				var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-				return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [0, 0, 0];
-			}
 			function mapPercentToColor(percent){
-				percent = Number(percent.toString().replace("%", ""));
-				//alert(percent);
-				//var colors = [[247,255,0], [255,140,0], [255,0,0]];//yellow, orange, red
-				//var colors = [hexToRgb("#000dff"), hexToRgb("#ff00ee")];//royalblue, hotpink
-				//var colors = [hexToRgb("#000dff"), hexToRgb("#22ff00")];//royalblue, limegreen
-				//var colors = [hexToRgb("#0022ff"), hexToRgb("#0dfa30"), hexToRgb("#f7ff00"), hexToRgb("#ff0000")];//blue, green, yellow, red
-				var colors = [hexToRgb("#2d5227"), hexToRgb("#22ff00")];//darkgreen, limegreen
-				//var colors = [hexToRgb("#2d5227"), [27,145,141], hexToRgb("#22ff00")];//darkgreen, bluegreen, limegreen
-				//var colors = [[66,0,83], [27,145,141], [253,232,32]];//dark purple, bluegreen, yellow
-				//var colors = [hexToRgb("#000000"), hexToRgb("#22ff00")];//black, limegreen
-				//var colors = [hexToRgb("#000787"), hexToRgb("#ff00ff")];//midnightblue, hotpink
-				//var colors = [hexToRgb("#440154"), hexToRgb("#21908c"), hexToRgb("#FDE725")]; //viridis
-				if(percent == 0) return "rgb(" + colors[0].join(", ") + ")"; //added this line because it doesn't seem to work as desired 2 lines below
-				for(var i = 0; i < colors.length; i++){
-					if(percent == (i/(colors.length - 1))) return "rgb(" + colors[i].join(", ") + ")";
-				}
-				var color1, color2;
-				for(var i = 1; i < colors.length; i++){
-					if(percent < (i/(colors.length - 1))){
-						color1 = colors[i];
-						color2 = colors[i - 1];
-						percent = (percent - ((i - 1) * (1/(colors.length - 1)))) / ((i/(colors.length - 1)) - ((i - 1) * (1/(colors.length - 1))));
-					}
-				}
-				var w1 = ((percent * 2 - 1)/1+1) / 2;
-				var w2 = 1 - w1;
-				return "rgb(" + Math.round(color1[0] * w1 + color2[0] * w2) + ", " + Math.round(color1[1] * w1 + color2[1] * w2) + ", " + Math.round(color1[2] * w1 + color2[2] * w2) + ")";
+                            var [color2, color1] = [[45,82,39], [34,255,0]]
+			    var w1 = percent;
+			    var w2 = 1 - w1;
+			    return "rgb(" + Math.round(color1[0] * w1 + color2[0] * w2) + ", " + Math.round(color1[1] * w1 + color2[1] * w2) + ", " + Math.round(color1[2] * w1 + color2[2] * w2) + ")";
 			}
-			function getNormalizedWeights(sitesArray){//data is in the form of: [{"ID": 2, "Name": "Example Site", "Data": 9999, ...etc}]
-				var max = 0;
-				var min = false;
-				for(var i = 0; i < sitesArray.length; i++){
-					var data = Number(sitesArray[i]["Weight"].toString().replace(/[^0-9.-]/g, ""));
-					var isExampleSite = (Number(sitesArray[i]["ID"]) == 2);
-					if(min === false && !isExampleSite){min = data;}
-					if(data > max && !isExampleSite){
-						max = data;
-					}
-					if(data < min && !isExampleSite){
-						min = data;
-					}
-				}
-				var arrToReturn = [];
-				for(var i = 0; i < sitesArray.length; i++){
-					var data = Number(sitesArray[i]["Weight"].toString().replace(/[^0-9.-]/g, ""));
-					var minMaxedData = min;
-					if(max > min){
-						minMaxedData = (data - min) / (max - min);
-					}
-					var cappedMinMaxedData = Math.max(0, Math.min(1, minMaxedData));
-					arrToReturn[arrToReturn.length] = cappedMinMaxedData;
-				}
-				return arrToReturn;
+			function getNormalizedWeights(sitesArray){
+                            //data is in the form of: [{"ID": 2, "Name": "Example Site", "Data": 9999, ...etc}]
+                            var weights = sitesArray.map((x) => Number(x["Weight"])).sort();
+                            return sitesArray.map((x) => weights.indexOf(x["Weight"]) / (weights.length -1));
 			}
 
                         function defineMarkerForSite(site, normalWeight) {
