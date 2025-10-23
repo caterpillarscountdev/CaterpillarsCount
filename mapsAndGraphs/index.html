@@ -1795,7 +1795,7 @@
 			function getNormalizedWeights(sitesArray){
                             //data is in the form of: [{"ID": 2, "Name": "Example Site", "Data": 9999, ...etc}]
                             var weights = sitesArray.map((x) => Number(x["Weight"])).sort();
-                            return sitesArray.map((x) => weights.indexOf(x["Weight"]) / (weights.length -1));
+                            return sitesArray.map((x) => weights.indexOf(x["Weight"]) / (weights.length -1) * 100);
 			}
 
                         function defineMarkerForSite(site, normalWeight) {
