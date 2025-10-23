@@ -1795,7 +1795,7 @@
 			function getNormalizedWeights(sitesArray){
                             //data is in the form of: [{"ID": 2, "Name": "Example Site", "Data": 9999, ...etc}]
                             var weights = sitesArray.map((x) => Number(x["Weight"])).sort();
-                            return sitesArray.map((x) => weights.indexOf(x["Weight"]) / (weights.length -1) * 100);
+                            return sitesArray.map((x) => weights.indexOf(x["Weight"]) / (weights.length -1));
 			}
 
                         function defineMarkerForSite(site, normalWeight) {
@@ -4593,6 +4593,11 @@
 								<div class="smallScaleCircle" onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);" style="position:relative;">
 									<div class="bottomToolTip" style="width:109px;text-align:center;right:-18px;"><div class="arrow" style="position:absolute;margin:0px;top:-7px;right:17px;"></div>No surveys</div>
 								</div>
+								<div class="scaleCircle" style="position:relative;"></div>
+								<div class="scaleCircle" style="position:relative;"></div>
+								<div class="scaleCircle" style="position:relative;"></div>
+								<div class="scaleCircle" style="position:relative;"></div>
+								<div class="scaleCircle" style="position:relative;"></div>
 								<div class="scaleCircle" style="position:relative;"></div>
 								<div class="scaleCircle" style="position:relative;"></div>
 								<div class="scaleCircle" style="position:relative;"></div>
