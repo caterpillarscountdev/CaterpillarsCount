@@ -1945,7 +1945,7 @@
                                     var scales = $(".scaleCircle").length;
 				    for(var i = 0; i < scales; i++){
 					if(comparisonMetric == "occurrence" || comparisonMetric == "meanBiomass"){
-					    $(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(indexBound(norms, norms.length*i/scales), 0) + "%</div>";
+					    $(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(indexBound(norms, i == 0 ? 0 : norms.length*(i+1)/scales), 0) + "%</div>";
 					}
 					    else{//density
 							var scaleNumber = Math.pow(10, minWeight + ((maxWeight - minWeight) * (i * (1/(scales - 1)))));
@@ -2035,8 +2035,8 @@
                                     var norms = sites.map(x => Number(x["Weight"])).sort((a,b) => a-b)
                                     var scales = $(".scaleCircle").length;
 				    for(var i = 0; i < scales; i++){
-					    $(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(indexBound(norms, norms.length*i/scales), 0) + "%</div>";
-					    $(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/(scales - 1)))});
+					$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(indexBound(norms, i == 0 ? 0 : norms.length*(i+1)/scales), 0) + "%</div>";
+					$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/(scales - 1)))});
 					}
 					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">Caterpillars on all trees<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">Percent of surveys with caterpillars that are at least 0 mm long on all trees (including surveys with wet leaves) from January to December over the period of all time<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
 					siteNamesAndIDs.sort(function(a, b){
