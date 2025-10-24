@@ -1794,7 +1794,7 @@
 			}
 			function getNormalizedWeights(sitesArray){
                             //data is in the form of: [{"ID": 2, "Name": "Example Site", "Data": 9999, ...etc}]
-                            var weights = sitesArray.map((x) => Number(x["Weight"])).sort();
+                            var weights = sitesArray.map((x) => Number(x["Weight"])).sort((a,b) => a-b);
                             return sitesArray.map((x) => weights.indexOf(x["Weight"]) / (weights.length -1));
 			}
 
@@ -1905,15 +1905,14 @@
 					markers = {};
 					//set new markers
 					var sites = JSON.parse(data);
-					var normalizedWeights = getNormalizedWeights(sites);
-					var minRawValue = -1;
+                                    var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] > 0)
+				    var normalizedWeights = getNormalizedWeights(sites);
+				    var minRawValue = -1;
 					var maxRawValue = -1;
 					var minWeight = -100;
 					var maxWeight = -100;
 					var alreadyActiveMarker = null;
 					for(var i = 0; i < sites.length; i++){
-                                            if (sites[i]["Active"] == "0" && sites[i]["SurveyCount"] == 0) { continue }
-                                            
 					    var color = mapPercentToColor(normalizedWeights[i]);
 					    var currentColor = color;
 						if($("#selectedSitePanel h2").eq(0)[0].innerHTML == sites[i]["Name"]){
@@ -1942,19 +1941,18 @@
 					if(alreadyActiveMarker !== null){
 						alreadyActiveMarker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
 					}
-					for(var i = 0; i < $(".scaleCircle").length; i++){
-						if(comparisonMetric == "occurrence"){
-							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1)))), 0) + "%</div>";
-						}
-						else if(comparisonMetric == "meanBiomass"){
-							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1)))), 0) + "</div>";
-						}
-						else{//density
-							var scaleNumber = Math.pow(10, minWeight + ((maxWeight - minWeight) * (i * (1/($(".scaleCircle").length - 1)))));
+                                    var norms = sites.map(x => Number(x["Weight"])).sort((a,b) => a-b)
+                                    var scales = $(".scaleCircle").length;
+				    for(var i = 0; i < scales; i++){
+					if(comparisonMetric == "occurrence" || comparisonMetric == "meanBiomass"){
+					    $(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(indexBound(norms, norms.length*i/scales), 0) + "%</div>";
+					}
+					    else{//density
+							var scaleNumber = Math.pow(10, minWeight + ((maxWeight - minWeight) * (i * (1/(scales - 1)))));
 							if(i == 0){
 								scaleNumber = minRawValue;
 							}
-							else if(i == $(".scaleCircle").length - 1){
+							else if(i == scales - 1){
 								scaleNumber = maxRawValue;
 							}
 							else if(minRawValue == maxRawValue){
@@ -1962,7 +1960,7 @@
 							}
 							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(scaleNumber, 2) + "</div>";
 						}
-						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
+					    $(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/(scales - 1)))});
 					}
 					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">" + readableArthropod + " on " + plantSpecies.replace("%", "All Trees") + "<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">" + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().charAt(0).toUpperCase() + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().slice(1) + " " + readableArthropod.toLowerCase() + readableComparisonMetricAfterText + " that are at least " + minSize + " mm long on " + plantSpecies.replace("%", "All Trees").toLowerCase() + " (" + readableIncludeWetLeaves + ") " + months + " over the period of " + years + "<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
 					closeHeight($("#mapFilters"), function(){$("#mapFilters")[0].style.borderBottom="0px none transparent";$("#mapTitle").stop().animate({opacity:"1"});$("#mapScale").stop().animate({opacity:"1"});showMapDownloadButton();});
@@ -2000,7 +1998,12 @@
 					yearEnd: filterYearEnd
 				};
 			}
-
+                 function indexBound(l, i) {
+                     i = Math.floor(i);
+                     if (i < 0) i = 0;
+                     if (i > l.length-1) i = l.length-1;
+                     return l[i]
+                 }
 			var siteNamesAndIDs = [];
 			function initializeMap() {
 				map = new google.maps.Map($('#map')[0], {
@@ -2013,11 +2016,11 @@
 					console.log("Sites loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					saveMapFilters();
 					var sites = JSON.parse(data);
-					var normalizedWeights = getNormalizedWeights(sites);
-					var minRawValue = -1;
+                                    var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] > 0)
+				    var normalizedWeights = getNormalizedWeights(sites);
+				    var minRawValue = -1;
 					var maxRawValue = -1;
 					for(var i = 0; i < sites.length; i++){
-                                            if (sites[i]["Active"] == "0" && sites[i]["SurveyCount"] == 0) { continue }
 					    siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
                                             var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
 						markers[sites[i]["ID"] + ""] = marker;
@@ -2029,9 +2032,11 @@
 							maxRawValue = rawValueNumber;
 						}
 					}
-					for(var i = 0; i < $(".scaleCircle").length; i++){
-						$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + Math.round(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1))))) + "%</div>";
-						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
+                                    var norms = sites.map(x => Number(x["Weight"])).sort((a,b) => a-b)
+                                    var scales = $(".scaleCircle").length;
+				    for(var i = 0; i < scales; i++){
+					    $(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(indexBound(norms, norms.length*i/scales), 0) + "%</div>";
+					    $(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/(scales - 1)))});
 					}
 					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">Caterpillars on all trees<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">Percent of surveys with caterpillars that are at least 0 mm long on all trees (including surveys with wet leaves) from January to December over the period of all time<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
 					siteNamesAndIDs.sort(function(a, b){
@@ -4593,9 +4598,6 @@
 								<div class="smallScaleCircle" onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);" style="position:relative;">
 									<div class="bottomToolTip" style="width:109px;text-align:center;right:-18px;"><div class="arrow" style="position:absolute;margin:0px;top:-7px;right:17px;"></div>No surveys</div>
 								</div>
-								<div class="scaleCircle" style="position:relative;"></div>
-								<div class="scaleCircle" style="position:relative;"></div>
-								<div class="scaleCircle" style="position:relative;"></div>
 								<div class="scaleCircle" style="position:relative;"></div>
 								<div class="scaleCircle" style="position:relative;"></div>
 								<div class="scaleCircle" style="position:relative;"></div>
