@@ -133,11 +133,22 @@
 				display:none;
 			}
 
-			@media screen and (max-width: 620px) {
-				#saveSiteSettingsButton{
-					width:100%;
-				}
-			}
+                 .passwordWrap {
+                     position: relative;
+                 }
+                 .passwordReveal {
+                     position: absolute;
+                     top: 1em;
+                     font-size: larger;
+                     color: #aaa;
+                     inset-inline-end: 1em;
+                 }
+
+		 @media screen and (max-width: 620px) {
+		     #saveSiteSettingsButton{
+			 width:100%;
+		     }
+		 }
 		</style>
 		<script>
 			requireLogIn();
@@ -185,6 +196,7 @@
 			}
 
 			var savedName = "";
+                        var clearPassword = "";
 			function loadSiteSettings(){
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function() {
@@ -197,6 +209,10 @@
 							var url = data["url"];
 							var openToPublic = data["openToPublic"];
 							var active = data["active"];
+                                                        if (data["password"]) {
+                                                            clearPassword = data["password"];
+                                                            $("#password")[0].value = clearPassword;
+                                                        }
 
 							$("#name")[0].value = name;
 							$("#url")[0].value = url;
@@ -229,6 +245,15 @@
 				xhttp.send();
 			}
 
+                 function revealPassword() {
+                     var passField = $("#password")[0];
+                     if (passField.type == "password") {
+                         passField.type = "text";
+                     } else {
+                         passField.type = "password";
+                     }
+                 }
+
 			var savingSiteSettings = false;
 			function saveSiteSettings(){
 				if(savingSiteSettings){return false;}
@@ -259,8 +284,8 @@
 					return false;
 				}
 
-				if(password != confirmPassword && (password != "hf!Eo 2k" || confirmPassword != "")){
-					queueNotice("error", "Site passwords must match.");
+			        if(password != clearPassword && (password != confirmPassword || confirmPassword == "")){
+				    queueNotice("error", "Site passwords must match.");
 					$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 300);
 
 					$("#password")[0].value = "";
@@ -269,7 +294,7 @@
 					return false;
 				}
 
-				if((password.indexOf(" ") > -1 || password.length < 4) && password != "hf!Eo 2k"){
+				if(password != clearPassword && (password.indexOf(" ") > -1 || password.length < 4)){
 					queueNotice("error", "Password must be at least 4 characters with no spaces.");
 					$('html, body').animate({ scrollTop: document.getElementById("splashImage").clientHeight }, 300);
 
@@ -278,6 +303,9 @@
 					$("#password")[0].focus();
 					return false;
 				}
+                                if (password == clearPassword) {
+                                    password = "";
+                                }
 
 				savingSiteSettings = true;
 				setLoadingButton($("#saveSiteSettingsButton")[0], "Save site settings", true);
@@ -303,7 +331,6 @@
 								$("#description")[0].blur();
 								$("#password")[0].blur();
 								$("#confirmPassword")[0].blur();
-
 								$("#name")[0].value = "";
 								$("#name")[0].focus();
 							}
@@ -488,7 +515,10 @@
 
 						<div class="group">
 							<div class="inputTitle">Site password (that you are willing to share with vistors at this site):</div>
-							<input type="password" id="password" value="hf!Eo 2k" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');this.setSelectionRange(0, 9999);" placeholder="to verify submissions" oninput="if($('#confirmSitePasswordGroup')[0].style.display == 'none' || $('#confirmSitePasswordGroup')[0].style.display == ''){$('#confirmSitePasswordGroup').show(300);}"/>
+                                                        <div class="passwordWrap">
+							<input type="password" id="password" value="" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');this.setSelectionRange(0, 9999);" placeholder="to verify submissions" oninput="if($('#confirmSitePasswordGroup')[0].style.display == 'none' || $('#confirmSitePasswordGroup')[0].style.display == ''){$('#confirmSitePasswordGroup').show(300);}"/>
+                                                        <span class="passwordReveal" onclick="revealPassword()">&#x1F441;</span>
+                                                        </div>
 						</div>
 
 						<div class="group" id="confirmSitePasswordGroup">

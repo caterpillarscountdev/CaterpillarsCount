@@ -39,7 +39,7 @@
 			if($site->getURL() != $url){
 				$site->setURL($url);
 			}
-			if(!$site->passwordIsCorrect($sitePassword) && $sitePassword != "hf!Eo 2k"){//"hf!Eo 2k" is just the placeholder default value from the front end
+			if($sitePassword){
 				if($user->passwordIsCorrect($password)){
 					$errors .= "Password cannot be the same as your Caterpillars Count! account password because you may be sharing it with vistors at this site. ";
 				}
