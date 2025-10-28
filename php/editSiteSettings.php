@@ -40,7 +40,7 @@
 				$site->setURL($url);
 			}
 			if($sitePassword){
-				if($user->passwordIsCorrect($password)){
+				if($user->passwordIsCorrect($sitePassword)){
 					$errors .= "Password cannot be the same as your Caterpillars Count! account password because you may be sharing it with vistors at this site. ";
 				}
 				else if(!$site->setPassword($sitePassword)){
