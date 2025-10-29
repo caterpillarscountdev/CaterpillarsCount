@@ -1803,15 +1803,19 @@
 			    var color = mapPercentToColor(normalWeight);
 			    var scale = 7;
 			    var zIndex = site["ID"];
-			    if(site["FilteredSurveyCount"] == 0){
+			    if(normalWeight == null || site["FilteredSurveyCount"] == 0){
 				scale = 5;
 				color = "#bbb";
 				zIndex = -1;
 			    }
+                            var surveys = ""
+                            if (normalWeight == null && site["SurveyCount"] > 0) {
+                                var surveys = " (Only " + site["SurveyCount"] + " Survey" + (site["SurveyCount"] > 1 ? "s" : "") + ")";
+                            }
 			    var marker = new google.maps.Marker({
 				map: map,
 				position: latlng,
-				title: (site["Name"] + ": " + site["RawValue"]),
+				title: (site["Name"] + ": " + site["RawValue"] + surveys),
 				zIndex: zIndex,
 				defaultZIndex: zIndex,
 				icon: {
@@ -1904,24 +1908,28 @@
 					markers = {};
 					//set new markers
 					var sites = JSON.parse(data);
-                                    var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] > 10)
+                                    var inactiveSites = sites.filter(x => x["Active"] == "0" || x["SurveyCount"] < 10);
+                                    var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] >= 10)
 				    var normalizedWeights = getNormalizedWeights(sites);
 				    var minRawValue = -1;
 					var maxRawValue = -1;
 					var minWeight = -100;
 					var maxWeight = -100;
 					var alreadyActiveMarker = null;
-					for(var i = 0; i < sites.length; i++){
-					    var color = mapPercentToColor(normalizedWeights[i]);
-					    var currentColor = color;
-						if($("#selectedSitePanel h2").eq(0)[0].innerHTML == sites[i]["Name"]){
-							currentColor = "#fed136";
-						}
-						var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
-						if(currentColor == "#fed136"){
-							lastMarker = marker;
-							alreadyActiveMarker = marker;
-						}
+				    for(var i = 0; i < inactiveSites.length; i++){
+					if($("#selectedSitePanel h2").eq(0)[0].innerHTML == inactiveSites[i]["Name"]){
+					    lastMarker = marker;
+					    alreadyActiveMarker = marker;
+					}
+					var marker = defineMarkerForSite(inactiveSites[i], null);
+                                    }
+				    for(var i = 0; i < sites.length; i++){
+					var color = mapPercentToColor(normalizedWeights[i]);
+					var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
+					if($("#selectedSitePanel h2").eq(0)[0].innerHTML == sites[i]["Name"]){
+					    lastMarker = marker;
+					    alreadyActiveMarker = marker;
+					}
 
 					    var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
 					    if(rawValueNumber < minRawValue || minRawValue == -1){
@@ -2015,12 +2023,17 @@
 					console.log("Sites loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					saveMapFilters();
 					var sites = JSON.parse(data);
-                                    var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] > 10)
+                                    var inactiveSites = sites.filter(x => x["Active"] == "0" || x["SurveyCount"] < 10);
+                                    var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] >= 10)
 				    var normalizedWeights = getNormalizedWeights(sites);
 				    var minRawValue = -1;
-					var maxRawValue = -1;
-					for(var i = 0; i < sites.length; i++){
-					    siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
+				    var maxRawValue = -1;
+				    for(var i = 0; i < inactiveSites.length; i++){
+					var marker = defineMarkerForSite(inactiveSites[i], null);
+					markers[inactiveSites[i]["ID"] + ""] = marker;
+                                    }
+				    for(var i = 0; i < sites.length; i++){
+					siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
                                             var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
 						markers[sites[i]["ID"] + ""] = marker;
 						var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
