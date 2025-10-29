@@ -1908,7 +1908,7 @@
 					markers = {};
 					//set new markers
 					var sites = JSON.parse(data);
-                                    var inactiveSites = sites.filter(x => x["Active"] == "0" || x["SurveyCount"] < 10);
+                                    var lowSites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] < 10);
                                     var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] >= 10)
 				    var normalizedWeights = getNormalizedWeights(sites);
 				    var minRawValue = -1;
@@ -1916,12 +1916,12 @@
 					var minWeight = -100;
 					var maxWeight = -100;
 					var alreadyActiveMarker = null;
-				    for(var i = 0; i < inactiveSites.length; i++){
-					if($("#selectedSitePanel h2").eq(0)[0].innerHTML == inactiveSites[i]["Name"]){
+				    for(var i = 0; i < lowSites.length; i++){
+					if($("#selectedSitePanel h2").eq(0)[0].innerHTML == lowSites[i]["Name"]){
 					    lastMarker = marker;
 					    alreadyActiveMarker = marker;
 					}
-					var marker = defineMarkerForSite(inactiveSites[i], null);
+					var marker = defineMarkerForSite(lowSites[i], null);
                                     }
 				    for(var i = 0; i < sites.length; i++){
 					var color = mapPercentToColor(normalizedWeights[i]);
@@ -2023,14 +2023,14 @@
 					console.log("Sites loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					saveMapFilters();
 					var sites = JSON.parse(data);
-                                    var inactiveSites = sites.filter(x => x["Active"] == "0" || x["SurveyCount"] < 10);
+                                    var lowSites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] < 10);
                                     var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] >= 10)
 				    var normalizedWeights = getNormalizedWeights(sites);
 				    var minRawValue = -1;
 				    var maxRawValue = -1;
-				    for(var i = 0; i < inactiveSites.length; i++){
-					var marker = defineMarkerForSite(inactiveSites[i], null);
-					markers[inactiveSites[i]["ID"] + ""] = marker;
+				    for(var i = 0; i < lowSites.length; i++){
+					var marker = defineMarkerForSite(lowSites[i], null);
+					markers[lowSites[i]["ID"] + ""] = marker;
                                     }
 				    for(var i = 0; i < sites.length; i++){
 					siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
