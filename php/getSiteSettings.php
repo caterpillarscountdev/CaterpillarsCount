@@ -20,6 +20,7 @@
                           "name" => html_entity_decode($site->getName()),
                           "description" => html_entity_decode($site->getDescription()),
                           "url" => $site->getURL(),
+                          "password" => $site->getClearPassword(),
                           "openToPublic" => $site->getOpenToPublic(),
                           "active" => $site->getActive(),
 			);
