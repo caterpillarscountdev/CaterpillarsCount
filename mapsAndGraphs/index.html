@@ -1004,7 +1004,6 @@
 				return str.slice(left, right + index);
 			}
 			function attachAutoCompleteToInput(inputElement, sourceList){
-                            console.log("source", sourceList);
 				$(inputElement).autocomplete({
 					minLength: 2,
 					source: function(request, response) {
@@ -1786,69 +1785,16 @@
 					numberOfShownSiteUserRankings = 10;
 				}
 			}
-			function hexToRgb(hex) {
-				// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-				var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-				hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-					return r + r + g + g + b + b;
-				});
-				var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-				return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [0, 0, 0];
-			}
 			function mapPercentToColor(percent){
-				percent = Number(percent.toString().replace("%", ""));
-				//alert(percent);
-				//var colors = [[247,255,0], [255,140,0], [255,0,0]];//yellow, orange, red
-				//var colors = [hexToRgb("#000dff"), hexToRgb("#ff00ee")];//royalblue, hotpink
-				//var colors = [hexToRgb("#000dff"), hexToRgb("#22ff00")];//royalblue, limegreen
-				//var colors = [hexToRgb("#0022ff"), hexToRgb("#0dfa30"), hexToRgb("#f7ff00"), hexToRgb("#ff0000")];//blue, green, yellow, red
-				var colors = [hexToRgb("#2d5227"), hexToRgb("#22ff00")];//darkgreen, limegreen
-				//var colors = [hexToRgb("#2d5227"), [27,145,141], hexToRgb("#22ff00")];//darkgreen, bluegreen, limegreen
-				//var colors = [[66,0,83], [27,145,141], [253,232,32]];//dark purple, bluegreen, yellow
-				//var colors = [hexToRgb("#000000"), hexToRgb("#22ff00")];//black, limegreen
-				//var colors = [hexToRgb("#000787"), hexToRgb("#ff00ff")];//midnightblue, hotpink
-				//var colors = [hexToRgb("#440154"), hexToRgb("#21908c"), hexToRgb("#FDE725")]; //viridis
-				if(percent == 0) return "rgb(" + colors[0].join(", ") + ")"; //added this line because it doesn't seem to work as desired 2 lines below
-				for(var i = 0; i < colors.length; i++){
-					if(percent == (i/(colors.length - 1))) return "rgb(" + colors[i].join(", ") + ")";
-				}
-				var color1, color2;
-				for(var i = 1; i < colors.length; i++){
-					if(percent < (i/(colors.length - 1))){
-						color1 = colors[i];
-						color2 = colors[i - 1];
-						percent = (percent - ((i - 1) * (1/(colors.length - 1)))) / ((i/(colors.length - 1)) - ((i - 1) * (1/(colors.length - 1))));
-					}
-				}
-				var w1 = ((percent * 2 - 1)/1+1) / 2;
-				var w2 = 1 - w1;
-				return "rgb(" + Math.round(color1[0] * w1 + color2[0] * w2) + ", " + Math.round(color1[1] * w1 + color2[1] * w2) + ", " + Math.round(color1[2] * w1 + color2[2] * w2) + ")";
+                            var [color2, color1] = [[45,82,39], [34,255,0]]
+			    var w1 = percent;
+			    var w2 = 1 - w1;
+			    return "rgb(" + Math.round(color1[0] * w1 + color2[0] * w2) + ", " + Math.round(color1[1] * w1 + color2[1] * w2) + ", " + Math.round(color1[2] * w1 + color2[2] * w2) + ")";
 			}
-			function getNormalizedWeights(sitesArray){//data is in the form of: [{"ID": 2, "Name": "Example Site", "Data": 9999, ...etc}]
-				var max = 0;
-				var min = false;
-				for(var i = 0; i < sitesArray.length; i++){
-					var data = Number(sitesArray[i]["Weight"].toString().replace(/[^0-9.-]/g, ""));
-					var isExampleSite = (Number(sitesArray[i]["ID"]) == 2);
-					if(min === false && !isExampleSite){min = data;}
-					if(data > max && !isExampleSite){
-						max = data;
-					}
-					if(data < min && !isExampleSite){
-						min = data;
-					}
-				}
-				var arrToReturn = [];
-				for(var i = 0; i < sitesArray.length; i++){
-					var data = Number(sitesArray[i]["Weight"].toString().replace(/[^0-9.-]/g, ""));
-					var minMaxedData = min;
-					if(max > min){
-						minMaxedData = (data - min) / (max - min);
-					}
-					var cappedMinMaxedData = Math.max(0, Math.min(1, minMaxedData));
-					arrToReturn[arrToReturn.length] = cappedMinMaxedData;
-				}
-				return arrToReturn;
+			function getNormalizedWeights(sitesArray){
+                            //data is in the form of: [{"ID": 2, "Name": "Example Site", "Data": 9999, ...etc}]
+                            var weights = sitesArray.map((x) => Number(x["Weight"])).sort((a,b) => a-b);
+                            return sitesArray.map((x) => weights.indexOf(x["Weight"]) / (weights.length -1));
 			}
 
                         function defineMarkerForSite(site, normalWeight) {
@@ -1856,16 +1802,20 @@
 			    var latlng = {lat:Number(ll[0]), lng:Number(ll[1])};
 			    var color = mapPercentToColor(normalWeight);
 			    var scale = 7;
-			    var zIndex = Math.round(normalWeight * 100);
-			    if(site["FilteredSurveyCount"] == 0){
+			    var zIndex = site["ID"];
+			    if(normalWeight == null || site["FilteredSurveyCount"] == 0){
 				scale = 5;
 				color = "#bbb";
 				zIndex = -1;
 			    }
+                            var surveys = ""
+                            if (normalWeight == null && site["SurveyCount"] > 0) {
+                                var surveys = " (Only " + site["SurveyCount"] + " Survey" + (site["SurveyCount"] > 1 ? "s" : "") + ")";
+                            }
 			    var marker = new google.maps.Marker({
 				map: map,
 				position: latlng,
-				title: (site["Name"] + ": " + site["RawValue"]),
+				title: (site["Name"] + ": " + site["RawValue"] + surveys),
 				zIndex: zIndex,
 				defaultZIndex: zIndex,
 				icon: {
@@ -1958,25 +1908,28 @@
 					markers = {};
 					//set new markers
 					var sites = JSON.parse(data);
-					var normalizedWeights = getNormalizedWeights(sites);
-					var minRawValue = -1;
+                                    var lowSites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] < 10);
+                                    var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] >= 10)
+				    var normalizedWeights = getNormalizedWeights(sites);
+				    var minRawValue = -1;
 					var maxRawValue = -1;
 					var minWeight = -100;
 					var maxWeight = -100;
 					var alreadyActiveMarker = null;
-					for(var i = 0; i < sites.length; i++){
-                                            if (sites[i]["Active"] == "0" && sites[i]["SurveyCount"] == 0) { continue }
-                                            
-					    var color = mapPercentToColor(normalizedWeights[i]);
-					    var currentColor = color;
-						if($("#selectedSitePanel h2").eq(0)[0].innerHTML == sites[i]["Name"]){
-							currentColor = "#fed136";
-						}
-						var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
-						if(currentColor == "#fed136"){
-							lastMarker = marker;
-							alreadyActiveMarker = marker;
-						}
+				    for(var i = 0; i < lowSites.length; i++){
+					if($("#selectedSitePanel h2").eq(0)[0].innerHTML == lowSites[i]["Name"]){
+					    lastMarker = marker;
+					    alreadyActiveMarker = marker;
+					}
+					var marker = defineMarkerForSite(lowSites[i], null);
+                                    }
+				    for(var i = 0; i < sites.length; i++){
+					var color = mapPercentToColor(normalizedWeights[i]);
+					var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
+					if($("#selectedSitePanel h2").eq(0)[0].innerHTML == sites[i]["Name"]){
+					    lastMarker = marker;
+					    alreadyActiveMarker = marker;
+					}
 
 					    var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
 					    if(rawValueNumber < minRawValue || minRawValue == -1){
@@ -1995,19 +1948,18 @@
 					if(alreadyActiveMarker !== null){
 						alreadyActiveMarker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
 					}
-					for(var i = 0; i < $(".scaleCircle").length; i++){
-						if(comparisonMetric == "occurrence"){
-							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1)))), 0) + "%</div>";
-						}
-						else if(comparisonMetric == "meanBiomass"){
-							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1)))), 0) + "</div>";
-						}
-						else{//density
-							var scaleNumber = Math.pow(10, minWeight + ((maxWeight - minWeight) * (i * (1/($(".scaleCircle").length - 1)))));
+                                    var norms = sites.map(x => Number(x["Weight"])).sort((a,b) => a-b)
+                                    var scales = $(".scaleCircle").length;
+				    for(var i = 0; i < scales; i++){
+					if(comparisonMetric == "occurrence" || comparisonMetric == "meanBiomass"){
+					    $(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(indexBound(norms, i == 0 ? 0 : norms.length*(i+1)/scales), 0) + "%</div>";
+					}
+					    else{//density
+							var scaleNumber = Math.pow(10, minWeight + ((maxWeight - minWeight) * (i * (1/(scales - 1)))));
 							if(i == 0){
 								scaleNumber = minRawValue;
 							}
-							else if(i == $(".scaleCircle").length - 1){
+							else if(i == scales - 1){
 								scaleNumber = maxRawValue;
 							}
 							else if(minRawValue == maxRawValue){
@@ -2015,7 +1967,7 @@
 							}
 							$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(scaleNumber, 2) + "</div>";
 						}
-						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
+					    $(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/(scales - 1)))});
 					}
 					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">" + readableArthropod + " on " + plantSpecies.replace("%", "All Trees") + "<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">" + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().charAt(0).toUpperCase() + (readableObservationMethod + " " + readableComparisonMetric).toLowerCase().trim().slice(1) + " " + readableArthropod.toLowerCase() + readableComparisonMetricAfterText + " that are at least " + minSize + " mm long on " + plantSpecies.replace("%", "All Trees").toLowerCase() + " (" + readableIncludeWetLeaves + ") " + months + " over the period of " + years + "<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
 					closeHeight($("#mapFilters"), function(){$("#mapFilters")[0].style.borderBottom="0px none transparent";$("#mapTitle").stop().animate({opacity:"1"});$("#mapScale").stop().animate({opacity:"1"});showMapDownloadButton();});
@@ -2053,7 +2005,12 @@
 					yearEnd: filterYearEnd
 				};
 			}
-
+                 function indexBound(l, i) {
+                     i = Math.floor(i);
+                     if (i < 0) i = 0;
+                     if (i > l.length-1) i = l.length-1;
+                     return l[i]
+                 }
 			var siteNamesAndIDs = [];
 			function initializeMap() {
 				map = new google.maps.Map($('#map')[0], {
@@ -2066,12 +2023,17 @@
 					console.log("Sites loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					saveMapFilters();
 					var sites = JSON.parse(data);
-					var normalizedWeights = getNormalizedWeights(sites);
-					var minRawValue = -1;
-					var maxRawValue = -1;
-					for(var i = 0; i < sites.length; i++){
-                                            if (sites[i]["Active"] == "0" && sites[i]["SurveyCount"] == 0) { continue }
-					    siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
+                                    var lowSites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] < 10);
+                                    var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] >= 10)
+				    var normalizedWeights = getNormalizedWeights(sites);
+				    var minRawValue = -1;
+				    var maxRawValue = -1;
+				    for(var i = 0; i < lowSites.length; i++){
+					var marker = defineMarkerForSite(lowSites[i], null);
+					markers[lowSites[i]["ID"] + ""] = marker;
+                                    }
+				    for(var i = 0; i < sites.length; i++){
+					siteNamesAndIDs[siteNamesAndIDs.length] = [sites[i]["Name"], sites[i]["ID"]];
                                             var marker = defineMarkerForSite(sites[i], normalizedWeights[i]);
 						markers[sites[i]["ID"] + ""] = marker;
 						var rawValueNumber = Number("0" + sites[i]["RawValue"].toString().replace(/[^0-9.]/g, ""));
@@ -2082,9 +2044,11 @@
 							maxRawValue = rawValueNumber;
 						}
 					}
-					for(var i = 0; i < $(".scaleCircle").length; i++){
-						$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + Math.round(minRawValue + ((maxRawValue - minRawValue) * (i * (1/($(".scaleCircle").length - 1))))) + "%</div>";
-						$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/($(".scaleCircle").length - 1)))});
+                                    var norms = sites.map(x => Number(x["Weight"])).sort((a,b) => a-b)
+                                    var scales = $(".scaleCircle").length;
+				    for(var i = 0; i < scales; i++){
+					$(".scaleCircle").eq(i)[0].innerHTML = "<div class=\"scaleLabel\">" + roundTo(indexBound(norms, i == 0 ? 0 : norms.length*(i+1)/scales), 0) + "%</div>";
+					$(".scaleCircle").eq(i).css({background:mapPercentToColor(i * (1/(scales - 1)))});
 					}
 					$("#mapTitle")[0].innerHTML = "<div class=\"title\">Currently Showing:</div><div onmouseenter=\"$(this).find('.bottomToolTip').stop().fadeIn(200);\" onmouseleave=\"$(this).find('.bottomToolTip').stop().fadeOut(200);\" style=\"position:relative;cursor:default;text-decoration:underline;\">Caterpillars on all trees<div class='bottomTooltip' style=\"text-decoration:none;white-space:normal;width:228px;left:55px;right:auto;font-size:10px;text-transform:none;\">Percent of surveys with caterpillars that are at least 0 mm long on all trees (including surveys with wet leaves) from January to December over the period of all time<div class='arrow' style=\"position:absolute;top:-7px;left:20px;margin:0px;\"></div></div></div>";
 					siteNamesAndIDs.sort(function(a, b){
@@ -4646,6 +4610,8 @@
 								<div class="smallScaleCircle" onmouseenter="$(this).find('.bottomToolTip').stop().fadeIn(200);" onmouseleave="$(this).find('.bottomToolTip').stop().fadeOut(200);" style="position:relative;">
 									<div class="bottomToolTip" style="width:109px;text-align:center;right:-18px;"><div class="arrow" style="position:absolute;margin:0px;top:-7px;right:17px;"></div>No surveys</div>
 								</div>
+								<div class="scaleCircle" style="position:relative;"></div>
+								<div class="scaleCircle" style="position:relative;"></div>
 								<div class="scaleCircle" style="position:relative;"></div>
 								<div class="scaleCircle" style="position:relative;"></div>
 								<div class="scaleCircle" style="position:relative;"></div>
