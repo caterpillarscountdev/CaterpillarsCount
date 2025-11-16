@@ -978,12 +978,9 @@
 							queueNotice("error", data.replace("false|", ""));
 						}
 					})
-					.fail(function(){
-						//error
-						//$('.loading').fadeOut(0);
-						//$('#surveys').fadeIn(0);
-						
-						queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again.");
+					.fail(function(req, status, error){
+                                            let msg = [req.status, status, error].join(": ");
+					    queueNotice("error", "Your request did not process. You may have a weak internet connection, or our servers might be busy. Please try again. (" + msg + ")");
 					});
 					
 					
@@ -2944,7 +2941,7 @@
 						<ul onclick="event.stopPropagation();">
 							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
 							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
-							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="https://www.inaturalist.org/observations?project_id=5443&verifiable=any">Recent Observations</a></li>
 							<li><a href="../reports">Reports</a></li>
 							<li><a href="../publications">Publications</a></li>
 							<li><a href="../dataDownload">Data Download</a></li>

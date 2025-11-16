@@ -72,9 +72,9 @@ class User
 		if ($id ===0) {
 			return 'Did not add a user to the database successfully for ' . $desiredEmail;
 		}
-		return new User($id, $firstName, $lastName, $desiredEmail, "", $salt, $saltedPasswordHash, false, "");
+		return new User($id, $firstName, $lastName, $desiredEmail, "", $salt, $saltedPasswordHash, false, "", "", "", "");
 	}
-	private function __construct($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID) {
+	private function __construct($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistJWToken) {
 		$this->id = intval($id);
 		$this->firstName = $firstName;
 		$this->lastName = $lastName;
@@ -84,6 +84,9 @@ class User
 		$this->saltedPasswordHash = $saltedPasswordHash;
 		$this->hidden = $hidden;
 		$this->iNaturalistObserverID = $iNaturalistObserverID;
+		$this->iNaturalistAccountName = $iNaturalistAccountName;
+		$this->iNaturalistAccessToken = $iNaturalistAccessToken;
+		$this->iNaturalistJWToken = $iNaturalistJWToken;
 
 		$this->deleted = false;
 	}
@@ -108,8 +111,11 @@ class User
 		$saltedPasswordHash = $userRow["SaltedPasswordHash"];
 		$hidden = $userRow["Hidden"];
 		$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+		$iNaturalistAccountName = $userRow["INaturalistAccountName"];
+		$iNaturalistAccessToken = $userRow["INaturalistAccessToken"];
+		$iNaturalistJWToken = $userRow["INaturalistJWToken"];
 
-		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistJWToken);
 	}
 
 	public static function findByEmail($email) {
@@ -134,8 +140,11 @@ class User
 		$saltedPasswordHash = $userRow["SaltedPasswordHash"];
 		$hidden = $userRow["Hidden"];
 		$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+		$iNaturalistAccountName = $userRow["INaturalistAccountName"];
+		$iNaturalistAccessToken = $userRow["INaturalistAccessToken"];
+		$iNaturalistJWToken = $userRow["INaturalistJWToken"];
 
-		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistJWToken);
 	}
 
 	public static function findBySignInKey($email, $salt){
@@ -160,8 +169,11 @@ class User
 		$saltedPasswordHash = $userRow["SaltedPasswordHash"];
 		$hidden = $userRow["Hidden"];
 		$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+		$iNaturalistAccountName = $userRow["INaturalistAccountName"];
+		$iNaturalistAccessToken = $userRow["INaturalistAccessToken"];
+		$iNaturalistJWToken = $userRow["INaturalistJWToken"];
 
-		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+		return new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistJWToken);
 	}
 	
 	public static function findUsersByIDs($userIDs){
@@ -187,8 +199,11 @@ class User
 			$saltedPasswordHash = $userRow["SaltedPasswordHash"];
 			$hidden = $userRow["Hidden"];
 			$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+                        $iNaturalistAccountName = $userRow["INaturalistAccountName"];
+                        $iNaturalistAccessToken = $userRow["INaturalistAccessToken"];
+                        $iNaturalistJWToken = $userRow["INaturalistJWToken"];
 
-			$usersArray[] = new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+			$usersArray[] = new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistJWToken);
 		}
 		return $usersArray;
 	}
@@ -208,8 +223,11 @@ class User
 			$saltedPasswordHash = $userRow["SaltedPasswordHash"];
 			$hidden = $userRow["Hidden"];
 			$iNaturalistObserverID = $userRow["INaturalistObserverID"];
+                        $iNaturalistAccountName = $userRow["INaturalistAccountName"];
+                        $iNaturalistAccessToken = $userRow["INaturalistAccessToken"];
+                        $iNaturalistJWToken = $userRow["INaturalistJWToken"];
 
-			$usersArray[] = new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID);
+			$usersArray[] = new User($id, $firstName, $lastName, $desiredEmail, $email, $salt, $saltedPasswordHash, $hidden, $iNaturalistObserverID, $iNaturalistAccountName, $iNaturalistAccessToken, $iNaturalistJWToken);
 		}
 		return $usersArray;
 	}
@@ -287,6 +305,22 @@ class User
 		return $this->iNaturalistObserverID;
 	}
 
+	public function getINaturalistAccountName() {
+		if($this->deleted){return null;}
+		return $this->iNaturalistAccountName;
+	}
+
+	public function getINaturalistAccessToken() {
+		if($this->deleted){return null;}
+		return $this->iNaturalistAccessToken;
+	}
+
+	public function getINaturalistJWToken() {
+		if($this->deleted){return null;}
+		return $this->iNaturalistJWToken;
+	}
+        
+        
 	public function getSites(){
 		if($this->deleted){return null;}
 
@@ -415,7 +449,7 @@ class User
 					if(mysqli_num_rows($query) == 0){
 						mysqli_query($dbconn, "UPDATE `User` SET `INaturalistObserverID`='$uniqueObserverID' WHERE ID='" . $this->id . "'");
 						$this->iNaturalistObserverID = $uniqueObserverID;
-						email($this->email, "We've linked your Caterpillars Count! account with iNaturalist and SciStarter!", "<div style=\"line-height:150%;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"color:#777;margin-bottom:40px;font-size:20px;\">Thanks for verifying your <b>Caterpillars Count!</b> account! You can now sign in to our <a href=\"https://caterpillarscount.unc.edu/\" style=\"color:#e6bf31;\">website</a> and mobile app to <a href=\"https://caterpillarscount.unc.edu/hostASurveySite/\" style=\"color:#e6bf31;\">create sites</a>, <a href=\"https://caterpillarscount.unc.edu/submitObservations/\" style=\"color:#e6bf31;\">submit observations</a>, review your data, and more!<br/><br/>We encourage you to try out our <a href=\"https://caterpillarscount.unc.edu/virtualSurvey/\" style=\"color:#e6bf31;\">Virtual Survey Game</a> to get practice identifying arthropods and following survey protocols before getting out in the field.<br/><br/>Also, we've gone ahead and linked your Caterpillars Count! account to a couple other websites that you might enjoy.<br/><br/>We've connected you to SciStarter, which is useful if you want to participate in other citizen science projects in addition to Caterpillars Count! and track your participation all in one place. Learn more about SciStarter on our website, <a href=\"https://caterpillarscount.unc.edu/SciStarter/\" style=\"color:#e6bf31;\">here</a>.<br/><br/>We've also made you a unique Caterpillars Count! Observer ID and used that to link you up with iNaturalist! <b>Your unique Caterpillars Count! Observer ID is \"" . $uniqueObserverID . "\".</b> When you choose to include a photo with any observations you submit, that photo will be automatically submitted to <a href=\"https://www.inaturalist.org\" style=\"color:#e6bf31;\">iNaturalist.org</a>, an independent website that will allow experts to review and potentially identify your observation. Although all photo observations are submitted to the project-wide <a href=\"https://www.inaturalist.org/observations?place_id=any&user_id=caterpillarscount&verifiable=any\" style=\"color:#e6bf31;\">Caterpillars Count! iNaturalist account</a>, you will be able to find your own observations by referring to your Caterpillars Count! Observer ID. Once you've submitted observations with photos, they will be available, along with any potential taxonomic identifications, at this <a href=\"https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=" . $uniqueObserverID . "\" style=\"color:#e6bf31;\">link</a>, or by going to My Account > Manage My Surveys on the website.<br/><br/><b>PRIVACY:</b> If you do not wish your name to appear on our <a href=\"https://caterpillarscount.unc.edu/mapsAndGraphs\" style=\"color:#e6bf31;\">User Leaderboard</a> or your username to appear in observations posted to iNaturalist (example <a href=\"https://www.inaturalist.org/observations/17704507\" style=\"color:#e6bf31;\">here</a>), you may change your privacy settings by logging in to our website and visiting your \"Settings\" page. Your name or username will instead appear simply as \"anonymous\".<br/><br/>Thanks for creating an account, and happy arthropod hunting!<br/><br/>The Caterpillars Count! Team</div></div>");
+						email($this->email, "We've linked your Caterpillars Count! account with iNaturalist and SciStarter!", "<div style=\"line-height:150%;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"color:#777;margin-bottom:40px;font-size:20px;\">Thanks for verifying your <b>Caterpillars Count!</b> account! You can now sign in to our <a href=\"https://caterpillarscount.unc.edu/\" style=\"color:#e6bf31;\">website</a> and mobile app to <a href=\"https://caterpillarscount.unc.edu/hostASurveySite/\" style=\"color:#e6bf31;\">create sites</a>, <a href=\"https://caterpillarscount.unc.edu/submitObservations/\" style=\"color:#e6bf31;\">submit observations</a>, review your data, and more!<br/><br/>We encourage you to try out our <a href=\"https://caterpillarscount.unc.edu/virtualSurvey/\" style=\"color:#e6bf31;\">Virtual Survey Game</a> to get practice identifying arthropods and following survey protocols before getting out in the field.<br/><br/>Also, we've gone ahead and linked your Caterpillars Count! account to a couple other websites that you might enjoy.<br/><br/>We've connected you to SciStarter, which is useful if you want to participate in other citizen science projects in addition to Caterpillars Count! and track your participation all in one place. Learn more about SciStarter on our website, <a href=\"https://caterpillarscount.unc.edu/SciStarter/\" style=\"color:#e6bf31;\">here</a>.<br/><br/>Do you have an iNaturalist account? When you include a photo with any observations you submit to Caterpillars Count! that photo will be automatically submitted to <a href=\"https://www.inaturalist.org\" style=\"color:#e6bf31;\">iNaturalist.org</a>, an independent website that will allow experts to review and potentially identify your observation. You can link your own iNaturalist account to use for these photos on our website at My Account > Settings > <a href=\"https://caterpillarscount.unc.edu/settings\" style=\"color:#e6bf31;\">Link iNaturalist Account</a>. Otherwise, photos are submitted to the project-wide Caterpillars Count! iNaturalist account, in which case you will be able to find your own observations by referring to your Caterpillars Count! Observer ID which is \"" . $uniqueObserverID . "\".  Once you've submitted observations with photos, they will be available, along with any potential taxonomic identifications, on iNaturalist or by going to My Account > Manage My Surveys on the website.<br/><br/><b>PRIVACY:</b> If you do not wish your name to appear on our <a href=\"https://caterpillarscount.unc.edu/mapsAndGraphs\" style=\"color:#e6bf31;\">User Leaderboard</a> or your username to appear in observations posted to iNaturalist (example <a href=\"https://www.inaturalist.org/observations/17704507\" style=\"color:#e6bf31;\">here</a>), you may change your privacy settings by logging in to our website and visiting your \"Settings\" page. Your name or username will instead appear simply as \"anonymous\".<br/><br/>Thanks for creating an account, and happy arthropod hunting!<br/><br/>The Caterpillars Count! Team</div></div>");
 						return true;
 					}
 					$i++;
@@ -424,6 +458,50 @@ class User
 		}
 		return false;
 	}
+
+        public function setINaturalistJWToken($token) {
+          $dbconn = (new Keychain)->getDatabaseConnection();
+          mysqli_query($dbconn, "UPDATE `User` SET `INaturalistJWToken`='$token' WHERE ID='" . $this->id . "'");
+          $this->iNaturalistJWToken = $token;
+          return true;
+        }
+        
+        public function setINaturalistLinked($accountName, $accessToken) {
+          $dbconn = (new Keychain)->getDatabaseConnection();
+          mysqli_query($dbconn, "UPDATE `User` SET `INaturalistAccountName`='$accountName', `INaturalistAccessToken`='$accessToken'  WHERE ID='" . $this->id . "'");
+          $this->iNaturalistAccountName = $accountName;
+          $this->iNaturalistAccessToken = $accessToken;
+          return true;
+        }
+
+        public function refreshINaturalistJWToken($accessToken=null, $skipCheck=false) {
+          $token = $accessToken;
+          if (!$token) {
+            $token = $this->iNaturalistAccessToken;
+          }
+          if (!$token) {
+            return false;
+          }
+
+          $needed = true;
+          if (!$skipCheck) {
+            $response = $this->getINaturalistUserDetails();
+            $needed = $response["error"] && $response["status"] == 401;
+          }
+          if ($needed) {
+              $response = curlINatJWT($token);
+              //error_log("jwt " . print_r($response, true));
+              if ($response["api_token"]) {
+                $this->setINaturalistJWToken($response["api_token"]);
+            }
+          }
+          return $this->iNaturalistJWToken;
+        }
+
+        public function getINaturalistUserDetails() {
+          $token = $this->iNaturalistJWToken;
+          return curlINatAPI("/v1/users/me", null, $token, array("GET" => 1));
+        }
 
 
 //REMOVER

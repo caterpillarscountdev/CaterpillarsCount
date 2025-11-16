@@ -1,0 +1,1 @@
+ALTER TABLE Site ADD COLUMN ClearPassword text NULL DEFAULT NULL;

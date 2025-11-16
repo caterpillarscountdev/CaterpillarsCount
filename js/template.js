@@ -462,7 +462,7 @@
 			}
 
 function accessManageMenu() {
-  toggleNav();
+  toggleNav(true);
   $("nav>ul>li:last-of-type").eq(0)[0].click();
 }
 			
@@ -624,12 +624,12 @@ function accessManageMenu() {
 			}
 			
 			
-			function toggleNav(){
+			function toggleNav(openOnly){
 				if(animatingMenu){
 					return false;
 				}
 				
-				if($("nav").eq(0)[0].style.maxHeight == "0px" || $("nav").eq(0)[0].style.maxHeight == ""){
+				if(openOnly || $("nav").eq(0)[0].style.maxHeight == "0px" || $("nav").eq(0)[0].style.maxHeight == ""){
 					$("nav").eq(0).stop().animate({maxHeight:"10000px"}, 3500);
 				}
 				else{

@@ -43,7 +43,7 @@
 		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
-		<link href="../css/submitObservations.css?v=14" rel="stylesheet">
+		<link href="../css/submitObservations.css?v=15" rel="stylesheet">
 		<link href="../css/checkbox.css" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
 		<script src="../js/template.js?v=4"></script>
@@ -108,6 +108,25 @@
 				}
 			}
 		</style>
+                <style>
+		 #helpbox{
+		     text-align:center;
+		     position:fixed;
+		     top:0px;
+		     left:0px;
+		     z-index:99999;
+		     width:100%;
+		     padding:20px;
+		     box-sizing:border-box;
+		     color:#fff;
+		     font-size:16px;
+		     display:none;
+		     font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		     max-height:90%;
+		     overflow:scroll;
+		     background:rgba(0,0,0,0.9);
+		 }                 
+                </style>
 		<script>
 		 requireLogIn();
 
@@ -131,14 +150,22 @@
 
                      showNotifyOfflineSubmit();
 
-                     if(!haveInternet()) {
-                         $("#plantSpecies").attr('placeholder', 'offline? leave this blank to use site plant data');
-                     }
+                     resetLastSitePassword();
+
 		 });
 
 		 $(window).resize(function(){
 		     $('.ui-autocomplete').css({display:"none"});
 		 });
+
+                 function helpbox(message) {
+		     $("#helpbox")[0].innerHTML = message;
+		     $("#helpbox").stop().fadeIn();
+
+                 }
+                 function closeHelpbox() {
+		     $("#helpbox").stop().fadeOut();
+                 }
                  
 		</script>
 	</head>
@@ -151,6 +178,7 @@
 			</div>
 		</div>
 		<div id="clearInteractionBlock"></div>
+		<div id="helpbox" onclick="closeHelpbox();"></div>
 		<div id="error" onclick="hideNotice();"></div>
 		<div id="confirmation" onclick="hideNotice();"></div>
 		<div id="alert" onclick="hideNotice();"></div>
@@ -235,7 +263,7 @@
 						<ul onclick="event.stopPropagation();">
 							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
 							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
-							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="https://www.inaturalist.org/observations?project_id=5443&verifiable=any">Recent Observations</a></li>
 							<li><a href="../reports">Reports</a></li>
 							<li><a href="../publications">Publications</a></li>
 							<li><a href="../dataDownload">Data Download</a></li>
@@ -293,12 +321,12 @@
 									<table class="instructionInputTitleTable">
 										<tr>
 											<td class="observationFieldTitle" style="padding:0px;">Branch survey code:</td>
-											<td onclick="event.stopPropagation();queueNotice('alert', 'Please enter the multi-letter code for the branch you are about to survey');"><img src="../images/question.png"/></td>
+											<td onclick="event.stopPropagation();queueNotice('alert', 'Please enter the multi-letter code for the branch you are about to survey. Note that if your branch is dead or has few leaves you may still use this code to survey any other branch of the same plant species that is nearby, especially if there are alternatives with more foliage.');"><img src="../images/question.png"/></td>
 										<tr>
 									</table>
 									<div>
-										<div></div>
-										<input type="text" id="plantCode" class="noautocomplete" oninput="getPlant(this, $('#sitePasswordGroup'));if($('#time')[0].value == '' && $('#date')[0].value == ''){autosetDateAndTimeInputs();}" readonly autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" name="noautocomplete1"/>
+									  <div></div>
+									  <input type="text" id="plantCode" class="noautocomplete" onblur="closeHelpbox();" onfocus="helpbox('Please enter the multi-letter code for the branch you are about to survey. Note that if your branch is dead or has few leaves you may still use this code to survey any other branch of the same plant species that is nearby, especially if there are alternatives with more foliage.')" oninput="getPlant(this, $('#sitePasswordGroup'));if($('#time')[0].value == '' && $('#date')[0].value == ''){autosetDateAndTimeInputs();}" readonly autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" name="noautocomplete1"/>
 									</div>
 								</div>
 
@@ -307,13 +335,13 @@
 										<tr>
 											<td class="observationFieldTitle" style="padding:0px;">Site password:</td>
 											<td onclick="event.stopPropagation();queueNotice('alert', 'Please consult the local site coordinator for the site password in order to submit observations for this site.');"><img src="../images/question.png"/></td>
-										<tr>
+										        <tr>
 									</table>
-									<input type="password" id="sitePassword" autocomplete="new-password" readonly class="noautocomplete" onclick="this.select();" oninput="uncheckCheckbox($('#samePass .checkbox').eq(0));" name="noautocomplete2"/>
+									<input type="password" id="sitePassword" autocomplete="new-password" readonly class="noautocomplete"  onblur="closeHelpbox();" onfocus="helpbox('Please consult the local site coordinator for the site password in order to submit observations for this site.')" onclick="this.select();" oninput="uncheckCheckbox($('#samePass .checkbox').eq(0));" name="noautocomplete2"/>
 									<div id="samePass" onclick="toggleSamePass();">
 										<table>
 											<tr>
-												<td>Same as last submission</td>
+												<td>Same password as previous observation</td>
 												<td><div class="checkbox"></div></td>
 											<tr>
 										</table>

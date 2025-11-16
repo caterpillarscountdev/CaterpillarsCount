@@ -593,6 +593,10 @@ function showNotifyOfflineSubmit() {
 			var switchingToPanel = false;
 			var currentPanelID = "site";
 			function continueToPanel(secondPanelID){
+                          if(!haveInternet()) {
+                            $("#plantSpecies").attr('placeholder', 'offline? leave this blank to use site plant data');
+                          }
+                          
 				//once a user is logged in, this function allows them to switch between "site", "arthropod", and "plant" panels.
 				if(!switchingToPanel){
 					if(secondPanelID != currentPanelID){
@@ -1347,7 +1351,6 @@ function showNotifyOfflineSubmit() {
 			
 			var arthropodData = [];
 			var finishing = false;
-			var lastPass = "";
 			function finish(){
 				if(finishing){return false;}
 				var plantCode = $("#plantCode")[0].value.trim();
@@ -1389,6 +1392,8 @@ function showNotifyOfflineSubmit() {
 					queueNotice("error", errors);
 					return false;
 				}
+
+                                window.localStorage.setItem("lastSitePassword", sitePassword);
 					
 				if(!haveInternet()){
 					finishing = true;
@@ -1579,6 +1584,7 @@ function showNotifyOfflineSubmit() {
 			}
 			
 			function toggleSamePass(){
+                                let lastPass = window.localStorage.getItem("lastSitePassword");
 				if($("#samePass .checkBox")[0].className.indexOf("checked") > -1){
 					uncheckCheckbox($("#samePass .checkBox").eq(0));
 					$("#sitePassword")[0].value = "";
@@ -2025,17 +2031,28 @@ function showNotifyOfflineSubmit() {
 				$(textareaElement).stop().animate({height:'54px', scrollTop:'0'});
 				$(textareaElement.parentNode).find('.textareaOtherLinesCover').stop().fadeIn();
 			}
+
+                        function resetLastSitePassword() {
+				let lastPass = $("#sitePassword")[0].value;
+                                if (lastPass) {
+                                  window.localStorage.setItem("lastSitePassword", lastPass);
+                                } else {
+                                  lastPass = window.localStorage.getItem("lastSitePassword");
+                                }
+				$("#sitePassword")[0].value = "";
+
+			        if(!haveInternet() && lastPass && $("#sitePasswordGroup")[0].style.display != "none"){
+					$("#samePass")[0].style.display = "block";
+					uncheckCheckbox($("#samePass .checkBox").eq(0));
+				}
+				$("#sitePasswordGroup").stop().show(0);
+                          
+                        }
 			
 			function restart(){
                                 showNotifyOfflineSubmit();
-                          
-				lastPass = $("#sitePassword")[0].value;
-				$("#sitePassword")[0].value = "";
-				if($("#sitePasswordGroup")[0].style.display != "none"){
-					$("#samePass")[0].style.display = "block";
-				}
-				$("#sitePasswordGroup").stop().show(0);
-				
+                                resetLastSitePassword();
+                          				
 				$("#plantCode")[0].value = "";
 				$("#plantCode")[0].parentNode.style.color = "";
 				$("#plantCode")[0].parentNode.style.borderRadius = "";

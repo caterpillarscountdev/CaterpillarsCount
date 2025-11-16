@@ -22,7 +22,23 @@
 	$averageNeedleLength = array_key_exists("averageNeedleLength", $_POST) ? $_POST["averageNeedleLength"] : -1;
 	$linearBranchLength = array_key_exists("linearBranchLength", $_POST) ? $_POST["linearBranchLength"] : -1;
 	$submittedThroughApp = custgetparam("submittedThroughApp");
-	
+
+        $reportingData = array(
+          "date" => $date,
+          "time" => $time,
+          "observationMethod" => $observationMethod,
+          "siteNotes" => $siteNotes,
+          "wetLeaves" => $wetLeaves,
+          "plantSpecies" => $plantSpecies,
+          "numberOfLeaves" => $numberOfLeaves,
+          "leafLength" => $averageLeafLength,
+          "herbivoryScore" => $herbivoryScore,
+          "needleLength" => $averageNeedleLength,
+          "branchLength" => $linearBranchLength,
+          "arthropodData" => $arthropodData
+          );
+
+
 	function explainError($fileError){
 		if($fileError == UPLOAD_ERR_INI_SIZE){return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';}
 		if($fileError == UPLOAD_ERR_FORM_SIZE){return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';}
@@ -79,8 +95,21 @@
                   $conn = (new Keychain)->getDatabaseConnection();
                   mysqli_begin_transaction($conn);
                   try {
-                
 			$user->setObservationMethodPreset($site, $observationMethod);
+
+                        //check for duplicate first, by [User, Plant, Date, Time] and count of arthropods
+                        $duplicateSQL = "SELECT Survey.ID, COUNT(ArthropodSighting.ID) AS ArthroCount FROM Survey JOIN User ON Survey.UserFKOfObserver = User.ID JOIN Plant ON Survey.PlantFK=Plant.ID JOIN Site ON Plant.SiteFK = Site.ID JOIN ArthropodSighting ON Survey.ID = ArthropodSighting.SurveyFK WHERE Plant.Code='$plantCode' AND User.ID='{$user->getID()}' AND ObservationMethod='$observationMethod' AND Survey.LocalDate='$date' AND Survey.LocalTime='$time' GROUP BY Survey.ID;";
+                        $query = mysqli_query($conn, $duplicateSQL);
+
+                        if(mysqli_num_rows($query) > 0){
+                          $row = mysqli_fetch_assoc($query);
+                          if ($row["ArthroCount"] == count($arthropodData)) {
+                            // silently ignore this duplicate submission
+                            mysqli_rollback($conn);
+                            die("true|");
+                          }
+                        }
+
 			//submit data to database
 			$survey = Survey::create($user, $plant, $date, $time, $observationMethod, $siteNotes, $wetLeaves, $plantSpecies, $numberOfLeaves, $averageLeafLength, $herbivoryScore, $averageNeedleLength, $linearBranchLength, $submittedThroughApp);
 			
@@ -129,12 +158,20 @@
 				die("false|" . $arthropodSightingFailures);
 			}
 			die("false|" . $survey);
-                  } catch (Exception $exception) {
+                  } catch (Throwable $exception) {
+                    $subj = "Submit Error for " . $email . " " . $plantCode;
+                    $body = $exception->getMessage();
+                    $body .= "\n\n" . print_r($reportingData, true);
+                    email("caterpillarscountdev@gmail.com", $subj, $body);
                     mysqli_rollback($conn);
                     throw $exception;
                   }
 		}
+                $subj = "Submit Site Password Error for " . $email . " " . $plantCode;
+                $body = "\n\n" . print_r($reportingData, true);
+                email("caterpillarscountdev@gmail.com", $subj, $body);
 		die("false|Enter a valid password.");
+                
 	}
 	die("false|Your log in dissolved. Maybe you logged in on another device.");
 ?>

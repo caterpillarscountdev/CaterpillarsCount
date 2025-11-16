@@ -2,6 +2,7 @@
         
 	require_once("orm/Plant.php");
 	require_once("orm/resources/mailing.php");
+        require_once("orm/resources/Customfunctions.php");
 	
 	function cleanParameter($param){
 		$param = preg_replace('!\s+!', ' ', trim(preg_replace('/[^a-zA-Z0-9.!*();:@&=+$,\/?%>-]/', ' ', trim((string)$param))));
@@ -18,21 +19,50 @@
 		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 
-        function submitINaturalistObservation($dbconn, $arthropodSightingID, $userTag, $plantCode, $date, $time, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $sawfly, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
+        $cachedTokens = array();
+
+        function iNatToken($dbconn, $userID, $accessToken) {
+          global $cachedTokens;
+          $token = null;
+          if (array_key_exists($accessToken, $cachedTokens)) {
+            $token = $cachedTokens[$accessToken];
+          }
+          if ($token) {
+            return $token;
+          }
+          // retrieve from access token
+          if ($accessToken) {
+            $response = curlINatJWT($accessToken);
+            if (array_key_exists("api_token", $response)) {
+              $token = $response["api_token"];
+            } else {
+              echo ("\nUser access token error: " . print_r($response, true));
+              // error getting user token, invalidate
+              mysqli_query($dbconn, "UPDATE User SET `INaturalistAccessToken` = '', `INaturalistJWToken = '' WHERE ID='$userID';");
+            }
+          }
+          if (!$token) {
+            // null user token will get CC token
+            $fields = array(
+              "grant_type" => "password",
+              "username" => "caterpillarscount",
+              "password" => getenv("iNaturalistPassword")
+              );
+            
+            $ccToken = curlINatOAuth($fields)["access_token"];
+            $token = curlINatJWT($ccToken)["api_token"];
+          }
+          $cachedTokens[$accessToken] = $token;
+          return $token;
+        }
+        
+
+        function submitINaturalistObservation($dbconn, $arthropodSightingID, $userID, $userTag, $userAccessToken, $plantCode, $date, $time, $observationMethod, $surveyNotes, $wetLeaves, $order, $hairy, $rolled, $tented, $sawfly, $beetleLarva, $arthropodQuantity, $arthropodLength, $arthropodPhotoURL, $arthropodNotes, $numberOfLeaves, $averageLeafLength, $herbivoryScore){
 		//GET AUTHORIZATION
-		$debuginat = false; // turn all debugging comments off with this variable
-		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. init for ID " . $arthropodSightingID . " -->");}
-		$ch = curl_init('https://www.inaturalist.org/oauth/token');
-		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. post oauth/token -->");}
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=" . getenv("iNaturalistAppID") . "&client_secret=" . getenv("iNaturalistAppSecret") . "&grant_type=password&username=caterpillarscount&password=" . getenv("iNaturalistPassword"));
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		if ($debuginat==true) {  echo("<!-- submitINaturalistObservation .. post set all opts -->");}
-		$token = json_decode(curl_exec($ch), true)["access_token"];
-		if ($debuginat==true) {  echo("<!-- got token  -->");}
-		curl_close ($ch);
+
+                $token = iNatToken($dbconn, $userID, $userAccessToken);
+                
+		echo("<!-- got token: $token  -->");
 		
 		//CREATE OBSERVATION
 		$plant = Plant::findByCode($plantCode);
@@ -123,78 +153,44 @@
 		}
 		
 		$data["observation"]["observation_field_values_attributes"] = $observationFieldValuesAttributes;
-  		$json = json_encode($data);
-                if ($debuginat==true) {  echo("<!--prepped data before curl api v1 inat obs -->");}
-  		$ch = curl_init("https://api.inaturalist.org/v1/observations");
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
-		$observation = json_decode(curl_exec($ch), true);
-		curl_close ($ch);
+
+                $observation = curlINatAPI("/v1/observations", $data, $token);
+                if ($observation["error"]) {
+                  try {
+                    if ($observation["status"] < 500) {
+                      // do not retry non-500s, log the result and let us check
+                      $err = $observation["status"] . " " . print_r($observation["error"], true);
+                      mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='-1', INaturalistError='" . $err . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
+                    }
+                  } finally {
+                    throw new Exception("Observation API error: " . print_r($observation, true));
+                  }
+                }
                 echo("\nMade observation for " . $arthropodSightingID . " :" . $observation["id"]);
-		if ($debuginat==true) {  echo("<!--done with curl api v1 inat obs -->");}
+
 		//ADD PHOTO TO OBSERVATION
 		$ch = curl_init();
 		$arthropodPhotoPath = "../images/arthropods/" . $arthropodPhotoURL;
 		if(strpos($arthropodPhotoURL, '/') !== false){
 			$arthropodPhotoPath = "/opt/app-root/src/images/arthropods" . $arthropodPhotoURL;
 		}
-		if ($debuginat==true) {  echo("<!--before image grab -->");}
-		if(function_exists('curl_file_create')){//PHP 5.5+
-			$cFile = curl_file_create($arthropodPhotoPath);
-		}
-		else{
-			curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
-			$cFile = '@' . realpath($arthropodPhotoPath);
-		}
-		if ($debuginat==true) {  echo("<!--before array of obs photo  -->");}
+                $cFile = curl_file_create($arthropodPhotoPath);
 		$post = array('observation_photo[observation_id]' => $observation["id"], 'observation_photo[uuid]' => guidv4(openssl_random_pseudo_bytes(16)), 'file' => $cFile);
-		if ($debuginat==true) {  echo("<!--before v1 obs photo api hit  -->");}
-		curl_setopt($ch, CURLOPT_URL, "https://api.inaturalist.org/v1/observation_photos");
-		if ($debuginat==true) {  echo("<!--after v1 obs photo api hit  -->");}
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: multipart/form-data"));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		if ($debuginat==true) {  echo("<!--before curl_exec photo api  -->");}
-		$photoAddResponse = curl_exec($ch);
-		if ($debuginat==true) {  echo("<!-- curl_exec done  -->");}
-		curl_close ($ch);
+
+                $photoAddResponse = curlINatAPI("/v1/observation_photos", $post, $token, array("multipart" => 1));
                 echo("\nGot photo response " . $arthropodSightingID . " :" . $photoAddResponse);
 		
-		if($photoAddResponse !== "Just making sure that the exec is complete."){
-			//LINK OBSERVATION TO CATERPILLARS COUNT PROJECT
-			if ($debuginat==true) {  echo("<!-- in just make sure if -->");}
-			$data = array(
-				"project_id" => 5443,
-				"observation_id" => $observation["id"]
-			);
-			$json = json_encode($data);
-                        if ($debuginat==true) {  echo("<!-- before v1 api proj obs -->");}
-			$ch = curl_init("https://api.inaturalist.org/v1/project_observations");
-			if ($debuginat==true) {  echo("<!-- after init  -->");}
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-			curl_setopt($ch, CURLOPT_HEADER, 0);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer " . $token, "Accept: application/json", "Content-Type: application/json"));
-			if ($debuginat==true) {  echo("<!-- before exec -->");}
-			$caterpillarsCountLinkResponse = curl_exec($ch);
-			if ($debuginat==true) {  echo("<!-- after exec -->");}
-			curl_close ($ch);
-                        echo("\nGot link response " . $arthropodSightingID . " :" . $caterpillarsCountLinkResponse);
-                }
+                //LINK OBSERVATION TO CATERPILLARS COUNT PROJECT
+                $data = array(
+                  "project_id" => 5443,
+                  "observation_id" => $observation["id"]
+                  );
+                $caterpillarsCountLinkResponse = curlINatAPI("/v1/project_observations", $data, $token);
+                echo("\nGot link response " . $arthropodSightingID . " :" . $caterpillarsCountLinkResponse);
+
                 //Mark this ArthropodSighting as completed and save the INaturalistID to our database
                 if(is_int($observation["id"]) && $observation["id"] > 0){
-                  if ($debuginat==true) {  echo("<!--updating arthropod sighting 2 ...  -->");}
                   mysqli_query($dbconn, "UPDATE ArthropodSighting SET NeedToSendToINaturalist='0', INaturalistID='" . $observation["id"] . "' WHERE ID='" . $arthropodSightingID . "' LIMIT 1");
-                  if ($debuginat==true) {  echo("<!--after arthropod sighting 2 ...  -->");}
-
                 }
-            
         }
 ?>

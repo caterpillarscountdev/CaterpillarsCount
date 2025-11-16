@@ -154,6 +154,8 @@
 			requireLogIn();
 
 			$(document).ready(function(){
+                            receiveINatToken();
+                            
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
 				
 				$.get("../php/getEmails.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
@@ -214,6 +216,7 @@
                                             $('#changeUserEmail input[name="firstName"]').val(privacySettings.firstName);
                                             $('#changeUserEmail input[name="lastName"]').val(privacySettings.lastName);
                                             $('#changeUserEmail input[name="newEmail"]').val(window.localStorage.getItem("email"));
+                                            handleINatLinked(privacySettings);
 					}
 				    else{
 						var getPrivacySettingsError = data.replace("false|", "");
@@ -471,6 +474,72 @@
 					setLoadingButton($("#savePrivacySettingsButton")[0], "Save privacy settings", false);
 				});
 			}
+
+                 function inatLink() {
+                     let redirect = new URL(window.location);
+                     redirect.search = '';
+                     redirect = redirect.toString();
+                     let client_id = window.location.hostname == 'caterpillarscount.unc.edu' ? 'a8c34811086a1c0f819e6ec2f0926ffab664a781cccf2ce8031ffefe25100413' : 'f288a4e448fb2157ca940efcd471b5148fbb26f5de7dea47593fd863f978ddcb';
+                     window.location = `https://www.inaturalist.org/oauth/authorize?client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect)}&response_type=code`;
+                 }
+
+                 function inatUnlink() {
+                         $.post("../php/linkINatAccount.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&forget=1",
+                                function (data) {
+				    if(data.indexOf("true|") == 0){
+                                        var msg = data.replace("true|", "");
+					queueNotice("confirmation", msg);
+                                        handleINatLinked({});
+				    }
+				    else{
+					data = data.replace("false|", "");
+					queueNotice("error", data);
+					if(data == "Your log in dissolved. Maybe you logged in on another device."){
+					    logOut();
+					}
+				    }
+                                })
+                 }
+
+                 
+                 function queryParam(key) {
+                     let u = new URL(window.location);
+                     return u.searchParams.get(key);
+                 }
+
+                 function handleINatLinked(settings) {
+                     if (settings.iNaturalistAccountName) {
+                         $('#iNaturalistAccountName').text(settings.iNaturalistAccountName);
+                         $('#iNatLinked').show();
+                         $('#iNatUnlinked').hide();
+                     } else {
+                         $('#iNatLinked').hide();
+                         $('#iNatUnlinked').show();
+                     }
+                 }
+
+                 function receiveINatToken() {
+                     let code = queryParam("code");                     
+                     if (code) {
+                         //console.log("received inat Code", code);
+                         $.post("../php/linkINatAccount.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent(code),
+                                function (data) {
+				    if(data.indexOf("true|") == 0){
+                                        var settings = JSON.parse(data.replace("true|", ""));
+					queueNotice("confirmation", "Your iNaturalist account '"+ settings.iNaturalistAccountName +"' is now linked.");
+                                        handleINatLinked(settings);
+				    }
+				    else{
+					data = data.replace("false|", "");
+					queueNotice("error", data);
+					if(data == "Your log in dissolved. Maybe you logged in on another device."){
+					    logOut();
+					}
+				    }
+                                })
+                     }
+                 }
+                 
 		</script>
 	</head>
 	<body>
@@ -529,7 +598,7 @@
 						<ul onclick="event.stopPropagation();">
 							<li class="closeSubmenu" onclick="closeSubmenu(this.parentNode);"><img src="../images/arrow.png"/></li>
 							<li><a href="../mapsAndGraphs">Maps & Graphs</a></li>
-							<li><a href="https://www.inaturalist.org/observations?place_id=any&subview=grid&user_id=caterpillarscount&verifiable=any">Recent Observations</a></li>
+							<li><a href="https://www.inaturalist.org/observations?project_id=5443&verifiable=any">Recent Observations</a></li>
 							<li><a href="../reports">Reports</a></li>
 							<li><a href="../publications">Publications</a></li>
 							<li><a href="../dataDownload">Data Download</a></li>
@@ -619,6 +688,27 @@
 					  <button onclick="savePrivacySettings();" id="savePrivacySettingsButton">Save privacy settings</button>
 					</div>
 				      </div>
+				    </div>
+				  </div>
+				  <div class="setting" id="inatAuth">
+				    <div class="settingTitle" onclick="toggleSetting(this.parentNode);">Link iNaturalist Account</div>
+				    <div class="settingBody">
+                                      <div id="iNatUnlinked" style="display:none">
+                                        <div>
+                                          <p>When you link your iNaturalist account, observations from photos will belong to your linked account and added to the Caterpillars Count! iNaturalist project.</p>
+                                        </div>
+				        <div>
+					  <button onclick="inatLink();" id="inatLinkButton">Link your iNaturalist account</button>
+				        </div>
+                                      </div>
+                                      <div id="iNatLinked" style="display:none">
+                                        <div>
+                                          <p>Your account is linked. New photo observations will be sent to your linked iNaturalist account '<span id="iNaturalistAccountName"></span>'.</p>
+                                        </div>
+				        <div>
+					  <button onclick="inatUnlink();" style="background: grey" >Forget your iNaturalist account</button>
+				        </div>
+                                      </div>
 				    </div>
 				  </div>
 				  <div class="setting">
