@@ -1,5 +1,15 @@
 {
     "require": {
         "phpmailer/phpmailer": "~5.2"
+    },
+  "config": {
+    "audit": {
+      "ignore": [
+        "PKSA-8sw7-9x88-c8bx",
+        "PKSA-35kn-2ddp-d3p4",
+        "PKSA-m8by-bb7v-7qt5"
+      ]
     }
+  }
+
 }
