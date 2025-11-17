@@ -1908,8 +1908,9 @@
 					markers = {};
 					//set new markers
 					var sites = JSON.parse(data);
-                                    var lowSites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] < 10);
-                                    var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] >= 10)
+                                    sites = sites.filter(x => x["Active"] != "0" || x["SurveyCount"] > 0)
+                                    var lowSites = sites.filter(x => x["SurveyCount"] < 10);
+                                    var sites = sites.filter(x => x["SurveyCount"] >= 10)
 				    var normalizedWeights = getNormalizedWeights(sites);
 				    var minRawValue = -1;
 					var maxRawValue = -1;
@@ -2023,8 +2024,9 @@
 					console.log("Sites loaded. Time: " + (((new Date()).getTime() - startTime) / 1000).toFixed(2));
 					saveMapFilters();
 					var sites = JSON.parse(data);
-                                    var lowSites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] < 10);
-                                    var sites = sites.filter(x => x["Active"] != "0" && x["SurveyCount"] >= 10)
+                                    sites = sites.filter(x => x["Active"] != "0" || x["SurveyCount"] > 0)
+                                    var lowSites = sites.filter(x => x["SurveyCount"] < 10);
+                                    var sites = sites.filter(x => x["SurveyCount"] >= 10)
 				    var normalizedWeights = getNormalizedWeights(sites);
 				    var minRawValue = -1;
 				    var maxRawValue = -1;
