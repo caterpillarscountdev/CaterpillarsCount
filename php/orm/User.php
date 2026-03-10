@@ -19,6 +19,9 @@ class User
 	private $salt;							//STRING
 
 	private $deleted;
+        private $iNaturalistAccountName;
+        private $iNaturalistAccessToken;
+        private $iNaturalistJWToken;
 
 //FACTORY
 	public static function create($firstName, $lastName, $email, $password) {
