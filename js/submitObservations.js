@@ -18,9 +18,21 @@ function showNotifyOfflineSubmit() {
 }
 
 
-                        function haveInternet(){
-				//return whether or not we have an internet connection that we are allowed to use
-				return navigator.onLine;
+                        async function haveInternet(){
+			  //return whether or not we have an internet connection that we are allowed to use
+                          var online = navigator.onLine;
+                          if (online) {
+                            try {
+                              r = await fetch("/images/splash.png?d="+Date.now(), {
+                                method: "HEAD",
+                                signal: AbortSignal.timeout(1000)
+                              })
+                            } catch(e) {
+                              online = false;
+                              console.log("online error", e);
+                            }
+                          }
+			  return online;
 			}
 			
 			var hasMoved = false;
@@ -265,15 +277,16 @@ function showNotifyOfflineSubmit() {
 			}
 			
 			var queuedPendingSurveys = false;
-			function queuePendingSurveys(){
+			async function queuePendingSurveys(){
 	//alert(window.localStorage.getItem("pendingSurveys") === null);
-				if(window.localStorage.getItem("pendingSurveys") === null || !haveInternet()){return false;}
+                          haveNet = await haveInternet();
+			  if(window.localStorage.getItem("pendingSurveys") === null || !haveNet){return false;}
 				queuedPendingSurveys = true;
 				var index = 0;
 				var readyForSubmissionCheck = setInterval(function(){
 					if(submitPendingSurveyOnStandby){
 						var lastestVersionOfPendingSurveys = JSON.parse(window.localStorage.getItem("pendingSurveys"));
-						if(index < lastestVersionOfPendingSurveys.length && haveInternet() && lastestVersionOfPendingSurveys[index][11] == window.localStorage.getItem("email")){
+						if(index < lastestVersionOfPendingSurveys.length && haveNet && lastestVersionOfPendingSurveys[index][11] == window.localStorage.getItem("email")){
 							//NEXT
 	//alert("submitPendingSurvey");
 							submitPendingSurvey(index, lastestVersionOfPendingSurveys[index++]);
@@ -354,8 +367,8 @@ function showNotifyOfflineSubmit() {
 				}
 			}
 			
-			function askForOfficialPlantSpecies(){
-				if(haveInternet()){
+			async function askForOfficialPlantSpecies(){
+				if(await haveInternet()){
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function() {
 						if (this.readyState == 4 && this.status == 200) {
@@ -551,9 +564,9 @@ function showNotifyOfflineSubmit() {
 			}
 			
 			var gettingTemperature = false;
-			function alertTemperature(zip){
+			async function alertTemperature(zip){
 				//if we have internet, alert the current fahrenheit temperature in the zip code "zip"
-				if(haveInternet() && !gettingTemperature){
+				if(await haveInternet() && !gettingTemperature){
 					gettingTemperature = true;
 					var xhttp = new XMLHttpRequest();
 					xhttp.onreadystatechange = function() {
@@ -592,8 +605,9 @@ function showNotifyOfflineSubmit() {
 			
 			var switchingToPanel = false;
 			var currentPanelID = "site";
-			function continueToPanel(secondPanelID){
-                          if(!haveInternet()) {
+			async function continueToPanel(secondPanelID){
+                          var haveNet = await haveInternet()
+                          if(!haveNet) {
                             $("#plantSpecies").attr('placeholder', 'offline? leave this blank to use site plant data');
                           }
                           
@@ -629,7 +643,7 @@ function showNotifyOfflineSubmit() {
 								queueNotice("error", errors);
 								$("#clearInteractionBlock")[0].style.display = "none";
 							}
-							else if(haveInternet()){
+						        else if(haveNet) {
 								//check server side
 								setLoadingButton($("#continueToArthropodButton")[0], "Continue", true);
 								$.get("/php/verifySitePassword.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent($("#plantCode")[0].value) + "&password=" + encodeURIComponent($("#sitePassword")[0].value), function(data){
@@ -719,7 +733,7 @@ function showNotifyOfflineSubmit() {
 					}
 				}
 			}
-			function accessPanel(secondPanelID){
+			async function accessPanel(secondPanelID){
 				//once a user is logged in, this function allows them to switch between "site", "arthropod", and "plant" panels.
 				if(!switchingToPanel){
 					if(secondPanelID != currentPanelID){
@@ -759,7 +773,7 @@ function showNotifyOfflineSubmit() {
 								queueNotice("error", errors);
 								$("#clearInteractionBlock")[0].style.display = "none";
 							}
-							else if(haveInternet()){
+							else if(await haveInternet()){
 								//check server side
 								$.get("/php/verifySitePassword.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent($("#plantCode")[0].value) + "&password=" + encodeURIComponent($("#sitePassword")[0].value), function(data){
 									//success
@@ -1201,13 +1215,13 @@ function showNotifyOfflineSubmit() {
 			
 			var observationMethod = "";
 			var mostUpToDatePlantReturnNumber = 0;
-			function getPlant(codeInput, passwordGroup){
+			async function getPlant(codeInput, passwordGroup){
 				codeInput = $(codeInput)[0];
 				codeInput.value = codeInput.value.toUpperCase().replace(/ /g, "").replace(/[^A-Z]/g, "");
 				$("#plant input")[0].value = "";
 				$("#plant input")[0].readOnly = false;
 				
-				if(!haveInternet()){
+			        if(!(await haveInternet())){
 					codeInput.parentNode.style.color = "";
 					codeInput.parentNode.style.borderRadius = "";
 					codeInput.parentNode.style.background = "";
@@ -1351,7 +1365,7 @@ function showNotifyOfflineSubmit() {
 			
 			var arthropodData = [];
 			var finishing = false;
-			function finish(){
+			async function finish(){
 				if(finishing){return false;}
 				var plantCode = $("#plantCode")[0].value.trim();
 				var sitePassword = $("#sitePassword")[0].value.trim();
@@ -1395,7 +1409,7 @@ function showNotifyOfflineSubmit() {
 
                                 window.localStorage.setItem("lastSitePassword", sitePassword);
 					
-				if(!haveInternet()){
+			        if(! (await haveInternet())){
 					finishing = true;
 					$("#clearInteractionBlock")[0].style.display = "block";
 					setLoadingButton($("#finishButton"), "Finish", true);
@@ -2032,7 +2046,7 @@ function showNotifyOfflineSubmit() {
 				$(textareaElement.parentNode).find('.textareaOtherLinesCover').stop().fadeIn();
 			}
 
-                        function resetLastSitePassword() {
+                        async function resetLastSitePassword() {
 				let lastPass = $("#sitePassword")[0].value;
                                 if (lastPass) {
                                   window.localStorage.setItem("lastSitePassword", lastPass);
@@ -2041,7 +2055,7 @@ function showNotifyOfflineSubmit() {
                                 }
 				$("#sitePassword")[0].value = "";
 
-			        if(!haveInternet() && lastPass && $("#sitePasswordGroup")[0].style.display != "none"){
+			  if(!(await haveInternet()) && lastPass && $("#sitePasswordGroup")[0].style.display != "none"){
 					$("#samePass")[0].style.display = "block";
 					uncheckCheckbox($("#samePass .checkBox").eq(0));
 				}
