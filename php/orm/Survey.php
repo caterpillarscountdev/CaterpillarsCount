@@ -26,6 +26,7 @@ class Survey
 	private $linearBranchLength;
 	private $submittedThroughApp;
 	private $reviewedAndApproved;
+        private $arthropodSightings;
 	private $qcComment;
 
         private $_flags;
@@ -382,10 +383,10 @@ class Survey
 		}
 
                 $dateSearch = "";
-                if ($filters["date"]) {
+                if (array_key_exists("date", $filters)) {
                   $dateSearch = " AND Survey.LocalDate LIKE '" . mysqli_real_escape_string($dbconn, trim(htmlentities(strval($filters["date"])))) . "'";
                 }
-                if ($filters["lastWeek"]) {
+                if (array_key_exists("lastWeek", $filters)) {
                   $dateSearch = " AND Survey.LocalDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)";
                 }
 		$totalCount = intval(mysqli_fetch_assoc(mysqli_query($dbconn, "SELECT COUNT(*) AS `Count` FROM (SELECT DISTINCT Survey.ID FROM " . $baseTable . " JOIN `Plant` ON Survey.PlantFK = Plant.ID JOIN `User` ON Survey.UserFKOfObserver=User.ID WHERE (Plant.SiteFK IN (" . join(",", $siteIDs) . ") OR Survey.UserFKOfObserver='" . $user->getID() . "')" . $dateSearch . $additionalSQL . $groupBy . ") AS Results"))["Count"]);
@@ -622,7 +623,7 @@ class Survey
 		
 		//flag too many leaves
 		if(!$isConifer && $numberOfLeaves > $flaggingRules["maxSafeLeaves"]){
-                  $key = "QCNuberOfLeavesHigh";
+                  $key = "QCNumberOfLeavesHigh";
                   $flags[] = array("text" => "TOO MANY LEAVES: " . $numberOfLeaves . " leaves more than expected " . $flaggingRules["maxSafeLeaves"] . " leaves.", "key" => $key, "ok" => $flagOverrides["QCNumberOfLeavesOK"]);
                         $sets[] = $key . " = 1";
 		}
@@ -634,10 +635,10 @@ class Survey
                   $flags[] = array("text" => "LONG LEAVES: " . $averageLeafLength . "cm more than expected " . $flaggingRules["maxSafeLeafLength"] . "cm.", "key" => $key, "ok" => $flagOverrides["QCAverageLeafLengthOK"]);
                         $sets[] = $key ." = 1";
 		}
-
-                $sql = "UPDATE Survey SET " . join(", ", $sets) . " WHERE ID = " . $this->getID() . ";";
-
-                $query = mysqli_query($dbconn, $sql);
+                if (count($sets)) {
+                  $sql = "UPDATE Survey SET " . join(", ", $sets) . " WHERE ID = " . $this->getID() . ";";
+                  $query = mysqli_query($dbconn, $sql);
+                }
                 
 		return $this->_flags = $flags;
 	}
@@ -674,7 +675,7 @@ class Survey
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$localTime = self::validLocalTime($dbconn, $localTime);
 			if($localTime !== false){
-				mysqli_query($dbconn, "UPDATE Survey SET LocalTime='$localTime' WHERE ID='" . $this->id . "'");
+				mysqli_query($dbconn, "UPDATE Survey SET `LocalTime`='$localTime' WHERE ID='" . $this->id . "'");
 				$this->localTime = $localTime;
 				return true;
 			}

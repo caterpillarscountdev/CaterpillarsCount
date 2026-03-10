@@ -65,7 +65,7 @@
 
 	$query = mysqli_query($dbconn, "SELECT P.ID, S.SiteFK FROM `Publication` P JOIN `PublicationSites` S ON P.ID = S.PublicationFK;");
 	while($row = mysqli_fetch_assoc($query)){
-          if ($sitesArray[strval($row["SiteFK"])]) {
+          if (array_key_exists(strval($row["SiteFK"]), $sitesArray)) {
 		$sitesArray[strval($row["SiteFK"])]["Publications"][] = intval($row["ID"]);
           }
 	}
