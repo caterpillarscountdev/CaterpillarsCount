@@ -410,11 +410,12 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/createSite.php?siteName=" + encodeURIComponent(name) + "&description=" + encodeURIComponent(description) + "&url=" + encodeURIComponent(url) + "&longitude=" + encodeURIComponent(longitude) + "&latitude=" + encodeURIComponent(latitude) + "&zoom=" + encodeURIComponent(map.getZoom()) + "&plantCount=" + encodeURIComponent(plantCount) + "&sitePassword=" + encodeURIComponent(password) + "&public=" + checkboxIsChecked($("#publicCheckbox")).toString() + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
-				xhttp.send();
+			    xhttp.open("POST", "../php/createSite.php", true)
+
+			    xhttp.send(new URLSearchParams(authParams({siteName:name, description: description, url: url, longitude: longitude, latitude: latitude, zoom: map.getZoom(), plantCount: plantCount, sitePassword: password, "public":  checkboxIsChecked($("#publicCheckbox")).toString()})));
 			}
 
-			function incrementCountInput(inputElement, min, max, step){
+		 function incrementCountInput(inputElement, min, max, step){
 				$(inputElement)[0].value = Math.max(Number($(inputElement)[0].value) + step, min);
 				enforceRange(inputElement, min, max, step);
 			}

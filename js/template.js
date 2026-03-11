@@ -168,8 +168,8 @@
 							}
 						}
 					};
-					xhttp.open("GET", "../php/autoLogIn.php?email=" + window.localStorage.getItem("email") + "&salt=" + window.localStorage.getItem("salt"), true);
-					xhttp.send();
+				  xhttp.open("POST", "../php/autoLogIn.php", true);
+				  xhttp.send(new URLSearchParams(authParams()));
 				}
 			}
 			
@@ -197,16 +197,15 @@
                                                   
 						}
 					};
-					if($("h1").eq(0)[0].innerHTML == "Caterpillars Count!"){
-						xhttp.open("GET", "php/autoLogIn.php?email=" + window.localStorage.getItem("email") + "&salt=" + window.localStorage.getItem("salt"), true);
-					}
-					else if($("h1").eq(0)[0].innerHTML.indexOf("../../") > -1){
-						xhttp.open("GET", "../../php/autoLogIn.php?email=" + window.localStorage.getItem("email") + "&salt=" + window.localStorage.getItem("salt"), true);
-					}
-					else{
-						xhttp.open("GET", "../php/autoLogIn.php?email=" + window.localStorage.getItem("email") + "&salt=" + window.localStorage.getItem("salt"), true);
-					}
-					xhttp.send();
+                                  let prefix = "";
+				  if($("h1").eq(0)[0].innerHTML.indexOf("../../") > -1){
+				    prefix = "../../";
+				  }
+				  else{
+				    prefix = "../";
+				  }
+				  xhttp.open("POST", prefix+"php/autoLogIn.php", true);
+				  xhttp.send(new URLSearchParams(authParams()));
 				}
 			}
 			
@@ -237,14 +236,14 @@
 					return false;
 				}
 				
-				var url = "../php/getManagerRequests.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt");
-				if($("h1").eq(0)[0].innerHTML == "Caterpillars Count!"){
-					url = "php/getManagerRequests.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt");
-				}
-				else if($("h1").eq(0)[0].innerHTML.indexOf("../../") > -1){
-					url = "../../php/getManagerRequests.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt");
-				}
-				$.get(url, function(data){
+			  var url = "../php/getManagerRequests.php";
+			  if($("h1").eq(0)[0].innerHTML == "Caterpillars Count!"){
+			    url = "php/getManagerRequests.php";
+			  }
+			  else if($("h1").eq(0)[0].innerHTML.indexOf("../../") > -1){
+			    url = "../../php/getManagerRequests.php";
+			  }
+			  $.post(url, authParams(), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						var managerRequests = JSON.parse(data.replace("true|", ""));
@@ -287,7 +286,7 @@
                             respondToUserGroupRequest(response);
                             return;
                           }
-				$.get("/php/respondToManagerRequest.php?managerRequestID=" + Number($("#managerRequestMessage span:last-of-type").eq(0)[0].innerHTML) + "&response=" + response + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+			  $.post("/php/respondToManagerRequest.php", authParams({managerRequestID: Number($("#managerRequestMessage span:last-of-type").eq(0)[0].innerHTML), response: response}), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						if(response == "approve"){
@@ -313,8 +312,8 @@
 					return false;
 				}
 				
-				var url = "/php/getUserGroupRequests.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt");
-				$.get(url, function(data){
+			  var url = "/php/getUserGroupRequests.php";
+			  $.post(url, authParams(), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 					  var userGroupRequests = JSON.parse(data.replace("true|", ""));
@@ -336,7 +335,7 @@
 			}
 
 			function respondToUserGroupRequest(response){
-				$.get("/php/respondToUserGroupRequest.php?groupID=" + Number($("#managerRequestMessage span:last-of-type").eq(0)[0].innerHTML) + "&response=" + response + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+			  $.post("/php/respondToUserGroupRequest.php", authParams({groupID: Number($("#managerRequestMessage span:last-of-type").eq(0)[0].innerHTML), response: response}), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						if(response == "approve"){
@@ -701,3 +700,12 @@ function showNotifyOffline() {
 $(document).ready(function() {
   showNotifyOffline()
 })
+
+function authParams(data) {
+  if (!data) {
+    data = {};
+  }
+  data.email = window.localStorage.getItem("email");
+  data.salt = window.localStorage.getItem("salt");
+  return data
+}

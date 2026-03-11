@@ -241,8 +241,8 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/getSiteSettings.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
-				xhttp.send();
+				xhttp.open("POST", "../php/getSiteSettings.php", true);
+			    xhttp.send(new URLSearchParams(authParams({siteID: window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)})));
 			}
 
                  function revealPassword() {
@@ -379,8 +379,8 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/editSiteSettings.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&siteName=" + encodeURIComponent(name) + "&url=" + encodeURIComponent(url) + "&description=" + encodeURIComponent(description) + "&sitePassword=" + encodeURIComponent(password) + "&public=" + checkboxIsChecked($("#openToPublic")).toString() + "&active=" + checkboxIsChecked($("#active")).toString() + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
-				xhttp.send();
+			    xhttp.open("POST", "../php/editSiteSettings.php", true);
+			    xhttp.send(new URLSearchParams(authParams({siteID: window.location.toString().substring(window.location.toString().indexOf("?s=") + 3), siteName: name, url: url, description: description, sitePassword: password, "public": checkboxIsChecked($("#openToPublic")).toString(), active: checkboxIsChecked($("#active")).toString()})));
 			}
 
 			var changeSiteNameConfirmed = true;

@@ -41,7 +41,7 @@
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<link href="../css/maps.css?v=2" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
-		<script src="../js/template.js?v=3"></script>
+		<script src="../js/template.js?v=4"></script>
 		<link href="../css/checkbox.css?v=2" rel="stylesheet">
 		<script src="../js/checkbox.js?v=2"></script>
 		<style>
@@ -440,8 +440,8 @@
 			            }
 			        }
 			    };
-			    xhttp.open("GET", "../php/getPlantsBySite.php?siteID=" + siteID + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.6.0", true);
-			    xhttp.send();
+			    xhttp.open("POST", "../php/getPlantsBySite.php", true);
+			    xhttp.send(new URLSearchParams(authParams({siteID: siteID, appVersion: "1.6.0"})));
 			}
 
 			function populateCircles(circles){
@@ -831,8 +831,8 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/addCircle.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.5.0", true);
-				xhttp.send();
+			    xhttp.open("POST", "../php/addCircle.php", true);
+			    xhttp.send(new URLSearchParams(authParams({siteID:siteID, appVersion:"1.5.0"})));
 			}
 		</script>
 	</head>

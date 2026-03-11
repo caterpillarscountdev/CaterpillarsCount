@@ -284,7 +284,7 @@
 					$("#manager" + Number(managerID)).find("img").eq(0)[0].src = "../images/rolling.svg";
 					$("#manager" + Number(managerID)).find("img").eq(0)[0].style.height = "24px";
 					$("#manager" + Number(managerID)).find("img").eq(0)[0].style.marginTop = "-12px";
-					$.get("../php/setManagerCreatorPermissions.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&managerID=" + Number(managerID) + "&creatorPermissions=" + shouldHaveCreatorPermissions + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+					$.post("../php/setManagerCreatorPermissions.php", authParams({siteID: window.location.toString().substring(window.location.toString().indexOf("?s=") + 3), managerID: Number(managerID), creatorPermissions: shouldHaveCreatorPermissions}), function(data){
 						//success
 						if(data.indexOf("true|") == 0){
 							if(shouldHaveCreatorPermissions){
@@ -393,13 +393,13 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/getManagers.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
-				xhttp.send();
+			    xhttp.open("POST", "../php/getManagers.php", true);
+			    xhttp.send(new URLSearchParams(authParams({siteID: window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)})));
 			}
 			function updateManagers(){
-				$.get("../php/getManagers.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
-					//success
-					if(data.indexOf("true|") == 0){
+			    $.post("../php/getManagers.php", authParams({siteID: window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)}), function(data){
+				//success
+				if(data.indexOf("true|") == 0){
 						var authorities = JSON.parse(data.replace("true|", ""));
 						var siteCreator = authorities[0];
 						var managers = authorities[1];
@@ -480,7 +480,7 @@
 								var innerHTMLToReplaceWith = "<span class=\"highlighted pointer underline\" onclick=\"email('" + encodeQuotesAndBackslashes(newManager["fullName"]) + "', ['" + encodeQuotesAndBackslashes(newManager["email"].split("@")[0]) + "', '" + encodeQuotesAndBackslashes(newManager["email"].split("@")[1]) + "']);\">" + newManager["fullName"] + "</span>";
 								innerHTMLToReplaceWith += "<img src=\"" + crownSRC + "\" onclick=\"toggleCreatorPermissions('" + newManager["managerID"] + "');\"/>";
 								innerHTMLToReplaceWith += " (request pending)<div onclick=\"promptConfirm('Are you sure you want to cancel your request for " + encodeQuotesAndBackslashes(newManager["fullName"]) + "\\'s management services at this site?', 'Never mind.', 'Continue. I am sure!', function(){}, function(){terminate('" + newManager["managerID"] + "');});\">&times;</div>";
-								$("#manager" + newManager["managerID"])[0].innerHTML = innerHTMLToReplaceWith;
+				$("#manager" + newManager["managerID"])[0].innerHTML = innerHTMLToReplaceWith;
 							}
 							else{
 								var htmlToAdd = "<div id=\"manager" + newManager["managerID"] + "\">";
@@ -501,11 +501,11 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/sendManagerRequest.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&managerEmail=" + encodeURIComponent(newManagerEmail) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
-				xhttp.send();
+			    xhttp.open("POST", "../php/sendManagerRequest.php", true);
+			    xhttp.send(new URLSearchParams(authParams({siteID: window.location.toString().substring(window.location.toString().indexOf("?s=") + 3), managerEmail: newManagerEmail})));
 			}
 
-			function terminate(managerID){
+		 function terminate(managerID){
 				$("#manager" + Number(managerID)).find("img").eq(0)[0].style.display = "none";
 				$("#manager" + Number(managerID))[0].getElementsByTagName("div")[0].innerHTML = "";
 				$("#manager" + Number(managerID))[0].getElementsByTagName("div")[0].style.backgroundImage = "url('../images/rolling.svg')";
@@ -530,9 +530,9 @@
 						}
 					}
 				};
-				xhttp.open("GET", "../php/terminateManager.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&managerID=" + Number(managerID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
-				xhttp.send();
-			}
+		     xhttp.open("POST", "../php/terminateManager.php", true);
+		     xhttp.send(new URLSearchParams(authParams({siteID: window.location.toString().substring(window.location.toString().indexOf("?s=") + 3), managerID: Number(managerID)})));
+		 }
 			
 			function resizeResignationPrompt(){
 				$("#resignationPrompt>div").eq(0)[0].style.maxHeight = window.innerHeight - Number($("#resignationPrompt").css("marginTop").replace(/\D/g, "")) -  180;
@@ -604,7 +604,7 @@
 				
 				$("#resignationProcessing")[0].style.display = "block";
 				$("#resignationPromptButtons")[0].style.display = "none";
-				$.get("../php/switchSiteCreator.php?siteID=" + encodeURIComponent(window.location.toString().substring(window.location.toString().indexOf("?s=") + 3)) + "&managerID=" + newSiteOwner + "&demotedPosition=" + demotedPosition + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+				$.post("../php/switchSiteCreator.php", authParams({siteID: window.location.toString().substring(window.location.toString().indexOf("?s=") + 3), managerID: newSiteOwner, demotedPosition: demotedPosition}), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						if(demotedPosition != "highManagement"){

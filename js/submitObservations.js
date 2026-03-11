@@ -378,8 +378,8 @@ function showNotifyOfflineSubmit() {
 							}
 						}
 					};
-					xhttp.open("GET", "/php/getSitesWithUnsetPlantSpecies.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
-					xhttp.send();
+				  xhttp.open("POST", "/php/getSitesWithUnsetPlantSpecies.php", true);
+				  xhttp.send(new URLSearchParams(authParams()));
 				}
 			}
 
@@ -646,7 +646,7 @@ function showNotifyOfflineSubmit() {
 						        else if(haveNet) {
 								//check server side
 								setLoadingButton($("#continueToArthropodButton")[0], "Continue", true);
-								$.get("/php/verifySitePassword.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent($("#plantCode")[0].value) + "&password=" + encodeURIComponent($("#sitePassword")[0].value), function(data){
+							  $.post("/php/verifySitePassword.php", authParams({code:$("#plantCode")[0].value, password:$("#sitePassword")[0].value}), function(data){
 									//success
 									if(data.indexOf("true") == 0){
 										$("#" + currentPanelID + "Icon")[0].className = "accessible panelIcon";
@@ -775,7 +775,7 @@ function showNotifyOfflineSubmit() {
 							}
 							else if(await haveInternet()){
 								//check server side
-								$.get("/php/verifySitePassword.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent($("#plantCode")[0].value) + "&password=" + encodeURIComponent($("#sitePassword")[0].value), function(data){
+							  $.post("/php/verifySitePassword.php", authParams({code:$("#plantCode")[0].value, password:$("#sitePassword")[0].value}), function(data){
 									//success
 									if(data.indexOf("true") == 0){
 										$("#" + currentPanelID + "Icon")[0].className = "accessible panelIcon";
@@ -1236,7 +1236,7 @@ function showNotifyOfflineSubmit() {
 				setTimeout(function(){
 					if(thisPlantReturnNumber == mostUpToDatePlantReturnNumber) {
 						code = codeInput.value;
-						$.get("/php/getPlantByCode.php?code=" + encodeURIComponent(code) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+					  $.post("/php/getPlantByCode.php", authParams({code: code}), function(data){
 							//success
 							if(thisPlantReturnNumber == mostUpToDatePlantReturnNumber){
 								if(data.indexOf("true|") == 0){
@@ -2104,7 +2104,7 @@ function showNotifyOfflineSubmit() {
 			}
 			
 			function populateSites(){
-				$.get("/php/getOwnedSitesLIGHT.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+			  $.post("/php/getOwnedSitesLIGHT.php", authParams(), function(data){
 					//success
 					if(data.indexOf("true") == 0){
 						var ownedSites = JSON.parse(data.replace("true|", ""));

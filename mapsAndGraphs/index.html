@@ -1406,7 +1406,10 @@
                      $("#noPlantsSection").hide();
                      $("#hasPlantsSection").hide();
                      
-                     let response = await fetch("../php/getPlantsBySite.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&appVersion=1.6.0")
+                     let response = await fetch("../php/getPlantsBySite.php",
+                                                {method: "POST",
+                                                 headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                                                 body: new URLSearchParams(authParams({siteID: siteID, appVersion: "1.6.0"}))});
                      var data = JSON.parse((await response.text()).replace("true|", ""));
 		     var siteName = data[0];
 		     var circles = data[1];
@@ -1468,7 +1471,7 @@
                          }
                          
                          let node = $("<a href=\"../submitObservations/index.html?plantCode="+code+"\"><div class=\"code\" style=\"color:"+color+"\"><img src='../images/tag" + (j + 1) + ".png'/>" + code + "</div></a>")[0];
-                         let loc = new google.maps.LatLng(lat, lng);
+                     let loc = new google.maps.LatLng(lat, lng);
                          var label = new MapPopUp(loc, node, true, 0);
                          latlngbounds.extend(loc);
                          label.setMap(plantMap);

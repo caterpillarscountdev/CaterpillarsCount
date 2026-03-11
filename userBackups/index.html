@@ -55,7 +55,7 @@
 			$(document).ready(function(){
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
         
-				$.get("../php/getUserBackups.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+				$.post("../php/getUserBackups.php", authParams(), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						data = JSON.parse(data.replace("true|", ""));
