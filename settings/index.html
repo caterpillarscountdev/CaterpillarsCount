@@ -158,7 +158,7 @@
                             
 				loadBackgroundImage($("#splashImage"), "../images/splash.png");
 				
-				$.get("../php/getEmails.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+				$.post("../php/getEmails.php", authParams(), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						$(".superUsersOnly").stop().fadeIn(0);
@@ -204,7 +204,7 @@
 					$("#getEmailsSetting").stop().fadeOut();
 				});
 				
-				$.get("../php/getPrivacySettings.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + encodeURIComponent(window.localStorage.getItem("salt")), function(data){
+				$.post("../php/getPrivacySettings.php", authParams(), function(data){
 					if(data.indexOf("true|") == 0){
 						var privacySettings = JSON.parse(data.replace("true|", ""));
 						$("#iNaturalistLink")[0].href = "https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=" + privacySettings["iNaturalistObserverID"];
@@ -234,7 +234,7 @@
 					$("#privacyLoading")[0].style.display = "none";
 				});
 
-                            $.get("../php/getUserGroupConsents.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + encodeURIComponent(window.localStorage.getItem("salt")), function(data){
+                            $.post("../php/getUserGroupConsents.php", authParams(), function(data){
 					if(data.indexOf("true|") == 0){
 					    var userGroups = JSON.parse(data.replace("true|", ""));
                                             if (userGroups.groups && userGroups.groups.length) {
@@ -258,7 +258,7 @@
 			});
 
                  function leaveUserGroup(groupID) {
-		     $.get("/php/respondToUserGroupRequest.php?groupID=" + groupID + "&response=deny&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+		     $.post("/php/respondToUserGroupRequest.php", authParams({groupID: groupID, response:"deny"}), function(data){
 			 //success
 			 if(data.indexOf("true|") == 0){
 			     queueNotice("confirmation", "You have left the group \"" + data.replace("true|", "") + "\", if this was in error please contact them to re-add you.!");
@@ -333,8 +333,8 @@
 					    }
 					}
 				    };
-				    xhttp.open("GET", "../php/changeUserEmail.php?firstName=" + encodeURIComponent(firstName) + "&lastName=" + encodeURIComponent(lastName) + "&newEmail=" + encodeURIComponent(newEmail) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")), false);
-				    xhttp.send();
+				    xhttp.open("POST", "../php/changeUserEmail.php", false);
+				    xhttp.send(new URLSearchParams(authParams({firstName: firstName, lastName: lastName, newEmail: newEmail})));
 				}
 			}
 
@@ -409,8 +409,8 @@
 							}
 						}
 					};
-					xhttp.open("GET", "../php/changePassword.php?currentPassword=" + encodeURIComponent(currentPassword) + "&newPassword=" + encodeURIComponent(newPassword) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")), false);
-					xhttp.send();
+					xhttp.open("POST", "../php/changePassword.php", false);
+				    xhttp.send(new URLSearchParams(authParams({currentPassword: currentPassword, newPassword: newPassword})));
 				}
 			}
 
@@ -419,7 +419,7 @@
 				if(!signingOutOfAllOtherDevices){
 					signingOutOfAllOtherDevices = true;
 					setLoadingButton($("#signOutOfAllOtherDevicesButton")[0], "Sign out of all other devices", true);
-					$.get("../php/signOutOfAllOtherDevices.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&password=" + encodeURIComponent($("#signOutOfAllOtherDevices input").eq(0)[0].value), function(data){
+				    $.post("../php/signOutOfAllOtherDevices.php", authParams({password: $("#signOutOfAllOtherDevices input").eq(0)[0].value}), function(data){
 						//success
 						if(data.indexOf("success") == 0){
 							window.localStorage.setItem("salt", data.replace("success", ""));
@@ -451,7 +451,7 @@
 				if(savingPrivacySettings){return false;}
 				savingPrivacySettings = true;
 				setLoadingButton($("#savePrivacySettingsButton")[0], "Save privacy settings", true);
-				$.get("../php/setHidden.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&newValue=" + checkboxIsChecked($("#hiddenCheckbox")), function(data){
+				$.post("../php/setHidden.php", authParams({newValue: checkboxIsChecked($("#hiddenCheckbox"))}), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						queueNotice("confirmation", "Your privacy settings have been updated!");
@@ -484,7 +484,7 @@
                  }
 
                  function inatUnlink() {
-                         $.post("../php/linkINatAccount.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&forget=1",
+                         $.post("../php/linkINatAccount.php", authParams({forget:1}),
                                 function (data) {
 				    if(data.indexOf("true|") == 0){
                                         var msg = data.replace("true|", "");
@@ -522,7 +522,7 @@
                      let code = queryParam("code");                     
                      if (code) {
                          //console.log("received inat Code", code);
-                         $.post("../php/linkINatAccount.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + encodeURIComponent(code),
+                         $.post("../php/linkINatAccount.php", authParams({code:code}),
                                 function (data) {
 				    if(data.indexOf("true|") == 0){
                                         var settings = JSON.parse(data.replace("true|", ""));
@@ -533,7 +533,7 @@
 					data = data.replace("false|", "");
 					queueNotice("error", data);
 					if(data == "Your log in dissolved. Maybe you logged in on another device."){
-					    logOut();
+					logOut();
 					}
 				    }
                                 })
