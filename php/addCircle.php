@@ -12,8 +12,9 @@
 	$salt = custgetparam("salt");
 	$samplePlantCode = custgetparam("samplePlantCode");
         $siteID = custgetparam("siteID");
-	$appVersion = intval(preg_replace("/[^0-9]/", "", isset($_GET["appVersion"]) ? $_GET["appVersion"] : "0"));
-
+        $appVersion = custgetparam("appVersion");
+        if (!$appVersion) { $appVersion = '0'; }
+        $appVersion = intval(preg_replace("/[^0-9]/", "", $appVersion));
 
         $conn = (new Keychain)->getDatabaseConnection();
         mysqli_begin_transaction($conn);

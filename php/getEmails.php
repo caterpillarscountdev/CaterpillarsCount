@@ -15,7 +15,7 @@
       			$query = mysqli_query($dbconn, "SELECT `ID`, `Email` FROM `User` WHERE 1");
       			$emailsArray = array();
 		  	while($row = mysqli_fetch_assoc($query)){
-				if(trim($row["Email"]) != ""){
+                          if(trim((string)$row["Email"]) != ""){
           					$emailsArray[(string)$row["ID"]] = array(
             					"email" => $row["Email"], 
             					"authority" => User::isSuperUser($row["Email"]),

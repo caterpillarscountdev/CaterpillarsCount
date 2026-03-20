@@ -40,7 +40,7 @@
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
-		<script src="../js/template.js?v=3"></script>
+		<script src="../js/template.js?v=4"></script>
 		<style>
 			#headingTable{
 				margin:auto;
@@ -217,8 +217,8 @@
 								}
 							}
 						};
-						xhttp.open("GET", "../php/autoLogIn.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), true);
-						xhttp.send();
+						xhttp.open("POST", "../php/autoLogIn.php", true);
+					    xhttp.send(new URLSearchParams(authParams()));
 					}
 				},700);
 			}
@@ -251,8 +251,8 @@
 							}
 						}
 					};
-					xhttp.open("GET", "../php/logIn.php?email=" + encodeURIComponent(logInEmail) + "&password=" + encodeURIComponent($("#logInPassword")[0].value), true);
-					xhttp.send();
+				    xhttp.open("POST", "../php/logIn.php", true);
+				    xhttp.send(new URLSearchParams({email: logInEmail, password:$("#logInPassword")[0].value}));
 				}
 			}
 		</script>
