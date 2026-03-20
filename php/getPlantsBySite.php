@@ -7,7 +7,9 @@
 	$email = custgetparam("email");
 	$salt = custgetparam("salt");
 	$siteID = custgetparam("siteID");
-	$appVersion = intval(preg_replace("/[^0-9]/", "", isset($_GET["appVersion"]) ? $_GET["appVersion"] : "0"));
+        $appVersion = custgetparam("appVersion");
+        if (!$appVersion) { $appVersion = '0'; }
+        $appVersion = intval(preg_replace("/[^0-9]/", "", $appVersion));
 	
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
