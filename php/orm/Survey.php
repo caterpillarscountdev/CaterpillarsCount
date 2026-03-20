@@ -48,7 +48,7 @@ class Survey
 		$localTime = self::validLocalTime($dbconn, $localTime);
 		$observationMethod = self::validObservationMethod($dbconn, $observationMethod);
 		$notes = self::validNotes($dbconn, $notes);
-		$wetLeaves = filter_var($wetLeaves, FILTER_VALIDATE_BOOLEAN);
+		$wetLeaves = intval(filter_var($wetLeaves, FILTER_VALIDATE_BOOLEAN));
 		$plantSpecies = self::validPlantSpecies($dbconn, $plantSpecies, $plant);
 		$isConifer = (intval($averageNeedleLength) !== -1);
 		$numberOfLeaves = $isConifer ? -1 : self::validNumberOfLeaves($dbconn, $numberOfLeaves);
@@ -56,7 +56,7 @@ class Survey
 		$herbivoryScore = $isConifer ? -1 : self::validHerbivoryScore($dbconn, $herbivoryScore);
 		$averageNeedleLength = $isConifer ? self::validAverageNeedleLength($dbconn, $averageNeedleLength) : -1;
 		$linearBranchLength = $isConifer ? self::validLinearBranchLength($dbconn, $linearBranchLength) : -1;
-		$submittedThroughApp = filter_var($submittedThroughApp, FILTER_VALIDATE_BOOLEAN);
+		$submittedThroughApp = intval(filter_var($submittedThroughApp, FILTER_VALIDATE_BOOLEAN));
 		$reviewedAndApproved = false;
 		$qcComment = null;
 		
