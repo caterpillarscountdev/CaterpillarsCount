@@ -71,7 +71,7 @@ class ArthropodSighting
 			return $failures;
 		}
 		
-		mysqli_query($dbconn, "INSERT INTO ArthropodSighting (`SurveyFK`, `OriginalGroup`, `UpdatedGroup`, `Length`, `Quantity`, `PhotoURL`, `Notes`, `Pupa`, `Hairy`, `Rolled`, `Tented`, `OriginalSawfly`, `UpdatedSawfly`, `OriginalBeetleLarva`, `UpdatedBeetleLarva`, `NeedToSendToINaturalist`) VALUES ('" . $survey->getID() . "', '$originalGroup', '$originalGroup', '$length', '$quantity', '', '$notes', '$pupa', '$hairy', '$rolled', '$tented', '$originalSawfly', '$originalSawfly', '$originalBeetleLarva', '$originalBeetleLarva', 0)");
+		mysqli_query($dbconn, "INSERT INTO ArthropodSighting (`SurveyFK`, `OriginalGroup`, `UpdatedGroup`, `Length`, `Quantity`, `PhotoURL`, `Notes`, `Pupa`, `Hairy`, `Rolled`, `Tented`, `OriginalSawfly`, `UpdatedSawfly`, `OriginalBeetleLarva`, `UpdatedBeetleLarva`, `NeedToSendToINaturalist`, `INaturalistID`) VALUES ('" . $survey->getID() . "', '$originalGroup', '$originalGroup', '$length', '$quantity', '', '$notes', '$pupa', '$hairy', '$rolled', '$tented', '$originalSawfly', '$originalSawfly', '$originalBeetleLarva', '$originalBeetleLarva', 0, '')");
 		$id = intval(mysqli_insert_id($dbconn));
 		
 		return new ArthropodSighting($id, $survey, $originalGroup, $originalGroup, $length, $quantity, "", $notes, $pupa, $hairy, $rolled, $tented, $originalSawfly, $originalSawfly, $originalBeetleLarva, $originalBeetleLarva, "");
