@@ -290,7 +290,7 @@
 					showAnswer(this);
 				    });
                                     let currentScore = Math.round(numberCorrect / (currentQuestionIndex) * 100)
-                                    fetch("../../php/submitQuizScore.php?email=", {
+                                    fetch("../../php/submitQuizScore.php", {
                                         method: "POST",
                                         headers: {"Content-Type": "application/x-www-form-urlencoded"},
                                         body: new URLSearchParams(authParams({score: currentScore}))});
