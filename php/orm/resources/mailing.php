@@ -1,6 +1,6 @@
 <?php
-	
-	require_once('vendor/autoload.php');
+        use PHPMailer\PHPMailer\PHPMailer;	
+	require_once(__DIR__.'/../../../vendor/autoload.php');
 	require_once('Customlogging.php');
 	
 	function email($to, $subject, $body, $attachments=array()){

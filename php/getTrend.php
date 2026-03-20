@@ -40,8 +40,6 @@
 		}
 		$siteName = mysqli_fetch_assoc($query)["Name"];
 		$arthropod = mysqli_real_escape_string($dbconn, htmlentities($lines[$i]["arthropod"]));
-		$startYear = intval($lines[$i]["startYear"]);
-		$endYear = intval($lines[$i]["endYear"]);
 		
 		//CHECK FOR SAVE
 		$baseFileName = str_replace(' ', '__SPACE__', basename(__FILE__, '.php') . $siteID . str_replace('%', 'all', $arthropod) . $startMonth . "-" . $endMonth);

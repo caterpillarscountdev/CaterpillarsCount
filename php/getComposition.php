@@ -183,7 +183,7 @@
 				$arthropodSurveyCounts[strval($row[$breakdownTitle])] = array();
 				$arthropodOccurrencesSet[strval($row[$breakdownTitle])] = array();
  			}
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, ArthropodSighting.UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS ArthropodSurveyCounts FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK = Survey.ID JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK = '$siteID' GROUP BY CONCAT($breakdownUpper(Survey.LocalDate), '-', ArthropodSighting.UpdatedGroup)");
+ 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, ArthropodSighting.UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS ArthropodSurveyCounts FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK = Survey.ID JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK = '$siteID' GROUP BY $breakdownUpper(Survey.LocalDate), ArthropodSighting.UpdatedGroup");
  			while($row = mysqli_fetch_assoc($query)){
  				$arthropodSurveyCounts[strval($row[$breakdownTitle])][$row["UpdatedGroup"]] = $row["ArthropodSurveyCounts"];
  			}
@@ -220,7 +220,7 @@
 				$arthropodCounts[strval($row[$breakdownTitle])] = array();
 				$arthropodDensitiesSet[strval($row[$breakdownTitle])] = array();
  			}
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK='$siteID' GROUP BY CONCAT($breakdownUpper(Survey.LocalDate), '-', ArthropodSighting.UpdatedGroup)");
+ 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK='$siteID' GROUP BY $breakdownUpper(Survey.LocalDate), ArthropodSighting.UpdatedGroup");
  			while($row = mysqli_fetch_assoc($query)){
  				$arthropodCounts[strval($row[$breakdownTitle])][$row["UpdatedGroup"]] = $row["ArthropodCount"];
  			}
@@ -297,7 +297,7 @@
 				$arthropodCounts[strval($row[$breakdownTitle])] = array();
 				$arthropodRelativeProportionsSet[strval($row[$breakdownTitle])] = array();
  			}
- 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK='$siteID' GROUP BY CONCAT($breakdownUpper(Survey.LocalDate), '-', ArthropodSighting.UpdatedGroup)");
+ 			$query = mysqli_query($dbconn, "SELECT $breakdownUpper(Survey.LocalDate) AS $breakdownTitle, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK='$siteID' GROUP BY $breakdownUpper(Survey.LocalDate), ArthropodSighting.UpdatedGroup");
  			while($row = mysqli_fetch_assoc($query)){
  				$arthropodCounts[strval($row[$breakdownTitle])][$row["UpdatedGroup"]] = $row["ArthropodCount"];
  			}
@@ -378,7 +378,7 @@
 				$arthropodOccurrencesSet[$row[$plantField] . " (" . $row["Branches"] . ")"] = array();
 				$branchCount[$row[$plantField]] = $row["Branches"];
  			}
- 			$query = mysqli_query($dbconn, "SELECT Plant.$plantField, ArthropodSighting.UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS ArthropodSurveyCounts FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK = Survey.ID JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK = '$siteID' AND $extraWhere GROUP BY CONCAT(Plant.$plantField, '-', ArthropodSighting.UpdatedGroup)");
+ 			$query = mysqli_query($dbconn, "SELECT Plant.$plantField, ArthropodSighting.UpdatedGroup, COUNT(DISTINCT ArthropodSighting.SurveyFK) AS ArthropodSurveyCounts FROM `ArthropodSighting` JOIN Survey ON ArthropodSighting.SurveyFK = Survey.ID JOIN Plant ON Survey.PlantFK = Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK = '$siteID' AND $extraWhere GROUP BY Plant.$plantField, ArthropodSighting.UpdatedGroup");
  			while($row = mysqli_fetch_assoc($query)){
  				$arthropodSurveyCounts[$row[$plantField]][$row["UpdatedGroup"]] = $row["ArthropodSurveyCounts"];
  			}
@@ -410,7 +410,7 @@
 				$arthropodDensitiesSet[$row[$plantField] . " (" . $row["Branches"] . ")"] = array();
 				$branchCount[$row[$plantField]] = $row["Branches"];
  			}
- 			$query = mysqli_query($dbconn, "SELECT Plant.$plantField, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK='$siteID' AND $extraWhere GROUP BY CONCAT(Plant.$plantField, '-', ArthropodSighting.UpdatedGroup)");
+ 			$query = mysqli_query($dbconn, "SELECT Plant.$plantField, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK='$siteID' AND $extraWhere GROUP BY Plant.$plantField, ArthropodSighting.UpdatedGroup");
  			while($row = mysqli_fetch_assoc($query)){
  				$arthropodCounts[$row[$plantField]][$row["UpdatedGroup"]] = $row["ArthropodCount"];
  			}
@@ -477,7 +477,7 @@
 				$arthropodRelativeProportionsSet[$row[$plantField] . " (" . $row["Branches"] . ")"] = array();
 				$branchCount[$row[$plantField]] = $row["Branches"];
  			}
- 			$query = mysqli_query($dbconn, "SELECT Plant.$plantField, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK='$siteID'  AND $extraWhere  GROUP BY CONCAT(Plant.$plantField, '-', ArthropodSighting.UpdatedGroup)");
+ 			$query = mysqli_query($dbconn, "SELECT Plant.$plantField, ArthropodSighting.UpdatedGroup, SUM(ArthropodSighting.Quantity) AS ArthropodCount FROM ArthropodSighting JOIN Survey ON ArthropodSighting.SurveyFK=Survey.ID JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND Plant.SiteFK='$siteID'  AND $extraWhere  GROUP BY Plant.$plantField, ArthropodSighting.UpdatedGroup");
  			while($row = mysqli_fetch_assoc($query)){
  				$arthropodCounts[$row[$plantField]][$row["UpdatedGroup"]] = $row["ArthropodCount"];
  			}
