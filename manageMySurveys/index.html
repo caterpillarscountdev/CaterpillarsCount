@@ -40,7 +40,7 @@
 		<link href="https://fonts.googleapis.com/css?family=Fanwood+Text:400i" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 		<link href="../css/template.css" rel="stylesheet">
-		<script src="../js/template.js?v=3"></script>
+		<script src="../js/template.js?v=4"></script>
 		<link href="../css/checkbox.css?v=1" rel="stylesheet">
 		<link href="../css/hint.min.css?v=1" rel="stylesheet" /> <!-- css for tool tips from https://kushagra.dev/lab/hint/ -->
 		<script src="../js/checkbox.js?v=1"></script>
@@ -918,7 +918,11 @@
 			
 			
 		        async function emailSurveyContributor(fullName, emailParts, surveyid) {
-                            let response = await fetch("../php/getPrivacySettings.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + encodeURIComponent(window.localStorage.getItem("salt")));
+                            let response = await fetch("../php/getPrivacySettings.php",
+                                                       {method: "POST",
+                                                        headers: {
+                                                            "Content-Type": "application/x-www-form-urlencoded"},
+                                                       body: new URLSearchParams(authParams())});
                             let user = JSON.parse((await response.text()).replace('true|', ''));
 
 			    // send email to user from the site to ask about info
@@ -1140,10 +1144,10 @@
 					loadingPage = true;
 					$("#resultsPage").css({display:"none"});
 					$(".loading").css({display:"block"});
-					
-					$.get("../php/getMySurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&page=" + pageNumber + "&filters=" + encodeURIComponent(JSON.stringify(filters)), function(data){
-						//success
-						if(data.indexOf("true|") == 0){
+				    
+				    $.post("../php/getMySurveys.php", authParams({filters: JSON.stringify(filters), page: pageNumber}), function(data){
+					//success
+					if(data.indexOf("true|") == 0){
 							GLOBALFilters = filters;
 							$("#filtersDropdown button")[0].innerHTML = "Apply Filters";
 							closeHeight($('#filtersDropdown'));
@@ -1787,7 +1791,7 @@
 			}
 
 			function populateSurveySites(){
-				$.get("../php/getMySurveySites.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+				$.post("../php/getMySurveySites.php", authParams(), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						var sites = JSON.parse(data.replace("true|", ""));
@@ -1844,7 +1848,7 @@
 					return false;
 				}
 
-				$.get("../php/deleteSurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + localStorage.getItem("salt") + "&selected=" + JSON.stringify([id]) + "&unselected=" + JSON.stringify([]), function(data){
+				$.post("../php/deleteSurveys.php", authParams({selected: JSON.stringify([id]), unselected: JSON.stringify([])}), function(data){
 					//success
 					if(data.indexOf("true|") == 0){
 						queueNotice("confirmation", "Survey deleted!");
@@ -2152,7 +2156,7 @@
                                             overrides.push(v.dataset.override);
                                         }});
 
-			    $.get("../php/approveSurvey.php?surveyID=" + id + "&approvedLevel=" + approvedLevel + "&qccomment=" + encodeURIComponent(qccomment) + "&overrides=" + encodeURIComponent(overrides) +  "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+			    $.post("../php/approveSurvey.php", authParams({surveyID: id, approvedLevel: approvedLevel, qccomment: qccomment, overrides: overrides}), function(data){
 				//success
 				if(data.indexOf("true|") == 0){
 						reloadPage();
@@ -2186,7 +2190,7 @@
 				}
 				batchDeleting = true;
 				promptConfirm(message, 'Never mind.', 'Yes, I am sure!', function(){batchDeleting = false;}, function(){
-					$.get("../php/deleteSurveys.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&selected=" + JSON.stringify(selected) + "&unselected=" + JSON.stringify(unselected), function(data){
+					$.post("../php/deleteSurveys.php", authParams({selected: JSON.stringify(selected), unselected: JSON.stringify(unselected)}), function(data){
 						//success
 						deselectAll();
 						closeHeight($('#batchDeleteDropdown'));
@@ -2237,7 +2241,7 @@
 				setTimeout(function(){
 					if(thisPlantCodeDataNumer != plantCodeDataNumber){return false;}
 					var code = plantCodeDiv.innerHTML;
-					$.get("../php/getPlantCodeInfo.php?code=" + encodeURIComponent(code) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"), function(data){
+					$.post("../php/getPlantCodeInfo.php", authParams({code: code}), function(data){
 						if(thisPlantCodeDataNumer != plantCodeDataNumber){return false;}
 						if(data.indexOf("true|") == 0){
 							var data = JSON.parse(data.replace("true|", ""));
@@ -2392,18 +2396,18 @@
 							setLoadingButton($("#saveSurveyButton")[0], "Save changes", false);
 						}
 						else{
-							//ask for site password
-							$.get("../php/validateUserPlant.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + editablePlantCodeDiv.innerHTML + "&password=", function(data){
-								if(data.indexOf("true|") == 0){
-									//submit
-									saveSurvey(surveyID);
+						    //ask for site password
+						    $.post("../php/validateUserPlant.php", authParams({code: editablePlantCodeDiv.innerHTML, password: ""}), function(data){
+							if(data.indexOf("true|") == 0){
+							    //submit
+							    saveSurvey(surveyID);
 								}
 								else{
 									promptConfirm("Enter site password to save:<div><input type=\"password\" style=\"width:100%;border:1px solid #ccc;border-bottom:2px solid #ccc;border-radius:5px;padding:10px;font-size:17px;margin-top:10px;\" id=\"sitePassword\"/></div>", "Never mind.", "CONTINUE!", function(){setLoadingButton($("#saveSurveyButton")[0], "Save changes", false);savingSurvey = false;}, function(){
 										var sitePassword = $("#sitePassword")[0].value;
-										$.get("../php/validateUserPlant.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&code=" + editablePlantCodeDiv.innerHTML + "&password=" + encodeURIComponent(sitePassword), function(data){
-											//success
-											if(data.indexOf("true|") == 0){
+							                        $.post("../php/validateUserPlant.php", authParams({code: editablePlantCodeDiv.innerHTML, password: sitePassword}), function(data){
+										    //success
+										    if(data.indexOf("true|") == 0){
 												//submit
 												saveSurvey(surveyID);
 											}

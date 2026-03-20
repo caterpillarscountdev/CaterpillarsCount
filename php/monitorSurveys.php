@@ -1,4 +1,4 @@
-<?php                                           \
+<?php                                           
         define('__PATH__', dirname(__FILE__));
         require_once(__PATH__.'/orm/resources/Keychain.php');
         require_once(__PATH__.'/orm/resources/mailing.php');

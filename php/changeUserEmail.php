@@ -7,8 +7,9 @@
         $newFirstName = custgetparam("firstName");
         $newLastName = custgetparam("lastName");
 	$email = custgetparam("email");
-	
-	$user = User::findByEmail($email);
+	$salt = custgetparam("salt");
+  
+  	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
           if($user->getFirstName() != $newFirstName) {
             $user->setFirstName($newFirstName);

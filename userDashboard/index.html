@@ -348,7 +348,10 @@
                  });
 
                  async function loadUserSites() {
-                     let response = await fetch("../php/getOwnedSitesLIGHT.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"));
+                     let response = await fetch("../php/getOwnedSitesLIGHT.php",
+                                                       {method: "POST",
+                                                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                                                        body: new URLSearchParams(authParams())});
                      var data = JSON.parse((await response.text()).replace("true|", ""));
 
                      if (data.length > 0) {
@@ -359,7 +362,10 @@
                  }
 
                  async function loadUserGroups() {
-                     let response = await fetch("../php/getUserGroups.php?email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt"));
+                     let response = await fetch("../php/getUserGroups.php",
+                                                {method: "POST",
+                                                 headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                                                 body: new URLSearchParams(authParams())});
                      var data = JSON.parse((await response.text()).replace("true|", ""));
 
                      if (data.allowed) {
@@ -401,7 +407,10 @@
                          switchButtonStates('User');
                      }
                      
-                     let response = await fetch("../php/getUserStats.php?siteID=" + encodeURIComponent(siteID) + "&email=" + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + "&userID=" + encodeURIComponent(userID) + "&groupID=" + encodeURIComponent(userGroupID));
+                     let response = await fetch("../php/getUserStats.php",
+                                                {method: "POST",
+                                                 headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                                                 body: new URLSearchParams(authParams({siteID: siteID, groupID: userGroupID, userID: userID}))});
                      var data = JSON.parse((await response.text()).replace("true|", ""));
                      userData = data.Users;
                      
@@ -501,7 +510,7 @@
                          let tr = document.createElement("tr");
                          if (group) {
                              tr.innerHTML = `${groupHTML}<td>${group.Surveys}</td><td><a target="_blank" href="https://www.inaturalist.org/observations?field:Caterpillars%20Count!%20Observer=${row.iNatObserverID}&taxon_name=${arth.taxon}">${group.WithPhotos}</a></td><td>${group.WithIDs} (${arth.hideAccuracy ? "-" : group.WithMatches})</td><td>${arth.hideAccuracy ? "N/A" : group.Accuracy}</td>`;
-                         } else {
+                 } else {
                              tr.innerHTML = `${groupHTML}<td></td><td></td><td></td><td></td>`;
                          }
                          
@@ -758,7 +767,10 @@
                      if (userGroupID) {
                          idClause = '&id=' + userGroupID;
                      }
-                     let response = await fetch('../php/editUserGroup.php?email=' + encodeURIComponent(window.localStorage.getItem("email")) + "&salt=" + window.localStorage.getItem("salt") + idClause + "&name=" + encodeURIComponent(name) + "&emails=" + encodeURIComponent(emails), {method: "POST"});
+                     let response = await fetch('../php/editUserGroup.php',
+                                                       {method: "POST",
+                                                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                                                        body: new URLSearchParams(authParams({idClause: name, emails: emails}))});
                      userGroupID = Number((await response.text()).replace("true|", ""));
 
                      showUserGroupDetails(document.querySelector("#groupDetails"));
