@@ -15,39 +15,24 @@ class Keychain
 
 //FACTORY
 	public function __construct() {
-		if(getenv("Openshift") === false){
-			require_once("GODADDY_KEYS.php");
-			$dbconnCreds = getDatabaseConnectionCredentials();
-			$this->hostPointer = $dbconnCreds[0];
-			$this->hostUsername = $dbconnCreds[1];
-			$this->hostPassword = $dbconnCreds[2];
-			$this->databaseName = $dbconnCreds[3];
-			
-			$pathComponents = getPathComponents();
-			$this->protocol = $pathComponents[0];
-			$this->domainName = $pathComponents[1];
-			$this->extraPaths = $pathComponents[2];
-		}
-		else{
-			if (getenv("DEVELOPMENT_INSTANCE") == 1) {  
-			  $this->hostPointer = getenv("DEVCCDB_SERVICE_HOST");
-                          if (getenv("LOCAL_DEV")) {
-                            $this->domainName =  "cc.devel";
-
-                          } else {
-                            $this->domainName =  "dev-caterpillarscount2-dept-caterpillars-count.apps.cloudapps.unc.edu";
-                          }
-                          
-			} else {
-			  $this->hostPointer = getenv("CATERPILLARSV2_SERVICE_HOST");
-                          $this->domainName =  "caterpillarscount.unc.edu";
-			}	
-			$this->hostUsername = getenv("HOST_USERNAME");
-			$this->hostPassword = getenv("HOST_PASSWORD");
-			$this->databaseName = getenv("DATABASE_NAME");
-                        $this->protocol = "https://";
-                        $this->extraPaths = "";
-                }
+          if (getenv("DEVELOPMENT_INSTANCE") == 1) {  
+            $this->hostPointer = getenv("DEVCCDB_SERVICE_HOST");
+            if (getenv("LOCAL_DEV")) {
+              $this->domainName =  "cc.devel";
+              
+            } else {
+              $this->domainName =  "dev-caterpillarscount2-dept-caterpillars-count.apps.cloudapps.unc.edu";
+            }
+            
+          } else {
+            $this->hostPointer = getenv("CATERPILLARSV2_SERVICE_HOST");
+            $this->domainName =  "caterpillarscount.unc.edu";
+          }	
+          $this->hostUsername = getenv("HOST_USERNAME");
+          $this->hostPassword = getenv("HOST_PASSWORD");
+          $this->databaseName = getenv("DATABASE_NAME");
+          $this->protocol = "https://";
+          $this->extraPaths = "";
 	}
 
 
