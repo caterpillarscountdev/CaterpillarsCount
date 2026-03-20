@@ -713,7 +713,7 @@ class Survey
 		if(!$this->deleted){
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$wetLeaves = filter_var($wetLeaves, FILTER_VALIDATE_BOOLEAN);
-			mysqli_query($dbconn, "UPDATE Survey SET WetLeaves='$wetLeaves' WHERE ID='" . $this->id . "'");
+			mysqli_query($dbconn, "UPDATE Survey SET WetLeaves='". intval($wetLeaves) . "' WHERE ID='" . $this->id . "'");
 			$this->wetLeaves = $wetLeaves;
 			return true;
 		}

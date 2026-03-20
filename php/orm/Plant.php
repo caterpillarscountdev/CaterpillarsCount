@@ -310,7 +310,7 @@ class Plant
 		if(!$this->deleted){
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			$isConifer = filter_var($isConifer, FILTER_VALIDATE_BOOLEAN);
-			mysqli_query($dbconn, "UPDATE Plant SET `IsConifer`='$isConifer' WHERE ID='" . $this->id . "'");
+			mysqli_query($dbconn, "UPDATE Plant SET `IsConifer`='" . intval($isConifer) . "' WHERE ID='" . $this->id . "'");
 			$this->isConifer = $isConifer;
 			return true;
 		}
