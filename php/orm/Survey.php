@@ -48,7 +48,7 @@ class Survey
 		$localTime = self::validLocalTime($dbconn, $localTime);
 		$observationMethod = self::validObservationMethod($dbconn, $observationMethod);
 		$notes = self::validNotes($dbconn, $notes);
-		$wetLeaves = intval(filter_var($wetLeaves, FILTER_VALIDATE_BOOLEAN));
+		$wetLeaves = filter_var($wetLeaves, FILTER_VALIDATE_BOOLEAN);
 		$plantSpecies = self::validPlantSpecies($dbconn, $plantSpecies, $plant);
 		$isConifer = (intval($averageNeedleLength) !== -1);
 		$numberOfLeaves = $isConifer ? -1 : self::validNumberOfLeaves($dbconn, $numberOfLeaves);
@@ -56,7 +56,7 @@ class Survey
 		$herbivoryScore = $isConifer ? -1 : self::validHerbivoryScore($dbconn, $herbivoryScore);
 		$averageNeedleLength = $isConifer ? self::validAverageNeedleLength($dbconn, $averageNeedleLength) : -1;
 		$linearBranchLength = $isConifer ? self::validLinearBranchLength($dbconn, $linearBranchLength) : -1;
-		$submittedThroughApp = intval(filter_var($submittedThroughApp, FILTER_VALIDATE_BOOLEAN));
+		$submittedThroughApp = filter_var($submittedThroughApp, FILTER_VALIDATE_BOOLEAN);
 		$reviewedAndApproved = false;
 		$qcComment = null;
 		
@@ -107,7 +107,7 @@ class Survey
 		if($plant->getSite()->getName() == "Example Site"){
 			$needToSendToSciStarter = 0;
 		}
-		mysqli_query($dbconn, "INSERT INTO Survey (`SubmissionTimestamp`, `UserFKOfObserver`, `PlantFK`, `LocalDate`, `LocalTime`, `ObservationMethod`, `Notes`, `WetLeaves`, `PlantSpecies`, `NumberOfLeaves`, `AverageLeafLength`, `HerbivoryScore`, `AverageNeedleLength`, `LinearBranchLength`, `SubmittedThroughApp`, `NeedToSendToSciStarter`, `ReviewedAndApproved`) VALUES ('" . $submissionTimestamp . "', '" . $observer->getID() . "', '" . $plant->getID() . "', '$localDate', '$localTime', '$observationMethod', '$notes', '$wetLeaves', '$plantSpecies', '$numberOfLeaves', '$averageLeafLength', '$herbivoryScore', '$averageNeedleLength', '$linearBranchLength', '$submittedThroughApp', '$needToSendToSciStarter', '$reviewedAndApproved')");
+		mysqli_query($dbconn, "INSERT INTO Survey (`SubmissionTimestamp`, `UserFKOfObserver`, `PlantFK`, `LocalDate`, `LocalTime`, `ObservationMethod`, `Notes`, `WetLeaves`, `PlantSpecies`, `NumberOfLeaves`, `AverageLeafLength`, `HerbivoryScore`, `AverageNeedleLength`, `LinearBranchLength`, `SubmittedThroughApp`, `NeedToSendToSciStarter`, `ReviewedAndApproved`) VALUES ('" . $submissionTimestamp . "', '" . $observer->getID() . "', '" . $plant->getID() . "', '$localDate', '$localTime', '$observationMethod', '$notes', '". intval($wetLeaves) ."', '$plantSpecies', '$numberOfLeaves', '$averageLeafLength', '$herbivoryScore', '$averageNeedleLength', '$linearBranchLength', '".intval($submittedThroughApp)."', '$needToSendToSciStarter', '". intval($reviewedAndApproved)."')");
 		$id = intval(mysqli_insert_id($dbconn));
 		
 		if($plant->getSite()->getDateEstablished() == "0000-00-00"){
