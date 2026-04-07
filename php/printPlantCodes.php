@@ -7,6 +7,7 @@
     
     class PDF extends FPDF{
         public $currentTagNumber = 0;
+        public $y0 = 0;
         
         function Header(){
             $this->SetFont('Arial','B',15);

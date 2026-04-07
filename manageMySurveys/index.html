@@ -2156,7 +2156,7 @@
                                             overrides.push(v.dataset.override);
                                         }});
 
-			    $.post("../php/approveSurvey.php", authParams({surveyID: id, approvedLevel: approvedLevel, qccomment: qccomment, overrides: overrides}), function(data){
+			    $.post("../php/approveSurvey.php", authParams({surveyID: id, approvedLevel: approvedLevel, qccomment: qccomment, overrides: overrides.join(",")}), function(data){
 				//success
 				if(data.indexOf("true|") == 0){
 						reloadPage();
