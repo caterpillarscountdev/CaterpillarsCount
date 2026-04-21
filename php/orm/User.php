@@ -730,9 +730,8 @@ class User
 			$email = $user->getEmail();
 		}
 		return in_array($email, array(
-			"plocharczykweb@gmail.com",
 			"hurlbert@bio.unc.edu",
-			"michael.lee@unc.edu",
+			"osaweemmanuelnosa@gmail.com",
 			"luke@opperman.net"
 		));
 	}
