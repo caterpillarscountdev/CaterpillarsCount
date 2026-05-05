@@ -262,7 +262,7 @@
 			}
 		}
 		else{
-			if(count($keys) > 1 || (count($keys > 0) && $keys[0] != $oldestCaterpillarsCountIdentification)){
+			if(count($keys) > 1 || (count($keys) > 0) && $keys[0] != $oldestCaterpillarsCountIdentification){
 				//if we haven't followed up with another identification yet, and there's a disagreement with our original identification
 				$supporting = 0;
 				if(array_key_exists($oldestCaterpillarsCountIdentification, $identificationVoteCounts)){
