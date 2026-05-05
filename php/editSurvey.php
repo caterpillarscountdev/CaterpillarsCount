@@ -149,9 +149,11 @@
 					if(!in_array(strval($arthropodData[$i][0]), $existingArthropodSightingIDs)){
 						$newArthropodSighting = $survey->addArthropodSighting($arthropodData[$i][1], $arthropodData[$i][2], $arthropodData[$i][3], $arthropodData[$i][4], $arthropodData[$i][5], $arthropodData[$i][6], $arthropodData[$i][7], $arthropodData[$i][8], $arthropodData[$i][9], $arthropodData[$i][10]);
 						if(is_object($newArthropodSighting) && get_class($newArthropodSighting) == "ArthropodSighting"){
-							$attachResult = attachPhotoToArthropodSighting($_FILES['file' . $i], $newArthropodSighting);
-							if($attachResult != "File not uploaded. " && $attachResult !== true){
-								$failures .= "Photo #" . $i . ": " . strval($attachResult);
+                                                	if (array_key_exists('file' . $i, $_FILES)) { 
+							  $attachResult = attachPhotoToArthropodSighting($_FILES['file' . $i], $newArthropodSighting);
+							  if($attachResult != "File not uploaded. " && $attachResult !== true){
+							 	$failures .= "Photo #" . $i . ": " . strval($attachResult);
+                                                          }
 							}
 						}
 						else{

@@ -155,7 +155,7 @@
 		$data["observation"]["observation_field_values_attributes"] = $observationFieldValuesAttributes;
 
                 $observation = curlINatAPI("/v1/observations", $data, $token);
-                if ($observation["error"]) {
+                if (array_key_exists("error", $observation)) {
                   try {
                     if ($observation["status"] < 500) {
                       // do not retry non-500s, log the result and let us check
@@ -178,7 +178,7 @@
 		$post = array('observation_photo[observation_id]' => $observation["id"], 'observation_photo[uuid]' => guidv4(openssl_random_pseudo_bytes(16)), 'file' => $cFile);
 
                 $photoAddResponse = curlINatAPI("/v1/observation_photos", $post, $token, array("multipart" => 1));
-                echo("\nGot photo response " . $arthropodSightingID . " :" . $photoAddResponse);
+                echo("\nGot photo response " . $arthropodSightingID . " :" . print_r($photoAddResponse, true));
 		
                 //LINK OBSERVATION TO CATERPILLARS COUNT PROJECT
                 $data = array(
@@ -186,7 +186,7 @@
                   "observation_id" => $observation["id"]
                   );
                 $caterpillarsCountLinkResponse = curlINatAPI("/v1/project_observations", $data, $token);
-                echo("\nGot link response " . $arthropodSightingID . " :" . $caterpillarsCountLinkResponse);
+                echo("\nGot link response " . $arthropodSightingID . " :" . print_r($caterpillarsCountLinkResponse, true);
 
                 //Mark this ArthropodSighting as completed and save the INaturalistID to our database
                 if(is_int($observation["id"]) && $observation["id"] > 0){
