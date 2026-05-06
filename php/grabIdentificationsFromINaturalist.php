@@ -60,7 +60,8 @@
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	$data = json_decode(curl_exec($ch), true);
 	curl_close($ch);
-	
+
+        echo("Got response iteration " . $iteration . " " . print_r($data));
 	//Simplify the translation process from iNaturalistIDs to ArthropodSightingIDs
 	$iNaturalistIDs = [];
 	for($i = 0; $i < count($data["results"]); $i++){
