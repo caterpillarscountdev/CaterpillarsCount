@@ -292,7 +292,7 @@
  		else{//relative proportion
 			$arthropodRelativeProportionsSet = array();
  			$arthropodCounts = array();
- 			$query = mysqli_query($dbconn, "SELECT DISTINCT $breakdownUpper(LocalDate) AS $breakdownTitle FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID Survey.ReviewedAndApproved < 3 AND WHERE SiteFK='$siteID'");
+ 			$query = mysqli_query($dbconn, "SELECT DISTINCT $breakdownUpper(LocalDate) AS $breakdownTitle FROM Survey JOIN Plant ON Survey.PlantFK=Plant.ID WHERE Survey.ReviewedAndApproved < 3 AND SiteFK='$siteID'");
  			while($row = mysqli_fetch_assoc($query)){
 				$arthropodCounts[strval($row[$breakdownTitle])] = array();
 				$arthropodRelativeProportionsSet[strval($row[$breakdownTitle])] = array();
