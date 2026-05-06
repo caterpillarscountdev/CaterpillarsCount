@@ -14,7 +14,7 @@
     		$site = Site::findByID($siteID);
     		if(is_object($site) && get_class($site) == "Site" && $site->hasCreatorPermissions($user)){
 			$managerRequests = ManagerRequest::findManagerRequestsBySite($site);
-			$mangers = array();
+			$managers = array();
 			for($i = 0; $i < count($managerRequests); $i++){
 				$managers[] = array(
 					"managerID" => $managerRequests[$i]->getManager()->getID(),
