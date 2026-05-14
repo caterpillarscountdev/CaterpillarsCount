@@ -1231,7 +1231,7 @@ function showNotifyOfflineSubmit() {
 			    var validated = plantArray["validated"];
 			    observationMethod = plantArray["observationMethod"];//refers to global var
 			    setConiferInputs(isConifer);
-                            $("#setIsConifer").style.display = 'none'
+                            $("#setIsConifer").hide()
 			    
 			    codeInput.parentNode.style.color = "#fff";
 			    codeInput.parentNode.style.borderRadius = "4px";
@@ -1280,7 +1280,7 @@ function showNotifyOfflineSubmit() {
                                   if (cachedPlantArrayStr) {
                                     return setPlantArray(cachedPlantArrayStr);
                                   }
-                                  $("#setIsConifer").style.display = 'block'
+                                  $("#setIsConifer").show()
 				  codeInput.parentNode.style.color = "";
 				  codeInput.parentNode.style.borderRadius = "";
 				  codeInput.parentNode.style.background = "";
