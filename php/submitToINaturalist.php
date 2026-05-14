@@ -186,7 +186,7 @@
                   "observation_id" => $observation["id"]
                   );
                 $caterpillarsCountLinkResponse = curlINatAPI("/v1/project_observations", $data, $token);
-                echo("\nGot link response " . $arthropodSightingID . " :" . print_r($caterpillarsCountLinkResponse, true);
+                echo("\nGot link response " . $arthropodSightingID . " :" . print_r($caterpillarsCountLinkResponse, true));
 
                 //Mark this ArthropodSighting as completed and save the INaturalistID to our database
                 if(is_int($observation["id"]) && $observation["id"] > 0){

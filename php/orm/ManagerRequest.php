@@ -198,7 +198,7 @@ class ManagerRequest
 			$dbconn = (new Keychain)->getDatabaseConnection();
 			
 			if($this->status == "Pending"){
-				$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">" . $this->getSite()->getCreator()->getFullName() . " no longer requires your services as a manager of the \"" . $this->getSite()->getName() . "\" Caterpillars Count! site in " . $this->getSite()->getRegion() . "." . $approvedMessageAddOn . "</div><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"></div></div>";
+				$message = "<div style=\"text-align:center;border-radius:5px;padding:20px;font-family:'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;\"><div style=\"text-align:left;color:#777;margin-bottom:40px;font-size:20px;\">" . $this->getSite()->getCreator()->getFullName() . " no longer requires your services as a manager of the \"" . $this->getSite()->getName() . "\" Caterpillars Count! site in " . $this->getSite()->getRegion() . ".</div><div style=\"padding-top:40px;margin-top:40px;margin-left:-40px;margin-right:-40px;border-top:1px solid #eee;color:#bbb;font-size:14px;\"></div></div>";
 				email($this->getManager()->getEmail(), "Your Caterpillars Count! \"" . $this->getSite()->getName() . "\" managment services are no longer required.", $message);
 			}
 			else if($this->status == "Approved"){
