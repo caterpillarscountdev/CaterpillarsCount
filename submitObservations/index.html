@@ -552,7 +552,12 @@
 								  <div class="observationFieldTitle">Plant species: <span id="offlinePlantSpeciesNotes"></span></div>
 									<input type="text" id="plantSpecies" placeholder="" oninput="setCustomPlantSpeciesConfirmed(false);" onclick="if(this.readOnly){this.blur();queueNotice('alert', 'The creator of this site has locked in this plant\'s species, so there\'s no need for you to worry about it.');}" onblur="if($('.ui-autocomplete').has(currentElement).length > 0){this.value = $(currentElement).text();this.focus();}else if(!this.readOnly && this.value.replace(/ /g, '') != '' && !inArrayIgnoreCaseAndWhitespace(this.value, plantSpeciesList) && !customPlantSpeciesConfirmed){promptConfirm('&quot;' + this.value + '&quot; is not a species name in our database. Are you sure this is the correct name and spelling of your tree species?', 'Try again.', 'Continue. I am sure!', function(){document.getElementById('plantSpecies').focus();document.getElementById('plantSpecies').select();}, function(){setCustomPlantSpeciesConfirmed(true);});setTimeout(function(){for(var i = 1; i < $('#plant input').length; i++){$('#plant input').eq(i).blur();}},1);}"/>
 								</div>
-
+								<table id="setIsConifer" class="checkboxTable" style="display:none">
+								  <tr onclick="var chk=$(this).find('.checkbox');toggleCheckbox(chk); setConiferInputs(checkboxIsChecked(chk));">
+								    <td><div class="checkbox" id="offlineConifer"></div></td>
+								    <td>This tree has needles, not leaves.</td>
+                                                                  </tr>
+								</table>
 								<div id="leafInputs">
 									<div class="half group">
 										<div class="observationFieldTitle">Avg. leaf length (cm):</div>
@@ -620,6 +625,6 @@
 
 			<div>View our <a href="../privacyPolicy">privacy policy</a></div>
 		</footer>
-		<script type="text/javascript" src="../js/submitObservations.js?v=11"></script>
+		<script type="text/javascript" src="../js/submitObservations.js?v=12"></script>
 	</body>
 </html>

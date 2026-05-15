@@ -1216,79 +1216,92 @@ function showNotifyOfflineSubmit() {
 			var observationMethod = "";
 			var mostUpToDatePlantReturnNumber = 0;
 			async function getPlant(codeInput, passwordGroup){
-				codeInput = $(codeInput)[0];
-				codeInput.value = codeInput.value.toUpperCase().replace(/ /g, "").replace(/[^A-Z]/g, "");
-				$("#plant input")[0].value = "";
-				$("#plant input")[0].readOnly = false;
+			  codeInput = $(codeInput)[0];
+			  codeInput.value = codeInput.value.toUpperCase().replace(/ /g, "").replace(/[^A-Z]/g, "");
+			  $("#plant input")[0].value = "";
+			  $("#plant input")[0].readOnly = false;
+
+                          function setPlantArray(plantArrayStr)  {
+                            var plantArray = JSON.parse(plantArrayStr)
+                            var color = plantArray["color"];
+                            var siteName = plantArray["siteName"];
+			    var species = plantArray["species"];
+			    var circle = plantArray["circle"];
+			    var isConifer = plantArray["isConifer"];
+			    var validated = plantArray["validated"];
+			    observationMethod = plantArray["observationMethod"];//refers to global var
+			    setConiferInputs(isConifer);
+                            $("#setIsConifer").hide()
+			    
+			    codeInput.parentNode.style.color = "#fff";
+			    codeInput.parentNode.style.borderRadius = "4px";
+			    codeInput.parentNode.style.background = color;
+			    codeInput.parentNode.style.padding = "10px 10px 0px 10px";
+			    codeInput.parentNode.style.marginTop = "10px";
+			    $(codeInput.parentNode).find("div")[0].innerHTML = siteName + ", Circle " + circle + ", " + species;
+			    
+			    if(validated){
+			      $(passwordGroup).stop().hide(300);
+			    }
+			    else{
+			      $(passwordGroup).stop().show(300);
+			    }
+			    
+			    if($(codeInput)[0] == $("#plantCode")[0]){
+			      if(observationMethod == "Visual"){
+				selectDualOptionButton($("#visualDualOptionButton")[0]);
+				forceFiftyLeaves();
+			      }
+			      else if(observationMethod == "Beat sheet"){
+				selectDualOptionButton($("#beatSheetDualOptionButton")[0]);
+				relaxFiftyLeaves();
+			      }
+			      
+			      if(species == "N/A"){
+				var speciesInput = $("#plant input")[0];
 				
+				//$("#plant .group").eq(0).show();
+				speciesInput.value = "";
+				speciesInput.readOnly = false;
+			      }
+			      else{
+				var speciesInput = $("#plant input")[0];
+				
+				//$("#plant .group").eq(0).hide();
+				speciesInput.value = species;
+				speciesInput.readOnly = true;
+			      }
+			    }
+                          }
+
+
 			        if(!(await haveInternet())){
-					codeInput.parentNode.style.color = "";
-					codeInput.parentNode.style.borderRadius = "";
-					codeInput.parentNode.style.background = "";
-					codeInput.parentNode.style.padding = "";
-					codeInput.parentNode.style.marginTop = "";
-					$(codeInput.parentNode).find("div")[0].innerHTML = "";
-					return false;
+                                  var cachedPlantArrayStr = window.localStorage.getItem('plant_'+codeInput.value);
+                                  if (cachedPlantArrayStr) {
+                                    return setPlantArray(cachedPlantArrayStr);
+                                  }
+                                  $("#setIsConifer").show()
+				  codeInput.parentNode.style.color = "";
+				  codeInput.parentNode.style.borderRadius = "";
+				  codeInput.parentNode.style.background = "";
+				  codeInput.parentNode.style.padding = "";
+				  codeInput.parentNode.style.marginTop = "";
+				  $(codeInput.parentNode).find("div")[0].innerHTML = "";
+				  return false;
 				}
 				
 				var thisPlantReturnNumber = ++mostUpToDatePlantReturnNumber;
 				
 				setTimeout(function(){
 					if(thisPlantReturnNumber == mostUpToDatePlantReturnNumber) {
-						code = codeInput.value;
+					  code = codeInput.value;
 					  $.post("/php/getPlantByCode.php", authParams({code: code}), function(data){
 							//success
 							if(thisPlantReturnNumber == mostUpToDatePlantReturnNumber){
 								if(data.indexOf("true|") == 0){
-									var plantArray = JSON.parse(data.replace("true|", ""));
-									var color = plantArray["color"];
-									var siteName = plantArray["siteName"];
-									var species = plantArray["species"];
-									var circle = plantArray["circle"];
-									var isConifer = plantArray["isConifer"];
-									var validated = plantArray["validated"];
-									observationMethod = plantArray["observationMethod"];//refers to global var
-									setConiferInputs(isConifer);
-									
-									codeInput.parentNode.style.color = "#fff";
-									codeInput.parentNode.style.borderRadius = "4px";
-									codeInput.parentNode.style.background = color;
-									codeInput.parentNode.style.padding = "10px 10px 0px 10px";
-									codeInput.parentNode.style.marginTop = "10px";
-									$(codeInput.parentNode).find("div")[0].innerHTML = siteName + ", Circle " + circle + ", " + species;
-									
-									if(validated){
-										$(passwordGroup).stop().hide(300);
-									}
-									else{
-										$(passwordGroup).stop().show(300);
-									}
-									
-									if($(codeInput)[0] == $("#plantCode")[0]){
-										if(observationMethod == "Visual"){
-											selectDualOptionButton($("#visualDualOptionButton")[0]);
-											forceFiftyLeaves();
-										}
-										else if(observationMethod == "Beat sheet"){
-											selectDualOptionButton($("#beatSheetDualOptionButton")[0]);
-											relaxFiftyLeaves();
-										}
-										
-										if(species == "N/A"){
-											var speciesInput = $("#plant input")[0];
-											
-											//$("#plant .group").eq(0).show();
-											speciesInput.value = "";
-											speciesInput.readOnly = false;
-										}
-										else{
-											var speciesInput = $("#plant input")[0];
-												
-											//$("#plant .group").eq(0).hide();
-											speciesInput.value = species;
-											speciesInput.readOnly = true;
-										}
-									}
+								  var plantArrayStr = data.replace("true|", "");
+                                                                  window.localStorage.setItem("plant_"+code, plantArrayStr);
+                                                                  setPlantArray(plantArrayStr)
 								}
 								else{
 									codeInput.parentNode.style.color = "";
