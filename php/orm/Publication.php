@@ -22,7 +22,7 @@ class Publication
 			return "Cannot connect to server.";
 		}
 				
-		mysqli_query($dbconn, "INSERT INTO Publication (`ID`, `Citation`, `DOI`, `Link`, `Image`) VALUES ('$id', '$citation', '$doi', '$link', '$image') ON DUPLICATE KEY UPDATE DOI='$doi', Link='$link', Image='$image'");
+		mysqli_query($dbconn, "INSERT INTO Publication (`ID`, `Citation`, `DOI`, `Link`, `Image`) VALUES ('$id', '$citation', '$doi', '$link', '$image') ON DUPLICATE KEY UPDATE Citation='$citation', DOI='$doi', Link='$link', Image='$image'");
 		
 		return new Publication($id, $citation, $doi, $link, $image, 1);
 	}
