@@ -8,7 +8,7 @@
 	$email = custgetparam("email");
 	$salt = custgetparam("salt");
 	$page = custgetparam("page");
-	$filters = json_decode(rawurldecode(custgetparam("filters")));
+	$filters = json_decode(rawurldecode(custgetparam("filters")), true);
 	$PAGE_LENGTH = 25;
 	
 	$user = User::findBySignInKey($email, $salt);

@@ -6,7 +6,7 @@
 	$salt = custgetparam("salt");
 	$selected = json_decode(custgetparam("selected"));
 	$unselected = json_decode(custgetparam("unselected"));
-	$filters = json_decode(rawurldecode(custgetparam("filters")));
+	$filters = json_decode(rawurldecode(custgetparam("filters")), true);
 
 	$user = User::findBySignInKey($email, $salt);
 	if(is_object($user) && get_class($user) == "User"){
