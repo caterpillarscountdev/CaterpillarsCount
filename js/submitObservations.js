@@ -221,7 +221,14 @@ function showNotifyOfflineSubmit() {
 									hideRetryPlantCredentialsNotice();
 									
 									//alert user of unexpected error
-									queueNotice("error", "Oh no! We were automatically collecting your previous offline survey submissions now that you have an internet connection, but we ran into this unexpected error and had to stop:<br/><br/>" + submissionError + "<br/><br/>If this is not the first time you have seen this error, please take a screenshot right now and email it to caterpillarscount@gmail.com so we can fix it. Thank you!");
+                                                                  skipKeys = ["arthropodData", "submittedThroughApp", "email", "salt", "sitePassword"];
+                                                                  partialForm = {}
+                                                                  for (var k of formData.keys()) {
+                                                                    if (!skipKeys.includes(k)) {
+                                                                      partialForm[k] = formData.get(k)
+                                                                    }
+                                                                  }
+								  queueNotice("error", "Oh no! We were automatically collecting your previous offline survey submissions now that you have an internet connection, but we ran into this unexpected error and had to stop:<br/><br/>" + submissionError + "<br/>" + JSON.stringify(partialForm, null, 2) + "<br/><br/>If this is not the first time you have seen this error, please take a screenshot right now and email it to caterpillarscount@gmail.com so we can fix it. Thank you!");
 									
 									//and dont continue
 								}
