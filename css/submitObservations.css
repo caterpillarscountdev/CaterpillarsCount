@@ -91,6 +91,8 @@
 				color:#fff;
 				font-size:16px;
 		                font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                                max-height: 90%;
+                                overflow: scroll;
 				display:none;
 		                background:rgba(0,0,0,0.9);
                                 
