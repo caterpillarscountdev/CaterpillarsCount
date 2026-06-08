@@ -105,45 +105,61 @@ function showNotifyOfflineSubmit() {
 			var fixIfError = true;
 			function submitPendingSurvey(index, pendingSurvey){
 				if(readyForRetry){
-					readyForRetry = false;
-					setLoadingButton($("#retryPlantCredentialsButton")[0], "Fix it!", true);
-					
-					submitPendingSurveyOnStandby = false;
-					currentSubmitPendingSurveyIndex = index;
-					currentPendingSurvey = pendingSurvey;
-					
-					//CURRENT
-					//[plantCode, sitePassword, dateAndTime, observationMethod, siteNotes, wetLeaves, arthropodDataCopy, plantSpecies, numberOfLeaves, averageLeafLength, herbivoryScore]
-					//dateAndTime: [date, time]
-					//arthropodData: [[orderType, orderLength, orderQuantity, orderNotes, pupa, hairy, leafRoll, silkTent, sawfly, beetle larva, fileInput]]
-					var plantCode = pendingSurvey[0];
-					var sitePassword = pendingSurvey[1];
-					if($("#retryPlantCredentials")[0].style.display == "block"){
-						plantCode = $("#retrySurveyLocationCode")[0].value.replace(/ /g, "").toUpperCase();
-						sitePassword = $("#retrySitePassword")[0].value;
-					}
-					var dateAndTime = pendingSurvey[2];
-					var observationMethod = pendingSurvey[3];
-					var siteNotes = pendingSurvey[4];
-					var wetLeaves = pendingSurvey[5];
-					var arthropodDataCopy = pendingSurvey[6];
-					var plantSpecies = pendingSurvey[7];
-					var numberOfLeaves = pendingSurvey[8];
-					var averageLeafLength = pendingSurvey[9];
-					var herbivoryScore = pendingSurvey[10];
-					var averageNeedleLength = pendingSurvey.length > 12 ? pendingSurvey[12] : "-1";
-					var linearBranchLength = pendingSurvey.length > 13 ? pendingSurvey[13] : "-1";
-	//alert("set vars");
-					var formData = new FormData();
-					for(var i = 0; i < arthropodDataCopy.length; i++){
-						var imgData = arthropodDataCopy[i][10];
-						if(imgData != ""){
-							var b64Data = imgData[1];
-							var contentType = imgData[0];
-							formData.append(('file' + i), b64toBlob(b64Data, contentType));
-							arthropodDataCopy[i][10] = "";
-						}
-					}
+				  readyForRetry = false;
+				  setLoadingButton($("#retryPlantCredentialsButton")[0], "Fix it!", true);
+				  
+				  submitPendingSurveyOnStandby = false;
+				  currentSubmitPendingSurveyIndex = index;
+				  currentPendingSurvey = pendingSurvey;
+				  
+				  //CURRENT
+				  //[plantCode, sitePassword, dateAndTime, observationMethod, siteNotes, wetLeaves, arthropodDataCopy, plantSpecies, numberOfLeaves, averageLeafLength, herbivoryScore]
+				  //dateAndTime: [date, time]
+				  //arthropodData: [[orderType, orderLength, orderQuantity, orderNotes, pupa, hairy, leafRoll, silkTent, sawfly, beetle larva, fileInput]]
+				  var plantCode = pendingSurvey[0];
+				  var sitePassword = pendingSurvey[1];
+				  if($("#retryPlantCredentials")[0].style.display == "block"){
+				    plantCode = $("#retrySurveyLocationCode")[0].value.replace(/ /g, "").toUpperCase();
+				    sitePassword = $("#retrySitePassword")[0].value;
+				  }
+                                  var extraNotes = [];
+				  var dateAndTime = pendingSurvey[2];
+				  var observationMethod = pendingSurvey[3];
+                                  if (!observationMethod) {
+                                    observationMethod = 'Beat sheet';
+                                    extraNotes.append("Observation method");
+                                  }
+				  var siteNotes = pendingSurvey[4] || "";
+				  var wetLeaves = pendingSurvey[5];
+                                  
+				  var arthropodDataCopy = pendingSurvey[6];
+				  var plantSpecies = pendingSurvey[7];
+				  var numberOfLeaves = pendingSurvey[8];
+                                  if (!numberOfLeaves) {
+                                    numberOfLeaves = '1';
+                                    extraNotes.append("Number of leaves");
+                                  }
+				  var averageLeafLength = pendingSurvey[9];
+                                  if (!averageLeafLength) {
+                                    averageLeafLength = '1';
+                                    extraNotes.append("Average leaf length");
+                                  }
+				  var herbivoryScore = pendingSurvey[10];
+				  var averageNeedleLength = pendingSurvey.length > 12 ? pendingSurvey[12] : "-1";
+				  var linearBranchLength = pendingSurvey.length > 13 ? pendingSurvey[13] : "-1";
+                                  if (extraNotes.length) {
+                                    siteNotes += "\nOffline submit missing: " + extraNotes.join(", ");
+                                  }
+				  var formData = new FormData();
+				  for(var i = 0; i < arthropodDataCopy.length; i++){
+				    var imgData = arthropodDataCopy[i][10];
+				    if(imgData != ""){
+				      var b64Data = imgData[1];
+				      var contentType = imgData[0];
+				      formData.append(('file' + i), b64toBlob(b64Data, contentType));
+				      arthropodDataCopy[i][10] = "";
+				    }
+				  }
 	//alert("converted base64 to blobs");
 					formData.append("plantCode", plantCode);
 					formData.append("sitePassword", sitePassword);
@@ -228,9 +244,9 @@ function showNotifyOfflineSubmit() {
                                                                       partialForm[k] = formData.get(k)
                                                                     }
                                                                   }
-								  queueNotice("error", "Oh no! We were automatically collecting your previous offline survey submissions now that you have an internet connection, but we ran into this unexpected error and had to stop:<br/><br/>" + submissionError + "<br/>" + JSON.stringify(partialForm, null, 2) + "<br/><br/>If this is not the first time you have seen this error, please take a screenshot right now and email it to caterpillarscount@gmail.com so we can fix it. Thank you!");
-									
-									//and dont continue
+								  queueNotice("error", "Oh no! We were automatically collecting your previous offline survey submissions now that you have an internet connection, but we ran into this unexpected error and had to stop:<br/><br/>" + submissionError + "<br/>" + JSON.stringify(partialForm, null, 2) + "<br/><br/>Please take a screenshot right now and email it to caterpillarscount@gmail.com so we can fix it. Thank you!");
+                                                                  // and don't continue
+								  
 								}
 							}
 						},
