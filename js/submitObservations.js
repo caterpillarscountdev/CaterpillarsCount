@@ -205,7 +205,7 @@ function showNotifyOfflineSubmit() {
 											$("#retrySitePassword").stop().animate({backgroundColor:"#ffbbbb"}).animate({backgroundColor:"#fff"});
 										}
 										else{
-											queueNotice("retryPlantCredentials", plantCode + "|While you were offline, at " + getTwelveHourTime(dateAndTime[1]) + " on " + getReadableDate(dateAndTime[0]) + ", you tried to submit a " + observationMethod.toLowerCase() + " survey of the " + plantSpecies.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) + " species  with some invalid site information. Please provide the correct information below.");
+										  showRetryPlantCredentials(plantCode, "While you were offline, at " + getTwelveHourTime(dateAndTime[1]) + " on " + getReadableDate(dateAndTime[0]) + ", you tried to submit a " + observationMethod.toLowerCase() + " survey  with some invalid site information. Please provide the correct information below.");
 										}
 									}
 									else{
@@ -215,16 +215,6 @@ function showNotifyOfflineSubmit() {
 										//and continue
 										submitPendingSurveyOnStandby = true;
 									}
-								}
-								else if(submissionError.indexOf("Invalid date of survey.") > -1 || submissionError.indexOf("Invalid time of survey.") > -1 || submissionError.indexOf("Select an observation method.") > -1 || submissionError.indexOf("Invalid plant species.") > -1 || submissionError.indexOf("Number of leaves must be between 1 and 500.") > -1 || submissionError.indexOf("Average leaf length must be between 1cm and 60cm.") > -1 || submissionError.indexOf("Select an herbivory score.") > -1 || submissionError.indexOf("Invalid arthropod group.") > -1 || submissionError.indexOf("length must be between 1mm and 300mm.") > -1 || submissionError.indexOf("quantity must be between 1 and 1000.") > -1){
-									//hide retryPlantCredentials if shown
-									hideRetryPlantCredentialsNotice();
-									
-									//remove tainted survey
-									successfullySubmittedPendingSurveyIndexes[successfullySubmittedPendingSurveyIndexes.length] = index;
-									
-									//and continue
-									submitPendingSurveyOnStandby = true;
 								}
 								else{
 									//hide retryPlantCredentials if shown
@@ -320,51 +310,23 @@ function showNotifyOfflineSubmit() {
 					queuePendingSurveys();
 				}
 			},3000);
-			
-			var noticeQueue = [];
-			var showingQueue = false;
-			function queueNotice(type, message){
-				for(var i = 0; i < noticeQueue.length; i++){
-					if(type != "retryPlantCredentials" && noticeQueue[i][0] == type && noticeQueue[i][1] == message){
-						//if its already in the queue
-						return false;
-					}
-				}
-				
-				noticeQueue[noticeQueue.length] = [type, message];
-				if(!showingQueue){
-					showingQueue = true;
-					showNextNoticeInQueue();
-				}
-			}
-			
-			function showRetryPlantCredentials(message){
+						
+                        function showRetryPlantCredentials(plantCode, message){
 				//show a regular alert message
-				$("#retrySurveyLocationCode")[0].value = message.substring(0, message.indexOf("|")).toUpperCase();
+				$("#retrySurveyLocationCode")[0].value = plantCode.toUpperCase();
 				$("#retrySitePassword")[0].value = "";
-				$("#retryPlantCredentials .message")[0].innerHTML = message.substring(message.indexOf("|") + 1);
+				$("#retryPlantCredentials .message")[0].innerHTML = message;
 				$("#retryPlantCredentials").stop().fadeIn();
 				$("#noticeInteractionBlock").stop().fadeIn();
 				
-				$("#noticeInteractionBlock")[0].onclick = function(){
-					postponeRetryPlantCredentials();
-				};
+				//$("#noticeInteractionBlock")[0].onclick = function(){
+				//	postponeRetryPlantCredentials();
+				//};
 			}
-			
-			function showManagerRequest(message){
-				//show a regular alert message
-				$("#managerRequestMessage")[0].innerHTML = message;
-				$("#managerRequest").stop().fadeIn();
-				$("#noticeInteractionBlock").stop().fadeIn();
-			}
-			
+						
 			function hideRetryPlantCredentialsNotice(){
-				if($("#retryPlantCredentials")[0].style.display == "block"){
-					$("#noticeInteractionBlock")[0].onclick = function(){
-						hideNotice();
-					};
-					hideNotice();
-				}
+				$("#retryPlantCredentials").stop().fadeOut(200);
+				$("#noticeInteractionBlock").stop().fadeOut(200);
 			}
 			
 			async function askForOfficialPlantSpecies(){

@@ -84,13 +84,16 @@
 				position:fixed;
 				top:0px;
 				left:0px;
-				z-index:1000;
+				z-index:99999;
 				width:100%;
 				padding:20px;
 				box-sizing:border-box;
 				color:#fff;
 				font-size:16px;
+		                font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 				display:none;
+		                background:rgba(0,0,0,0.9);
+                                
 			}
 			
 			#retryPlantCredentials .message{
