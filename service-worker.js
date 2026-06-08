@@ -56,10 +56,10 @@ self.addEventListener("fetch", (event) => {
       response,
     );
     
-    if (response.status < 400) {
+    if (event.request.method == 'GET' && response.status < 400) {
       // This avoids caching responses that we know are errors
       // (i.e. HTTP status code of 4xx or 5xx).
-      console.log("  Caching the response to", event.request.url);
+      // console.log("  Caching the response to", event.request.url);
       // We call .clone() on the response to save a copy of it
       // to the cache. By doing so, we get to keep the original
       // response object which we will return back to the controlled
@@ -67,7 +67,7 @@ self.addEventListener("fetch", (event) => {
       // https://developer.mozilla.org/en-US/docs/Web/API/Request/clone
       cache.put(event.request, response.clone());
     } else {
-      console.log("  Not caching the response to", event.request.url);
+      // console.log("  Not caching the response to", event.request.url);
     }
     
     // Return the original response object, which will be used to
