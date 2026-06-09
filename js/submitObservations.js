@@ -127,7 +127,7 @@ function showNotifyOfflineSubmit() {
 				  var observationMethod = pendingSurvey[3];
                                   if (!observationMethod) {
                                     observationMethod = 'Beat sheet';
-                                    extraNotes.append("Observation method");
+                                    extraNotes.push("Observation method");
                                   }
 				  var siteNotes = pendingSurvey[4] || "";
 				  var wetLeaves = pendingSurvey[5];
@@ -137,12 +137,12 @@ function showNotifyOfflineSubmit() {
 				  var numberOfLeaves = pendingSurvey[8];
                                   if (!numberOfLeaves) {
                                     numberOfLeaves = '1';
-                                    extraNotes.append("Number of leaves");
+                                    extraNotes.push("Number of leaves");
                                   }
 				  var averageLeafLength = pendingSurvey[9];
                                   if (!averageLeafLength) {
                                     averageLeafLength = '1';
-                                    extraNotes.append("Average leaf length");
+                                    extraNotes.push("Average leaf length");
                                   }
 				  var herbivoryScore = pendingSurvey[10];
 				  var averageNeedleLength = pendingSurvey.length > 12 ? pendingSurvey[12] : "-1";
