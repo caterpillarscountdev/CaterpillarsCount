@@ -371,7 +371,6 @@
 				optimizeVideoSize();
 				queueManagerRequests();
 				queueUserGroupRequests();
-				
 			});
 			
 			$(window).scroll(function(){
@@ -697,8 +696,28 @@ function showNotifyOffline() {
   })
 }
 
+_lastError = ""
+function _logError(ev) {
+  _lastError = ev.message || ev.reason;
+}
+
+function showJSVersions() {
+  var d = document.createElement("span");
+  d.style.cursor = "pointer";
+  d.innerHTML = "&#x1F41B;";
+  document.querySelector("footer").appendChild(d)
+  vs = Array.from(document.querySelectorAll("script[src*='v=']")).map(x => x.src.replace(location.origin, "")).join("<br>");
+  d.onclick = function() {
+    queueNotice("alert", "Versions:<br>" + vs + "<br>" + _lastError);
+  }
+}
+
+
 $(document).ready(function() {
   showNotifyOffline()
+  showJSVersions();
+  addEventListener("error", _logError);
+  addEventListener("unhandledrejection", _logError);
 })
 
 function authParams(data) {
@@ -709,3 +728,4 @@ function authParams(data) {
   data.salt = window.localStorage.getItem("salt");
   return data
 }
+
