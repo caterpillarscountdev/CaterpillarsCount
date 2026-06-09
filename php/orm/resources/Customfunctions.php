@@ -80,7 +80,9 @@ function curlINat($uri, $data, $accessToken = null, $options = array()) {
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   $response = curl_exec($ch);
   curl_close ($ch);
-  return json_decode($response, true);
+  $ret = json_decode($response, true);
+  if (!is_array($ret)) { error_log("curl response: " . $uri . "\n" . print_r($data, true) . "\n" . print_r($response, true) . "\n" . print_r($ret, true)); }
+  return $ret;
 }
 	
 ?>
