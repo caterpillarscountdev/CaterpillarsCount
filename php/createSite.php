@@ -29,20 +29,25 @@
 		//Max of 2,500 free requests per day, calculated as the sum of client-side and server-side queries.
 		//Max of 50 requests per second, calculated as the sum of client-side and server-side queries.
 		$KEY = getenv("unrestrictedGoogleMapsGeocodeAPIKey");
-		$arr = json_decode(file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $latitude . "," . $longitude . "&key=" . $KEY), true);
+		$arr = json_decode(@file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $latitude . "," . $longitude . "&key=" . $KEY), true);
 		$country = "";
 		$country_full = "";
 		$region = "";
-		$addressComponents = $arr["results"][0]["address_components"];
-		for($i = 0; $i < count($addressComponents); $i++){
+                if ($arr && array_key_exists("results", $arr) && count($arr["results"]) > 0 && array_key_exists("address_components", $arr["results"][0])) {
+		    $addressComponents = $arr["results"][0]["address_components"];
+		    for($i = 0; $i < count($addressComponents); $i++){
 			if(in_array("country", $addressComponents[$i]["types"])){
-				$country = $addressComponents[$i]["short_name"];
-				$country_full = $addressComponents[$i]["long_name"];
+			    $country = $addressComponents[$i]["short_name"];
+			    $country_full = $addressComponents[$i]["long_name"];
 			}
 			else if(in_array("administrative_area_level_1", $addressComponents[$i]["types"])){
-				$region = $addressComponents[$i]["short_name"];
+			    $region = $addressComponents[$i]["short_name"];
 			}
-		}
+		    }
+                } else {
+                    $country = 'US';
+                    $region = 'NC';
+                }
 		
 		$finalRegion = $country_full;
 		if($country == "US" || $country == "CA"){

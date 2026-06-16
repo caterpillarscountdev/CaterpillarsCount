@@ -168,12 +168,10 @@ class ManagerRequest
 	public function setHasCompleteAuthority($hasCompleteAuthority){
 		if(!$this->deleted){
 			$dbconn = (new Keychain)->getDatabaseConnection();
-			$hasCompleteAuthority = filter_var($hasCompleteAuthority, FILTER_VALIDATE_BOOLEAN);
-			if($status !== false){
-				mysqli_query($dbconn, "UPDATE ManagerRequest SET HasCompleteAuthority='$hasCompleteAuthority' WHERE ID='" . $this->id . "'");
-				$this->hasCompleteAuthority = $hasCompleteAuthority;
-				return true;
-			}
+			$hasCompleteAuthority = filter_var($hasCompleteAuthority, FILTER_VALIDATE_BOOLEAN);     
+                        mysqli_query($dbconn, "UPDATE ManagerRequest SET HasCompleteAuthority='$hasCompleteAuthority' WHERE ID='" . $this->id . "'");
+			$this->hasCompleteAuthority = $hasCompleteAuthority;
+			return true;
 		}
 		return false;
 	}
