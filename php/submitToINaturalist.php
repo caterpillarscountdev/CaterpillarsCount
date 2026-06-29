@@ -145,6 +145,12 @@
 				"value" => cleanParameter($params[$i][1])
 			);
 		}
+		if($order == "caterpillar"){
+			$observationFieldValuesAttributes[] = array(
+				"observation_field_id" => 325,
+				"value" => "larva"
+			);
+		}
 		if($order == "beetle" && $beetleLarva){
 			$observationFieldValuesAttributes[] = array(
 				"observation_field_id" => 325,
@@ -155,6 +161,7 @@
 		$data["observation"]["observation_field_values_attributes"] = $observationFieldValuesAttributes;
 
                 $observation = curlINatAPI("/v1/observations", $data, $token);
+
                 if (array_key_exists("error", $observation)) {
                   try {
                     if ($observation["status"] < 500) {
