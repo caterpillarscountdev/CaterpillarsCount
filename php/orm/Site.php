@@ -600,6 +600,7 @@ class Site
 		if($this->deleted){return false;}
 		$dbconn = (new Keychain)->getDatabaseConnection();
 		$query = mysqli_query($dbconn, "SELECT `ID` FROM `SiteUserValidation` WHERE `UserFK`='" . intval($user->getID()) . "' AND `SiteFK`='" . $this->id . "' AND `SaltedSitePasswordHash`='" . $this->saltedPasswordHash . "' LIMIT 1");
+            error_log("Site.validateUser, validation " . mysqli_num_rows($query) . ": ".$user->getID()." with ".$password." on ". $this->id . " " . $this->clearPassword . ": " . $this->passwordIsCorrect($password));
 		if(mysqli_num_rows($query) == 1){
 			return true;
 		}
